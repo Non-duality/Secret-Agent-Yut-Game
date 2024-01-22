@@ -1,8 +1,12 @@
 <script setup>
-import Main from './views/Main.vue';
 </script>
 
 <template>
-  <Main></Main>
+  <div>
+    <!-- <TheHeader /> -->
+    <router-view></router-view>
+  </div>
 </template>
 
+<style scoped>
+</style>
