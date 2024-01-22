@@ -127,7 +127,7 @@
 - 함수명, 변수명은 카멜케이스
 
 - 주석은 설명하려는 구문 상단에 맞춰 쓰기
-```JavaScript
+```java
 function example() {
 ...
 	// something에 관한 주석
@@ -149,7 +149,7 @@ function example() {
 - 세미콜론 사용
 
 - 멀티 워드 컴포넌트 이름 사용하기
-```JavaScript
+```java
 <!-- 사전 컴파일된 템플릿에서 -->
 <TodoItem />
 
@@ -158,11 +158,11 @@ function example() {
 ```
 
 - prop 정의는 상세하게, 최소한 타입을 명시하기
-```JavaScript
+```java
 // 잘못된 예
 const props = defineProps(['status'])
 ```
-```JavaScript
+```java
 // 좋은 예
 // 1. 첫번째 예시
 const props = defineProps({
