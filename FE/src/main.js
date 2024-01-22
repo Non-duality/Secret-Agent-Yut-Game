@@ -12,14 +12,15 @@ app.use(createPinia());
 app.use(router);
 
 app.mount("#app");
-var c = document.getElementById("canv"),
+
+let c = document.getElementById("canv"),
   d = c.getContext("2d");
-var w = (c.width = window.innerWidth),
+  let w = (c.width = window.innerWidth),
   h = (c.height = window.innerHeight);
 
 // 마우스 위치를 저장할 변수
-var mouseX = 0;
-var mouseY = 0;
+let mouseX = 0;
+let mouseY = 0;
 
 // 마우스 이벤트 리스너 등록
 c.addEventListener("mousemove", function (e) {
@@ -28,7 +29,7 @@ c.addEventListener("mousemove", function (e) {
 });
 
 // 배경 이미지를 로드합니다.
-var backgroundImage = new Image();
+let backgroundImage = new Image();
 backgroundImage.src = "../src/assets/gameMain/lobby.png"; // 배경 이미지 파일의 경로를 지정하세요.
 
 // 이미지가 로드되면 배경을 그립니다.
