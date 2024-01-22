@@ -113,3 +113,98 @@
 - `master` 브랜치로 부터 개발하는 용도 외의 복사본 용을 git clone하여 `master` 브랜치로 부터 계속 pull 받으면서 복사본으로 사용\*\*
 - `merge request` 승인 후 에러 생길 시 `git revert` 사용 권장\*\*
 - **원격 저장소 `master`에 `merge` 이후 꼭 잊지말고 `master` 에서 `pull` 하기**
+
+## 📌Code Convention
+
+### 백, 프론트 공통 코드 컨벤션
+
+- 메소드 파라미터는 최대 4개 이하
+
+- 메소드 최대 30줄 이하
+
+- 들여쓰기는 최대 3칸
+
+- 함수명, 변수명은 카멜케이스
+
+- 주석은 설명하려는 구문 상단에 맞춰 쓰기
+```JavaScript
+function example() {
+...
+	// something에 관한 주석
+	something ...
+}
+```
+
+- 공백으로 구분 잘해주기
+
+### 프론트엔드 코드 컨벤션
+**[ 코드 ]**
+
+- 문장마다 Enter하여 가독성 높이기
+
+- 화살표 함수 사용
+
+- 작은 따옴표 사용
+
+- 세미콜론 사용
+
+- 멀티 워드 컴포넌트 이름 사용하기
+```JavaScript
+<!-- 사전 컴파일된 템플릿에서 -->
+<TodoItem />
+
+<!-- in-DOM 템플릿에서 -->
+<todo-item></todo-item>
+```
+
+- prop 정의는 상세하게, 최소한 타입을 명시하기
+```JavaScript
+// 잘못된 예
+const props = defineProps(['status'])
+```
+```JavaScript
+// 좋은 예
+// 1. 첫번째 예시
+const props = defineProps({
+	status: String
+})
+
+// 2. 두번째 예시 (상세)
+const props = defineProps({
+	status: {
+		type: String,
+		required: true,
+
+		validator: (value) => {
+				return ['syncing', 'synced', 'version-conflict', 'error'].includes(
+					value
+				)
+			}
+		}
+	})
+```
+
+**[ 파일명 ]**
+
+- 기초 컴포넌트명에 이어쓰기
+    
+    ex) 
+    
+    Todo.vue
+    
+    TodoList.vue
+    
+    TodoDetailList.vue
+    
+- 파스칼 케이스
+
+### 백엔드 코드 컨벤션
+
+  - 모든 변수는 하나의 한개만 선언
+
+  ```
+  int a, b; // X
+
+  int a;
+  int b; // O
+  ```
