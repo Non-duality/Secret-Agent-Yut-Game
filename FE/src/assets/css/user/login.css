@@ -1,5 +1,4 @@
 button {
-  z-index: 2;
   background-color: #0000008a;
   color: #fff;
   padding: 10px 20px;
@@ -8,13 +7,13 @@ button {
 }
 
 .button-container {
-  z-index: 3;
   position: absolute;
   right: 10px;
   bottom: 10px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  z-index: 2;
 }
 
 .login-btn,

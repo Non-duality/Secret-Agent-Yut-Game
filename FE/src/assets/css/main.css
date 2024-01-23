@@ -13,10 +13,10 @@
   position: absolute; /* 절대 위치 지정 */
   top: 0; /* 상단에 배치 */
   left: 0; /* 왼쪽에 배치 */
-  z-index: 1;
+  z-index: -1;
 }
 
-#app {
+.app-container {
   position: fixed;
 
   width: 100%;
@@ -28,4 +28,13 @@
   background: url("../img/MainBackground.png") no-repeat;
   background-size: cover;
   background-position: center;
+  z-index: 0;
+}
+
+button {
+  background-color: #0000008a;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
 }
