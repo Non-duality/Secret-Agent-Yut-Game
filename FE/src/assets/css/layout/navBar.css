@@ -1,12 +1,9 @@
-* {
-  background-color: gray;
-}
-
+/* 로고 사이즈와 위치를 고정시킨다 */
 .img-log {
-  width: 100px;
+  width: 70px;
   margin-left: 20px;
 }
-
+/* display를 flex로 설정 후 가로 배치 */
 .nav-bar {
   margin-top: 20px;
   margin-left: 100px;
@@ -39,4 +36,5 @@
 /* 프로필 위한 클래스 */
 .pro-box {
   margin-left: auto;
+  margin-right: 30px;
 }

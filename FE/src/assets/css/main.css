@@ -25,15 +25,9 @@
   top: 0;
   left: 0;
 
-<<<<<<< HEAD
-    background: url("../assets/img/src/assets/img/MainBackground.png") no-repeat;
-    background-size: cover;
-    background-position: center;
-=======
   background: url("../img/MainBackground.png") no-repeat;
   background-size: cover;
   background-position: center;
->>>>>>> developer
 }
 
 button {
