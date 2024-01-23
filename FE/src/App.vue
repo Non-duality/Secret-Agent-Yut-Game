@@ -2,10 +2,7 @@
 </script>
 
 <template>
-  <div>
-    <!-- <TheHeader /> -->
-    <router-view></router-view>
-  </div>
+  <RouterView />
 </template>
 
 <style scoped>
