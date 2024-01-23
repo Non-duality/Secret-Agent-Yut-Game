@@ -1,8 +1,11 @@
 <script setup>
-import Main from "@/view/Main.vue";
+// import Main from "@/view/Main.vue";
+import NavBarVue from "./components/layout/NavBar.vue";
+
 </script>
 
 <template>
-  <Main></Main>
+<!-- <Main></Main> -->
+  <NavBarVue/>
 </template>
 
