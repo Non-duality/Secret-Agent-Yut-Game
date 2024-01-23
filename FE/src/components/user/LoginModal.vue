@@ -1,12 +1,4 @@
 <template>
-<<<<<<< HEAD
-    
-</template>
-
-<script>
-
-</script>
-=======
     <div>
       <div class="button-container">
         <button class="login-btn" @click="openModal('login')">
@@ -126,4 +118,3 @@
     },
   };
   </script>
->>>>>>> design/FE-login
