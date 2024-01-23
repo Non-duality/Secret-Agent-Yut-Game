@@ -1,9 +1,8 @@
 <script setup>
+import Main from "@/view/Main.vue";
 </script>
 
 <template>
-  <RouterView />
+  <Main></Main>
 </template>
 
-<style scoped>
-</style>
