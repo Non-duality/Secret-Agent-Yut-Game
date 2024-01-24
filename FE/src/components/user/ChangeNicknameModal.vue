@@ -1,0 +1,99 @@
+<template>
+  <!-- 닉네임 변경 모달 창 -->
+  <div id="changeNicknameModal" class="modal">
+    <div class="modal-content">
+      <input type="text" placeholder="|" v-model="nickname" />
+      <br />
+      <h2 class="nickname-text">변경할 닉네임을 입력하시오</h2>
+      <br />
+      <button @click="nicknameChangeTest()" class="modal-change-nickname-btn">확인</button>
+      취소
+    </div>
+  </div>
+
+  <!-- <label for="rememberMeCheckbox" @click="toggleCheckbox()">
+    <input class="login-text" type="checkbox" id="rememberMeCheckbox" />
+    <span style="color: white">로그인 유지</span>
+  </label> -->
+
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      
+    };
+  },
+  methods: {
+    nicknameChangeTest() {
+      this.$emit("nicknameChangeTest")
+    }
+  }
+}
+</script>
+
+<style>
+.nickname-text {
+  margin-bottom: 20px;
+  top: -10px; /* 위로 20픽셀 이동, 필요에 따라 조절 가능 */
+  color: white;
+  font-family: "Palatino Linotype", "Book Antiqua", palatino, serif; /* Press Start 2P 글꼴 적용 */
+}
+
+.button-container {
+  margin: 20px;
+}
+
+/* 모달 애니메이션 */
+.modal {
+  /* 기본 스타일 유지 */
+  border-color: black;
+  display: flex;
+  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: center; /* 수평 중앙 정렬 */
+  position: fixed;
+  left: 0;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 3;
+}
+
+.modal-content {
+  /* 기본 스타일 유지 */
+  background-color: #00000035;
+  margin: 5% auto;
+  padding: 20px;
+  border: 2px solid #888;
+  border-color: white;
+  border-radius: 30px;
+  width: 300px;
+  text-align: center;
+  /* 애니메이션 설정 */
+  transform: translateY(-50px);
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+
+/* 입력란 스타일 */
+input[type="text"] {
+  width: 75%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 30px;
+}
+
+.modal-change-nickname-btn {
+  margin-right: 10px;
+}
+
+
+/* 로그인 버튼 호버 효과 */
+.modal-change-nickname-btn:hover {
+  background-color: #f44336; /* 호버 시 배경색 변경 */
+  color: white; /* 호버 시 텍스트 색상 변경 */
+}
+
+</style>
