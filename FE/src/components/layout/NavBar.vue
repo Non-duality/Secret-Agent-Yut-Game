@@ -20,6 +20,8 @@ export default {
       <router-link to="/" class="nav-text">홈</router-link>
       <router-link to="room" class="nav-text">게임</router-link>
       <router-link to="/" class="nav-text">게시판</router-link>
+      <!-- 테스트 -->
+      <router-link to="game" class="nav-text">겜방</router-link>
     </div>
     <!-- 프로필 가져와서 보여주기 -->
     <div class="pro-box">
