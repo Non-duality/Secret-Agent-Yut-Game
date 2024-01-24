@@ -9,4 +9,9 @@ public class MainController {
     public String hello(){
         return "hello world";
     }
+
+    @GetMapping("/hello")
+    public String hi(){
+        return "옴?";
+    }
 }
