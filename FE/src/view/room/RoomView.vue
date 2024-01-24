@@ -1,30 +1,10 @@
 <template>
   <div>
-    <button @click="goToWait">wait</button>
-  </div>
-  <div>
     <router-view />
   </div>
 </template>
 
 <script>
-import { useUserStore } from "@/store/userStore";
-import { useRouter } from "vue-router";
-
 export default {
-  setup() {
-    const store = useUserStore();
-    const router = useRouter();
-
-    const goToWait = () => {
-      store.toggleNav();
-      router.push("/room/wait");
-    };
-
-    return {
-      goToWait,
-    };
-  },
 };
 </script>
-

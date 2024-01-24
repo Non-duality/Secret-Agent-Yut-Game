@@ -7,6 +7,7 @@ export const useUserStore = defineStore('user', {
       showModalSide: false,   // 네비 바, 사이드 바
       showLoginModal: false,  // 로그인 모달
       showJoinModal: false,   // 회원가입 모달
+      showUserInfoNick: false,    // 회원정보 닉네임
     };
   },
   actions: {
@@ -17,6 +18,8 @@ export const useUserStore = defineStore('user', {
         this.showLoginModal = true;
       } else if (value === 'join') {
         this.showJoinModal = true;
+      } else if(value === 'Nick'){
+        this.showUserInfoNick = true;
       }
     },
     // 위와 같지만, 닫는 함수.
@@ -25,6 +28,8 @@ export const useUserStore = defineStore('user', {
         this.showLoginModal = false;
       } else if (value === 'join') {
         this.showJoinModal = false;
+      } else if(value === 'Nick'){
+        this.showUserInfoNick = false;
       }
     },
     // 상단 바와 사이드 바 토글 함수.

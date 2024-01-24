@@ -3,9 +3,9 @@ import HomeView from '@/view/home/HomeView.vue'
 import RoomViewVue from '@/view/room/RoomView.vue'
 import UserViewVue from '@/view/user/UserView.vue'
 import GameWaitingRoomVue from '@/components/room/GameWaitingRoom.vue'
-import roomtest from '@/components/room/roomtest.vue'
 import InitialViewVue from '@/view/home/InitialView.vue'
-import MemberInfoModifyVue from '@/components/user/MemberInfoModify.vue'
+import UserInfoModifyVue from '@/components/user/UserInfoModify.vue'
+import RoomListViewVue from '@/components/room/RoomListView.vue'
 
 const router = createRouter({
   history: createWebHistory('/'),
@@ -32,7 +32,7 @@ const router = createRouter({
         {
           path: '/room/list',
           name: 'room/list',
-          component: roomtest
+          component: RoomListViewVue
         },
         {
           path: '/room/wait',
@@ -43,14 +43,17 @@ const router = createRouter({
     },
     // 사용자 회원정보
     {
-      path: '/profile',
-      name: 'profile',
-      component: UserViewVue
-    },
-    {
-      path: '/member',
-      name: 'member',
-      component: MemberInfoModifyVue
+      path: '/user',
+      name: 'user',
+      component: UserViewVue,
+      redirect: '/user/info',
+      children: [
+        {
+          path: '/user/info',
+          name: 'user/info',
+          component: UserInfoModifyVue
+        }
+      ]
     },
   ]
 })

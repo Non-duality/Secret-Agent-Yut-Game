@@ -19,8 +19,6 @@
   import RoomList from '@/components/room/RoomList.vue';
   import RoomInfo from '@/components/room/RoomInfo.vue';
   import RoomMaking from '@/components/room/RoomMaking.vue';
-  
-
 
   export default {
     components: {
