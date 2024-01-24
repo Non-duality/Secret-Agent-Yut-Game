@@ -1,6 +1,5 @@
 <script setup>
-// import Main from "@/view/Main.vue";
-import NavBarVue from "./components/layout/NavBar.vue";
+import Main from "@/view/Main.vue";
 
 </script>
 
@@ -8,6 +7,5 @@ import NavBarVue from "./components/layout/NavBar.vue";
   <div class="app-container">
     <Main></Main>
     <canvas id="canv"></canvas>
-    <!-- <NavBarVue/> -->
   </div>
 </template>

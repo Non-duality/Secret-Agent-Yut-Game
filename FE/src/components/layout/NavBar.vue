@@ -18,7 +18,7 @@ export default {
     <!-- 홈, 게임, 게시판 클릭시 화면 이동 -->
     <div class="text-box">
       <router-link to="/" class="nav-text">홈</router-link>
-      <router-link to="/" class="nav-text">게임</router-link>
+      <router-link to="room" class="nav-text">게임</router-link>
       <router-link to="/" class="nav-text">게시판</router-link>
     </div>
     <!-- 프로필 가져와서 보여주기 -->

@@ -14,7 +14,7 @@
         <span style="color: white">로그인 유지</span>
       </label>
       <br />
-      <button @click="performLogin()" class="modal-login-btn">로그인</button>
+      <button @click="loginTest()" class="modal-login-btn">로그인</button>
       <button @click="closeModal('login')" class="modal-cancel-btn">
         취소
       </button>
@@ -36,35 +36,40 @@ export default {
     closeModal(modalId) {
       this.$emit("close-modal", modalId);
     },
-    
-    async performLogin() {
-      try {
-        const response = await userConfirm(
-          {
-            userId: this.email, // 이메일 변수를 사용
-            password: this.password, // 패스워드 변수를 사용
-          },
-          (response) => {
-            console.log(response);
-            // 로그인 성공 시 처리
-            // response.data를 통해 서버의 응답 데이터에 접근할 수 있을 것입니다.
-            // 예를 들어, 토큰을 저장하거나 로그인 완료 후의 동작을 정의할 수 있습니다.
-          },
-          (error) => {
-            // 로그인 실패 시 처리
-            // error를 통해 실패 이유 등을 확인할 수 있을 것입니다.
-            console.error("로그인 실패:", error);
-            // 에러 메시지를 표시하거나 다른 처리를 수행하세요.
-          }
-        );
 
-        // 서버로부터 받은 토큰을 처리하거나 원하는 동작을 수행할 수 있습니다.
-      } catch (error) {
-        // 예외 처리
-        console.error("로그인 오류:", error);
-        // 예외 처리를 수행하세요.
-      }
-    },
+    loginTest(){
+      this.$emit("loginTest");
+    }
+    
+    // 추후 로그인 백이랑 연결할 때 사용할 함수 현재는 주석처리
+    // async performLogin() {
+    //   try {
+    //     const response = await userConfirm(
+    //       {
+    //         userId: this.email, // 이메일 변수를 사용
+    //         password: this.password, // 패스워드 변수를 사용
+    //       },
+    //       (response) => {
+    //         console.log(response);
+    //         // 로그인 성공 시 처리
+    //         // response.data를 통해 서버의 응답 데이터에 접근할 수 있을 것입니다.
+    //         // 예를 들어, 토큰을 저장하거나 로그인 완료 후의 동작을 정의할 수 있습니다.
+    //       },
+    //       (error) => {
+    //         // 로그인 실패 시 처리
+    //         // error를 통해 실패 이유 등을 확인할 수 있을 것입니다.
+    //         console.error("로그인 실패:", error);
+    //         // 에러 메시지를 표시하거나 다른 처리를 수행하세요.
+    //       }
+    //     );
+
+    //     // 서버로부터 받은 토큰을 처리하거나 원하는 동작을 수행할 수 있습니다.
+    //   } catch (error) {
+    //     // 예외 처리
+    //     console.error("로그인 오류:", error);
+    //     // 예외 처리를 수행하세요.
+    //   }
+    // },
   },
 };
 </script>

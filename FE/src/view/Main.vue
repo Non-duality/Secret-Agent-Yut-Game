@@ -13,7 +13,11 @@
 
         <!-- 로그인 모달 -->
         <transition name="fade">
-          <LoginModal v-if="showLoginModal" @close-modal="closeModal" />
+          <LoginModal
+            v-if="showLoginModal"
+            @close-modal="closeModal"
+            @loginTest="loginTest"
+          />
         </transition>
 
         <!-- 회원 가입 모달 -->
@@ -22,28 +26,32 @@
         </transition>
       </div>
     </div>
-
-    <!-- 로그인 후 ( 메인화면 ) -->`
-    <div v-if="isLogin">
-      <!-- 상단바 -->
-      <!-- <HeaderBar/> -->
-      <HomeView />
-    </div>
+  </div>
+  <!-- 로그인 후 ( 메인화면 ) -->`
+  <div v-if="isLogin">
+    <!-- 상단바 -->
+    <!-- <div v-if="showModal"> -->
+    <NavBar />
+    <!-- </div> -->
+    <router-view />
   </div>
 </template>
 
 <script>
 import LoginModal from "@/components/user/LoginModal.vue";
 import JoinModal from "@/components/user/JoinModal.vue";
+import NavBar from "@/components/layout/NavBar.vue";
 
 export default {
   components: {
+    NavBar,
     LoginModal,
     JoinModal,
   },
   data() {
     return {
       isLogin: false,
+      showModal: true,
       showLoginModal: false,
       showJoinModal: false,
     };
@@ -64,6 +72,12 @@ export default {
       } else if (value === "join") {
         this.showJoinModal = false;
       }
+    },
+
+    loginTest() {
+      this.showLoginModal = false;
+      this.isLogin = true;
+      console.log("loginTest");
     },
   },
 };

@@ -11,7 +11,7 @@
         </div>
         <!-- 클릭 시 프로필로 화면을 이동한다 -->
         <div class="nav-my">
-            <a href="#" class="nav-btn">내정보</a>
+            <router-link to="profile" class="nav-btn">내정보</router-link>
         </div>
     </div>
   </div>
