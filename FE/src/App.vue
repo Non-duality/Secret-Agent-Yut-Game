@@ -5,7 +5,9 @@ import NavBarVue from "./components/layout/NavBar.vue";
 </script>
 
 <template>
-<!-- <Main></Main> -->
-  <NavBarVue/>
+  <div class="app-container">
+    <Main></Main>
+    <canvas id="canv"></canvas>
+    <NavBarVue/>
+  </div>
 </template>
-
