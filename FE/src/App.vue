@@ -8,6 +8,6 @@ import NavBarVue from "./components/layout/NavBar.vue";
   <div class="app-container">
     <Main></Main>
     <canvas id="canv"></canvas>
-    <NavBarVue/>
+    <!-- <NavBarVue/> -->
   </div>
 </template>
