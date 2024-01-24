@@ -5,6 +5,7 @@ import UserViewVue from '@/view/user/UserView.vue'
 import GameWaitingRoomVue from '@/components/room/GameWaitingRoom.vue'
 import roomtest from '@/components/room/roomtest.vue'
 import InitialViewVue from '@/view/home/InitialView.vue'
+import MemberInfoModifyVue from '@/components/user/MemberInfoModify.vue'
 
 const router = createRouter({
   history: createWebHistory('/'),
@@ -45,6 +46,11 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: UserViewVue
+    },
+    {
+      path: '/member',
+      name: 'member',
+      component: MemberInfoModifyVue
     },
   ]
 })
