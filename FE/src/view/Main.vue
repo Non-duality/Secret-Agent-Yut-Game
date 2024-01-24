@@ -78,7 +78,7 @@ export default {
 
 .fade-enter-active {
   /* 전체 단계에서 적용될 부분*/
-  transition: all 1s;
+  transition: all 0.5s;
 }
 
 .fade-enter-to {
@@ -101,8 +101,8 @@ export default {
 /* 이미지의 초기 위치와 스타일 설정 */
 .game-image {
   position: absolute;
-  top: 5%;
-  left: 55%;
+  top: 10%;
+  left: 50%;
   transform: translateX(-50%);
 }
 
