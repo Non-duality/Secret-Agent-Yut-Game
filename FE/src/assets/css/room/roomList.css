@@ -1,0 +1,9 @@
+.room-list {
+  margin-top: 20px;
+  margin-left: 100px;
+  margin-right: 100px;
+  overflow: hidden;
+  background-color: #00000000;
+  display: flex;
+  align-items: center;
+}
