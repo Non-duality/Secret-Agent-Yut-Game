@@ -12,6 +12,11 @@ public class MainController {
 
     @GetMapping("/hello")
     public String hi(){
-        return "옴?";
+        return "테스트2";
+    }
+
+    @GetMapping("/test")
+    public String test(){
+        return "테스트이빈다";
     }
 }
