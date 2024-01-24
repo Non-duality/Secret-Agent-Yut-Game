@@ -61,6 +61,7 @@ export default {
   z-index: 3;
 }
 
+
 .modal-content {
   /* 기본 스타일 유지 */
   background-color: #00000035;
@@ -84,6 +85,7 @@ input[type="text"] {
   margin-bottom: 10px;
   border-radius: 30px;
 }
+
 
 .modal-change-nickname-btn {
   margin-right: 10px;
