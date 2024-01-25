@@ -4,11 +4,11 @@
     <div class="modal-content">
       <button class="close" @click="closeModal">&times;</button>
       <h2 class="login-text">Login</h2>
-      <input type="text" placeholder="이메일" v-model="email" />
-      <input type="password" placeholder="패스워드" v-model="password" />
+      <input type="text" placeholder="이메일" v-model="email"/>
+      <input type="password" placeholder="패스워드" v-model="password"/>
       <br />
       <label for="rememberMeCheckbox" @click="toggleCheckbox()">
-        <input class="login-text" type="checkbox" id="rememberMeCheckbox" />
+        <input class="login-text" type="checkbox" id="rememberMeCheckbox"/>
         <span style="color: white">로그인 유지</span>
       </label>
       <br />

@@ -2,9 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/view/home/HomeView.vue'
 import RoomViewVue from '@/view/room/RoomView.vue'
 import UserViewVue from '@/view/user/UserView.vue'
-import GameWaitingRoomVue from '@/view/room/GameWaitingRoom.vue'
+import GameWaitingRoomVue from '@/components/room/GameWaitingRoom.vue'
 import InitialViewVue from '@/view/home/InitialView.vue'
 import UserInfoModifyVue from '@/components/user/UserInfoModify.vue'
+import ChangePasswordVue from '@/components/user/ChangePassword.vue'
+import ScoreCheckVue from '@/components/user/ScoreCheck.vue'
 import RoomListViewVue from '@/components/room/RoomListView.vue'
 
 const router = createRouter({
@@ -52,7 +54,17 @@ const router = createRouter({
           path: '/user/info',
           name: 'user/info',
           component: UserInfoModifyVue
-        }
+        },
+        {
+          path: '/user/password',
+          name: 'user/password',
+          component: ChangePasswordVue
+        },
+        {
+          path: '/user/records',
+          name: 'user/records',
+          component: ScoreCheckVue
+        },
       ]
     },
   ]

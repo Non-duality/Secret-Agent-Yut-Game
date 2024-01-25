@@ -8,6 +8,8 @@ export const useUserStore = defineStore('user', {
       showLoginModal: false,  // 로그인 모달
       showJoinModal: false,   // 회원가입 모달
       showUserInfoNick: false,    // 회원정보 닉네임
+      showDropOutModal: false,  // 탈퇴 모달
+      showSuccessPassword: false, // 비밀번호 변경 모달
     };
   },
   actions: {
@@ -18,8 +20,12 @@ export const useUserStore = defineStore('user', {
         this.showLoginModal = true;
       } else if (value === 'join') {
         this.showJoinModal = true;
-      } else if(value === 'Nick'){
+      } else if (value === 'Nick') {
         this.showUserInfoNick = true;
+      } else if (value === 'out') {
+        this.showDropOutModal = true;
+      } else if (value === 'password') {
+        this.showSuccessPassword = true;
       }
     },
     // 위와 같지만, 닫는 함수.
@@ -28,8 +34,12 @@ export const useUserStore = defineStore('user', {
         this.showLoginModal = false;
       } else if (value === 'join') {
         this.showJoinModal = false;
-      } else if(value === 'Nick'){
+      } else if(value === 'Nick') {
         this.showUserInfoNick = false;
+      } else if(value === 'Drop') {
+        this.showDropOutModal = false;
+      } else if(value === 'password') {
+        this.showSuccessPassword = false
       }
     },
     // 상단 바와 사이드 바 토글 함수.

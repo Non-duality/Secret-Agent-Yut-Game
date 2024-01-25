@@ -3,18 +3,10 @@
   <div id="changeNicknameModal" class="modal">
     <div class="modal-content">
       <input type="text" placeholder="|" v-model="nickname" />
-      <br />
-      <h2 class="nickname-text">변경할 닉네임을 입력하시오</h2>
-      <br />
+      <h4 class="nickname-text">변경할 닉네임을 입력하시오</h4>
       <button @click="closeModal('Nick')" class="modal-change-nickname-btn">확인</button>
-      취소
     </div>
   </div>
-
-  <!-- <label for="rememberMeCheckbox" @click="toggleCheckbox()">
-    <input class="login-text" type="checkbox" id="rememberMeCheckbox" />
-    <span style="color: white">로그인 유지</span>
-  </label> -->
 
 </template>
 
@@ -31,13 +23,25 @@ export default {
   },
   data() {
     return {
-      nickname: 'test',
+      nickname: '',
     };
   },
   methods: {
     nicknameChangeTest() {
       this.$emit("nicknameChangeTest")
-    }
+    },
+
+    // // 서버로 새로운 닉네임을 전송하고 업데이트하는 로직을 추가해야함.
+    // // axios 요청
+    // changNickname() {
+    //     axios.post('/api/change-nickname', { newNickname: this.newNickname })
+    //     .then(response => {
+    //       // 업데이트 시 로직
+    //     })
+    //     .catch(error => {
+
+    //     });
+    // },
   }
 }
 </script>
