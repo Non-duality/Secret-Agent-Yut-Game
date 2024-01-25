@@ -11,6 +11,7 @@
 .event-container {
   position: relative;
   height: 50%;
+  width: 100%;
   margin: 20px;
 }
 
@@ -44,6 +45,10 @@
   align-self: flex-end; /* 버튼을 자신의 영역 아래로 배치 */
 }
 
+#detail-btn:hover {
+  text-decoration: underline;
+}
+
 .article-container {
   position: relative;
   display: flex;
@@ -70,9 +75,10 @@
   font-size: 25px;
 }
 
-#patch > .patch-list,
-#faq > .patch-list {
-  height: calc(100% - 23px - 31px - 10px);
+.patch-list,
+.patch-list {
+  /* height: calc(100% - 23px - 31px - 10px); */
+  height: 100px;
   display: flex;
   flex-direction: column; /* 내부 요소를 세로로 배치 */
   justify-content: flex-start; /* 내부 요소를 위로 정렬 */
@@ -88,18 +94,25 @@
 #faq > .patch-list > span {
   color: white;
   background: rgba(0, 0, 0, 0.8);
-  font-size: 25px;
-  margin: 20px;
+  font-size: 20px;
+  margin: 8px;
 }
 
-#gallery{
+#patch > .patch-list > span:hover,
+#faq > .patch-list > span:hover {
+  text-decoration: underline;
+}
+
+#gallery {
   object-fit: contain; /* 이미지를 부모 요소에 맞게 조절하고, 잘린 부분을 처리합니다. */
+  max-height: 350px;
+  max-width: 600px;
 }
 
 .carousel__item {
-  max-height: 330px;
-  width: 100%;
-  background-color: rgba(255, 255, 255, 0);
+  max-height: 350px;
+  max-width: 600px;
+  background-color: rgb(255, 255, 255);
   color: var(--vc-clr-white);
   font-size: 20px;
   border-radius: 8px;
@@ -116,4 +129,32 @@
 .carousel__next {
   box-sizing: content-box;
   border: 5px solid white;
+}
+
+/* 모달 페이드 */
+.fade-enter-from {
+  /* 시작시 효과 */
+  opacity: 0;
+}
+
+.fade-enter-active {
+  /* 전체 단계에서 적용될 부분*/
+  transition: all 0.5s;
+}
+
+.fade-enter-to {
+  /* 끝나는 효과 */
+  opacity: 1;
+}
+
+.fade-leave-from {
+  opacity: 1;
+}
+
+.fade-leave-active {
+  transition: all 0.5s;
+}
+
+.fade-leave-to {
+  opacity: 0;
 }

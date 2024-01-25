@@ -2,17 +2,16 @@
   <div class="container">
     <!-- (상단) 이벤트 슬라이더 -->
     <div class="event-container">
-      <Carousel :autoplay="3000" :wrap-around="true">
+      <Carousel :autoplay="4000" :wrap-around="true">
         <Slide v-for="slide in 6" :key="slide">
-          <!-- <div class="carousel__item">{{ i18n[slide].name }}</div> -->
           <div class="carousel__item">
             <img id="gallery" :src="i18n[slide].name" />
           </div>
-          <CustomNavigation @goToPrev="goToPrev" @goToNext="goToNext" />
         </Slide>
 
         <template #addons>
-          <Pagination />
+          <!-- <Pagination /> -->
+          <Navigation />
         </template>
       </Carousel>
     </div>
@@ -21,14 +20,21 @@
     <div class="article-title">
       <!-- 패치노트 -->
       <div id="patch-title">
-        <h2>패치노트</h2>
-        <button id="detail-btn">더보기></button>
+        <h3>패치노트</h3>
+        <button id="detail-btn" @click="openModal('patch')">더보기></button>
+        <transition name="fade">
+          <PatchNoteItem v-if="showPatchItemModal" @close-modal="closeModal" />
+        </transition>
       </div>
 
       <!-- FAQ -->
       <div id="faq-title">
-        <h2>도움말</h2>
-        <button id="detail-btn">더보기></button>
+        <h3>도움말</h3>
+        <button id="detail-btn" @click="openModal('help')">더보기></button>
+
+        <transition name="fade">
+          <HelpItem v-if="showHelpItemModal" @close-modal="closeModal" />
+        </transition>
       </div>
     </div>
 
@@ -36,24 +42,38 @@
     <div class="article-container">
       <!-- 패치노트 -->
       <div id="patch">
-        <div class="patch-list"></div>
+        <div class="patch-list">
+          <span>Hello</span>
+          <span>Hello</span>
+          <span>Hello</span>
+        </div>
       </div>
 
       <!-- FAQ -->
-      <div id="faq"></div>
+      <div id="faq">
+        <div class="patch-list">
+          <span>Hello</span>
+          <span>Hello</span>
+          <span>Hello</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
       
   <script>
-import { defineComponent, ref } from "vue";
-import { Carousel, Slide } from "vue3-carousel";
-import CustomNavigation from "./CustomNavigation.vue"; // 커스텀 Navigation 컴포넌트
+import { defineComponent } from "vue";
+import { Carousel, Slide, Navigation } from "vue3-carousel";
 
 import "vue3-carousel/dist/carousel.css";
 
-import test01 from "../../assets/img/home/event01.png";
-import test02 from "../../assets/img/home/test02.png";
+// Item vue
+import PatchNoteItem from "../../components/home/PatchItem.vue";
+import HelpItem from "../../components/home/HelpItem.vue";
+
+// 이미지
+import event01 from "../../assets/img/home/event01.png";
+import event02 from "../../assets/img/home/event02.png";
 import test03 from "../../assets/img/home/test03.png";
 import test04 from "../../assets/img/home/test04.png";
 import test05 from "../../assets/img/home/test05.png";
@@ -64,32 +84,47 @@ export default defineComponent({
   components: {
     Carousel,
     Slide,
-    CustomNavigation,
+    Navigation,
+    PatchNoteItem,
+    HelpItem,
   },
 
   methods: {
-    goToPrev() {
-      this.$refs.carousel.prev();
+    openModal(value) {
+      if (value === "patch") {
+        this.showPatchItemModal = true;
+      } else if (value === "help") {
+        this.showHelpItemModal = true;
+      }
     },
-    goToNext() {
-      this.$refs.carousel.next();
+
+    closeModal(value) {
+      if (value === "patch") {
+        this.showPatchItemModal = false;
+      } else if (value === "help") {
+        this.showHelpItemModal = false;
+      }
     },
   },
 
-  data: () => ({
-    i18n: [
-      {},
-      { name: test01 },
-      { name: test02 },
-      { name: test03 },
-      { name: test04 },
-      { name: test05 },
-      { name: test06 },
-    ],
-  }),
+  data() {
+    return {
+      i18n: [
+        {},
+        { name: event01 },
+        { name: event02 },
+        { name: test03 },
+        { name: test04 },
+        { name: test05 },
+        { name: test06 },
+      ],
+      showPatchItemModal: false,
+      showHelpItemModal: false,
+    };
+  },
 });
 </script>
       
-  <style scoped>
+<style scoped>
 @import url("../../assets/css/home/home.css");
 </style>
