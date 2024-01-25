@@ -1,0 +1,52 @@
+/* 대기 방 유저와 채팅 css */
+.wait-left {
+  color: white;
+  display: flex;
+  width: 550px;
+  flex-direction: column;
+  text-align: center;
+  align-items: start;
+}
+
+.team-container {
+  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 이 부분이 모든 자식 요소를 가운데로 정렬합니다 */
+}
+
+.team-name {
+  width: 300px;
+  border: 2px solid white;
+  border-radius: 30px;
+  height: 30px;
+  text-align: center; /* 텍스트 가운데 정렬 */
+  font-size: 20px;
+  line-height: 30px;
+}
+/* 홍팀, 청팀의 팀 색을 다르게 한다. */
+.team-red .team-name {
+  background-color: #dc3545;
+  margin-top: 30px;
+}
+/* 청팀 */
+.team-blue .team-name {
+  background-color: #2d81ff;
+  margin-top: 20px;
+}
+/* 각 유저 마다 크기를 가진다 */
+.user-container {
+  width: 300px; /* 부모 컨테이너의 전체 너비 사용 */
+}
+/* 유저 이름 */
+.team-user {
+  margin-top: 10px;
+  text-align: left; /* 유저 이름 왼쪽 정렬 */
+  display: flex;
+  align-items: center;
+}
+/* 각각의 유저 프로필 사진 */
+.team-img {
+  width: 30px;
+  margin-right: 30px;
+}

@@ -1,0 +1,76 @@
+/* 대기 방 채팅 css */
+.wait-chat {
+  margin-left: 30px;
+  margin-top: 20px;
+  background-color: rgba(90, 90, 90, 0.409);
+  border-radius: 10px;
+  padding: 5px;
+  border: 1px solid white;
+  width: 470px;
+  height: 150px;
+}
+
+.chat-container {
+  height: 120px;
+  overflow-y: auto;
+}
+
+.chat-name {
+  width: 80px;
+}
+
+.chat-div {
+  margin-left: 10px;
+  display: flex;
+  font-size: 14px;
+}
+/* 자기 자신은 다른 색으로 구별하였다 */
+.my-chat .chat-div {
+  color: green;
+}
+
+.chat-chat {
+  margin-left: 20px;
+}
+/* 입력 칸 */
+.chat-input-div {
+  border-radius: 10px;
+  border: 1px solid white;
+  height: 30px;
+  width: 400px;
+  text-align: left;
+  margin-left: 20px;
+  color: green;
+  display: flex;
+}
+
+.chat-input {
+  height: 10px;
+  background-color: transparent;
+  border: none;
+  color: white;
+}
+/* input을 클릭 시 테두리가 있어 제거 */
+.chat-input:focus {
+  outline: none;
+}
+
+.chat-container::-webkit-scrollbar-track {
+  background: transparent; /* 스크롤바 배경을 투명하게 설정 */
+}
+
+/* 스크롤바 핸들 스타일 */
+.chat-container::-webkit-scrollbar-thumb {
+  background: #888; /* 스크롤바 핸들 색상 설정 */
+  border-radius: 10px; /* 스크롤바 핸들 둥근 모서리 설정 */
+}
+
+/* 스크롤바 핸들 호버 시 스타일 */
+.chat-container::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 호버 시 스크롤바 핸들 색상 변경 */
+}
+
+/* 스크롤바 너비 설정 */
+.chat-container::-webkit-scrollbar {
+  width: 8px; /* 스크롤바 너비 설정 */
+}
