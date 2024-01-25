@@ -38,7 +38,7 @@
   padding-left: 30px;
 }
 
-button {
+#detail-btn {
   background-color: rgba(255, 255, 255, 0);
   font-size: 25px;
   align-self: flex-end; /* 버튼을 자신의 영역 아래로 배치 */
@@ -92,14 +92,28 @@ button {
   margin: 20px;
 }
 
-.slider {
-  display: flex;
-  width: 100%;
-  overflow: hidden; /* 슬라이드 영역 넘침 방지를 위해 추가 */
+#gallery{
+  object-fit: contain; /* 이미지를 부모 요소에 맞게 조절하고, 잘린 부분을 처리합니다. */
 }
 
-.slide {
-  flex: 0 0 100%;
-  transition: transform 0.5s ease-in-out;
-  min-width: 100%; /* 슬라이드의 최소 너비를 100%로 설정 */
+.carousel__item {
+  max-height: 330px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0);
+  color: var(--vc-clr-white);
+  font-size: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel__slide {
+  padding: 10px;
+}
+
+.carousel__prev,
+.carousel__next {
+  box-sizing: content-box;
+  border: 5px solid white;
 }
