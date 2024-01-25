@@ -7,12 +7,15 @@ export default {
   components:{
     Main,
   },
+
   mounted() {
     // 눈 배경
     initializeSnowAnimation("canv", "./src/assets/img/MainBackground.png");
+
     // 클릭 사운드
     initializeClickSoundEffect();
   },
+  
 }
 </script>
 
