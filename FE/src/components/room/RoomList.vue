@@ -1,7 +1,10 @@
 <template>
+  <!-- 실제 게임 방 목록 -->
   <div class="room-list">
     <div class="room-search">
+      <!-- 게임 방 검색바 -->
       <RoomSearch />
+      <!-- 게임 방 새로고침 아이콘 -->
       <font-awesome-icon icon="arrows-rotate" style="color: #ffffff;" />
     </div>
     <table class="room-content">
@@ -10,7 +13,8 @@
         <th scope="col">게임방 이름</th>
         <th scope="col">공개</th>
       </tr>
-      <!-- 실제 게임 방 정보 -->
+      <!-- 실제 게임 방 요약 정보 v-for를 통한 반복 컴포넌트 구성 -->
+      <!-- 나중에 페이지네이션이나 스크롤로 바꿔야 함 -->
       <RoomListComponent 
       v-for="roomInfo in roomInfos" 
       :key="roomInfo.id"

@@ -1,3 +1,4 @@
+/* 방 클릭시 나오는 상세 정보 프레임 */
 .room-detail {
   display: flex;
   flex-direction: column;
@@ -11,15 +12,18 @@
   
 }
 
+/* 방 클릭시 나오는 상세 정보 콘텐츠 */
 .room-detail-content {
   display: flex;
   justify-content: space-between;
 }
 
+/* 방 클릭시 나오는 상세 정보 콘텐츠의 부제목 */
 .room-detail-subtitle {
   color: #44A9F3;
 }
 
+/* 방 클릭시 나오는 상세 정보 참가 버튼 */
 button {
   background-color: #2D81FF;
   opacity: 100%;

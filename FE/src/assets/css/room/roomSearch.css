@@ -1,3 +1,4 @@
+/* 방 검색 form */
 .room-search-form {
   display: flex;
   align-items: center;
@@ -9,6 +10,7 @@
   padding: 0 20px;
 }
 
+/* 방 검색 바 */
 .room-search-input {
   flex: 9;
   border: none;
@@ -19,10 +21,12 @@
 
 }
 
+/* 방 검색 포커스 됐을 때 생기는 효과 없애기 */
 .room-search-input:focus{
   outline: none;
 }
 
+/* 방 검색 버튼 flex 분배 */
 .room-search-btn {
   flex: 1;
 }

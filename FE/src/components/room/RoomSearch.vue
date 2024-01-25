@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 방 검색 폼 -->
+    <!-- 방 검색 form -->
     <form class="room-search-form">
       <label for="room-search-input"></label>
       <input placeholder="검색어를 입력하시오" type="text" id="room-search-input" class="room-search-input">

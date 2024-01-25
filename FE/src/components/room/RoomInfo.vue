@@ -1,4 +1,5 @@
 <template>
+  <!-- 방 클릭했을 때 나오는 상세 정보 -->
   <div class="room-detail">
     <div class="room-detail-content">
       <div class="room-detail-info">
