@@ -120,10 +120,6 @@
 
 - 메소드 파라미터는 최대 4개 이하
 
-- 메소드 최대 30줄 이하
-
-- 들여쓰기는 최대 3칸
-
 - 함수명, 변수명은 카멜케이스
 
 - 주석은 설명하려는 구문 상단에 맞춰 쓰기
@@ -198,13 +194,51 @@ const props = defineProps({
     
 - 파스칼 케이스
 
-### 백엔드 코드 컨벤션
+#### 백엔드 코드 컨벤션
 
-  - 모든 변수는 하나의 한개만 선언
+- 모든 변수는 하나의 한개만 선언하기
 
-  ```
+  ```java
   int a, b; // X
 
   int a;
   int b; // O
   ```
+
+- package 이름 : 소문자와 숫자만 사용 `ex) com.example.deepspace`
+
+- Class 이름 : 첫 번째 문자를 대문자로 시작하며, 명사로 작성
+
+  ```java
+  class Test { }
+
+  //단어가 2개 이상 혼합되어 있다면,
+  //각 단어의 첫 번째 문자를 대문자로 표현
+  class UserInfo { }
+  ```
+
+- Interface 이름 : 첫 번째 문자를 대문자 시작
+
+  ```java
+  interface Runnable { }
+  interface ActionListener { }
+  ```
+
+- C style 배열선언 금지
+  ```java
+  String[] args // O
+  String args[] // X
+  ```
+- 구현부가 없거나 한 줄의 구문을 포함해도 중괄호를 사용한다.
+
+  ```java
+  if(a > b) {
+  a = b;
+  }
+  ```
+
+- 상수는 모두 대문자로 작성하며, 단어 사이를 밑줄(\_)로 구분
+- 클래스의 멤버와 initializer 의 순서는 따로 없지만, 최대한 논리적인 순서를 따름 새 메서드를 끝에 추가하는 것은 시간순이지 논리적인 순서가 아님
+- 빈 블록은 줄바꿈하지 않고 {} 로 사용 multi-block(if/else, try/catch/finally) 은 줄바꿈
+- 같은 동일한 이름의 메서드, 생성자는 연속적으로 작성
+- @Override: 항상 사용
