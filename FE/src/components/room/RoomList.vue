@@ -5,7 +5,7 @@
       <!-- 게임 방 검색바 -->
       <RoomSearch />
       <!-- 게임 방 새로고침 아이콘 -->
-      <font-awesome-icon icon="arrows-rotate" style="color: #ffffff;" />
+      <font-awesome-icon :icon="['fas', 'arrows-rotate']" spin size="2xl" style="color: #ffffff;" />
     </div>
     <table class="room-content">
       <tr>

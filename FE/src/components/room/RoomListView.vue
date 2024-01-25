@@ -1,7 +1,7 @@
 <template>
   <div class="room-info">
     <!-- 방 목록 -->
-    <div>
+    <div class="room-list">
       <h2>방 목록</h2>
       <RoomList 
       @show-room-info="handleShowRoomInfo"

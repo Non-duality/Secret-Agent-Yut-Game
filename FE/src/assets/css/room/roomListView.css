@@ -15,6 +15,11 @@ h2 {
   margin-bottom: 1%;
 }
 
+.room-list {
+  display: flex;
+  flex-direction: column;
+}
+
 /* 방 참가 및 생성 방향 */
 .room-make-relate {
   display: flex;
