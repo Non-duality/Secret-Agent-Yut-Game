@@ -1,36 +1,33 @@
 <template>
-  <div class="container">
-    <div class="event-container">
-
-    </div>
-
-    <!-- 공지사항 -->
-    <div class="article-container">
-      <!-- 패치노트 -->
-      <div id="patch">
-        <section class="patch-list">
-          <span> 패치 노트가 되었습니다.</span>
-          <span> 2024.01.23 v 1.0 </span>
-        </section>
+    <div class="container">
+      <div class="event-container">
+       
       </div>
-
-      <!-- FAQ -->
-      <div id="faq">
-        <section class="patch-list">
-          <span> 기생말이 추가 되었습니다.</span>
-          <span> 2024.01.23 v 1.0 </span>
-        </section>
+  
+      <div class="article-title">
+        <div id="patch-title">
+          <h2>패치노트</h2>
+          <button>더보기></button>
+        </div>
+        <div id="faq-title">
+          <h2>FAQ</h2>
+          <button>더보기></button>
+        </div>
+      </div>
+  
+      <div class="article-container">
+        <div id="patch">
+          <div class="patch-list"></div>
+        </div>
+        <div id="faq"></div>
       </div>
     </div>
-  </div>
-</template>
-
-<script>
-import Swiper from 'swiper';
-import { Navigation, Pagination } from 'swiper/modules';
-
-</script>
-
-<style scoped>
-@import url("../../assets/css/home/home.css");
-</style>
+  </template>
+      
+  <script>
+  
+  </script>
+      
+  <style scoped>
+  @import url("../../assets/css/home/home.css");
+  </style>
