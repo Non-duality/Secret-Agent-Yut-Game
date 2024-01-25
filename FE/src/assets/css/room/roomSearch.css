@@ -1,0 +1,28 @@
+.room-search-form {
+  display: flex;
+  align-items: center;
+  background-color: whitesmoke;
+  border-radius: 50px;
+  box-sizing: border-box;
+  width: 100%;
+  opacity: 100%;
+  padding: 0 20px;
+}
+
+.room-search-input {
+  flex: 9;
+  border: none;
+  background-color: whitesmoke;
+  margin: 0;
+  padding: 10px;
+  box-sizing: border-box;
+
+}
+
+.room-search-input:focus{
+  outline: none;
+}
+
+.room-search-btn {
+  flex: 1;
+}

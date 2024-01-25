@@ -1,0 +1,31 @@
+.room-detail {
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  color: whitesmoke;
+  opacity: 0.8;
+  border-radius: 30px;
+  padding: 50px 80px;
+  width: 100%;
+  box-sizing: border-box;
+  
+}
+
+.room-detail-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.room-detail-subtitle {
+  color: #44A9F3;
+}
+
+button {
+  background-color: #2D81FF;
+  opacity: 100%;
+  margin-top: 20px;
+  border-radius: 50px;
+  width: 50%;
+  align-self: center;
+}
+
