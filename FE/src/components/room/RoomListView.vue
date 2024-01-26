@@ -1,16 +1,21 @@
 <template>
-  <div class="room-list">
-    <RoomList 
-    @show-room-info="handleShowRoomInfo"
-    />
-    <div>
+  <div class="room-info">
+    <!-- 방 목록 -->
+    <div class="room-list">
+      <h2>방 목록</h2>
+      <RoomList 
+      @show-room-info="handleShowRoomInfo"
+      />
+    </div>
+    <!-- 방 클릭 시 나오는 상세 정보 및 방 생성 -->
+    <div class="room-make-relate">
+      <h2>세부사항</h2>
       <RoomInfo 
       v-if="isShow" 
       :room-detail="roomDetail"
       />
-      <button>방 생성</button>
+      <button class="room-make-btn">방 생성</button>
     </div>
-
   </div>
 </template>
 
@@ -44,6 +49,6 @@
   }
 </script>
 
-<style>
-@import "@/assets/css/room/roomList.css";
+<style scoped>
+@import "@/assets/css/room/roomListView.css";
 </style>
