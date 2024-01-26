@@ -1,5 +1,4 @@
 export function initializeSnowAnimation(canvasId, backgroundImageSrc) {
-
   // 맵을 불러온다.
   const c = document.getElementById(canvasId);
   const d = c.getContext("2d");
@@ -26,10 +25,10 @@ export function initializeSnowAnimation(canvasId, backgroundImageSrc) {
 
   // 눈 생성
   function Snowy() {
-    var arr = [];   // 눈 배열
-    var num = 300;  // 눈송이 개수
-    var sp = 0.4;   // 내리는 속도
-    var sc = 0.5    // 크기
+    var arr = []; // 눈 배열
+    var num = 300; // 눈송이 개수
+    var sp = 0.4; // 내리는 속도
+    var sc = 0.5; // 크기
     var t = 10;
     var mv = 20;
     var min = 0.3;
@@ -45,23 +44,23 @@ export function initializeSnowAnimation(canvasId, backgroundImageSrc) {
       snow.sp = snow.sp < min ? min : snow.sp;
       arr.push(snow);
     }
-  
+
     go();
-    
+
     function go() {
       window.requestAnimationFrame(go);
       d.clearRect(0, 0, w, h);
-  
+
       for (var i = 0; i < arr.length; ++i) {
         var f = arr[i];
         f.t += 0.05;
         f.t = f.t >= Math.PI * 2 ? 0 : f.t;
-  
+
         // 이동 방향을 마우스 위치로 조절
         var angleToMouse = Math.atan2(mouseY - f.y, mouseX - f.x);
         f.x += Math.cos(angleToMouse) * (f.sz * 0.00005);
         f.y += f.sp; // 눈송이는 아래 방향으로 계속 이동
-  
+
         if (f.y > h + 50) f.y = -10 - Math.random() * mv;
         if (f.x > w + mv) f.x = -mv;
         if (f.x < -mv) f.x = w + mv;

@@ -1,5 +1,10 @@
 <template>
-  <img src="@/assets/logo/TitleText.png" class="game-image" />
+  <img
+    src="@/assets/logo/TitleText.png"
+    class="game-image"
+    :class="{ animated: isAnimated }"
+  />
+
   <div>
     <!-- 로그인 및 회원 가입 -->
     <div class="button-container">
@@ -30,6 +35,11 @@ export default {
     LoginModal,
     JoinModal,
   },
+  data() {
+    return {
+      isAnimated: true, // 애니메이션 상태를 저장하는 데이터
+    };
+  },
   setup() {
     const store = useUserStore();
     const { isLogin, showLoginModal, showJoinModal } = storeToRefs(store);
@@ -47,5 +57,5 @@ export default {
 </script>
 
 <style>
-@import "../../assets/css/home/initial.css";
+@import url("../../assets/css/home/initial.css");
 </style>
