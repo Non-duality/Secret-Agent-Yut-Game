@@ -2,6 +2,7 @@
   <!-- 게임 중이거나 로그인 전이면 숨기기 위해 if문 사용 -->
   <header v-if="showModalSide">
     <NavBar />
+    <SideBar/>
   </header>
   <main>
     <router-view />
@@ -10,12 +11,14 @@
 
 <script>
 import NavBar from "@/components/layout/NavBar.vue";
+import SideBar from "@/components/layout/SideBar.vue";
 import { useUserStore } from "@/store/userStore";
 import { storeToRefs } from "pinia";
 
 export default {
   components: {
     NavBar,
+    SideBar,
   },
   setup() {
     const store = useUserStore();
