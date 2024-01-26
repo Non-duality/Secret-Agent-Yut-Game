@@ -4,7 +4,9 @@
     <NavBar />
   </header>
   <main>
-    <router-view />
+    <transition name="fade" mode="out-in">
+      <router-view />
+    </transition>
   </main>
 </template>
 
@@ -22,8 +24,19 @@ export default {
     const { showModalSide } = storeToRefs(store);
 
     return {
-      showModalSide,  // 네비 바와 사이드 바를 숨기고 나타내기 위해 선언
+      showModalSide, // 네비 바와 사이드 바를 숨기고 나타내기 위해 선언
     };
   },
 };
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
