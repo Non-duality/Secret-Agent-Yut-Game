@@ -1,9 +1,41 @@
+/* 실제 게임 방 목록 프레임 */
 .room-list {
-  margin-top: 20px;
-  margin-left: 100px;
-  margin-right: 100px;
-  overflow: hidden;
-  background-color: #00000000;
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  opacity: 0.8;
+  border-radius: 30px;
+  padding: 50px 80px;
+  box-sizing: border-box;
+  color: whitesmoke;
+  height: 100%;
+}
+
+/* 게임 방 검색 바 */
+.room-search {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+/* 게임 방 요약 정보 담긴 테이블 */
+.room-content {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+/* 게임 방 목록 첫 행 */
+th {
+  text-align: left;
+  padding-bottom: 30px;
+}
+
+/* 방 목록 및 세부사항 제목 */
+h2 {
+  padding-bottom: 30px;
+}
+
+/* 새로고침 크기 키우기 */
+.refresh {
+
 }

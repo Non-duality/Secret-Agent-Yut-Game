@@ -1,0 +1,40 @@
+/* 전반적인 방 리스트 페이지 컨테이너 구성 */
+.room-info {
+  margin-top: 20px;
+  margin-left: 100px;
+  margin-right: 100px;
+  display: grid;
+  grid-template-columns: 6fr 4fr 2fr;
+  column-gap: 50px;
+  height: 70vh;
+}
+
+/* 방 리스트 페이지 서브타이틀 */
+h2 {
+  color: whitesmoke;
+  margin-bottom: 1%;
+}
+
+.room-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 방 참가 및 생성 방향 */
+.room-make-relate {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 방 생성 버튼 */
+.room-make-btn {
+  background-color: black;
+  opacity: 80%;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 20px;
+  font-size: 2rem;
+  margin-bottom: 0;
+}

@@ -1,5 +1,6 @@
 <template>
-  <tr>
+  <!-- 실제 게임 방 목록 하나 -->
+  <tr class="room-list-component">
     <td>{{ roomInfo.currentPlayers }} / 6</td>
     <td>{{ roomInfo.roomName }}</td>
     <td>
@@ -19,5 +20,5 @@
 </script>
 
 <style scoped>
-
+@import "@/assets/css/room/roomListComponent.css";
 </style>
