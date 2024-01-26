@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import SuccessChangePasswordModal from '@/components/user/SuccessChangePasswordModal.vue';
+import SuccessChangePasswordModal from '@/components/profile/SuccessChangePasswordModal.vue';
 import { useUserStore } from "@/store/userStore";
 import { storeToRefs } from "pinia";
 
@@ -66,5 +66,5 @@ export default {
 </script>
 
 <style scoped>
-@import "@/assets/css/user/changePassword.css";
+@import "@/assets/css/profile/changePassword.css";
 </style>

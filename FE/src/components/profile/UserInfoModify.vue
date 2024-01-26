@@ -34,8 +34,8 @@
 </template>
 
 <script>
-import ChangeNicknameModal from "@/components/user/ChangeNicknameModal.vue";
-import DropoutModal from "@/components/user/DropoutModal.vue";
+import ChangeNicknameModal from "@/components/profile/ChangeNicknameModal.vue";
+import DropoutModal from "@/components/profile/DropoutModal.vue";
 import { useUserStore } from "@/store/userStore";
 import { storeToRefs } from "pinia";
 
@@ -74,5 +74,5 @@ export default {
 </script>
 
 <style scoped>
-@import "@/assets/css/user/userModify.css";
+@import "@/assets/css/profile/userModify.css";
 </style>

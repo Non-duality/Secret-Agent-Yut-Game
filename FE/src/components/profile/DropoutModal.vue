@@ -51,6 +51,6 @@
   };
   </script>
   
-  <style>
-  @import "@/assets/css/user/changeNick.css";
+  <style scoped>
+  @import "@/assets/css/profile/changeNick.css";
   </style>

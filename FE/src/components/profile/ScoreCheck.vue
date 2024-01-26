@@ -41,5 +41,5 @@
 </script>
 
 <style scoped>
-@import "@/assets/css/user/scoreCheck.css";
+@import "@/assets/css/profile/scoreCheck.css";
 </style>
