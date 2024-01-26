@@ -34,6 +34,6 @@
   }
   </script>
   
-  <style>
-  @import "@/assets/css/user/successChangePassword.css";
+  <style scoped>
+  @import "@/assets/css/profile/successChangePassword.css";
   </style>
