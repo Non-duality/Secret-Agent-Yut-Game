@@ -16,10 +16,11 @@ export default {
       <img src="../../assets/logo/logo.png" class="img-log" />
     </div>
     <!-- 홈, 게임, 게시판 클릭시 화면 이동 -->
+    <!-- Named Routes로 변경 -->
     <div class="text-box">
-      <router-link to="/home" class="nav-text">홈</router-link>
-      <router-link to="/room" class="nav-text">게임</router-link>
-      <router-link to="/home" class="nav-text">게시판</router-link>
+      <Router-link :to="{ name: 'home' }" class="nav-text">홈</Router-link>
+      <Router-link :to="{ name: 'room' }" class="nav-text">게임</Router-link>
+      <Router-link :to="{ name: 'home' }" class="nav-text">게시판</Router-link>
     </div>
     <!-- 프로필 가져와서 보여주기 -->
     <div class="pro-box">

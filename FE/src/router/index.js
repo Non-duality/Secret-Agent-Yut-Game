@@ -25,6 +25,7 @@ const router = createRouter({
       component: HomeView
     },
     // 방 리스트, 방생성, 게임 대기방
+    // router name 알기 쉽게 수정
     {
       path: '/room',
       name: 'room',
@@ -32,13 +33,13 @@ const router = createRouter({
       redirect: '/room/list',
       children: [
         {
-          path: '/room/list',
-          name: 'room/list',
+          path: 'list',
+          name: 'list',
           component: RoomListViewVue
         },
         {
-          path: '/room/wait',
-          name: 'room/wait',
+          path: 'wait/:roomNum',
+          name: 'wait',
           component: GameWaitingRoomVue
         },
       ]
