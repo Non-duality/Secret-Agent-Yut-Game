@@ -1,4 +1,7 @@
 /* 표 여백 주기 */
 .room-list-component {
+  display: flex;
+  justify-content: space-between;
+  margin: 0px 30px;
   height: 50px;
 }

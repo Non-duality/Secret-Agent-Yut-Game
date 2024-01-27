@@ -8,14 +8,20 @@
       />
     </div>
     <!-- 방 클릭 시 나오는 상세 정보 및 방 생성 -->
-    <div class="room-make-relate">
+    <div class="room-list">
       <h2>세부사항</h2>
-      <RoomInfo 
-      v-if="isShow" 
-      :room-detail="roomDetail"
-      />
-      <button class="room-make-btn">방 생성</button>
+      <div class="room-detail-make">
+        <RoomInfo 
+        v-if="isShowDetail" 
+        :room-detail="roomDetail"
+        />
+        <button @click="makeRoom" class="room-make-btn">방 생성</button>
+      </div>
     </div>
+    <RoomMaking 
+    v-if="isShowMaking"
+    class="room-make-modal"
+    @room-make-cancel="makeRoom"/>
   </div>
 </template>
 
@@ -34,18 +40,24 @@
 
     data() {
       return {
-        isShow: false,
+        isShowDetail: false,
+        isShowMaking: false,
         roomDetail: null
       }
     },
 
     methods: {
+      // 방 상세 정보 모달 띄우기
       handleShowRoomInfo(roomInfo) {
         this.roomDetail = roomInfo 
-        this.isShow = true
+        this.isShowDetail = true 
+      },
+
+      // 방 생성 모달 띄우거나 취소하기
+      makeRoom() {
+        this.isShowMaking = !this.isShowMaking
       }
     }
-    
   }
 </script>
 

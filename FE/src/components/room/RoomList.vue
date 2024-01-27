@@ -5,14 +5,14 @@
       <!-- 게임 방 검색바 -->
       <RoomSearch />
       <!-- 게임 방 새로고침 아이콘 -->
-      <font-awesome-icon :icon="['fas', 'arrows-rotate']" spin size="2xl" style="color: #ffffff;" />
+      <font-awesome-icon :icon="['fas', 'arrows-rotate']" size="2xl" style="color: #ffffff;" />
     </div>
-    <table class="room-content">
-      <tr>
-        <th scope="col">플레이어</th>
-        <th scope="col">게임방 이름</th>
-        <th scope="col">공개</th>
-      </tr>
+    <div class="room-list-subtitle">
+      <th scope="col">플레이어</th>
+      <th scope="col">게임방 이름</th>
+      <th scope="col">공개</th>
+    </div>
+    <div class="room-list-content">
       <!-- 실제 게임 방 요약 정보 v-for를 통한 반복 컴포넌트 구성 -->
       <!-- 나중에 페이지네이션이나 스크롤로 바꿔야 함 -->
       <RoomListComponent 
@@ -21,8 +21,8 @@
       :roomInfo="roomInfo"
       @click="$emit('showRoomInfo', roomInfo)"
       class="room-list-component"
-      />
-    </table>
+        />
+    </div>
   </div>
 </template>
 
@@ -31,7 +31,15 @@
   let RoomData = [ 
     { id: 1, currentPlayers: 3, roomName: '하이룽', isPublic: false, speed: 1, theme: '설날' },
     { id: 2, currentPlayers: 1, roomName: '메롱', isPublic: true, speed: 3, theme: '설날' },
-    { id: 3, currentPlayers: 6, roomName: '어쩔티비', isPublic: true, speed: 2, theme: '설날' }
+    { id: 3, currentPlayers: 6, roomName: '어쩔티비', isPublic: true, speed: 2, theme: '설날' },
+    { id: 3, currentPlayers: 6, roomName: '어쩔티비', isPublic: true, speed: 2, theme: '설날' },
+    { id: 3, currentPlayers: 6, roomName: '어쩔티비', isPublic: true, speed: 2, theme: '설날' },
+    { id: 3, currentPlayers: 6, roomName: '어쩔티비', isPublic: true, speed: 2, theme: '설날' },
+    { id: 3, currentPlayers: 6, roomName: '어쩔티비', isPublic: true, speed: 2, theme: '설날' },
+    { id: 3, currentPlayers: 6, roomName: '어쩔티비', isPublic: true, speed: 2, theme: '설날' },
+    { id: 3, currentPlayers: 6, roomName: '어쩔티비', isPublic: true, speed: 2, theme: '설날' },
+    { id: 3, currentPlayers: 6, roomName: '어쩔티비', isPublic: true, speed: 2, theme: '설날' },
+    { id: 3, currentPlayers: 6, roomName: '어쩔티비', isPublic: true, speed: 2, theme: '설날' },
   ]
 
   // 아이콘

@@ -7,17 +7,11 @@
   opacity: 0.8;
   border-radius: 30px;
   padding: 50px 80px;
-  height: 100%;
   width: 100%;
   box-sizing: border-box;
   
 }
 
-/* 방 클릭시 나오는 상세 정보 콘텐츠 */
-.room-detail-content {
-  display: flex;
-  justify-content: space-between;
-}
 
 /* 방 클릭시 나오는 상세 정보 콘텐츠의 부제목 */
 .room-detail-subtitle {
