@@ -3,7 +3,6 @@ import { localAxios } from "@/util/http-commons";
 const local = localAxios();
 
 async function userConfirm(param, success, fail) {
-  console.log("param", param);
   await local.post(`/auth/login`, param).then(success).catch(fail);
   console.log("userConfirm ok");
 }
@@ -15,7 +14,7 @@ async function userJoin(param, success, fail) {
 }
 
 async function findById(userid, success, fail) {
-  local.defaults.headers["Authorization"] = sessionStorage.getItem("accessToken");
+  local.defaults.headers["Authorization"] = "Bearer " + sessionStorage.getItem("accessToken");
   await local.get(`/user/info/${userid}`).then(success).catch(fail);
 }
 

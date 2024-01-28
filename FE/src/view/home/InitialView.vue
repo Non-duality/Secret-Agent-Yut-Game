@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      isAnimated: true, // 애니메이션 상태를 저장하는 데이터
+      isAnimated: true,
     };
   },
   setup() {
