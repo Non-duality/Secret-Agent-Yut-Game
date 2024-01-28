@@ -30,7 +30,6 @@
 </template>
 
 <script>
-  import { useRoute, useRouter } from 'vue-router';
   export default {
     // 부모로부터 받아온 방 상세정보 데이터
     props: {
@@ -39,7 +38,7 @@
 
     data() {
       return {
-        // 임시 유저 데이터
+        // 임시 유저 데이터 (삭제 필요)
         userInfo: {
           userNickname: '수콩',
         }
@@ -56,7 +55,9 @@
         } 
         // 방 접근 가능
         else {
+          // 유저 정보 JSON으로 변형 (나중에는 store로 관리)
           const userInfoString = JSON.stringify(this.userInfo);
+
           this.$router.push({ name: 'wait', 
           params: { roomNum: roomDetail.id }, 
           // 나중에 user는 store로 관리 필요

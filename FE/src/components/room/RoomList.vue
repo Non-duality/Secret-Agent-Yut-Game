@@ -46,6 +46,7 @@
     },
 
     computed: {
+      // 방 정보를 실시간으로 계산
       roomInfos() {
         const roomStore = useRoomStore();
         return roomStore.roomListData;
