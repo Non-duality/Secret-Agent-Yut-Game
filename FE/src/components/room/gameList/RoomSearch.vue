@@ -13,10 +13,8 @@
   // 아이콘
   import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
   import { library } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
   library.add(faMagnifyingGlass)
   export default {
-    components: { FontAwesomeIcon }
 }
 </script>
 

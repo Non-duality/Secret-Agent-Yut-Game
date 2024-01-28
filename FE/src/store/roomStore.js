@@ -4,25 +4,46 @@ export const useRoomStore = defineStore('room', {
   // 반응형 상태 (data)
   state: () => ({
     roomListData: [
-      { id: 1, currentPlayers: 3, title: '하이룽', isPublic: false, speed: 1, theme: '설날' },
-      { id: 2, currentPlayers: 1, title: '메롱', isPublic: true, speed: 3, theme: '설날' },
-      { id: 3, currentPlayers: 6, title: '어도비', isPublic: true, speed: 2, theme: '설날' },
-      { id: 4, currentPlayers: 6, title: '야호', isPublic: true, speed: 2, theme: '설날' },
-      { id: 5, currentPlayers: 6, title: '쿠키쩔', isPublic: false, speed: 1, theme: '설날' },
-      { id: 6, currentPlayers: 5, title: '우짜랄미용', isPublic: true, speed: 2, theme: '설날' },
-      { id: 7, currentPlayers: 6, title: '떠돌다가 오는', isPublic: true, speed: 2, theme: '설날' },
-      { id: 8, currentPlayers: 4, title: '투썸 ㅋㅋ', isPublic: false, speed: 2, theme: '설날' },
-      { id: 9, currentPlayers: 6, title: '스타벅스 흑흑', isPublic: true, speed: 2, theme: '설날' },
-      { id: 10, currentPlayers: 2, title: '에이바우트', isPublic: true, speed: 2, theme: '설날' },
-      { id: 11, currentPlayers: 6, title: '4반애들', isPublic: true, speed: 2, theme: '설날' },
-    ]
+      { id: 1, currentPlayers: 3, title: '하이룽', isPublic: false, password: 'qwer1234', speed: 1, theme: 'lunaNewYear' },
+    ],
+
+    // 모달 관련
+    showRoomMakingModal: false, // 방 생성
+    showRoomPasswordCheckModal: false // 비공개방 비밀번호 체크 모달
   }),
 
   // 메서드 (function)
   actions: {
+    // 여는 모달
+    openModal(value) {
+      if (value === 'roomMaking') {
+        this.showRoomMakingModal = true;
+      } else if (value === 'roomPasswordCheck') {
+        this.showRoomPasswordCheckModal = true;
+      }
+    },
+
+    // 닫는 모달
+    closeModal(value) {
+      if (value === 'roomMaking') {
+        this.showRoomMakingModal = false;
+      } else if (value === 'roomPasswordCheck') {
+        this.showRoomPasswordCheckModal = false;
+      }
+    },
+
+
     // 방 추가
     addRoom(roomData) {
       this.roomListData.push(roomData)
+    },
+
+    // 플레이어 수 증가
+    increasePlayerCount(roomId) {
+      const room = this.roomListData.find(room => room.id === roomId)
+      if (room && room.currentPlayers < 6) {
+        room.currentPlayers += 1;
+      }
     },
 
     // 플레이어 수 감소

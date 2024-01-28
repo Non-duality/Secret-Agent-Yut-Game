@@ -15,8 +15,21 @@
       <!-- 유저의 정보를 나타낸다 -->
       <div v-for="user in team.users" :key="user.name" class="user-container">
         <div class="team-user">
-          <img src="@/assets/img/profile_picture.png" class="team-img" />
+          <!-- 기본 프로필, 유저 들어오면 유저의 프로필 사진 넣기! -->
+          <img v-if="user.name === null" src="@/assets/img/profile_picture.png" class="team-img" />
           {{ user.name }}  {{ user.status }}
+          <div>
+            <!-- 친구 추가 (친구인지 판단하는 로직 넣어야 함) -->
+            <font-awesome-icon :icon="['fas', 'user-plus']" 
+            size="xl" style="color: #ffffff;" 
+            class="icon-user-plus" 
+            v-if="user.name !== null"/>
+            <!-- 강퇴 (방장 자신은 안뜨게 해야하는데 이건 user 정보가 필요) -->
+            <font-awesome-icon :icon="['far', 'circle-xmark']" 
+            size="xl" style="color: #ffffff;" 
+            class="icon-circle-xmark" 
+            v-if="isManager"/>
+          </div>
         </div>
       </div>
     </div>
@@ -25,6 +38,13 @@
 </template>
 
 <script>
+// 아이콘
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons/faUserPlus";
+import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
+library.add(faUserPlus, faCircleXmark)
+
+// 자식 컴포넌트
 import GameWaitChatVue from "./GameWaitChat.vue";
 
 export default {
@@ -33,6 +53,7 @@ export default {
   },
   data() {
     return {
+      // 팀 정보 기본 세팅
       teams: [
         { 
           name: "홍팀", 
@@ -51,23 +72,28 @@ export default {
             { name: null, status: null },
           ], 
           maxUser: 3 }
-      ]
+      ],
+
+      // 방장 여부
+      isManager: false,
     };
   },
 
-  // 들어올 때 fetchUserFromQuery 실행 시키기!
+  // 들어올 때 user 세팅 (추후 수정 필요)
   created() {
     this.fetchUserFromQuery();
+    // URL query의 isManager 가져와서 방장 여부 판단
+    this.isManager = this.$route.query.isManager === 'true';
   },
 
   methods: {
+    // user 세팅 (추후 수정 필요)
     fetchUserFromQuery() {
-      console.log('Route query:', this.$route.query);
       const userInfoString = this.$route.query.userInfo;
       if (!userInfoString) return;
 
       try {
-        // 문자열 파싱
+        // 문자열 파싱 (추후 수정 필요)
         const userInfo = JSON.parse(userInfoString);
         // 홍팀부터 넣고 홍팀 다 차면 청팀에 넣기
         const redTeamSlot = this.teams[0].users.find(user => user.name === null);

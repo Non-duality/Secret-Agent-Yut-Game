@@ -31,7 +31,7 @@
 
     data() {
       return {
-        // 방장 여부 차이
+        // 방장 여부
         isManager: false,
         // 방 정보
         roomInfo: null
@@ -43,7 +43,7 @@
       goToList() {
         const roomStore = useRoomStore();
         const roomNum = Number(this.$route.params.roomNum);
-        const roomInfo = this.getRoomInfo(roomNum);
+        const roomInfo = roomStore.roomListData.find(room => room.id === roomNum);
 
         if (roomInfo) {
           // 인원 감소

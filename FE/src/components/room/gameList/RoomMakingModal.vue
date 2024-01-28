@@ -42,7 +42,7 @@
       <div class="button-group">
         <button type="button" 
         class="cancle" 
-        @click="$emit('roomMakeCancel')">취소</button>
+        @click="closeModal('roomMaking')">취소</button>
         <button type="submit" 
         class="create"
         @click="makeGame(roomInfo, user)">생성</button>
@@ -79,7 +79,7 @@
       makeGame(roomInfo) {
         if (roomInfo.title === '') {
           alert('방 제목을 작성해주세요')
-        } else if (roomInfo.isPublic === false && roomInfo.password === '') {
+        } else if (roomInfo.isPublic === false && roomInfo.password.trim() === '') {
           alert('비공개 방으로 비밀번호를 입력하세요')
         } else if (roomInfo.theme === '') {
           alert('테마를 선택하세요')
@@ -109,10 +109,16 @@
           query: { userInfo: userInfoString, isManager: true }
           })
         }
-      }
+      },
+      
+      // 모달 관리
+      closeModal(modalType) {
+        const roomStore = useRoomStore();
+        roomStore.closeModal(modalType);
+      },
     },
 
-    // 공개 여부를 계속 감시ㄸ
+    // 공개 여부를 계속 감시
     watch: {
       'roomInfo.isPublic': function(newValue) {
         if (newValue) {
