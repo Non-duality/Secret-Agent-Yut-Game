@@ -22,8 +22,7 @@ import { useUserStore } from "@/store/userStore";
 
 export default {
   data() {
-    return {
-    };
+    return {};
   },
 
   computed: {
