@@ -8,7 +8,6 @@
   padding: 50px 80px;
   box-sizing: border-box;
   color: whitesmoke;
-  height: 100%;
 }
 
 /* 게임 방 검색 바 */
@@ -18,11 +17,41 @@
   justify-content: space-between;
 }
 
-/* 게임 방 요약 정보 담긴 테이블 */
-.room-content {
-  padding-top: 30px;
-  padding-bottom: 30px;
+/* 게임 목록 부제목 */
+.room-list-subtitle {
+  display: flex;
+  justify-content: space-between;
+  margin: 30px;
 }
+
+/* 실게 게임 목록 스크롤바 지정 */
+.room-list-content {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* 실제 게임 목록 스크롤바 배경 */
+.room-list-content::-webkit-scrollbar-track {
+  background: transparent; /* 스크롤바 배경을 투명하게 설정 */
+}
+
+/* 실제 게임 목록 스크롤바 핸드 스타일 */
+.room-list-content::-webkit-scrollbar-track {
+  background: #888; /* 스크롤바 핸들 색상 설정 */
+  border-radius: 10px; /* 스크롤바 핸들 둥근 모서리 설정 */
+  
+}
+
+/* 실제 게임 목록 스크롤바 핸들 호버 시 스타일 */
+.room-list-content::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 호버 시 스크롤바 핸들 색상 변경 */
+}
+
+/* 실제 게임 목록 스크롤바 너비 설정 */
+.room-list-content::-webkit-scrollbar {
+  width: 8px; /* 스크롤바 너비 설정 */
+}
+
 
 /* 게임 방 목록 첫 행 */
 th {
@@ -33,9 +62,4 @@ th {
 /* 방 목록 및 세부사항 제목 */
 h2 {
   padding-bottom: 30px;
-}
-
-/* 새로고침 크기 키우기 */
-.refresh {
-
 }

@@ -7,13 +7,12 @@
   opacity: 0.8;
   border-radius: 30px;
   padding: 50px 80px;
-  height: 100%;
   width: 100%;
   box-sizing: border-box;
   
 }
 
-/* 방 클릭시 나오는 상세 정보 콘텐츠 */
+/* 방 클릭 시 나오는 상세 정보 프레임 */
 .room-detail-content {
   display: flex;
   justify-content: space-between;
@@ -22,6 +21,18 @@
 /* 방 클릭시 나오는 상세 정보 콘텐츠의 부제목 */
 .room-detail-subtitle {
   color: #44A9F3;
+}
+
+/* 방 클릭 시 나오는 테마 관련 (그림 및 글) */
+.room-detail-theme {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 이미지 사진 크기 줄이기 */
+img {
+  width: 200px;
 }
 
 /* 방 클릭시 나오는 상세 정보 참가 버튼 */
