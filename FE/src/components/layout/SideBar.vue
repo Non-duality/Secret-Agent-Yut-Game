@@ -1,12 +1,30 @@
 <template>
   <div>
     <div class="side-bar" v-if="showFlag">
+      <div class="side-title">
+        <span class="side-text" v-if="showMessageFlag">알림</span>
+        <span class="side-text" v-if="showFriendFlag">친구목록</span>
+        <button class="btn" @click="closeSidebar">
+          <img class="side-close" src="@/assets/icon/close.png" />
+        </button>
+      </div>
+      <div class="side-line"></div>
       <MessageComponents v-if="showMessageFlag" @closeSidebar="closeSidebar" />
       <FriendComponents v-if="showFriendFlag" @closeSidebar="closeSidebar" />
     </div>
     <div class="side-btn">
-      <button @click="showMessage">메시지</button>
-      <button @click="showFriend">친구</button>
+      <button class="btn" @click="showMessage"> 
+        <img class="btn-img" src="@/assets/icon/message.png" />
+      </button>
+      <button class="btn" @click="showFriend">
+        <img class="btn-img" src="@/assets/icon/friend.png" />
+      </button>
+      <button class="btn" @click="showFriend">
+        <img class="btn-img" src="@/assets/icon/setting.png" />
+      </button>
+      <button class="btn" @click="showFriend">
+        <img class="btn-img" src="@/assets/icon/logout.png" />
+      </button>
     </div>
   </div>
 </template>
@@ -41,6 +59,7 @@ export default {
     };
     const closeSidebar = () => {
       showMessageFlag.value = false;
+      showFriendFlag.value = false;
       showFlag.value = false;
     };
     return {
