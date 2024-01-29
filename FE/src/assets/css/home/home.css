@@ -1,117 +1,16 @@
-.container {
-  flex-direction: column; /* 컨테이너를 세로로 배치 */
-  position: absolute;
-  top: 14%;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-}
-
-.event-container {
-  position: relative;
-  height: 50%;
-  width: 100%;
-  margin: 20px;
-}
-
-.article-title {
-  position: relative;
-  display: flex;
-  height: 13%;
-}
-
-#patch-title {
-  flex: 1;
+.banner-container {
+  margin-top: 20px;
+  margin-left: 100px;
+  margin-right: 100px;
+  flex-direction: column;
   display: flex;
   position: relative;
-  justify-content: space-between;
-  padding-left: 30px;
-  padding-right: 50px;
+  height: 40vh;
+  width: 85vw;
 }
-
-#faq-title {
-  flex: 1;
-  display: flex;
-  position: relative;
-  justify-content: space-between;
-  margin-right: 80px;
-  padding-left: 30px;
-}
-
-#detail-btn {
-  background-color: rgba(255, 255, 255, 0);
-  font-size: 25px;
-  align-self: flex-end; /* 버튼을 자신의 영역 아래로 배치 */
-}
-
-#detail-btn:hover {
-  text-decoration: underline;
-}
-
-.article-container {
-  position: relative;
-  display: flex;
-  margin: 20px;
-}
-
-#patch,
-#faq {
-  height: 130%;
-  flex: 1; /* 동일한 너비로 나란히 배치 */
-  background: rgba(0, 0, 0, 0.95);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-sizing: border-box;
-  padding: 5px 8px;
-  padding-left: 10px;
-  margin-right: 40px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-}
-
-#patch-title,
-#faq-title {
-  color: white;
-  font-size: 25px;
-}
-
-.patch-list,
-.patch-list {
-  /* height: calc(100% - 23px - 31px - 10px); */
-  height: 100px;
-  display: flex;
-  flex-direction: column; /* 내부 요소를 세로로 배치 */
-  justify-content: flex-start; /* 내부 요소를 위로 정렬 */
-}
-
-#patch > .patch-list > div,
-#faq > .patch-list > div {
-  height: 50px;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-#patch > .patch-list > span,
-#faq > .patch-list > span {
-  color: white;
-  background: rgba(0, 0, 0, 0.8);
-  font-size: 20px;
-  margin: 8px;
-}
-
-#patch > .patch-list > span:hover,
-#faq > .patch-list > span:hover {
-  text-decoration: underline;
-}
-
-#gallery {
-  object-fit: contain; /* 이미지를 부모 요소에 맞게 조절하고, 잘린 부분을 처리합니다. */
-  max-height: 350px;
-  max-width: 600px;
-}
-
 .carousel__item {
-  max-height: 350px;
-  max-width: 600px;
+  max-height: 280px;
+  max-width: 500px;
   background-color: rgba(255, 255, 255, 0);
   color: var(--vc-clr-white);
   font-size: 20px;
@@ -120,41 +19,162 @@
   justify-content: center;
   align-items: center;
 }
-
 .carousel__slide {
   padding: 10px;
 }
-
 .carousel__prev,
 .carousel__next {
   box-sizing: content-box;
   border: 5px solid white;
 }
+#gallery {
+  object-fit: contain;
+  max-height: 300px;
+  max-width: 600px;
+}
 
-/* 모달 페이드 */
+.article-container {
+  display: flex;
+  position: relative;
+  max-width: 75vw;
+}
+
+#patch {
+  margin-top: 20px;
+  margin-left: 35px;
+  width: 55vw;
+  height: 45vh;
+}
+#patch-title {
+  max-height: 11vh;
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  font-size: 25px;
+  margin-left: 20px;
+  margin-right: 55px;
+  margin-bottom: 10px;
+}
+#patch-content {
+  height: 12vw;
+  box-sizing: border-box;
+  flex: 1;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-sizing: border-box;
+  padding: 5px 8px;
+  padding-left: 10px;
+  margin-right: 40px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+#patch-list {
+  /* height: calc(100% - 23px - 31px - 10px); */
+  height: 20vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+#patch-content > #patch-list > span {
+  color: white;
+  font-size: 20px;
+  margin: 8px;
+}
+#patch-content > #patch-list > span:hover {
+  text-decoration: underline;
+}
+#detail-btn {
+  background-color: rgba(255, 255, 255, 0);
+  font-size: 25px;
+  /* align-self: flex-end; */
+}
+#detail-btn:hover {
+  text-decoration: underline;
+}
+
+.help {
+  width: 45vw;
+  height: 50vh;
+}
+.help-icon {
+  margin-top: 140px;
+  margin-left: 80px;
+  border-radius: 50%;
+  width: 130px;
+  height: 130px;
+  border: 5px solid #000000;
+}
+.help-icon i {
+  font-size: 18px; 
+}
+
+.help-icon img {
+  font-size: 18px;
+  border-radius: 50%;
+  width: 130px;
+  height: 130px;
+  transition: transform 0.3s ease;
+}
+
+.help-icon img:hover {
+  transform: rotate(360deg);
+}
+
+.help-message {
+  position: absolute; /* absolute에서 relative로 변경 */
+  margin-top: 70px;
+  margin-left: 50px;
+  padding: 12px;
+  font-size: 15px;
+  border: 2px solid #333;
+  border-radius: 10px;
+  background-color: #ffffffa4;
+  display: inline-block;
+  z-index: 1;
+}
+
+/* .arrow-up {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid #333;
+} */
+
+.help-close-btn {
+  position: relative;
+  top: -1.4vh;
+  right: 0.1vw;
+  background: none;
+  color: #000000;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+}
+
+
+/* 모달창 애니메이션 */
 .fade-enter-from {
-  /* 시작시 효과 */
   opacity: 0;
 }
-
 .fade-enter-active {
-  /* 전체 단계에서 적용될 부분*/
   transition: all 0.5s;
 }
-
 .fade-enter-to {
-  /* 끝나는 효과 */
   opacity: 1;
 }
-
 .fade-leave-from {
   opacity: 1;
 }
-
 .fade-leave-active {
   transition: all 0.5s;
 }
-
 .fade-leave-to {
   opacity: 0;
 }
