@@ -1,9 +1,13 @@
 package com.ssafy.hungry.global.config;
 
+import com.ssafy.hungry.global.filter.JWTFilter;
 import com.ssafy.hungry.global.filter.LoginFilter;
 import com.ssafy.hungry.global.util.JWTUtil;
+import com.ssafy.hungry.user.repository.TokenRepository;
+import org.antlr.v4.runtime.Token;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,14 +20,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     private final AuthenticationConfiguration authenticationConfiguration;
+
+    private final TokenRepository repository;
 
     private final JWTUtil jwtUtil;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, TokenRepository repository) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
+        this.repository = repository;
     }
 
     @Bean
@@ -52,11 +58,14 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/user/join").permitAll()
+                        .requestMatchers("/login", "/**", "/user/join").permitAll()
                         .anyRequest().authenticated());
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil, repository), LoginFilter.class);
+
+        http
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration) ,jwtUtil, repository), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .sessionManagement((session) -> session

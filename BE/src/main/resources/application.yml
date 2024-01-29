@@ -1,4 +1,8 @@
 spring:
+  redis:
+    host: i10d205.p.ssafy.io
+    port: 6379
+
   h2:
     console:
       enabled: true

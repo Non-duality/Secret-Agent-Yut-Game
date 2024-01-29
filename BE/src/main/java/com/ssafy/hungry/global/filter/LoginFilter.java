@@ -2,9 +2,13 @@ package com.ssafy.hungry.global.filter;
 
 import com.ssafy.hungry.global.util.JWTUtil;
 import com.ssafy.hungry.user.dto.LoginDto;
+import com.ssafy.hungry.user.entity.TokenEntity;
+import com.ssafy.hungry.user.repository.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,17 +16,20 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-
+    private final TokenRepository repository;
     private final JWTUtil jwtUtil;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, TokenRepository repository) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.repository = repository;
+        super.setFilterProcessesUrl("/auth/login");
     }
 
     @Override
@@ -45,7 +52,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     //로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         LoginDto customUserDetails = (LoginDto) authentication.getPrincipal();
 
         String email = customUserDetails.getUsername();
@@ -56,8 +63,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
-        String accessToken = jwtUtil.createJwt(email, role, 60*60*10L);
-        String refreshToken = jwtUtil.createJwt(email, role, 60*60*10L);
+        String accessToken = jwtUtil.createAccessJwt(email, role, 15*60*1000L);
+        String refreshToken = jwtUtil.createRefreshJwt(12*60*60*1000L);
+
+        TokenEntity token = new TokenEntity(refreshToken, accessToken, 12*60*60);
+        repository.save(token);
 
         response.addHeader("Authorization", "Bearer" + accessToken);
         response.addHeader("RefreshToken", refreshToken);
