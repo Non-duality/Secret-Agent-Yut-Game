@@ -1,8 +1,8 @@
-package com.ssafy.hungry.user.controller;
+package com.ssafy.hungry.domain.user.controller;
 
-import com.ssafy.hungry.user.dto.JoinDto;
-import com.ssafy.hungry.user.dto.MyInfoDto;
-import com.ssafy.hungry.user.service.UserService;
+import com.ssafy.hungry.domain.user.dto.JoinDto;
+import com.ssafy.hungry.domain.user.dto.MyInfoDto;
+import com.ssafy.hungry.domain.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;

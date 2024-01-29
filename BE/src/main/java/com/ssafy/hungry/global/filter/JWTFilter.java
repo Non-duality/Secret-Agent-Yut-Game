@@ -1,10 +1,10 @@
 package com.ssafy.hungry.global.filter;
 
 import com.ssafy.hungry.global.util.JWTUtil;
-import com.ssafy.hungry.user.dto.LoginDto;
-import com.ssafy.hungry.user.entity.TokenEntity;
-import com.ssafy.hungry.user.entity.UserEntity;
-import com.ssafy.hungry.user.repository.TokenRepository;
+import com.ssafy.hungry.domain.user.dto.LoginDto;
+import com.ssafy.hungry.domain.user.entity.TokenEntity;
+import com.ssafy.hungry.domain.user.entity.UserEntity;
+import com.ssafy.hungry.domain.user.repository.TokenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

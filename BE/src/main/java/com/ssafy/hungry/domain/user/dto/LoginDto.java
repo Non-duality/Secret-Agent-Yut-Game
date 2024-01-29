@@ -1,6 +1,6 @@
-package com.ssafy.hungry.user.dto;
+package com.ssafy.hungry.domain.user.dto;
 
-import com.ssafy.hungry.user.entity.UserEntity;
+import com.ssafy.hungry.domain.user.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

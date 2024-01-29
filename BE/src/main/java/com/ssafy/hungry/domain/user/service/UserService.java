@@ -1,10 +1,10 @@
-package com.ssafy.hungry.user.service;
+package com.ssafy.hungry.domain.user.service;
 
-import com.ssafy.hungry.user.dto.JoinDto;
-import com.ssafy.hungry.user.dto.LoginDto;
-import com.ssafy.hungry.user.dto.MyInfoDto;
-import com.ssafy.hungry.user.entity.UserEntity;
-import com.ssafy.hungry.user.repository.UserRepository;
+import com.ssafy.hungry.domain.user.entity.UserEntity;
+import com.ssafy.hungry.domain.user.repository.UserRepository;
+import com.ssafy.hungry.domain.user.dto.JoinDto;
+import com.ssafy.hungry.domain.user.dto.LoginDto;
+import com.ssafy.hungry.domain.user.dto.MyInfoDto;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
