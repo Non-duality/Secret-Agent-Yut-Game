@@ -43,11 +43,11 @@ export default {
     const { userLogin, getUserInfo } = userStore;
 
     const login = async () => {
-      console.log("로그인 진행중..");
       await userLogin(loginUser.value);
 
       let token = sessionStorage.getItem("accessToken");
-
+      console.log(token);
+      
       if (isLogin) {
         getUserInfo(token);
         closeModal();

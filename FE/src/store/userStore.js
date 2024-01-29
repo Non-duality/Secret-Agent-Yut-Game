@@ -55,12 +55,6 @@ export const useUserStore = defineStore("user", {
       this.showModalSide = !this.showModalSide;
     },
 
-    // 우선은 백이랑 연결전에 테스트하기위한 함수.
-    // login() {
-    //   this.showLoginModal = false;
-    //   this.isLogin = true;
-    // },
-
     userLogin: async (loginUser) => {
       await userConfirm(
         loginUser,
@@ -72,18 +66,22 @@ export const useUserStore = defineStore("user", {
 
             let accessToken = data["access-token"];
             let refreshToken = data["refresh-token"];
-
-            store.isLogin = true;
-            store.showLoginModal = false;
+            
             sessionStorage.setItem("accessToken", accessToken);
             sessionStorage.setItem("refreshToken", refreshToken);
+
+            useUserStore().isLogin = true;
+            useUserStore().showLoginModal = false;
           } else {
             console.log("로그인 실패");
-            store.isLogin = false;
+            useUserStore().isLogin = false;
           }
         },
+
         (error) => {
-          console.error(error);
+          // 로그인 실패 구현
+          alert("로그인 실패");
+          this.isLogin = false;
         }
       );
     },
@@ -95,16 +93,17 @@ export const useUserStore = defineStore("user", {
         decodeToken.userId,
         (response) => {
           if (response.status === httpStatusCode.OK) {
-            this.userInfo = response.userInfo;
+            useUserStore().userInfo = response.data.userInfo;
           } else {
             console.log("유저 정보 없음!!!!");
           }
         },
 
         async (error) => {
-          console.error("getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ", error.response.status);
+          //error.response.status
+          console.error("getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ");
           // this.isValidToken = false;
-          await tokenRegenerate();
+          // await tokenRegenerate();
         }
       );
     },

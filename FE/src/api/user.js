@@ -4,7 +4,6 @@ const local = localAxios();
 
 async function userConfirm(param, success, fail) {
   await local.post(`/auth/login`, param).then(success).catch(fail);
-  console.log("userConfirm ok");
 }
 
 async function userJoin(param, success, fail) {

@@ -16,9 +16,7 @@ export function initializeSnowAnimation(canvasId, backgroundImageSrc) {
   // 배경이미지 가져오기.
   const backgroundImage = new Image();
   backgroundImage.src = backgroundImageSrc;
-  console.log(backgroundImage.onload);
   backgroundImage.onload = function () {
-    console.log("load");
     Snowy();
     d.drawImage(backgroundImage, 0, 0, w, h);
   };
