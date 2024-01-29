@@ -14,6 +14,7 @@ export const useUserStore = defineStore("user", {
       showUserInfoNick: false, // 회원정보 닉네임
       showDropOutModal: false, // 탈퇴 모달
       showSuccessPassword: false, // 비밀번호 변경 모달
+      userInfo: null // 회원정보
     };
   },
 
@@ -89,24 +90,20 @@ export const useUserStore = defineStore("user", {
 
     getUserInfo: (token) => {
       let decodeToken = jwtDecode(token);
-      
+
       findById(
         decodeToken.userId,
         (response) => {
           if (response.status === httpStatusCode.OK) {
-            userInfo.value = response.data.userInfo;
+            this.userInfo = response.userInfo;
           } else {
             console.log("유저 정보 없음!!!!");
           }
         },
 
         async (error) => {
-          console.error(
-            "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ",
-            error.response.status
-          );
-          isValidToken.value = false;
-
+          console.error("getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ", error.response.status);
+          // this.isValidToken = false;
           await tokenRegenerate();
         }
       );
