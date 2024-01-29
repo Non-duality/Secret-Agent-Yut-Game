@@ -2,8 +2,8 @@
   <div>
     <div class="side-bar" v-if="showFlag">
       <div class="side-title">
-        <span class="side-text" v-if="showMessageFlag">메시지</span>
-        <span class="side-text" v-if="showFriendFlag">친구</span>
+        <span class="side-text" v-if="showMessageFlag">알림</span>
+        <span class="side-text" v-if="showFriendFlag">친구목록</span>
         <button class="btn" @click="closeSidebar">
           <img class="side-close" src="@/assets/icon/close.png" />
         </button>
@@ -13,7 +13,7 @@
       <FriendComponents v-if="showFriendFlag" @closeSidebar="closeSidebar" />
     </div>
     <div class="side-btn">
-      <button class="btn" @click="showMessage">
+      <button class="btn" @click="showMessage"> 
         <img class="btn-img" src="@/assets/icon/message.png" />
       </button>
       <button class="btn" @click="showFriend">

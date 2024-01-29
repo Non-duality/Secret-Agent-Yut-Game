@@ -44,6 +44,7 @@
 .side-close{
     width: 20px;
     height: auto;
+    margin-right: 10px;
 }
 .btn {
   background-color: transparent;
