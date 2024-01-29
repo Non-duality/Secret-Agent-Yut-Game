@@ -7,14 +7,20 @@ import { httpStatusCode } from "@/util/http-status";
 export const useUserStore = defineStore("user", {
   state: () => {
     return {
-      isLogin: false, // 로그인 체크
-      showModalSide: false, // 네비 바, 사이드 바
-      showLoginModal: false, // 로그인 모달
-      showJoinModal: false, // 회원가입 모달
-      showUserInfoNick: false, // 회원정보 닉네임
-      showDropOutModal: false, // 탈퇴 모달
-      showSuccessPassword: false, // 비밀번호 변경 모달
-      userInfo: null // 회원정보
+      isLogin: sessionStorage.getItem("isLogin") === "true" || false,
+      showModalSide:
+        sessionStorage.getItem("showModalSide") === "true" || false,
+      showLoginModal:
+        sessionStorage.getItem("showLoginModal") === "true" || false,
+      showJoinModal:
+        sessionStorage.getItem("showJoinModal") === "true" || false,
+      showUserInfoNick:
+        sessionStorage.getItem("showUserInfoNick") === "true" || false,
+      showDropOutModal:
+        sessionStorage.getItem("showDropOutModal") === "true" || false,
+      showSuccessPassword:
+        sessionStorage.getItem("showSuccessPassword") === "true" || false,
+      userInfo: sessionStorage.getItem("userInfo") || null,
     };
   },
 
@@ -24,14 +30,19 @@ export const useUserStore = defineStore("user", {
     openModal(value) {
       if (value === "login") {
         this.showLoginModal = true;
+        sessionStorage.setItem("showLoginModal", "true");
       } else if (value === "join") {
         this.showJoinModal = true;
+        sessionStorage.setItem("showJoinModal", "true");
       } else if (value === "Nick") {
         this.showUserInfoNick = true;
+        sessionStorage.setItem("showUserInfoNick", "true");
       } else if (value === "out") {
         this.showDropOutModal = true;
+        sessionStorage.setItem("showDropOutModal", "true");
       } else if (value === "password") {
         this.showSuccessPassword = true;
+        sessionStorage.setItem("showSuccessPassword", "true");
       }
     },
 
@@ -39,48 +50,52 @@ export const useUserStore = defineStore("user", {
     closeModal(value) {
       if (value === "login") {
         this.showLoginModal = false;
+        sessionStorage.setItem("showLoginModal", false);
       } else if (value === "join") {
         this.showJoinModal = false;
+        sessionStorage.setItem("showJoinModal", false);
       } else if (value === "Nick") {
         this.showUserInfoNick = false;
+        sessionStorage.setItem("showUserInfoNick", false);
       } else if (value === "Drop") {
         this.showDropOutModal = false;
+        sessionStorage.setItem("showDropOutModal", false);
       } else if (value === "password") {
         this.showSuccessPassword = false;
+        sessionStorage.setItem("showSuccessPassword", false);
       }
     },
 
     // 상단 바와 사이드 바 토글 함수.
     toggleNav() {
       this.showModalSide = !this.showModalSide;
+      sessionStorage.setItem("showModalSide", this.showModalSide);
     },
 
     userLogin: async (loginUser) => {
       await userConfirm(
         loginUser,
         (response) => {
-
           if (response.status === httpStatusCode.OK) {
             let { data } = response;
-
             let accessToken = data["access-token"];
             let refreshToken = data["refresh-token"];
-            
+
             sessionStorage.setItem("accessToken", accessToken);
             sessionStorage.setItem("refreshToken", refreshToken);
 
-            useUserStore().isLogin = true;
-            useUserStore().showLoginModal = false;
+            sessionStorage.setItem("isLogin", "true");
+            sessionStorage.setItem("showLoginModal", "false");
           } else {
             console.log("로그인 실패");
-            useUserStore().isLogin = false;
+            sessionStorage.setItem("isLogin", "false");
           }
         },
-
         (error) => {
           // 로그인 실패 구현
           alert("로그인 실패");
-          this.isLogin = false;
+          sessionStorage.setItem("isLogin", "false");
+          useUserStore().isLogin = false;
         }
       );
     },
@@ -93,16 +108,18 @@ export const useUserStore = defineStore("user", {
         (response) => {
           if (response.status === httpStatusCode.OK) {
             useUserStore().userInfo = response.data.userInfo;
+            sessionStorage.setItem(
+              "userInfo",
+              JSON.stringify(response.data.userInfo)
+            );
           } else {
             console.log("유저 정보 없음!!!!");
           }
         },
-
         async (error) => {
-          //error.response.status
-          console.error("getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ");
-          // this.isValidToken = false;
-          // await tokenRegenerate();
+          console.error(
+            "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: "
+          );
         }
       );
     },
