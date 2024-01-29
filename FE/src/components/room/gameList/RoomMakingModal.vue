@@ -108,6 +108,9 @@
           // 나중에 user는 store로 관리 필요
           query: { userInfo: userInfoString, isManager: true }
           })
+
+          // 방 생성 모달 닫기
+          this.closeModal('roomMaking')
         }
       },
       

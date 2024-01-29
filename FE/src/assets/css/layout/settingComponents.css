@@ -1,0 +1,92 @@
+/* 모달 창 전반적 css */
+.setting-modal {
+  background-color: #3D3D3D;
+  border: 5px solid whitesmoke;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  padding: 30px 150px;
+  border-radius: 30px;
+  color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 제목 상하 간격 조절 */
+h2 {
+  margin-bottom: 30px;
+}
+
+/* 세팅 값 세로 정렬 */
+.setting-value {
+  display: flex;
+  align-items: center;
+}
+
+/* 세팅 값 좌우 간격 조절 */
+.setting-value p {
+  margin-right: 30px;
+}
+
+/* 효과음 간격 조절 */
+.mode {
+  margin: 0px 50px;
+  display: flex;
+  align-items: center;
+}
+
+/* 배경 음악 바 효과 */
+input[type="range"] {
+  border: max(2px, 0.1em) solid gray;
+  width: 200px;
+  accent-color: #C0D904;
+  margin-right: 30px;
+}
+
+/* 효과음 체크박스 효과 */
+input[type="checkbox"] {
+  border: max(2px, 0.1em) solid gray;
+  width: 2em;
+  height: 2em;
+  accent-color: #C0D904;
+}
+
+input[type="checkbox"]:checked {
+  border: 0.4em solid #C0D904;
+}
+
+input[type="checkbox"]:hover {
+  box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
+  cursor: pointer;
+}
+
+/* 버튼 상하 간격 조절 */
+.btn {
+  margin-top: 30px;
+}
+
+/* 버튼 관련 css */
+
+.btn .btn-confirm {
+  margin-right: 70px;
+  background-color: #7EB0F2;
+}
+
+.btn .btn-cancel {
+  background-color: #D97171;
+}
+
+.btn .btn-cancel, .btn .btn-confirm {
+  border-radius: 50px;
+  border-radius: 50px;
+  padding: 10px 50px;
+  color: black;
+}
+
+.btn .btn-cancel:hover, .btn .btn-confirm:hover {
+  color: whitesmoke;
+  box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
+}
