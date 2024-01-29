@@ -7,7 +7,7 @@ import InitialViewVue from '@/view/home/InitialView.vue'
 import UserInfoModifyVue from '@/components/profile/UserInfoModify.vue'
 import ChangePasswordVue from '@/components/profile/ChangePassword.vue'
 import ScoreCheckVue from '@/components/profile/ScoreCheck.vue'
-import RoomListViewVue from '@/view/room/RoomListView.Vue'
+import RoomListViewVue from '@/view/room/RoomListView.vue'
 
 const router = createRouter({
   history: createWebHistory('/'),
