@@ -1,14 +1,12 @@
 package com.ssafy.hungry.global.filter;
 
 import com.ssafy.hungry.global.util.JWTUtil;
-import com.ssafy.hungry.user.dto.LoginDto;
-import com.ssafy.hungry.user.entity.TokenEntity;
-import com.ssafy.hungry.user.repository.TokenRepository;
+import com.ssafy.hungry.domain.user.dto.LoginDto;
+import com.ssafy.hungry.domain.user.entity.TokenEntity;
+import com.ssafy.hungry.domain.user.repository.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

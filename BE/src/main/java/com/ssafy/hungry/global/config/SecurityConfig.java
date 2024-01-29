@@ -3,7 +3,7 @@ package com.ssafy.hungry.global.config;
 import com.ssafy.hungry.global.filter.JWTFilter;
 import com.ssafy.hungry.global.filter.LoginFilter;
 import com.ssafy.hungry.global.util.JWTUtil;
-import com.ssafy.hungry.user.repository.TokenRepository;
+import com.ssafy.hungry.domain.user.repository.TokenRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

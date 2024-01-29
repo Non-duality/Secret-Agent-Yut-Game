@@ -1,4 +1,4 @@
-package com.ssafy.hungry.user.entity;
+package com.ssafy.hungry.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
