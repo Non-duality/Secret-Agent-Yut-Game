@@ -1,0 +1,16 @@
+.game-main{
+    display: flex;
+    flex-direction: row;
+    margin-top: 50px;
+    height: 90vh;
+}
+
+.game-left{
+    width: 318px;
+}
+.game-mid{
+    width: 900px;
+}
+.game-right{
+    width: 318px;
+}

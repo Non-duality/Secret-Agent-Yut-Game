@@ -1,0 +1,12 @@
+.game-board {
+    display: flex;
+    justify-content: center; /* 가로 방향 가운데 정렬 */
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 600px;
+    height: 600px;
+    background-color: wheat;
+    align-items: center;
+    margin: auto;
+  }
+  
