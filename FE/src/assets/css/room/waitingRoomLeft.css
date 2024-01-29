@@ -43,10 +43,16 @@
   margin-top: 10px;
   text-align: left; /* 유저 이름 왼쪽 정렬 */
   display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 /* 각각의 유저 프로필 사진 */
 .team-img {
   width: 30px;
   margin-right: 30px;
+}
+
+/* 아이콘끼리 거리감 맞추기 */
+.icon-user-plus {
+  margin-right: 10px;
 }

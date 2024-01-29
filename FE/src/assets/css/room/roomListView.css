@@ -6,24 +6,17 @@
   display: grid;
   grid-template-columns: 6fr 4fr 2fr;
   column-gap: 50px;
-  height: 70vh;
 }
 
-/* 방 리스트 페이지 서브타이틀 */
+/* 서브타이틀 */
 h2 {
   color: whitesmoke;
-  margin-bottom: 1%;
+  margin-bottom: 2%;
 }
 
+/* 왼쪽, 오른쪽 박스 */
 .room-list {
-  display: flex;
-  flex-direction: column;
-}
-
-/* 방 참가 및 생성 방향 */
-.room-make-relate {
-  display: flex;
-  flex-direction: column;
+  height: 70vh;
 }
 
 /* 방 생성 버튼 */
@@ -32,9 +25,23 @@ h2 {
   opacity: 80%;
   width: 100%;
   box-sizing: border-box;
-  margin-top: 30px;
+  margin-top: 10px;
   padding: 20px;
   border-radius: 20px;
   font-size: 2rem;
   margin-bottom: 0;
+}
+
+/* 방 생성 모달 */
+.room-make-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  background-color: rgb(60, 58, 58);
+  min-width: 400px;
+  min-height: 450px;
+  border-radius: 30px;
+  padding: 30px;
 }
