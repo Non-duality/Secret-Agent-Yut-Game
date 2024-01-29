@@ -20,13 +20,17 @@ public class TokenEntity {
     private String refreshToken;
 
     private String accessToken;
+    private String email;
+    private String role;
 
     @TimeToLive
     private Long expiration;
 
-    public TokenEntity(String refreshToken, String accessToken, long l) {
+    public TokenEntity(String refreshToken, String accessToken, String email, String role,long l) {
         this.refreshToken = refreshToken;
         this.accessToken = accessToken;
+        this.email = email;
+        this.role = role;
         this.expiration = l;
     }
 }

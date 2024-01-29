@@ -2,6 +2,7 @@ package com.ssafy.hungry.user.service;
 
 import com.ssafy.hungry.user.dto.JoinDto;
 import com.ssafy.hungry.user.dto.LoginDto;
+import com.ssafy.hungry.user.dto.MyInfoDto;
 import com.ssafy.hungry.user.entity.UserEntity;
 import com.ssafy.hungry.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,6 +44,17 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
         } else {
             return false;
         }
+    }
+
+    public MyInfoDto myInfo(String email){
+        MyInfoDto myInfo = new MyInfoDto();
+        UserEntity findUser = userRepository.findByEmail(email);
+        myInfo.setEmail(findUser.getEmail());
+        myInfo.setNickname(findUser.getNickname());
+        myInfo.setBirthDate(findUser.getBirthDate());
+        myInfo.setGender(findUser.getGender());
+        myInfo.setProfileImgUrl(findUser.getProfileImgUrl());
+        return myInfo;
     }
 
     @Override

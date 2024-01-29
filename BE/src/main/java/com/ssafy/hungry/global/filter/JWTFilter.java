@@ -1,11 +1,11 @@
 package com.ssafy.hungry.global.filter;
 
 import com.ssafy.hungry.global.util.JWTUtil;
-import com.ssafy.hungry.user.dto.JoinDto;
 import com.ssafy.hungry.user.dto.LoginDto;
 import com.ssafy.hungry.user.entity.TokenEntity;
 import com.ssafy.hungry.user.entity.UserEntity;
 import com.ssafy.hungry.user.repository.TokenRepository;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,36 +34,59 @@ public class JWTFilter extends OncePerRequestFilter {
 
         //request에서 Authorization 헤더를 찾음
         String authorization= request.getHeader("Authorization");
+        //requset에서 RefreshToken 헤더를 찾음
         String refreshToken = request.getHeader("RefreshToken");
 
         //refresh 토큰과 함께 요청이 들어왔을 경우
         //redis에서 refreshToken값과 매칭되는 accessToken 값을 찾고 둘이 일치하면 재발급
         if(refreshToken != null){
-            String token = authorization.split(" ")[1];
+            String accessToken = authorization.split(" ")[1];
+            System.out.println("refresh Token 검증");
             //리프레시 토큰이 만료되었을 경우 재 로그인을 위한 401 반환
-            if (jwtUtil.isExpired(refreshToken)) {
-
+            try{
+                jwtUtil.isExpired(refreshToken);
+            }catch(ExpiredJwtException e){
                 System.out.println("token expired");
-                filterChain.doFilter(request, response);
 
-                //조건이 해당되면 메소드 종료 (필수)
-                response.sendError(401);
-                return;
+                response.sendError(401, "require login");
             }
             //refreshToken 값을 키로 accessToken을 가져온다. 두 값이 일치하면 새로운 refreshToken 과 accessToken을 발급한다.
-            if (token == repository.findById(refreshToken).get().getAccessToken()){
-                String email = jwtUtil.getUsername(token);
-                String role = jwtUtil.getRole(token);
+            TokenEntity tokenEntity = repository.findById(refreshToken).get();
+            if (accessToken.equals(tokenEntity.getAccessToken())) {
+                String email = tokenEntity.getEmail();
+                String role = tokenEntity.getRole();
 
-                String acToken = jwtUtil.createAccessJwt(email, role, 15*60*1000L);
-                String reToken = jwtUtil.createRefreshJwt(12*60*60*1000L);
+                //token 재발급
+                String acToken = jwtUtil.createAccessJwt(email, role, 15 * 1000L);
+                String reToken = jwtUtil.createRefreshJwt(12 * 60 * 60 * 1000L);
 
-                TokenEntity token1 = new TokenEntity(reToken, acToken, 12*60*60);
+                TokenEntity token1 = new TokenEntity(reToken, acToken, email, role, 12 * 60 * 60);
                 repository.save(token1);
+                //이전 refreshToken 은 삭제
                 repository.deleteById(refreshToken);
 
-                response.addHeader("Authorization", "Bearer" + acToken);
+                response.addHeader("Authorization", "Bearer " + acToken);
                 response.addHeader("RefreshToken", reToken);
+
+                //userEntity를 생성하여 값 set
+                UserEntity userEntity = new UserEntity();
+                userEntity.setEmail(email);
+                userEntity.setPassword("temppassword");
+                userEntity.setRole(role);
+
+                //UserDetails에 회원 정보 객체 담기
+                LoginDto customUserDetails = new LoginDto(userEntity);
+
+                //스프링 시큐리티 인증 토큰 생성
+                Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+                //세션에 사용자 등록
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                filterChain.doFilter(request, response);
+                return;
+            }else {
+                response.sendError(401, "require login");
+                return;
             }
         }
 
@@ -82,34 +105,32 @@ public class JWTFilter extends OncePerRequestFilter {
         String token = authorization.split(" ")[1];
 
         //토큰 소멸 시간 검증
-        if (jwtUtil.isExpired(token)) {
+        try{
+            if (!jwtUtil.isExpired(token)) {
+                //토큰에서 username과 role 획득
+                String email = jwtUtil.getUsername(token);
+                String role = jwtUtil.getRole(token);
 
+                //userEntity를 생성하여 값 set
+                UserEntity userEntity = new UserEntity();
+                userEntity.setEmail(email);
+                userEntity.setPassword("temppassword");
+                userEntity.setRole(role);
+
+                //UserDetails에 회원 정보 객체 담기
+                LoginDto customUserDetails = new LoginDto(userEntity);
+
+                //스프링 시큐리티 인증 토큰 생성
+                Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+                //세션에 사용자 등록
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                filterChain.doFilter(request, response);
+            }
+        }catch(ExpiredJwtException e){
             System.out.println("token expired");
-            filterChain.doFilter(request, response);
 
-            //조건이 해당되면 메소드 종료 (필수)
-            response.sendError(401);
-            return;
+            response.sendError(401, "token expired");
         }
-
-        //토큰에서 username과 role 획득
-        String email = jwtUtil.getUsername(token);
-        String role = jwtUtil.getRole(token);
-
-        //userEntity를 생성하여 값 set
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(email);
-        userEntity.setPassword("temppassword");
-        userEntity.setRole(role);
-
-        //UserDetails에 회원 정보 객체 담기
-        LoginDto customUserDetails = new LoginDto(userEntity);
-
-        //스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-        //세션에 사용자 등록
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-        filterChain.doFilter(request, response);
     }
 }

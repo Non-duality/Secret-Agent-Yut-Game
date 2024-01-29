@@ -63,13 +63,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
-        String accessToken = jwtUtil.createAccessJwt(email, role, 15*60*1000L);
+        String accessToken = jwtUtil.createAccessJwt(email, role, 15*1000L);
         String refreshToken = jwtUtil.createRefreshJwt(12*60*60*1000L);
 
-        TokenEntity token = new TokenEntity(refreshToken, accessToken, 12*60*60);
+        TokenEntity token = new TokenEntity(refreshToken, accessToken, email, role, 12*60*60);
         repository.save(token);
 
-        response.addHeader("Authorization", "Bearer" + accessToken);
+        response.addHeader("Authorization", "Bearer " + accessToken);
         response.addHeader("RefreshToken", refreshToken);
     }
 
