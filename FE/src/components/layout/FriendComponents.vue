@@ -6,7 +6,7 @@
       </div>
       <div class="profile-info">
         <h4>{{ friend }}님</h4>
-        <img :src="isActive ? '../../assets/img/online.png' : '../../assets/img/offline.png'" alt="status-profile">
+        <img :src="isActive ? '@/assets/img/online.png' : '@/assets/img/offline.png'" alt="status-profile">
         <p>채팅</p>
       </div>
     </div>
