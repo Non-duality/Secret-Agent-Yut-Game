@@ -9,72 +9,80 @@
         </button>
       </div>
       <div class="side-line"></div>
-      <MessageComponents v-if="showMessageFlag" @closeSidebar="closeSidebar" />
-      <FriendComponents v-if="showFriendFlag" @closeSidebar="closeSidebar" />
+      <MessageComponents v-if="showMessageFlag" />
+      <FriendComponents v-if="showFriendFlag" />
     </div>
     <div class="side-btn">
-      <button class="btn" @click="showMessage"> 
+      <button class="btn" @click="showMessage">
         <img class="btn-img" src="@/assets/icon/message.png" />
       </button>
       <button class="btn" @click="showFriend">
         <img class="btn-img" src="@/assets/icon/friend.png" />
       </button>
-      <button class="btn" @click="showFriend">
+      <button class="btn" @click="showSetting">
         <img class="btn-img" src="@/assets/icon/setting.png" />
       </button>
       <button class="btn" @click="showFriend">
         <img class="btn-img" src="@/assets/icon/logout.png" />
       </button>
     </div>
+    <SettingComponents v-if="showSettingFlag" @close-setting="closeSetting"/>
   </div>
 </template>
-  
-  <script>
+
+<script>
 import MessageComponents from "./MessageComponents.vue";
 import FriendComponents from "./FriendComponents.vue";
-import { ref } from "vue";
+import SettingComponents from "./SettingComponents.vue";
 
 export default {
   components: {
     MessageComponents,
     FriendComponents,
-  },
-  setup() {
-    const showFlag = ref(false);
-    const showMessageFlag = ref(false);
-    const showFriendFlag = ref(false);
-
-    const showMessage = () => {
-      console.log("me");
-      if (!showFlag.value) showFlag.value = true;
-      showFriendFlag.value = false;
-      showMessageFlag.value = true;
-    };
-
-    const showFriend = () => {
-      console.log("fr");
-      if (!showFlag.value) showFlag.value = true;
-      showMessageFlag.value = false;
-      showFriendFlag.value = true;
-    };
-    const closeSidebar = () => {
-      showMessageFlag.value = false;
-      showFriendFlag.value = false;
-      showFlag.value = false;
-    };
+    SettingComponents,
+},
+  data() {
     return {
-      showFlag,
-      showMessageFlag,
-      showFriendFlag,
-      showMessage,
-      showFriend,
-      closeSidebar,
+      showFlag: false,
+      showMessageFlag: false,
+      showFriendFlag: false,
+      showSettingFlag: false,
     };
   },
+  methods: {
+    // 알림 메시지
+    showMessage() {
+      this.showFlag = true;
+      this.showFriendFlag = false;
+      this.showMessageFlag = true;
+    },
+    // 친구 목록
+    showFriend() {
+      this.showFlag = true;
+      this.showMessageFlag = false;
+      this.showFriendFlag = true;
+    },
+
+    // 설정 모달 열기
+    showSetting() {
+      this.showSettingFlag = true
+    },
+
+    // 설정 모달 닫기
+    closeSetting() {
+      this.showSettingFlag = false
+    },
+
+    // 사이드바 닫기
+    closeSidebar() {
+      this.showMessageFlag = false;
+      this.showFriendFlag = false;
+      this.showFlag = false;
+    }
+  }
 };
 </script>
-  
-  <style>
+
+<style>
 @import "@/assets/css/layout/sideBar.css";
 </style>
-  
