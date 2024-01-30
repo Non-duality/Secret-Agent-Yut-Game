@@ -53,4 +53,7 @@ public class UserEntity {
     @Column(nullable=false,length=30)
     private String role;
 
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

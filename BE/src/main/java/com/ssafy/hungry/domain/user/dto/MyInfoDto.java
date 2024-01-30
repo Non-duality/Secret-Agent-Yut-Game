@@ -1,17 +1,13 @@
 package com.ssafy.hungry.domain.user.dto;
 
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
 @Getter
 @Setter
-@ToString
-@NoArgsConstructor
+@Builder
 public class MyInfoDto {
     private String email;
     private String nickname;
