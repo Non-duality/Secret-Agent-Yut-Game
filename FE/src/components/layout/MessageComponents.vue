@@ -33,9 +33,6 @@ export default {
   },
 
   methods: {
-    closeSidebar() {
-      this.$emit('closeSidebar');
-    },
 
     async acceptFriend(user) {
       // 수락하는 로직
