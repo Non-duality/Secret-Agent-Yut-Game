@@ -5,6 +5,7 @@ import com.ssafy.hungry.domain.user.repository.UserRepository;
 import com.ssafy.hungry.domain.user.dto.JoinDto;
 import com.ssafy.hungry.domain.user.dto.LoginDto;
 import com.ssafy.hungry.domain.user.dto.MyInfoDto;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -68,4 +69,5 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
 
         return null;
     }
+
 }
