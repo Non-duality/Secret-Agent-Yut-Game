@@ -1,27 +1,22 @@
 <template>
     <div class="game-main">
-        <div class="game-left">
-            <GameLeft/>
-        </div>
-        <div class="game-mid">
-            <GameMid/>
-        </div>
-        <div class="game-right">
-            <GameRight/>
-        </div>
+        <GameVideo class="game-video-team1"/>
+        <GameBoard class="game-board-main"/>
+        <GameVideo class="game-video-team2"/>
+        <!-- <GameChat class="game-chat-main"/> -->
     </div>
 </template>
 
 <script>
-import GameLeft from '@/components/game/GameLeft.vue';
-import GameMid from '@/components/game/GameMid.vue';
-import GameRight from '@/components/game/GameRight.vue';
+import GameBoard from '@/components/game/GameBoard.vue';
+import GameVideo from '@/components/game/GameVideo.vue';
+import GameChat from '@/components/game/GameChat.vue';
 
 export default {
     components:{
-        GameLeft,
-        GameMid,
-        GameRight,
+        GameBoard,
+        GameVideo,
+        GameChat,
     }
 }
 </script>
