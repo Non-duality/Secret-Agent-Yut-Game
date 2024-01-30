@@ -1,3 +1,4 @@
+
 .profile-scroll-container {
   max-height: 400px;
   overflow-y: auto;
@@ -15,8 +16,8 @@ align-items: center;
 
 .profile-image .status {
   position: absolute;
-  bottom: 10px;
   right: 5px;
+  bottom: 7px;
 }
 
 .profile-info h4 {

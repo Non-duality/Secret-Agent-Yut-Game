@@ -3,8 +3,8 @@
     <div class="profile-container" v-for="friend in myFriend" :key="friend">
       <div class="profile-image">
         <img src="@/assets/img/profile.png" alt="friend-profile" class="friend-profile">
-        <img class="status" v-if="isActive" src="@/assets/img/online.png" alt="enable">
-        <img class="status" v-else src="@/assets/img/offline.png" alt="disable">
+        <img class="status" v-if="isActive" src="@/assets/img/online.png" alt="status">
+        <img class="status" v-else src="@/assets/img/offline.png" alt="status">
       </div>
       <div class="profile-info">
         <h4>{{ friend }}님</h4>
@@ -31,5 +31,5 @@ export default {
 </script>
 
 <style scoped>
-@import '@/assets/css/layout/friendComponents';
+@import "@/assets/css/layout/friend.css";
 </style>

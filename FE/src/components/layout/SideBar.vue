@@ -14,7 +14,7 @@
     </div>
     <SettingComponents v-if="showSettingFlag" @close-setting="closeSettingModal"/>
     <div class="side-btn">
-      <button class="btn" @click="showMessage"> 
+      <button class="btn" @click="showMessage">
         <img class="btn-img" src="@/assets/icon/message.png" />
       </button>
       <button class="btn" @click="showFriend">
@@ -27,9 +27,9 @@
         <img class="btn-img" src="@/assets/icon/logout.png" />
       </button>
     </div>
+    <SettingComponents v-if="showSettingFlag" @close-setting="closeSetting"/>
   </div>
 </template>
-  
 <script>
 import MessageComponents from "./MessageComponents.vue";
 import FriendComponents from "./FriendComponents.vue";
@@ -42,44 +42,36 @@ export default {
     FriendComponents,
     SettingComponents,
 },
-  
   data() {
     return {
-      // 사이드 바 관리
       showFlag: false,
-      // 사이드 바 내 모달 관리
       showMessageFlag: false,
       showFriendFlag: false,
-      showSettingFlag: false
-    }
+      showSettingFlag: false,
+    };
   },
-
   methods: {
-    // 알림창
+    // 알림 메시지
     showMessage() {
       this.showFlag = true;
       this.showFriendFlag = false;
       this.showMessageFlag = true;
-      this.showSettingFlag = false;
     },
-    
     // 친구 목록
     showFriend() {
       this.showFlag = true;
       this.showMessageFlag = false;
       this.showFriendFlag = true;
-      this.showSettingFlag = false;
     },
 
-    // 설정 열기
+    // 설정 모달 열기
     showSetting() {
-      this.showSettingFlag = true;
-      console.log(this.showSettingFlag)
+      this.showSettingFlag = true
     },
 
-    // 설정 닫기
-    closeSettingModal() {
-      this.showSettingFlag = false;
+    // 설정 모달 닫기
+    closeSetting() {
+      this.showSettingFlag = false
     },
 
     // 사이드바 닫기
@@ -88,11 +80,10 @@ export default {
       this.showFriendFlag = false;
       this.showFlag = false;
     }
-  },
+  }
 };
 </script>
-  
-  <style>
+
+<style>
 @import "@/assets/css/layout/sideBar.css";
 </style>
-  
