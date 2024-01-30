@@ -9,11 +9,11 @@
     <div class="setting-value">
       <p>효과음</p>
       <div class="radio">
-        <label class="radio-label" for="on">On</label>
+        <label class="radio-label" for="on">활성화</label>
         <input checked class="radio-button" type="radio" value="true" name="sound-effect" id="on" v-model="soundEffect">
       </div>
       <div class="radio">
-        <label class="radio-label" for="off">Off</label>
+        <label class="radio-label" for="off">비활성화</label>
         <input class="radio-button" type="radio" value="false" name="sound-effect" id="off" v-model="soundEffect">
       </div>
     </div>
