@@ -2,19 +2,20 @@
   <!-- 패치노트 모달창 -->
   <div class="modal">
     <div class="modal-content">
-      <button class="close" @click="closeModal('patch')">&times;</button>
+      <font-awesome-icon :icon="['fas', 'x']" style="color: #ffffff;" class="close" @click="closeModal('patch')" />
       <h2 class="title">패치노트</h2>
       <br />
       
       <br />
-      <button @click="closeModal('patch')" class="modal-cancel-btn">
-        나가기
-      </button>
     </div>
   </div>
 </template>
 
 <script>
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faX } from '@fortawesome/free-solid-svg-icons';
+library.add(faX)
+
 export default {
   data() {
     return {
