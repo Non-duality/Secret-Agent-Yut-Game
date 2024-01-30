@@ -1,10 +1,13 @@
 import { defineStore } from "pinia";
+import { cloneDeep } from "lodash";
 import { jwtDecode } from "jwt-decode";
 
 import { userConfirm, findById } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useUserStore = defineStore("user", {
+  id: "myStore",
+
   state: () => {
     return {
       isLogin: false, // 로그인 체크
@@ -14,11 +17,20 @@ export const useUserStore = defineStore("user", {
       showUserInfoNick: false, // 회원정보 닉네임
       showDropOutModal: false, // 탈퇴 모달
       showSuccessPassword: false, // 비밀번호 변경 모달
-      userInfo: null // 회원정보
+      userInfo: null, // 회원정보
+      accessToken: null, // 어세스 토큰
+      refreshToken: null, // 리프레쉬 토큰
     };
   },
 
   actions: {
+    // 데이터 초기화 로직
+    initData() {
+      console.log("모든 데이터 초기화")
+      const initialState = this.$reset();
+      Object.assign(this, initialState);
+    },
+
     // 로그인, 회원가입 모달 창을 나타내기 위한 함수 매개변수를 입력받아
     // 로그인, 회원가입 차별을 준다.
     openModal(value) {
@@ -59,15 +71,16 @@ export const useUserStore = defineStore("user", {
       await userConfirm(
         loginUser,
         (response) => {
+          const store = useUserStore();
 
           if (response.status === httpStatusCode.OK) {
             let { data } = response;
 
             let accessToken = data["access-token"];
             let refreshToken = data["refresh-token"];
-            
-            sessionStorage.setItem("accessToken", accessToken);
-            sessionStorage.setItem("refreshToken", refreshToken);
+
+            useUserStore().accessToken = accessToken;
+            useUserStore().refreshToken = refreshToken;
 
             useUserStore().isLogin = true;
             useUserStore().showLoginModal = false;
@@ -80,7 +93,7 @@ export const useUserStore = defineStore("user", {
         (error) => {
           // 로그인 실패 구현
           alert("로그인 실패");
-          this.isLogin = false;
+          useUserStore().isLogin = false;
         }
       );
     },
@@ -100,7 +113,9 @@ export const useUserStore = defineStore("user", {
 
         async (error) => {
           //error.response.status
-          console.error("getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ");
+          console.error(
+            "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: "
+          );
           // this.isValidToken = false;
           // await tokenRegenerate();
         }
@@ -152,5 +167,15 @@ export const useUserStore = defineStore("user", {
         }
       );
     },
+  },
+
+  persist: {
+    enabled: true, //storage 저장유무
+    strategies: [
+      {
+        key: "counter", //storage key값 설정
+        storage: localStorage, // localStorage, sessionStorage storage 선택 default sessionStorage
+      },
+    ],
   },
 });
