@@ -59,7 +59,6 @@ export const useUserStore = defineStore("user", {
       await userConfirm(
         loginUser,
         (response) => {
-          const store = useUserStore();
 
           if (response.status === httpStatusCode.OK) {
             let { data } = response;
