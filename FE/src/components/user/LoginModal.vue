@@ -45,7 +45,7 @@ export default {
     const login = async () => {
       await userLogin(loginUser.value);
 
-      let token = sessionStorage.getItem("accessToken");
+      let token = useUserStore().accessToken;
       console.log(token);
       
       if (isLogin) {

@@ -1,5 +1,4 @@
 .container{
-  background-color: #00000078;
 }
 
 .banner-container {
@@ -44,8 +43,8 @@
 
 #patch {
   margin-top: 20px;
-  margin-left: 35px;
-  width: 55vw;
+  margin-left: 100px;
+  width: 45vw;
   height: 45vh;
 }
 #patch-title {
