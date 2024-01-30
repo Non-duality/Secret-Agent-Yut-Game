@@ -4,7 +4,7 @@ export const useRoomStore = defineStore('room', {
   // 반응형 상태 (data)
   state: () => ({
     roomListData: [
-      { id: 1, currentPlayers: 3, title: '하이룽', isPublic: false, password: 'qwer1234', speed: 1, theme: 'lunaNewYear' },
+      { id: 1, currentPlayers: 3, title: '방가방가 햄토리', isPublic: false, password: 'qwer1234', speed: 1, theme: 'lunaNewYear' },
     ],
 
     // 모달 관련

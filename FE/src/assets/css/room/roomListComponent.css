@@ -5,3 +5,9 @@
   margin: 0px 30px;
   height: 50px;
 }
+
+td {
+  word-wrap: break-word;
+  word-break: break-all;
+  max-width: 150px; /* 셀의 최대 너비를 설정 */
+}

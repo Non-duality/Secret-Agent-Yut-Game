@@ -6,10 +6,10 @@
   color: whitesmoke;
   opacity: 0.8;
   border-radius: 30px;
-  padding: 30px 50px;
+  padding: 20px 30px;
   width: 100%;
   box-sizing: border-box;
-  min-height: 60vh;
+  min-height: 50vh;
 }
 
 /* 방 클릭 시 나오는 상세 정보 프레임 */
@@ -22,6 +22,10 @@
 .room-detail-subtitle {
   color: #44A9F3;
 }
+
+/* .room-detail-content {
+  font-size: small;
+} */
 
 /* 방 클릭 시 나오는 테마 관련 (그림 및 글) */
 .room-detail-theme {
@@ -44,3 +48,7 @@ button {
   align-self: center;
 }
 
+/* 텍스트 정렬 */
+p {
+  text-align: center;
+}
