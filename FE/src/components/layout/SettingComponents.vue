@@ -34,6 +34,7 @@
     },
 
     methods: {
+      // 설정 모달 닫는 것
       closeSetting() {
         this.$emit('close-setting');
       }
