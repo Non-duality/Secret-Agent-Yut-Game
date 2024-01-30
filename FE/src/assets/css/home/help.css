@@ -11,7 +11,7 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.879);
-  z-index: 3;
+  z-index: 5000;
 }
 
 #work-npc-main {
@@ -101,13 +101,26 @@
 
 .modal-btn {
   margin-left: 10px;
+  border-radius: 50px;
 }
 
-/* 취소 버튼 호버 효과 */
-.modal-btn:hover {
-  background-color: #f44336;
+/* 응, 알려줘 버튼 호버 효과 */
+.modal-yes-btn:hover {
+  background-color: #2D81FF;
   color: white;
 
   /* 트랜지션 효과 */
   transition: background-color 0.3s ease, color 0.3s ease;
+
+  border-radius: 50px;
+}
+
+/* 아니 버튼 호버 효과 */
+.modal-no-btn:hover {
+  background-color: #DC3545;
+  color: white;
+
+  /* 트랜지션 효과 */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-radius: 50px;
 }

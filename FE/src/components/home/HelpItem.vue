@@ -10,9 +10,9 @@
         <div class="work-npc-name">도움말</div>
         <div class="work-npc-content">{{ npcMessage }}</div>
         <section class="work-npc-buttons">
-          <button class="modal-btn">응, 알려줘</button>
+          <button class="modal-yes-btn">응, 알려줘</button>
           <!-- <button onclick="workNPC.onFishiButton()">낚시하기</button> -->
-          <button @click="closeModal('help')" class="modal-btn">아니</button>
+          <button @click="closeModal('help')" class="modal-no-btn">아니</button>
         </section>
       </div>
     </div>
