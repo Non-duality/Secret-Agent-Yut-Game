@@ -23,9 +23,6 @@
       <button class="btn" @click="showSetting">
         <img class="btn-img" src="@/assets/icon/setting.png" />
       </button>
-      <button class="btn" @click="showFriend">
-        <img class="btn-img" src="@/assets/icon/logout.png" />
-      </button>
     </div>
     <SettingComponents v-if="showSettingFlag" @close-setting="closeSetting"/>
   </div>

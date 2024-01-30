@@ -40,12 +40,12 @@
         </div>
       </div>
       <div class="button-group">
-        <button type="button" 
-        class="cancle" 
-        @click="closeModal('roomMaking')">취소</button>
         <button type="submit" 
         class="create"
         @click="makeGame(roomInfo, user)">생성</button>
+        <button type="button" 
+        class="cancle" 
+        @click="closeModal('roomMaking')">취소</button>
       </div>
     </form>
   </div>

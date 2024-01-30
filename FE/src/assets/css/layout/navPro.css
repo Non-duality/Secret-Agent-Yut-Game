@@ -25,5 +25,17 @@
 }
 
 .nav-btn{
-    padding: none;
+    background-color: whitesmoke;
+    text-decoration: none;
+    margin-top: 5px;
+    padding: 2px 5px;
+    border: 3px lightgray solid;
+    color: rgb(38, 38, 38);
+    font-size: small;
+}
+
+.nav-btn:hover {
+    cursor: pointer;
+    background-color: darkgray;
+    color: whitesmoke;
 }
