@@ -20,9 +20,9 @@ public class UserController {
     @PostMapping("/join")
     public ResponseEntity<String> join(@ModelAttribute JoinDto joinDto) {
         if(userService.join(joinDto)){
-            return ResponseEntity.status(200).body("회원가입 실패");
+            return ResponseEntity.status(200).body("회원가입 성공");
         }
-        return ResponseEntity.status(201).body("회원가입 성공");
+        return ResponseEntity.status(201).body("회원가입 실패");
     }
 
     @GetMapping("/myinfo")

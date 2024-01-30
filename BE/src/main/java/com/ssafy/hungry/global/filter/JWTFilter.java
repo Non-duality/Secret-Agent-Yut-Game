@@ -57,7 +57,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 String role = tokenEntity.getRole();
 
                 //token 재발급
-                String acToken = jwtUtil.createAccessJwt(email, role, 15 * 1000L);
+                String acToken = jwtUtil.createAccessJwt(email, role, 15 * 60 * 1000L);
                 String reToken = jwtUtil.createRefreshJwt(12 * 60 * 60 * 1000L);
 
                 TokenEntity token1 = new TokenEntity(reToken, acToken, email, role, 12 * 60 * 60);
