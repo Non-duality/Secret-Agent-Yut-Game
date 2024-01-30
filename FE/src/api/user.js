@@ -1,4 +1,5 @@
 import { localAxios } from "@/util/http-commons";
+import { useUserStore } from "@/store/userStore";
 
 const local = localAxios();
 
@@ -13,7 +14,7 @@ async function userJoin(param, success, fail) {
 }
 
 async function findById(userid, success, fail) {
-  local.defaults.headers["Authorization"] = "Bearer " + sessionStorage.getItem("accessToken");
+  local.defaults.headers["Authorization"] = "Bearer " + useUserStore().accessToken;
   await local.get(`/user/info/${userid}`).then(success).catch(fail);
 }
 

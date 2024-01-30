@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <!-- (상단) 배너 슬라이드 -->
     <div class="banner-container">
       <div class="event-container">

@@ -9,6 +9,8 @@ import ChangePasswordVue from '@/components/profile/ChangePassword.vue'
 import ScoreCheckVue from '@/components/profile/ScoreCheck.vue'
 import RoomListViewVue from '@/view/room/RoomListView.vue'
 
+import { useUserStore } from "@/store/userStore";
+
 const router = createRouter({
   history: createWebHistory('/'),
   routes: [
@@ -69,6 +71,22 @@ const router = createRouter({
       ]
     },
   ]
-})
+});
+
+// 로그인 여부에 따라 경로 "/" 또는 "/home"으로 계속 리다이렉션 수행
+router.beforeEach((to, from, next) => {
+  const isLogin = useUserStore().isLogin;
+
+  if (to.meta.requiresAuth && !isLogin) {
+    // 로그인이 필요한 페이지인데 로그인이 안된 경우
+    next("/");
+  } else if (to.name === 'initial' && isLogin) {
+    // 초기 화면인데 이미 로그인된 경우
+    next("/home");
+  } else {
+    // 그 외의 경우는 정상적으로 진행
+    next();
+  }
+});
 
 export default router
