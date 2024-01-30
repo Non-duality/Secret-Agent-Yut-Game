@@ -1,6 +1,6 @@
 <template>
   <!-- 방 클릭했을 때 나오는 상세 정보 -->
-  <div class="room-detail">
+  <div v-if=" Object.keys(roomInfo).length > 0" class="room-detail">
     <div class="room-detail-content">
       <div class="room-detail-info">
         <p class="room-detail-subtitle">방 제목</p>
@@ -26,7 +26,11 @@
         </div>
       </div>
     </div>
+    <!-- 예시 방 디테일일 때는 참가 버튼 없애기 -->
     <button @click="joinGame(roomNum)">참가</button>
+  </div>
+  <div v-else class="room-detail">
+    즐거운 윷놀이 한 판 가보자고~!
   </div>
 </template>
 

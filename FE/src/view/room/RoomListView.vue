@@ -15,6 +15,10 @@
         v-if="ShowDetail" 
         :room-info="roomInfo"
         />
+        <RoomInfo 
+        v-else 
+        :room-info="defaultRoomInfo"
+        />
         <button @click="openModal('roomMaking')" class="room-make-btn">방 생성</button>
       </div>
     </div>
@@ -27,7 +31,7 @@
     <RoomPasswordCheckModal 
     v-if="showRoomPasswordCheckModal"
     class="room-password-modal"
-    :room-info="roomInfo"
+    :room-info="defaultRoomInfo"
     />
   </div>
 </template>
@@ -58,6 +62,11 @@
     },
 
     computed: {
+      defaultRoomInfo() {
+        const roomStore = useRoomStore();
+        return roomStore.roomListData[0] || {};
+      },
+
       // 방 생성 모달
       showRoomMaking() {
         const roomStore = useRoomStore();

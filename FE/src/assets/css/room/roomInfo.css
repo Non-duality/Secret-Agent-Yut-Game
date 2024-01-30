@@ -6,10 +6,10 @@
   color: whitesmoke;
   opacity: 0.8;
   border-radius: 30px;
-  padding: 50px 80px;
+  padding: 30px 50px;
   width: 100%;
   box-sizing: border-box;
-  
+  min-height: 60vh;
 }
 
 /* 방 클릭 시 나오는 상세 정보 프레임 */
@@ -39,7 +39,6 @@ img {
 button {
   background-color: #2D81FF;
   opacity: 100%;
-  margin-top: 20px;
   border-radius: 50px;
   width: 50%;
   align-self: center;
