@@ -9,7 +9,7 @@ import ChangePasswordVue from '@/components/profile/ChangePassword.vue'
 import ScoreCheckVue from '@/components/profile/ScoreCheck.vue'
 import RoomListViewVue from '@/view/room/RoomListView.vue'
 import CharacterVue from '@/view/game/pick/character.vue'
-import NotFoundPage from '@/view/not/NotFoundPage.vue'
+import openVidu from '@/view/game/pick/openvidu.vue'
 
 import { useUserStore } from "@/store/userStore";
 
@@ -83,6 +83,14 @@ const router = createRouter({
       name: 'pick',
       component: CharacterVue
     },
+
+    // (테스트) WebRTC
+    {
+      path: "/rtc",
+      name: 'rtc',
+      component: openVidu
+    },
+
   ]
 });
 
@@ -95,7 +103,6 @@ function findChildRouteByPath(routes, pathToFind) {
       // 자식 라우트가 있는 경우
       for (let i = 0; i < route.children.length; i++) {
         const path = route.children[i].path;
-        console.log(path + " : " + pathToFind + " === " + (path === pathToFind));
 
         // 동적 세그먼트에 대한 처리 추가
         const regexPath = path.replace(/:\w+/g, '.*');
@@ -130,7 +137,6 @@ router.beforeEach((to, from, next) => {
 
   // routes 중에 children을 가지고 있는 부모 경로들만을 확인하는 변수
   const matchingChildRoute = findChildRouteByPath(router.options.routes, to.path);
-  console.log(matchingChildRoute)
 
   if (isRouteExist || matchingChildRoute) {
     if (isLogin) {

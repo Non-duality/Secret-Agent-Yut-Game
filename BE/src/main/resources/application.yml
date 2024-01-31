@@ -40,3 +40,4 @@ OPENVIDU_SECRET: MY_SECRET
 server:
   ssl:
     enabled: false
+  port: 8080
