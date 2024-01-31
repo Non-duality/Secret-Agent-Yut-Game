@@ -9,6 +9,7 @@ import ChangePasswordVue from '@/components/profile/ChangePassword.vue'
 import ScoreCheckVue from '@/components/profile/ScoreCheck.vue'
 import RoomListViewVue from '@/view/room/RoomListView.vue'
 import CharacterVue from '@/view/game/pick/character.vue'
+import NotFoundPage from '@/view/not/NotFoundPage.vue'
 
 import { useUserStore } from "@/store/userStore";
 
@@ -37,19 +38,20 @@ const router = createRouter({
       redirect: '/room/list',
       children: [
         {
-          path: 'list',
-          name: 'list',
+          path: '/room/list',
+          name: '/room/list',
           component: RoomListViewVue,
           meta: { background: 'room-list' }
         },
         {
-          path: 'wait/:roomNum',
+          path: '/room/wait/:roomNum',
           name: 'wait',
           component: GameWaitingRoomVue,
           meta: { background: 'room-wait' }
         },
       ]
     },
+
     // 사용자 회원정보
     {
       path: '/user',
@@ -74,6 +76,7 @@ const router = createRouter({
         },
       ]
     },
+    
     // 말 선택 페이지
     {
       path: '/pick',
@@ -83,15 +86,41 @@ const router = createRouter({
   ]
 });
 
+// to.path와 일치하는 자식 라우트 찾기
+function findChildRouteByPath(routes, pathToFind) {
+  let isTrue = false;
+
+  routes.forEach(route => {
+    if (route.children) {
+      // 자식 라우트가 있는 경우
+      for (let i = 0; i < route.children.length; i++) {
+        const path = route.children[i].path;
+        console.log(path + " : " + pathToFind + " === " + (path === pathToFind));
+
+        // 동적 세그먼트에 대한 처리 추가
+        const regexPath = path.replace(/:\w+/g, '.*');
+        const regex = new RegExp(`^${regexPath}$`);
+        if (regex.test(pathToFind)) {
+          // to.path와 일치하는 자식 라우트를 찾음
+          isTrue = true;
+          break;
+        }
+      }
+    }
+  });
+
+  return isTrue;
+}
+
 // 리다이렉션 처리
 router.beforeEach((to, from, next) => {
   const isLogin = useUserStore().isLogin;
 
   // "/" 경로 처리
-  if(to.path === "/"){
-    if(isLogin){
+  if (to.path === "/") {
+    if (isLogin) {
       next("/home")
-    }else{
+    } else {
       next();
     }
   }
@@ -99,14 +128,19 @@ router.beforeEach((to, from, next) => {
   // routes에 설정된 경로 중에서 현재 이동하려는 경로가 있는지 확인
   const isRouteExist = router.options.routes.some((route) => route.path === to.path);
 
-  if(isRouteExist){
-    if(isLogin){
+  // routes 중에 children을 가지고 있는 부모 경로들만을 확인하는 변수
+  const matchingChildRoute = findChildRouteByPath(router.options.routes, to.path);
+  console.log(matchingChildRoute)
+
+  if (isRouteExist || matchingChildRoute) {
+    if (isLogin) {
       next();
-    }else{
+    } else {
       next("/");
     }
-  }else{
+  } else {
     next("/");
   }
 });
-export default router
+
+export default router;
