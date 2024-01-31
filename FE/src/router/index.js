@@ -83,21 +83,30 @@ const router = createRouter({
   ]
 });
 
-// 로그인 여부에 따라 경로 "/" 또는 "/home"으로 계속 리다이렉션 수행
+// 리다이렉션 처리
 router.beforeEach((to, from, next) => {
   const isLogin = useUserStore().isLogin;
 
-  // routes에 설정된 경로인 경우는 그대로 진행
-  if (router.options.routes.some(route => route.path === to.path)) {
-    next();
-  } else {
-    // 설정되지 않은 경로인 경우 로그인 여부에 따라 리다이렉션
-    if (isLogin) {
-      next("/home");
-    } else {
-      next("/");
+  // "/" 경로 처리
+  if(to.path === "/"){
+    if(isLogin){
+      next("/home")
+    }else{
+      next();
     }
   }
-});
 
+  // routes에 설정된 경로 중에서 현재 이동하려는 경로가 있는지 확인
+  const isRouteExist = router.options.routes.some((route) => route.path === to.path);
+
+  if(isRouteExist){
+    if(isLogin){
+      next();
+    }else{
+      next("/");
+    }
+  }else{
+    next("/");
+  }
+});
 export default router
