@@ -1,11 +1,13 @@
 package com.ssafy.hungry.domain.room.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class CurrentSeatDto {
 
@@ -15,6 +17,8 @@ public class CurrentSeatDto {
     private String nickname;
     private String profileImgUrl;
     private int state;
+
+    @JsonProperty("ready")
     private boolean isReady;
 
 }

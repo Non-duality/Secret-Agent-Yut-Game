@@ -20,6 +20,9 @@ public class RoomEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int roomId;
 
+    @Column
+    private String roomCode;
+
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private UserEntity owner;
@@ -45,5 +48,6 @@ public class RoomEntity {
 
     @Column
     private LocalDateTime endAt;
+
 
 }

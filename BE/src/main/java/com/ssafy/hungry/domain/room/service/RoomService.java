@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -29,6 +30,7 @@ public class RoomService {
     // 방 비밀번호를 암호화 시키기 위한 객체
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    // 방 전체 목록 검색
     public List<RoomDto> getRoomList() {
         log.info("RoomService getRoomList 호출");
 
@@ -38,8 +40,7 @@ public class RoomService {
         for(RoomEntity roomEntity : roomEntityList){
             roomDtoList.add(RoomDto.builder()
                             .roomId(roomEntity.getRoomId())
-                            // Todo : redis로 부터 현재 유저 정보 받아오기
-                            .currentUserCount(0)
+                            .currentUserCount(roomRedisRepository.getCurrentUserCount(roomEntity.getRoomCode()))
                             .title(roomEntity.getTitle())
                             .isPublic(roomEntity.isPublic())
                             .build());
@@ -48,13 +49,17 @@ public class RoomService {
         return roomDtoList;
     }
 
-    public int createRoom(CreateRoomDto createRoomDto, String email){
+    // 방 생성
+    public String createRoom(CreateRoomDto createRoomDto, String email){
         log.info("RoomService createRoom 호출 : " + createRoomDto);
 
+        String roomCode = UUID.randomUUID().toString().replaceAll("-","").substring(0,6);
 
+        // 이메일을 이용해 유저 정보 가져오기
         UserEntity user = userRepository.findByEmail(email);
 
         RoomEntity roomEntity = RoomEntity.builder()
+                .roomCode(roomCode)
                 .owner(user)
                 .title(createRoomDto.getTitle())
                 .theme(createRoomDto.getTheme())
@@ -70,13 +75,22 @@ public class RoomService {
         // rooms 테이블 저장
         roomRepository.save(roomEntity);
 
-        // 만들어진 room id 반환
-        int roomId = (roomRepository.findRoomByEndAtIsNullAndOwnerId(user.getId())).getRoomId();
-
         // redis에 만들어진 방에 현재 좌석 정보를 만들기
-        roomRedisRepository.createCurrentSeat(roomId);
+        roomRedisRepository.createCurrentSeat(roomCode);
 
-        // 만들어진 room id 반환
-        return roomId;
+        // 만들어진 room code 반환
+        return roomCode;
+    }
+
+    // 종료되지 않은 방인지 확인
+    public RoomEntity getRoomByRoomId (int roomId){
+        log.info("isActiveRoomExists 호출 / roomId : " + roomId);
+        RoomEntity room = roomRepository.findByEndAtIsNullAndRoomId(roomId);
+        return room;
+    }
+
+    // 비공개 방 비밀번호 검증
+    public boolean validatePassword(String password, String encodeddPassword){
+        return bCryptPasswordEncoder.matches(password, encodeddPassword);
     }
 }
