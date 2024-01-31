@@ -7,12 +7,6 @@ import com.ssafy.hungry.domain.user.entity.TokenEntity;
 import com.ssafy.hungry.domain.user.repository.TokenRepository;
 import com.ssafy.hungry.global.dto.TokenDTO;
 import com.ssafy.hungry.global.util.JWTUtil;
-<<<<<<< HEAD
-=======
-import com.ssafy.hungry.domain.user.dto.LoginDto;
-import com.ssafy.hungry.domain.user.entity.TokenEntity;
-import com.ssafy.hungry.domain.user.repository.TokenRepository;
->>>>>>> feat/BE-room
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
