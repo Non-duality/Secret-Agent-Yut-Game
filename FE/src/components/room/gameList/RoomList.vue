@@ -5,7 +5,7 @@
       <!-- 게임 방 검색바 -->
       <RoomSearch />
       <!-- 게임 방 새로고침 아이콘 -->
-      <font-awesome-icon :icon="['fas', 'arrows-rotate']" size="2xl" style="color: #ffffff;" />
+      <font-awesome-icon @click="refresh" :class="{ 'rotate-animation': isRotating }" :icon="['fas', 'arrows-rotate']" size="2xl" style="color: #ffffff;" />
     </div>
     <div class="room-list-subtitle">
       <th scope="col">플레이어</th>
@@ -13,8 +13,6 @@
       <th scope="col">공개</th>
     </div>
     <div class="room-list-content">
-      <!-- 실제 게임 방 요약 정보 v-for를 통한 반복 컴포넌트 구성 -->
-      <!-- 나중에 페이지네이션이나 스크롤로 바꿔야 함 -->
       <RoomListComponent 
       v-for="roomInfo in roomInfos" 
       :key="roomInfo.id"
@@ -45,6 +43,12 @@
       RoomListComponent,
     },
 
+    data() {
+      return {
+        isRotating: false
+      }
+    },
+
     computed: {
       // 방 정보를 실시간으로 계산
       roomInfos() {
@@ -57,7 +61,15 @@
       // 방 디테일을 나타내는 함수
       showRoomInfo(roomInfo) {
         this.$emit('showRoomInfo', roomInfo)
-        
+      },
+
+      refresh() {
+        this.isRotating = true;
+        // 애니메이션 종료 후 다시 false로
+        setTimeout(() => {
+          this.isRotating = false;
+        }, 2000)
+
       }
     },
 
