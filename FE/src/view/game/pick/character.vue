@@ -13,7 +13,7 @@
         </div>
 
         <div class="character-box">
-          <div v-for="character in characters" :key="character" @click="selectCharacter(user, character)">
+          <div v-for="character in characters" :key="character" @click="selectCharacter(character)">
             <div class="character">
               <p>{{ character }}</p>
             </div>
@@ -41,7 +41,7 @@ export default {
 
     const users = ["준희", "지훈", "성규", "수빈", "희웅"];
     const characters = ["캐릭터1", "캐릭터2", "캐릭터3", "캐릭터4", "캐릭터5", "캐릭터6", "캐릭터7", "캐릭터8", "캐릭터9", "캐릭터10", "캐릭터11", "캐릭터12", '캐릭터13', '캐릭터14'];
-    const selectedCharacters = {};
+    const selectedCharacters = [];
 
     return {
       showSpyModal,
@@ -58,40 +58,57 @@ export default {
       return true;
     },
 
+    // 캐릭터를 선택했는지 확인하는 로직
     isCharacterSelected(user) {
-      return this.selectedCharacters[user] !== undefined;
+      return this.selectedCharacters.some(
+        entry => entry.user === user && entry.character !== null
+      );
     },
 
+    // 캐릭터를 선택 후 다시 해제 할 수 있는 로직
     toggleCharacterSelection(user) {
-      // 이미 선택된 캐릭터를 해제
-      if (this.selectedCharacters[user] !== undefined) {
-        delete this.selectedCharacters[user];
+      const existingIndex = this.selectedCharacters.findIndex(
+        entry => entry.user === user
+      );
+
+      if (existingIndex !== -1) {
+        // 이미 선택한 캐릭터면 선택 해제
+        this.selectedCharacters.splice(existingIndex, 1);
       } else {
-        // 다른 사용자가 이미 선택한 캐릭터는 선택할 수 없게 하는 로직
-        const selectedCharacter = Object.values(this.selectedCharacters).find(char => char !== undefined);
-        if (selectedCharacter === undefined) {
-          // 캐릭터 선택
-          this.selectedCharacters[user] = user;
-          console.log('Selected Characters:', this.selectedCharacters);
+        // 아직 캐릭터 선택 안했으면 선택
+        const userHasSelectedCharacter = this.selectedCharacters.some(
+          entry => entry.user === user && entry.character !== null
+        );
+
+        if (!userHasSelectedCharacter) {
+          this.selectedCharacters.push({ user, character: null });
         }
       }
     },
 
-    selectCharacter(user, selectedCharacter) {
-      // 이미 선택된 캐릭터 해제
-      if (this.selectedCharacters[user] !== undefined) {
-        delete this.selectedCharacters[user];
+    // 캐릭터 선택하는 로직 >> 캐릭터 하나만 선택할 수 있도록 하면 됨 !
+    selectCharacter(character) {
+      const user = "현재 사용자";     // 사용자 정보 가져오는 곳
+      const existingIndex = this.selectedCharacters.findIndex(
+        entry => entry.user === user
+      );
+
+      // 이미 선택한 캐릭터면 선택 해제
+      if (existingIndex !== -1) {
+        this.selectedCharacters[existingIndex].character = character;
       } else {
-          // 다른 사용자가 이미 선택한 캐릭터는 선택할 수 없게 하는 로직
-          const selectedCharacterValues = Object.values(this.selectedCharacters);
-          if (!selectedCharacterValues.includes(selectedCharacter)) {
-            // 캐릭터 선택
-            this.selectedCharacters[user] = selectedCharacter;
-            console.log('Selected Characters:', this.selectedCharacters);
-          }
+        // 아직 캐릭터 선택 안했으면 선택
+        const userHasSelectedCharacter = this.selectedCharacters.some(
+          entry => entry.user === user && entry.character !== null
+        );
+
+        if (!userHasSelectedCharacter) {
+          console.log(`User ${user} selected character ${character}`);
+          this.selectedCharacters.push({ user, character })
         }
       }
     },
+  },
 };
 </script>
 
@@ -103,7 +120,8 @@ export default {
     align-items: center;
     background-color: rgba(44, 43, 43, 0.8);
     margin-top: 20px;
-    width: 1200px;
+    width: 90%;
+    max-width: 1200px;
     height: 700px;
     border-radius: 20px;
     margin-left: 11%;
@@ -150,12 +168,13 @@ export default {
 
 .character-box {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(13%, 1fr));
   gap: 9px;
   justify-content: center;
   margin: 20px 0px;
   background-color: rgba(158, 152, 152, 0.8);
-  width: 700px;
+  width: 90%;
+  max-width: 700px;
   padding: 10px;
   border-radius: 20px;
 }
