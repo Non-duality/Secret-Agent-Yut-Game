@@ -29,7 +29,6 @@ import { useUserStore } from "@/store/userStore";
 export default {
   data() {
     return {
-      user: null,
     };
   },
 
@@ -49,7 +48,7 @@ export default {
       const userInfo = useUserStore().userInfo;
       
       // userInfo를 이용한 로직
-      return userInfo ? userInfo.name : "로딩 중...";
+      return userInfo ? userInfo.nickname : "로딩 중...";
     },
   },
 };
