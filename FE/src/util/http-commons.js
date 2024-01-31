@@ -6,6 +6,7 @@ const { VITE_VUE_API_URL } = import.meta.env;
 // station vue api axios instance
 function stationAxios() {
   const instance = axios.create({
+    baseURL: VITE_VUE_API_URL,
     headers: {
       "Content-Type": "application/json;charset=utf-8",
     },

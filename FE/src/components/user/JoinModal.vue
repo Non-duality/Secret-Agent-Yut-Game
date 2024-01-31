@@ -20,7 +20,7 @@
         v-model="passwordCheck"
         required
       /><br />
-      <div class="password-error" v-if="passwordMismatch">
+      <div class="password-error" v-if="isNotPasswordMatch">
         패스워드가 일치하지 않습니다.
       </div>
 
@@ -28,7 +28,7 @@
         type="text"
         placeholder="닉네임"
         id="nicknameInput"
-        v-model="name"
+        v-model="nickname"
         required
       /><br />
 
@@ -36,16 +36,16 @@
         <button
           id="male-button"
           class="gender-button"
-          @click="selectGender('male')"
-          :class="{ selected: selectedGender === 'male' }"
+          @click="selectGender('남')"
+          :class="{ selected: gender === '남' }"
         >
           남성
         </button>
         <button
           id="female-button"
           class="gender-button"
-          @click="selectGender('female')"
-          :class="{ selected: selectedGender === 'female' }"
+          @click="selectGender('여')"
+          :class="{ selected: gender === '여' }"
         >
           여성
         </button>
@@ -66,39 +66,17 @@
 </template>
 
 <script>
-import { ref } from "vue";
-import { storeToRefs } from "pinia";
 import { useUserStore } from "@/store/userStore";
-import { useRouter } from "vue-router";
 
 export default {
-  setup() {
-    const userStore = useUserStore();
-
-    const { userLogin } = userStore;
-
-    const join = async () => {
-    
-    }
-
-    // pinia 닫기 함수 호출
-    const closeModal = () => {
-      userStore.closeModal("join");
-    };
-
-    return {
-      closeModal,
-    };
-  },
-
   data() {
     return {
       passwordMismatch: false,
-      selectedGender: null,
-      userId: null,
+      gender: null,
+      email: null,
       password: null,
       passwordCheck: null,
-      name: null,
+      nickname: null,
       year: null,
       month: null,
       day: null,
@@ -112,8 +90,8 @@ export default {
         !this.email ||
         !this.password ||
         !this.passwordCheck ||
-        !this.name ||
-        !this.selectedGender ||
+        !this.nickname ||
+        !this.gender ||
         !this.year ||
         !this.month ||
         !this.day
@@ -130,18 +108,18 @@ export default {
           passwordInput.style.border = "2px solid red";
         }
         if (!this.passwordCheck) {
-          // 패스워드 필드가 비어있을 경우 해당 필드 강조
+          // 패스워드 체크 필드가 비어있을 경우 해당 필드 강조
           const passwordCheckInput = document.getElementById(
             "confirmPasswordInput"
           );
           passwordCheckInput.style.border = "2px solid red";
         }
-        if (!this.name) {
+        if (!this.nickname) {
           // 닉네임 필드가 비어있을 경우 해당 필드 강조
           const nicknameInput = document.getElementById("nicknameInput");
           nicknameInput.style.border = "2px solid red";
         }
-        if (!this.selectedGender) {
+        if (!this.gender) {
           // 성별이 선택되지 않았을 경우 성별 선택 버튼 강조
           const maleButton = document.getElementById("male-button");
           const femaleButton = document.getElementById("female-button");
@@ -161,31 +139,48 @@ export default {
         // 필수 필드가 비어있는 경우 알림을 표시합니다.
         alert("필수 정보를 모두 입력하세요.");
         return;
+         // 모든 정보가 제대로 되어 있을 경우 서버로 넘기기
+      } else {
+        const userStore = useUserStore();
+        
+        const joinUserObject = {
+          email: this.email,
+          nickname: this.nickname,
+          password: this.password,
+          birthDate: `${this.year}-${this.month.toString().padStart(2, '0')}-${this.day.toString().padStart(2, '0')}`,
+          gender: this.gender
+        }
+
+        // 회원가입 전송
+        const joinUser = JSON.stringify(joinUserObject)
+        userStore.userJoin(joinUser)
       }
 
+      // 비밀번호가 불일치하는 경우 알림을 표시합니다.
       if (this.passwordMismatch) {
         alert("비밀번호 일치 하지 않습니다.");
         return;
       }
     },
 
-    checkPassword() {
-      const passwordInput = document.getElementById("passwordInput").value;
-      const confirmPasswordInput = document.getElementById(
-        "confirmPasswordInput"
-      ).value;
+    // 패스워드 일치 여부 확인 (희웅)
+    // checkPassword() {
+    //   const passwordInput = document.getElementById("passwordInput").value;
+    //   const confirmPasswordInput = document.getElementById(
+    //     "confirmPasswordInput"
+    //   ).value;
 
-      if (passwordInput !== confirmPasswordInput) {
-        // 패스워드가 일치하지 않으면 불일치 여부를 true로 설정하여 메시지 표시
-        this.passwordMismatch = true;
-      } else {
-        // 패스워드가 일치하면 불일치 여부를 false로 설정하여 메시지 감춤
-        this.passwordMismatch = false;
-      }
-    },
+    //   if (passwordInput !== confirmPasswordInput) {
+    //     // 패스워드가 일치하지 않으면 불일치 여부를 true로 설정하여 메시지 표시
+    //     this.passwordMismatch = true;
+    //   } else {
+    //     // 패스워드가 일치하면 불일치 여부를 false로 설정하여 메시지 감춤
+    //     this.passwordMismatch = false;
+    //   }
+    // },
 
     selectGender(gender) {
-      this.selectedGender = gender;
+      this.gender = gender;
     },
 
     populateDateOptions() {
@@ -217,11 +212,26 @@ export default {
         birthdateDay.appendChild(option);
       }
     },
+
+    // 회원가입 창 닫기
+    closeModal() {
+      const userStore = useUserStore();
+      userStore.closeModal("join");
+
+    }
   },
 
+  // 계속 패스워드 불일치 여부 판단
+  computed: {
+    isNotPasswordMatch() {
+      return this.password !== this.passwordCheck;
+    }
+  },
+  
   mounted() {
     this.populateDateOptions();
   },
+
 };
 </script>
 
