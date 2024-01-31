@@ -151,7 +151,7 @@ export default {
           gender: this.gender
         }
 
-        // 회원가입 전송
+        // 회원가입 전송 (500에러 발생!)
         const joinUser = JSON.stringify(joinUserObject)
         userStore.userJoin(joinUser)
       }
