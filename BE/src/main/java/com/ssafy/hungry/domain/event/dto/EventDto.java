@@ -1,7 +1,14 @@
 package com.ssafy.hungry.domain.event.dto;
 
-public class FriendEventDto {
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class EventDto {
     private String fromUserEmail;
     private String toUserEmail;
-    private String action;
+    private String eventCategory;
+    private String eventAction;
+    private String message;
 }
