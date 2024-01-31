@@ -14,7 +14,8 @@ export const useUserStore = defineStore("user", {
       showUserInfoNick: false, // 회원정보 닉네임
       showDropOutModal: false, // 탈퇴 모달
       showSuccessPassword: false, // 비밀번호 변경 모달
-      userInfo: null // 회원정보
+      userInfo: null, // 회원정보
+      showSpyModal: false,  // 밀정 선택 모달
     };
   },
 
@@ -32,6 +33,8 @@ export const useUserStore = defineStore("user", {
         this.showDropOutModal = true;
       } else if (value === "password") {
         this.showSuccessPassword = true;
+      } else if (value === 'spy') {
+        this.showSpyModal = true;
       }
     },
 
