@@ -87,15 +87,16 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isLogin = useUserStore().isLogin;
 
-  if (to.meta.requiresAuth && !isLogin) {
-    // 로그인이 필요한 페이지인데 로그인이 안된 경우
-    next("/");
-  } else if (to.name === 'initial' && isLogin) {
-    // 초기 화면인데 이미 로그인된 경우
-    next("/home");
-  } else {
-    // 그 외의 경우는 정상적으로 진행
+  // routes에 설정된 경로인 경우는 그대로 진행
+  if (router.options.routes.some(route => route.path === to.path)) {
     next();
+  } else {
+    // 설정되지 않은 경로인 경우 로그인 여부에 따라 리다이렉션
+    if (isLogin) {
+      next("/home");
+    } else {
+      next("/");
+    }
   }
 });
 
