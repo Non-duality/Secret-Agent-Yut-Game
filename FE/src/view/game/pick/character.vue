@@ -14,7 +14,7 @@
         <div class="character-box">
           <div v-for="character in characters" :key="character" @click="selectCharacter(character)">
             <div class="character">
-              <p class="character-detail" :class="{ selected: isCharacterSelected('현재 사용자', character) }">{{ character }}</p>
+              <p class="character-detail" :class="{ selected: isCharacterSelected('현재 사용자', character) }" :style="{ border: `2px solid ${borderColor}` }" @click="changeBorderColor">{{ character }}</p>
             </div>
           </div>
         </div>
@@ -48,6 +48,7 @@ export default {
       users, 
       characters,
       selectedCharacters,
+      borderColor: 'initialBorderColor'
     };
   },
 
@@ -106,6 +107,9 @@ export default {
           this.selectedCharacters.push({ user, character })
         }
       }
+    },
+    changeBorderColor() {
+      this.borderColor = 'red';
     },
   },
 };
