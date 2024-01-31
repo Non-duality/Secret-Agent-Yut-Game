@@ -25,9 +25,9 @@
   top: 0;
   left: 0;
 
-  background: url("../img/MainBackground.png") no-repeat;
+  /* background: url("../img/MainBackground.png") no-repeat;
   background-size: cover;
-  background-position: center;
+  background-position: center; */
   z-index: 0;
 }
 
@@ -37,4 +37,22 @@ button {
   padding: 10px 20px;
   border: none;
   cursor: pointer;
+}
+
+.default {
+  background: url("../img/MainBackground.png") no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.room-list {
+  background: url("@/assets/img/room/roomListBackground.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.room-wait {
+  background: url("@/assets/img/room/roomWatingBackground.png");
+  background-size: cover;
+  background-position: center;
 }

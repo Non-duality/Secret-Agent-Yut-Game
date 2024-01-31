@@ -1,10 +1,11 @@
 <template>
   <div class="room-info">
     <!-- 방 목록 -->
-    <div class="room-list">
+    <div>
       <h2>방 목록</h2>
       <RoomList 
       @show-room-info="handleShowRoomInfo"
+      class="room-list-box"
       />
     </div>
     <div class="room-list">

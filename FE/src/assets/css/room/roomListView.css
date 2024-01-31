@@ -18,7 +18,20 @@ h2 {
 /* 왼쪽, 오른쪽 박스 */
 .room-list {
   height: 70vh;
+  background: none;
 }
+
+.room-list-box {
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  opacity: 0.8;
+  border-radius: 30px;
+  padding: 50px 80px;
+  box-sizing: border-box;
+  color: whitesmoke;
+}
+
 
 /* 방 생성 버튼 */
 .room-make-btn {
