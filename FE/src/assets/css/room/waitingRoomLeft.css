@@ -5,18 +5,17 @@
   width: 550px;
   flex-direction: column;
   text-align: center;
-  align-items: start;
+  align-items: center;
 }
 
 .team-container {
-  margin-left: 30px;
   display: flex;
   flex-direction: column;
   align-items: center; /* 이 부분이 모든 자식 요소를 가운데로 정렬합니다 */
 }
 
 .team-name {
-  width: 300px;
+  width: 350px;
   border: 2px solid white;
   border-radius: 30px;
   height: 30px;
@@ -27,12 +26,12 @@
 /* 홍팀, 청팀의 팀 색을 다르게 한다. */
 .team-red .team-name {
   background-color: #dc3545;
-  margin-top: 30px;
+  margin-top: 15px;
 }
 /* 청팀 */
 .team-blue .team-name {
   background-color: #2d81ff;
-  margin-top: 20px;
+  margin-top: 15px;
 }
 /* 각 유저 마다 크기를 가진다 */
 .user-container {
@@ -55,4 +54,15 @@
 /* 아이콘끼리 거리감 맞추기 */
 .icon-user-plus {
   margin-right: 10px;
+}
+
+.ban {
+  display: flex;
+  border-radius: 30px;
+  height: 35px;
+  align-items: center;
+}
+
+.ban:hover {
+  background-color: #f44336;
 }
