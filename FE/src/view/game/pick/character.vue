@@ -1,5 +1,5 @@
 <template>
- <div class="background">
+  <div class="background">
     <div class="content">
       <p class="web-rtc">web RTC 자리</p>
       <div class="characters-wrapper">
@@ -11,11 +11,10 @@
             </div>
           </div>
         </div>
-
         <div class="character-box">
           <div v-for="character in characters" :key="character" @click="selectCharacter(character)">
             <div class="character">
-              <p>{{ character }}</p>
+              <p class="character-detail" :class="{ selected: isCharacterSelected('현재 사용자', character) }">{{ character }}</p>
             </div>
           </div>
         </div>
@@ -23,7 +22,7 @@
         <spyModal v-if="showSpyModal" @close="showSpyModal = false" class="spy-modal"/>
         </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -66,7 +65,7 @@ export default {
     },
 
     // 캐릭터를 선택 후 다시 해제 할 수 있는 로직
-    toggleCharacterSelection(user) {
+    toggleCharacterSelection(user, character) {
       const existingIndex = this.selectedCharacters.findIndex(
         entry => entry.user === user
       );

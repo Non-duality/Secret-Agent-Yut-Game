@@ -40,9 +40,14 @@ export default {
                 this.selectedCharcter = character;
                 this.showSpyModal = true;
             }
+            console.log(character)
         },
         closeModal() {
-            this.showSpyModal = false;
+            if (this.isHost) {
+                this.showSpyModal = false;
+                // 게임방 router 생기면 연결해줘야함
+                this.$router.push({ path: '/game', query: { character: this.selectedFCharacter.id } });
+            }
         },
     },
 };

@@ -71,6 +71,7 @@ const router = createRouter({
         },
       ]
     },
+    // 말 선택 페이지
     {
       path: '/pick',
       name: 'pick',
