@@ -8,9 +8,7 @@ async function userConfirm(param, success, fail) {
 }
 
 async function userJoin(param, success, fail) {
-  console.log("param", param);
-  await local.post(`/join`, param).then(success).catch(fail);
-  console.log("userJoin ok");
+  await local.post(`/user/join`, param).then(success).catch(fail);
 }
 
 async function findById(userid, success, fail) {
