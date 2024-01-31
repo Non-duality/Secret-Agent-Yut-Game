@@ -20,6 +20,7 @@ export const useUserStore = defineStore("user", {
       userInfo: null, // 회원정보
       accessToken: null, // 어세스 토큰
       refreshToken: null, // 리프레쉬 토큰
+      showSpyModal: false,  // 밀정 선택 모달
     };
   },
 
@@ -44,6 +45,8 @@ export const useUserStore = defineStore("user", {
         this.showDropOutModal = true;
       } else if (value === "password") {
         this.showSuccessPassword = true;
+      } else if (value === 'spy') {
+        this.showSpyModal = true;
       }
     },
 

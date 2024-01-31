@@ -8,6 +8,7 @@ import UserInfoModifyVue from '@/components/profile/UserInfoModify.vue'
 import ChangePasswordVue from '@/components/profile/ChangePassword.vue'
 import ScoreCheckVue from '@/components/profile/ScoreCheck.vue'
 import RoomListViewVue from '@/view/room/RoomListView.vue'
+import CharacterVue from '@/view/game/pick/character.vue'
 
 import { useUserStore } from "@/store/userStore";
 
@@ -69,6 +70,11 @@ const router = createRouter({
           component: ScoreCheckVue
         },
       ]
+    },
+    {
+      path: '/pick',
+      name: 'pick',
+      component: CharacterVue
     },
   ]
 });
