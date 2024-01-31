@@ -25,7 +25,8 @@ const router = createRouter({
     {
       path: '/home',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      meta: { background: 'home' }
     },
     // 방 리스트, 방생성, 게임 대기방
     // router name 알기 쉽게 수정

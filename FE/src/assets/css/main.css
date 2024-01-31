@@ -45,6 +45,12 @@ button {
   background-position: center;
 }
 
+.home {
+  background: url("@/assets/img/home/homeBackground.png");
+  background-size: cover;
+  background-position: center;
+}
+
 .room-list {
   background: url("@/assets/img/room/roomListBackground.png");
   background-size: cover;
