@@ -52,7 +52,7 @@ button {
 }
 
 .room-wait {
-  background: url("@/assets/img/room/roomWaitingBackground.png");
+  background: url("@/assets/img/room/roomWatingBackground.png");
   background-size: cover;
   background-position: center;
 }

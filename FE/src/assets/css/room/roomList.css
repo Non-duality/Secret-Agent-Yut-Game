@@ -1,15 +1,3 @@
-/* 실제 게임 방 목록 프레임 */
-.room-list {
-  display: flex;
-  flex-direction: column;
-  background-color: black;
-  opacity: 0.8;
-  border-radius: 30px;
-  padding: 50px 80px;
-  box-sizing: border-box;
-  color: whitesmoke;
-}
-
 /* 게임 방 검색 바 */
 .room-search {
   display: flex;
