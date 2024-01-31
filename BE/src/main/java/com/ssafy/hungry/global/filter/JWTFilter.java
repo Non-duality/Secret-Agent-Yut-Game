@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hungry.domain.login.dto.LoginDto;
 import com.ssafy.hungry.domain.user.detail.CustomUserDetails;
 import com.ssafy.hungry.global.util.JWTUtil;
+<<<<<<< HEAD
+=======
+import com.ssafy.hungry.domain.user.dto.LoginDto;
+>>>>>>> feat/BE-room
 import com.ssafy.hungry.domain.user.entity.TokenEntity;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.repository.TokenRepository;
