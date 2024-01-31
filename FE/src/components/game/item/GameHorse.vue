@@ -1,11 +1,20 @@
 <template>
-  <div class="horse">
-    <button @mouseover="showModal = true" @mouseleave="showModal = false"><img :src="imgSrc" alt="Horse image" /></button>
-    <div class="modal" v-if="showModal">{{ horse }}</div>
+  <div :style="horseStyle">
+    <button
+      @mouseover="MouseOver"
+      @mouseleave="MouseLeave"
+      :style="horseBtnStyle"
+      @click="selectHorse"
+    >
+      <img :src="imgSrc" :style="horseImgStyle" />
+    </button>
+    <div v-if="isMouseOver" :style="horseModalStyle">{{ horse }}</div>
   </div>
 </template>
 
 <script>
+import { useGameStore } from "@/store/gameStore";
+
 export default {
   props: {
     horse: Object,
@@ -13,63 +22,152 @@ export default {
   data() {
     return {
       imgSrc: "",
-      showModal: false, // 모달 상태 관리,
+      isMouseOver: false, // 마우스 오버
     };
   },
+  computed: {
+    // 말 스타일
+    horseStyle() {
+      // 피니아 가져오기
+      const gameStore = useGameStore();
+      const horsesIndex = gameStore.horsesIndex;
+
+      // 기본 스타일 설정.
+      let styles = {
+        position: "fixed",
+        zIndex: "1000",
+        transition: "all 0.5s",
+      };
+
+      // 말이 대기 상태이면.
+      if (this.horse.status === "wait") {
+        // 홍팀
+        if (this.horse.team == 1) {
+          // 앞에 대기 중인 말이 몇개 인지 체크
+          const temp = this.horse.id - this.horse.check;
+          let sub = 0;
+          if (temp > 1) {
+            sub = temp - 1;
+          }
+
+          // 위치를 미리 저장한 배열에서 가져온다.
+          styles.bottom = horsesIndex[0][this.horse.id - 1 - sub].bottom;
+          styles.left = horsesIndex[0][this.horse.id - 1 - sub].left;
+        }
+        // 청팀
+        else {
+          // 앞에 대기 중인 말이 몇개 인지 체크
+          const temp = this.horse.id - this.horse.check;
+          let sub = 0;
+          if (temp > 1) {
+            sub = temp - 1;
+          }
+
+          // 위치를 미리 저장한 배열에서 가져온다.
+          styles.bottom = horsesIndex[1][this.horse.id - 1 - sub].bottom;
+          styles.right = horsesIndex[1][this.horse.id - 1 - sub].right;
+        }
+      }
+      // 말이 이동 중이면.
+      else if (this.horse.status === "ing") {
+        const tileHorse = gameStore.tileHorse;
+
+        styles.bottom = tileHorse[this.horse.index].bottom;
+        styles.right = tileHorse[this.horse.index].right;
+      }
+      // 말이 들어 왔다면.
+      else {
+      }
+
+      return styles;
+    },
+
+    // 말 버튼 스타일
+    horseBtnStyle() {
+      let styles = {
+        background: "none",
+        border: "none",
+        padding: "0",
+        margin: "0",
+        cursor: "pointer",
+      };
+
+      return styles;
+    },
+
+    // 말 정보 모달 스타일
+    horseModalStyle() {
+      let styles = {
+        position: "fixed",
+        zIndex: "1000",
+        top: "500px",
+        width: "200px",
+        height: "200px",
+      };
+      if (this.horse.team === 1) {
+        styles.left = "250px";
+        styles.backgroundColor = "rgba(255, 2, 2, 0.05)";
+      } else {
+        styles.right = "250px";
+        styles.backgroundColor = "rgba(36, 2, 255, 0.05)";
+      }
+      return styles;
+    },
+
+    // 말 이미지 스타일
+    horseImgStyle() {
+      let styles = {
+        width: "50px",
+      };
+      if (this.isMouseOver) {
+        styles.transform = "scale(1.2)"; // 확대
+        styles.transition = "transform 0.3s ease";
+      }
+      return styles;
+    },
+  },
+
+  // 이미지를 동적으로 가져오기.
   async mounted() {
     try {
-      if (this.horse.img === "horse1") {
-        const module = await import(`@/assets/img/horse/horse1.png`);
-        this.imgSrc = module.default;
-      }else if(this.horse.img === "horse2"){
-        const module = await import(`@/assets/img/horse/horse2.png`);
-        this.imgSrc = module.default;
-      }else if(this.horse.img === "horse3"){
-        const module = await import(`@/assets/img/horse/horse3.png`);
-        this.imgSrc = module.default;
-      }else if(this.horse.img === "horse4"){
-        const module = await import(`@/assets/img/horse/horse4.png`);
-        this.imgSrc = module.default;
-      }else if(this.horse.img === "horse5"){
-        const module = await import(`@/assets/img/horse/horse5.png`);
-        this.imgSrc = module.default;
+      switch (this.horse.img) {
+        case "horse1":
+          this.imgSrc = (await import("@/assets/img/horse/horse1.png")).default;
+          break;
+        case "horse2":
+          this.imgSrc = (await import("@/assets/img/horse/horse2.png")).default;
+          break;
+        case "horse3":
+          this.imgSrc = (await import("@/assets/img/horse/horse3.png")).default;
+          break;
+        case "horse4":
+          this.imgSrc = (await import("@/assets/img/horse/horse4.png")).default;
+          break;
+        case "horse5":
+          this.imgSrc = (await import("@/assets/img/horse/horse5.png")).default;
+          break;
+        default:
+          this.imgSrc = "/path/to/default-image.png"; // 기본 이미지 경로
+          break;
       }
     } catch (error) {
       console.error("Error loading image:", error);
-      // 오류 발생시 기본 이미지 경로 또는 대체 이미지 설정
-      this.imgSrc = "/path/to/default-image.png";
+      this.imgSrc = "/path/to/default-image.png"; // 오류 발생 시 기본 이미지 경로
     }
+  },
+  methods: {
+    MouseOver() {
+      this.isMouseOver = true;
+    },
+    MouseLeave() {
+      this.isMouseOver = false;
+    },
+    selectHorse() {
+      this.$emit("selectHorse", this.horse);
+    },
   },
 };
 </script>
 
 <style>
-.horse button {
-  background: none; /* 배경 제거 */
-  border: none; /* 테두리 제거 */
-  padding: 0; /* 패딩 제거 */
-  margin: 0; /* 마진 제거 */
-  cursor: pointer; /* 커서 스타일 변경 */
-}
-.horse button:hover img {
-  transform: scale(1.1); /* 이미지 확대 */
-  transition: transform 0.3s ease, opacity 0.3s ease; /* 부드러운 전환 효과 */
-}
-.horse img {
-  width: 50px;
-  margin-left: 10px;
-}
-
-.modal {
-  /* 모달 스타일 */
-  position: fixed;
-  background: rgba(255, 255, 255, 0.388);
-  border: 1px solid #ddd;
-  top: 300px;
-  right: 300px;
-  padding: 10px;
-  width: 200px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-}
 </style>

@@ -9,15 +9,15 @@
 .game-video-team1{
     position: absolute;
     /* width: 200px; */
-    top: 10px;
-    left: 50px;
+    top: 70px;
+    left: 40px;
 }
 
 .game-video-team2{
     position: absolute;
     /* width: 200px; */
-    top: 10px;
-    right: 50px;
+    top: 70px;
+    right: 40px;
 }
 
 .game-board-main{
@@ -30,4 +30,20 @@
     position: absolute;
     bottom: 10px;
     left: 10px;
+}
+
+.game-red-team-name{
+    position: absolute;
+    color: red;
+    top: 20px;
+    left: 100px;
+    font-size: xx-large;
+}
+
+.game-blue-team-name{
+    position: absolute;
+    color: blue;
+    top: 20px;
+    right: 100px;
+    font-size: xx-large;
 }

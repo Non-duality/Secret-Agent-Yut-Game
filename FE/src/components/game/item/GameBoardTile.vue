@@ -1,6 +1,6 @@
 <template>
-  <div class="tile" :style="tileStyle">
-    {{ tile.id }}
+  <div :style="tileStyle">
+    <!-- {{ tile.id }} -->
   </div>
 </template>
   
@@ -37,7 +37,6 @@ export default {
 
       if ([22, 27].includes(this.tile.id)) {
         styles.backgroundImage = `url(${this.taegeukImageUrl})`;
-        console.log(styles.backgroundImage);
         styles.backgroundSize = "cover"; // This will ensure that your image covers the entire tile
         styles.backgroundPosition = "center";
       } else {

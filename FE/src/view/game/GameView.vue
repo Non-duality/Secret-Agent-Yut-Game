@@ -1,7 +1,9 @@
 <template>
     <div class="game-main">
+        <span class="game-red-team-name">홍팀</span>
         <GameVideo class="game-video-team1"/>
         <GameBoard class="game-board-main"/>
+        <span class="game-blue-team-name">청팀</span>
         <GameVideo class="game-video-team2"/>
         <!-- <GameChat class="game-chat-main"/> -->
     </div>
