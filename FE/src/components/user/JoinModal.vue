@@ -143,7 +143,7 @@ export default {
       } else {
         const userStore = useUserStore();
         
-        const joinUserObject = {
+        const joinUser = {
           email: this.email,
           nickname: this.nickname,
           password: this.password,
@@ -152,8 +152,7 @@ export default {
         }
 
         // 회원가입 전송 (500에러 발생!)
-        const joinUser = JSON.stringify(joinUserObject)
-        userStore.userJoin(joinUser)
+        useUserStore().userJoin(JSON.stringify(joinUser))
       }
 
       // 비밀번호가 불일치하는 경우 알림을 표시합니다.
@@ -162,22 +161,6 @@ export default {
         return;
       }
     },
-
-    // 패스워드 일치 여부 확인 (희웅)
-    // checkPassword() {
-    //   const passwordInput = document.getElementById("passwordInput").value;
-    //   const confirmPasswordInput = document.getElementById(
-    //     "confirmPasswordInput"
-    //   ).value;
-
-    //   if (passwordInput !== confirmPasswordInput) {
-    //     // 패스워드가 일치하지 않으면 불일치 여부를 true로 설정하여 메시지 표시
-    //     this.passwordMismatch = true;
-    //   } else {
-    //     // 패스워드가 일치하면 불일치 여부를 false로 설정하여 메시지 감춤
-    //     this.passwordMismatch = false;
-    //   }
-    // },
 
     selectGender(gender) {
       this.gender = gender;

@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { cloneDeep } from "lodash";
 import { jwtDecode } from "jwt-decode";
 
-import { userConfirm, userJoin, findById } from "@/api/user";
+import { userConfirm, userDoJoin, findById } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useUserStore = defineStore("user", {
@@ -67,30 +67,10 @@ export const useUserStore = defineStore("user", {
       this.showModalSide = !this.showModalSide;
     },
 
-    userJoin: async (joinUser) => {
-      await userJoin(
-        joinUser,
-        (response) => {
-          // 확인용
-          alert('회원가입 성공')
-          console.log(response)
-          console.log("회원가입 성공")
-        },
-
-        (error) => {
-          // 확인용
-          alert('회원가입 실패')
-          console.log(error)
-          console.log("회원가입 실패")
-        }
-      )
-    },
-
     userLogin: async (loginUser) => {
       await userConfirm(
         loginUser,
         (response) => {
-          const store = useUserStore();
           console.log("로그인 성공")
           if (response.status === httpStatusCode.OK) {
             let { data } = response;
@@ -115,6 +95,25 @@ export const useUserStore = defineStore("user", {
           useUserStore().isLogin = false;
         }
       );
+    },
+
+    userJoin: async (joinUser) => {
+      await userDoJoin(
+        joinUser,
+        (response) => {
+          // 확인용
+          alert('회원가입 성공')
+          console.log(response)
+          console.log("회원가입 성공")
+        },
+
+        (error) => {
+          // 확인용
+          alert('회원가입 실패')
+          console.log(error)
+          console.log("회원가입 실패")
+        }
+      )
     },
 
     getUserInfo: (token) => {
