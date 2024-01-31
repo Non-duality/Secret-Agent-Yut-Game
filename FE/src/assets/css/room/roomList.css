@@ -24,6 +24,20 @@
   margin: 30px;
 }
 
+/* 새로고침 돌아가는 효과 */
+.rotate-animation {
+  animation: rotateAnimation 2s ease;
+}
+
+@keyframes rotateAnimation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* 실게 게임 목록 스크롤바 지정 */
 .room-list-content {
   height: 100%;
