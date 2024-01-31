@@ -38,12 +38,14 @@ const router = createRouter({
         {
           path: 'list',
           name: 'list',
-          component: RoomListViewVue
+          component: RoomListViewVue,
+          meta: { background: 'room-list' }
         },
         {
           path: 'wait/:roomNum',
           name: 'wait',
-          component: GameWaitingRoomVue
+          component: GameWaitingRoomVue,
+          meta: { background: 'room-wait' }
         },
       ]
     },
