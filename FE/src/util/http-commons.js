@@ -6,6 +6,7 @@ const { VITE_VUE_API_URL } = import.meta.env;
 // station vue api axios instance
 function stationAxios() {
   const instance = axios.create({
+    baseURL: VITE_VUE_API_URL,
     headers: {
       "Content-Type": "application/json;charset=utf-8",
     },
@@ -22,6 +23,7 @@ function localAxios() {
     //   "Content-Type": "application/json;charset=utf-8",
     // },
   });
+
   // Request 발생 시 적용할 내용.
   instance.defaults.headers.common["Authorization"] = "";
   instance.defaults.headers.post["Content-Type"] = "application/json";
@@ -38,7 +40,7 @@ function localAxios() {
   // accessToken의 값이 유효하지 않은 경우,
   // refreshToken을 이용해 재발급 처리.
   let isTokenRefreshing = false;
-
+  
   instance.interceptors.response.use(
     (response) => {
       return response;

@@ -50,7 +50,6 @@ export default {
       showJoinModal,
       openModal: store.openModal,
       closeModal: store.closeModal,
-      loginTest: store.loginTest,
     };
   },
 };
