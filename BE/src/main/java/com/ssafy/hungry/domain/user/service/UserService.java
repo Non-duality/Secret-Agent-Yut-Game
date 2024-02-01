@@ -1,6 +1,5 @@
 package com.ssafy.hungry.domain.user.service;
 
-import com.ssafy.hungry.domain.login.dto.LoginDto;
 import com.ssafy.hungry.domain.user.detail.CustomUserDetails;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.repository.UserRepository;
@@ -25,6 +24,7 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+
     //회원 가입 메소드
     public Boolean join(JoinDto joinDto) {
         String email = joinDto.getEmail();
@@ -43,6 +43,21 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
 
         userRepository.save(user);
         return true;
+    }
+
+    // 아이디 중복 검사
+    public boolean checkId(String email){
+        return userRepository.existsByEmail(email);
+    }
+
+    // 스웨거용
+    public UserEntity getProfile(String userId){
+        return userRepository.findByEmail(userId);
+    }
+
+    // 사용자 정보 변경
+    public void modifyProfile(String userId, MyInfoDto dto) {
+
     }
 
 //    public MyInfoDto myInfo(String email) {
@@ -70,5 +85,9 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
 
     public UserEntity findByEmail(String email){
         return userRepository.findByEmail(email);
+    }
+
+    public void deleteUser(String userId) {
+        userRepository.deleteByEmail(userId);
     }
 }

@@ -26,6 +26,10 @@ spring:
 
   jwt:
     secret: ssafyD205rlatnqlsdlwnaldlgmldnddidtjdrbqkrwlgnsdlwnsgmlghkdlxlddkwkdkwk
+
+springdoc:
+  show-login-endpoint: true
+
 # ?? ?? ??
 #logging:
 #  level:
@@ -33,11 +37,3 @@ spring:
 #    # jpa hibernate? ???? sql? ??? ??? ???? ?? ??
 #    org.hibernate.SQL: debug
 #    org.hibernate.type: trace # ?? ???? ????? ???? ??
-
-OPENVIDU_URL: http://localhost:4443/
-OPENVIDU_SECRET: MY_SECRET
-
-server:
-  ssl:
-    enabled: false
-  port: 8080

@@ -1,6 +1,7 @@
 package com.ssafy.hungry.domain.room.controller;
 
 import com.ssafy.hungry.domain.room.dto.CreateRoomDto;
+import com.ssafy.hungry.domain.room.dto.RoomDetailDto;
 import com.ssafy.hungry.domain.room.dto.RoomDto;
 import com.ssafy.hungry.domain.room.entity.RoomEntity;
 import com.ssafy.hungry.domain.room.service.RoomRedisService;
@@ -33,6 +34,15 @@ public class RoomController {
         return new ResponseEntity<>(roomList, HttpStatus.OK);
     }
 
+    // 방 세부 정보 조회
+    @GetMapping("/detail/{roomId}")
+    public ResponseEntity<RoomDetailDto> getRoomDetail(@PathVariable int roomId){
+        log.info("방 세부 정보 조회");
+        RoomDetailDto roomDetail = roomService.getRoomDetail(roomId);
+
+        return new ResponseEntity<>(roomDetail, HttpStatus.OK);
+    }
+
     // 방 생성. 방 생성 후 room code 반환.
     @PostMapping("/create")
     public ResponseEntity<String> createRoom(@RequestBody CreateRoomDto createRoomDto){
@@ -47,8 +57,9 @@ public class RoomController {
 
     // 방 입장 가능 여부 조회
     @PostMapping("/{roomId}")
-    public ResponseEntity<String> canEnterRoom(@PathVariable int roomId, Map<String, String> roomPassword){
+    public ResponseEntity<String> canEnterRoom(@PathVariable int roomId, @RequestBody Map<String, String> roomPassword){
         log.info("canEnterRoom 진입 / roomId : " + roomId);
+
 
         String password = roomPassword.get("password");
         RoomEntity room = roomService.getRoomByRoomId(roomId);

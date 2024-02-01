@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface RoomRepository extends JpaRepository<RoomEntity, Integer> {
 
-    // owner_id를 통해 방 찾기 (조건 : 종료되지 않은 방)
+    // owner_id를 통해 방 전체 찾기 (조건 : 종료되지 않은 방)
     List<RoomEntity> findAllByEndAtIsNullOrderByStartAt();
 
-    // 게임을 시작하지 않거나, 종료되지 않은 방의 room code 찾기
+    // 게임을 시작하지 않거나, 종료되지 않은 방
     RoomEntity findByEndAtIsNullAndRoomId(int roomId);
 
     // room code 찾기
