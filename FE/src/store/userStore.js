@@ -62,6 +62,8 @@ export const useUserStore = defineStore("user", {
         this.showDropOutModal = false;
       } else if (value === "password") {
         this.showSuccessPassword = false;
+      } else if(value === "spy"){
+        this.showSpyModal = false;
       }
     },
 

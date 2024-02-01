@@ -1,9 +1,8 @@
 <template>
   <div id="main-container" class="container">
     <div id="join" v-if="!session">
-      <div id="img-div">
-      </div>
-      <div id="join-dialog" class="jumbotron vertical-center">
+      <div id="img-div"></div>
+      <div id="join-dialog">
         <h1>Join a video session</h1>
         <div class="form-group">
           <p>
@@ -44,20 +43,27 @@
           value="Leave session"
         />
       </div>
-      <div id="main-video" class="col-md-6">
-        <user-video :stream-manager="mainStreamManager" />
-      </div>
-      <div id="video-container" class="col-md-6">
-        <user-video
-          :stream-manager="publisher"
-          @click="updateMainVideoStreamManager(publisher)"
-        />
-        <user-video
-          v-for="sub in subscribers"
-          :key="sub.stream.connection.connectionId"
-          :stream-manager="sub"
-          @click="updateMainVideoStreamManager(sub)"
-        />
+
+      <div class="container">
+        <div id="main-container">
+          <user-video :stream-manager="mainStreamManager" />
+        </div>
+
+        <div id="video-container">
+          <!-- 현재 참여자를 띄워주는 RTC -->
+          <user-video
+            v-for="sub in subscribers"
+            :key="sub.stream.connection.connectionId"
+            :stream-manager="sub"
+            @click="updateMainVideoStreamManager(sub)"
+          />
+
+          <!--  -->
+          <user-video
+            :stream-manager="publisher"
+            @click="updateMainVideoStreamManager(publisher)"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -72,11 +78,12 @@ import UserVideo from "@/components/game/openvidu/UserVideo.vue";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080/';
+const APPLICATION_SERVER_URL =
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
 export default {
   name: "App",
-  
+
   setup() {
     useUserStore().showModalSide = false;
   },
@@ -133,12 +140,11 @@ export default {
 
       // Get a token from the OpenVidu deployment
       this.getToken(this.mySessionId).then((token) => {
-
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-        this.session.connect(token, { clientData: this.myUserName })
+        this.session
+          .connect(token, { clientData: this.myUserName })
           .then(() => {
-
             // --- 5) Get your own camera stream with the desired properties ---
 
             // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
@@ -163,7 +169,11 @@ export default {
             this.session.publish(this.publisher);
           })
           .catch((error) => {
-            console.log("There was an error connecting to the session:", error.code, error.message);
+            console.log(
+              "There was an error connecting to the session:",
+              error.code,
+              error.message
+            );
           });
       });
 
@@ -211,16 +221,24 @@ export default {
     },
 
     async createSession(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId }, {
-        headers: { 'Content-Type': 'application/json', },
-      });
+      const response = await axios.post(
+        APPLICATION_SERVER_URL + "api/sessions",
+        { customSessionId: sessionId },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
       return response.data; // The sessionId
     },
 
     async createToken(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections', {}, {
-        headers: { 'Content-Type': 'application/json', },
-      });
+      const response = await axios.post(
+        APPLICATION_SERVER_URL + "api/sessions/" + sessionId + "/connections",
+        {},
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
       return response.data; // The token
     },
   },
