@@ -5,10 +5,10 @@
     margin-top: 50px;
 }
 .wait-left{
-    background-color: rgba(0, 0, 0, 0.376);
+    background-color: rgba(0, 0, 0, 0.474);
     border-radius: 10px;
-    width: 550px;
-    height: 550px;
+    max-width: 32vw;
+    height: 75vh;
 }
 .wait-right{
     margin-left: 50px;
@@ -17,7 +17,7 @@
     flex-direction: column;
 }
 .wait-btn{
-    background-color: rgba(0, 0, 0, 0.628);
+    background-color: rgba(0, 0, 0, 0.9);
     border-radius: 10px;
     margin-top: 20px;
     height: 80px;
