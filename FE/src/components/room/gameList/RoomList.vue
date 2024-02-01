@@ -15,7 +15,7 @@
     <div class="room-list-content">
       <RoomListComponent 
       v-for="roomInfo in roomInfos" 
-      :key="roomInfo.id"
+      :key="roomInfo.roomId"
       :roomInfo="roomInfo"
       @click="$emit('showRoomInfo', roomInfo)"
       class="room-list-component"
@@ -53,7 +53,7 @@
       // 방 정보를 실시간으로 계산
       roomInfos() {
         const roomStore = useRoomStore();
-        return roomStore.roomListData;
+        return roomStore.roomListSomeData;
       }
     },
 
@@ -69,6 +69,9 @@
         setTimeout(() => {
           this.isRotating = false;
         }, 2000)
+        
+        const roomStore = useRoomStore();
+        roomStore.getRoomSomeListData()
 
       }
     },

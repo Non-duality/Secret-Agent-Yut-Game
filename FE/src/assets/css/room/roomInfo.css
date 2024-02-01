@@ -44,8 +44,13 @@ button {
   background-color: #2D81FF;
   opacity: 100%;
   border-radius: 50px;
-  width: 50%;
+  width: 30%;
   align-self: center;
+}
+
+button:hover {
+  box-shadow: 3px 3px 3px rgba(84, 122, 171, 0.5);
+  text-shadow: 1px 1px 1px;
 }
 
 /* 텍스트 정렬 */

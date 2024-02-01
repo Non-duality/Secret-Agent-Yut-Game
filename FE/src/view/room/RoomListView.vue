@@ -65,7 +65,7 @@
     computed: {
       defaultRoomInfo() {
         const roomStore = useRoomStore();
-        return roomStore.roomListData[0] || {};
+        return roomStore.roomListSomeData[0] || {};
       },
 
       // 방 생성 모달
@@ -93,6 +93,11 @@
         const roomStore = useRoomStore();
         roomStore.openModal(modalType);
       },
+    },
+
+    created() {
+      const roomStore =useRoomStore();
+      roomStore.getRoomSomeListData()
     }
   }
 </script>

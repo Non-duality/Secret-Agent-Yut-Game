@@ -110,15 +110,10 @@
           })
 
           // 방 생성 모달 닫기
-          this.closeModal('roomMaking')
+          roomStore.closeModal('roomMaking')
         }
       },
-      
-      // 모달 관리
-      closeModal(modalType) {
-        const roomStore = useRoomStore();
-        roomStore.closeModal(modalType);
-      },
+
     },
 
     // 공개 여부를 계속 감시

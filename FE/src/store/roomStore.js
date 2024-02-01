@@ -1,10 +1,18 @@
 import { defineStore } from 'pinia';
 
+import { getRoomSomeList } from "@/api/room";
+
 export const useRoomStore = defineStore('room', {
   // 반응형 상태 (data)
   state: () => ({
+    // 게임 방 전체 정보
     roomListData: [
       { id: 1, currentPlayers: 3, title: '방가방가 햄토리', isPublic: false, password: 'qwer1234', speed: 1, theme: 'lunaNewYear' },
+    ],
+
+    // 게임 방 생략 정보
+    roomListSomeData:[
+
     ],
 
     // 모달 관련
@@ -32,6 +40,20 @@ export const useRoomStore = defineStore('room', {
       }
     },
 
+    // 방 일부 정보 DB에서 받아오기
+    getRoomSomeListData: async function() {
+      await getRoomSomeList(
+        (response) => {
+          const { data } = response;
+          this.roomListSomeData = data;
+          console.log('방 데이터 조회')
+        },
+        (error) => {
+          console.log(error)
+          console.log('방 데이터 조회 실패')
+        }
+      )
+    },
 
     // 방 추가
     addRoom(roomData) {
