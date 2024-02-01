@@ -7,10 +7,9 @@ async function userConfirm(param, success, fail) {
   await local.post(`/auth/login`, param).then(success).catch(fail);
 }
 
-async function userJoin(param, success, fail) {
-  console.log("param", param);
-  await local.post(`/join`, param).then(success).catch(fail);
-  console.log("userJoin ok");
+async function userDoJoin(param, success, fail) {
+  console.log(param);
+  await local.post(`/user/join`, param).then(success).catch(fail);
 }
 
 async function findById(userid, success, fail) {
@@ -27,4 +26,4 @@ async function logout(userid, success, fail) {
   await local.get(`/user/logout/${userid}`).then(success).catch(fail);
 }
 
-export { userConfirm, userJoin, findById, tokenRegeneration, logout };
+export { userConfirm, userDoJoin, findById, tokenRegeneration, logout };
