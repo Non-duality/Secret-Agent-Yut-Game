@@ -120,8 +120,7 @@ function findChildRouteByPath(routes, pathToFind) {
 // 리다이렉션 처리
 router.beforeEach((to, from, next) => {
   if (from.path.startsWith("/room/wait")) {
-    const confirmMessage =
-      "정말 대기방에서 나가시겠습니까?";
+    const confirmMessage = "정말 대기방에서 나가시겠습니까?";
     if (confirm(confirmMessage)) {
       // 사용자가 예를 선택하면 다음 단계로 이동
       next();
