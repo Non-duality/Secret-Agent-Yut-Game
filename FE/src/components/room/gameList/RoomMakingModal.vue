@@ -7,34 +7,33 @@
       <div class="form-group">
         <label for="title">방 제목</label>
         <!-- 악성 유저 고려해서 방 제목 길이 제한 -->
-        <input type="text" id="title" maxlength="30" v-model="roomInfo.title" />
+        <input type="text" id="title" maxlength="10" v-model="roomInfo.title" />
       </div>
       <div class="form-group">
         <label for="isPublic">공개 여부</label>
         <div name="theme" id="theme">
           <button
             id="theme-btn"
-            @click="selectScope('공개')"
-            :class="{ selected: selectScope === '공개' }"
+            @click="selectScope(true)"
+            :class="{ selected: roomInfo.public === true }"
           >
             공개
           </button>
           <button
             id="theme-btn"
-            @click="selectScope('비공개')"
-            :class="{ selected: selectScope === '비공개' }"
+            @click="selectScope(false)"
+            :class="{ selected: roomInfo.public === false }"
           >
             비공개
           </button>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" v-if="!roomInfo.public">
         <label for="password">비밀번호</label>
         <!-- 악성 유저 고려해서 비밀번호 길이 제한 -->
         <input
           type="text"
           id="password"
-          :disabled="roomInfo.isPublic"
           maxlength="10"
           v-model="roomInfo.password"
         />
@@ -46,14 +45,14 @@
             <button
               id="theme-btn"
               @click="selectTheme('설날')"
-              :class="{ selected: selectTheme === '설날' }"
+              :class="{ selected: roomInfo.theme === '설날' }"
             >
               설날
             </button>
             <button
               id="theme-btn"
               @click="selectTheme('추석')"
-              :class="{ selected: selectTheme === '추석' }"
+              :class="{ selected: roomInfo.theme === '추석' }"
             >
               추석
             </button>
@@ -63,30 +62,26 @@
       <div class="form-group">
         <label for="speed">속도</label>
         <div>
-          느림
-          <input
-            type="radio"
-            name="speed"
-            id="slow"
-            value="1"
-            v-model="roomInfo.speed"
-          />
-          보통
-          <input
-            type="radio"
-            name="speed"
-            id="normal"
-            value="2"
-            v-model="roomInfo.speed"
-          />
-          빠름
-          <input
-            type="radio"
-            name="speed"
-            id="fast"
-            value="3"
-            v-model="roomInfo.speed"
-          />
+          <button
+            id="theme-btn"
+            @click="selectSpeed('느림')"
+            :class="{ selected: roomInfo.speed === '느림' }"
+          >
+            느림
+          </button>
+          <button
+            id="theme-btn"
+            @click="selectSpeed('보통')"
+            :class="{ selected: roomInfo.speed === '보통' }"
+          >
+            보통</button
+          ><button
+            id="theme-btn"
+            @click="selectSpeed('빠름')"
+            :class="{ selected: roomInfo.speed === '빠름' }"
+          >
+            빠름
+          </button>
         </div>
       </div>
       <div class="button-group">
@@ -111,10 +106,10 @@ export default {
       // 생성할 방 정보
       roomInfo: {
         title: "",
-        isPublic: true,
+        public: true,
         password: "",
-        theme: "",
-        speed: 2,
+        theme: "설날",
+        speed: "보통",
       },
 
       // 임시 유저 데이터 (삭제 필요)
@@ -130,7 +125,7 @@ export default {
       if (roomInfo.title === "") {
         alert("방 제목을 작성해주세요");
       } else if (
-        roomInfo.isPublic === false &&
+        roomInfo.public === false &&
         roomInfo.password.trim() === ""
       ) {
         alert("비공개 방으로 비밀번호를 입력하세요");
@@ -173,6 +168,18 @@ export default {
       const roomStore = useRoomStore();
       roomStore.closeModal(modalType);
     },
+
+    selectScope(val) {
+      this.roomInfo.public = val;
+    },
+
+    selectTheme(val) {
+      this.roomInfo.theme = val;
+    },
+
+    selectSpeed(val){
+      this.roomInfo.speed = val;
+    }
   },
 
   // 공개 여부를 계속 감시
