@@ -6,14 +6,29 @@ export const useGameStore = defineStore("game", {
     return {
       // 윷 던진 결과
       throwRes: [false, false, false, false],
+      yutText: "도",
       yutRes: 0,
+      // 내 팀 정보.
+      myTeam: 1,
+      // 말 선택 flag.
+      isSelect: false,
+      // 대각선으로 갈지 말지 선택
+      isGoDiagonal: false,
       // 말
       redHorses: [
         { id: 1, index: 0, team: 1, status: "wait", img: "horse1", check: 0 },
         { id: 2, index: 0, team: 1, status: "wait", img: "horse2", check: 1 },
         { id: 3, index: 0, team: 1, status: "wait", img: "horse3", check: 2 },
         { id: 4, index: 0, team: 1, status: "wait", img: "horse4", check: 3 },
-        { id: 5, index: 0, team: 1, status: "wait", img: "horse5", check: 4 },
+        {
+          id: 5,
+          index: 0,
+          team: 1,
+          status: "wait",
+          img: "horse5",
+          check: 4,
+          group: false,
+        },
       ],
       blueHorses: [
         { id: 1, index: 0, team: 2, status: "wait", img: "horse1", check: 0 },
@@ -31,11 +46,11 @@ export const useGameStore = defineStore("game", {
           { bottom: "30px", left: "105px" },
         ],
         [
-          { bottom: "160px", right: "140px" },
-          { bottom: "160px", right: "70px" },
-          { bottom: "90px", right: "140px" },
-          { bottom: "90px", right: "70px" },
-          { bottom: "30px", right: "105px" },
+          { bottom: "160px", left: "1356px" },
+          { bottom: "160px", left: "1426px" },
+          { bottom: "90px", left: "1356px" },
+          { bottom: "90px", left: "1426px" },
+          { bottom: "30px", left: "1391px" },
         ],
       ],
       // 말이 이동할 위치
@@ -73,54 +88,180 @@ export const useGameStore = defineStore("game", {
       ],
       // 타일
       tiles: [
-        { id: 0, position: "right" },
-        { id: 1, position: "right" },
-        { id: 2, position: "right" },
-        { id: 3, position: "right" },
-        { id: 4, position: "right" },
-        { id: 5, position: "right" },
-        { id: 6, position: "top" },
-        { id: 7, position: "top" },
-        { id: 8, position: "top" },
-        { id: 9, position: "top" },
-        { id: 10, position: "top" },
-        { id: 11, position: "left" },
-        { id: 12, position: "left" },
-        { id: 13, position: "left" },
-        { id: 14, position: "left" },
-        { id: 15, position: "left" },
-        { id: 16, position: "bottom" },
-        { id: 17, position: "bottom" },
-        { id: 18, position: "bottom" },
-        { id: 19, position: "bottom" },
-        { id: 20, position: "top-right" },
-        { id: 21, position: "top-right" },
-        { id: 22, position: "center" },
-        { id: 23, position: "bottom-left" },
-        { id: 24, position: "bottom-left" },
-        { id: 25, position: "top-left" },
-        { id: 26, position: "top-left" },
-        { id: 27, position: "center" },
-        { id: 28, position: "bottom-right" },
-        { id: 29, position: "bottom-right" },
+        { id: 0, position: "right", horse: [] },
+        { id: 1, position: "right", horse: [] },
+        { id: 2, position: "right", horse: [] },
+        { id: 3, position: "right", horse: [] },
+        { id: 4, position: "right", horse: [] },
+        { id: 5, position: "right", horse: [] },
+        { id: 6, position: "top", horse: [] },
+        { id: 7, position: "top", horse: [] },
+        { id: 8, position: "top", horse: [] },
+        { id: 9, position: "top", horse: [] },
+        { id: 10, position: "top", horse: [] },
+        { id: 11, position: "left", horse: [] },
+        { id: 12, position: "left", horse: [] },
+        { id: 13, position: "left", horse: [] },
+        { id: 14, position: "left", horse: [] },
+        { id: 15, position: "left", horse: [] },
+        { id: 16, position: "bottom", horse: [] },
+        { id: 17, position: "bottom", horse: [] },
+        { id: 18, position: "bottom", horse: [] },
+        { id: 19, position: "bottom", horse: [] },
+        { id: 20, position: "top-right", horse: [] },
+        { id: 21, position: "top-right", horse: [] },
+        { id: 22, position: "center", horse: [] },
+        { id: 23, position: "bottom-left", horse: [] },
+        { id: 24, position: "bottom-left", horse: [] },
+        { id: 25, position: "top-left", horse: [] },
+        { id: 26, position: "top-left", horse: [] },
+        { id: 27, position: "center", horse: [] },
+        { id: 28, position: "bottom-right", horse: [] },
+        { id: 29, position: "bottom-right", horse: [] },
       ],
     };
   },
 
   // 메서드 (function)
   actions: {
-    moveHorse() {
-      const horseInRed = this.redHorses.find((horse) => horse.id === 1);
+    // 말 이동
+    moveHorse(selectedHorse) {
+      const horseInfo =
+        selectedHorse.team === 1
+          ? this.redHorses.find((horse) => horse.id === selectedHorse.id)
+          : this.blueHorses.find((horse) => horse.id === selectedHorse.id);
 
-      horseInRed.index += 1;
-      if (horseInRed.status === "wait") {
-        for (var i = 1; i < 5; i++) {
-          this.redHorses[i].check -= 1;
+      let target = horseInfo.index + this.yutRes;
+
+      // 5, 10 모서리 출발
+      if (this.isGoDiagonal) target += 14;
+      // 처음 출발할때는 상태를 바꿔야한다.
+      if (horseInfo.status === "wait") {
+        // 처음 출발한 말을 0번에 넣어 시작한다.
+        this.tiles[0].horse.push(horseInfo);
+
+        // 대기 중인 말이 빠지면 대기 말 재배열.
+        for (var i = horseInfo.id; i < 5; i++) {
+          if (selectedHorse.team === 1) this.redHorses[i].check -= 1;
+          else this.blueHorses[i].check -= 1;
         }
-        horseInRed.status = "ing";
+
+        // 출발한 말의 상태를 바꾼다.
+        horseInfo.status = "ing";
+      }
+
+      // 다른 말 체크
+      this.horseCheck(horseInfo, target);
+      // 말 이동
+      this.moveTo(horseInfo.index, target);
+      this.isGoDiagonal = false;
+    },
+
+    // 이동하는 곳에 다른 말이 있나 체크.
+    horseCheck(horseInfo, target) {
+      // console.log(horseInfo + " " + target);
+      // 만약 팀이 다르다면.
+      if (
+        this.tiles[target].horse.length != 0 &&
+        this.tiles[horseInfo.index].horse[0].team !=
+          this.tiles[target].horse[0].team
+      ) {
+        for (var i = 0; i < this.tiles[target].horse.length; i++) {
+          const horsedel =
+            this.tiles[target].horse[i].team === 1
+              ? this.redHorses.find(
+                  (horse) => horse.id === this.tiles[target].horse[i].id
+                )
+              : this.blueHorses.find(
+                  (horse) => horse.id === this.tiles[target].horse[i].id
+                );
+
+          horsedel.index = 0;
+          horsedel.status = "wait";
+          for (var j = horsedel.id; j < 5; j++) {
+            if (horsedel.team === 1) this.redHorses[j].check += 1;
+            else this.blueHorses[j].check += 1;
+          }
+        }
+        this.tiles[target].horse = [];
+      }
+
+      this.tiles[target].horse.push(...this.tiles[horseInfo.index].horse);
+      // 전에 있던 타일의 말 정보를 초기화한다.
+      this.tiles[horseInfo.index].horse = [];
+    },
+
+    // 말 이동 함수
+    moveTo(from, to) {
+      // 이동 전 타일에서 말 배열의 크기를 가져온다.
+      const len = this.tiles[to].horse.length;
+      // 팀 정보.
+      const team = this.tiles[to].horse[0].team;
+
+      // 모서리를 통과할때.
+      if (this.yutRes != -1 && Math.trunc(from / 5) != Math.trunc(to / 5)) {
+        // 순간이동을 방지하기 위해 모서리를 찍고 목적지로 이동한다.
+        for (var i = 0; i < len; i++) {
+          const horseInfo =
+            team === 1
+              ? this.redHorses.find(
+                  (horse) => horse.id === this.tiles[to].horse[i].id
+                )
+              : this.blueHorses.find(
+                  (horse) => horse.id === this.tiles[to].horse[i].id
+                );
+          horseInfo.index = Math.trunc(to / 5) * 5;
+          console.log(to / 5 + " " + Math.trunc(from / 5));
+        }
+        setTimeout(() => {
+          for (var i = 0; i < len; i++) {
+            const horseInfo =
+              team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[to].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[to].horse[i].id
+                  );
+
+            horseInfo.index = to;
+          }
+        }, 300);
+      }
+      // 모서리에서 이동.
+      else if ([5, 10].includes(from) && this.isGoDiagonal) {
+        to += 15;
+        // 그룹을 다 이동 시킨다.
+        for (var i = 0; i < len; i++) {
+          const horseInfo =
+            team === 1
+              ? this.redHorses.find(
+                  (horse) => horse.id === this.tiles[to].horse[i].id
+                )
+              : this.blueHorses.find(
+                  (horse) => horse.id === this.tiles[to].horse[i].id
+                );
+          horseInfo.index = to;
+        }
+      }
+      // 평범한 이동
+      else {
+        // 그룹을 다 이동 시킨다.
+        for (var i = 0; i < len; i++) {
+          const horseInfo =
+            team === 1
+              ? this.redHorses.find(
+                  (horse) => horse.id === this.tiles[to].horse[i].id
+                )
+              : this.blueHorses.find(
+                  (horse) => horse.id === this.tiles[to].horse[i].id
+                );
+          horseInfo.index = to;
+        }
       }
     },
 
+    // 윷 던지기
     yutThrow() {
       // 총 4번의 랜덤을 발생
       // false가 뒤집어 진거
@@ -135,31 +276,35 @@ export const useGameStore = defineStore("game", {
         } else {
           this.throwRes[i] = false;
         }
-        console.log("rand = " + rand);
+        // console.log("rand = " + rand);
       }
 
       // 저장된 결과를 계산.
       switch (cnt) {
         case 0:
           this.yutRes = 4;
+          this.yutText = "윷";
           break;
         case 1:
-          if(this.throwRes[0])
+          this.yutText = "도";
+          if (this.throwRes[0]) {
+            this.yutText = "백도";
             this.yutRes = -1;
-          else
-            this.yutRes = 1;
+          } else this.yutRes = 1;
           break;
         case 2:
+          this.yutText = "개";
           this.yutRes = 2;
           break;
         case 3:
+          this.yutText = "걸";
           this.yutRes = 3;
           break;
         case 4:
+          this.yutText = "모";
           this.yutRes = 5;
           break;
         default:
-          // 기본 처리
           break;
       }
       console.log("res = " + this.yutRes);

@@ -1,6 +1,10 @@
 <template>
   <div class="game-board">
     <div class="game-board-tile">
+      <div class="game-yut-res" v-show="isShowRes">
+        <span class="game-yut-res-text">{{ yutText }}</span>
+        <GameYut />
+      </div>
       <GameBoardTile v-for="(tile, index) in tiles" :key="index" :tile="tile" />
     </div>
     <GameHorse
@@ -21,25 +25,43 @@
     >
       test
     </button>
+    <button
+      v-if="isShowGoDig"
+      @click="goDigYes"
+      style="top: 150px; left: 250px; position: absolute"
+    >
+      네
+    </button>
+    <button
+      v-if="isShowGoDig"
+      @click="goDigNo"
+      style="top: 250px; left: 250px; position: absolute"
+    >
+      아니오
+    </button>
   </div>
 </template>
                                                                         
 <script>
 import GameBoardTile from "./item/GameBoardTile.vue";
 import GameHorse from "./item/GameHorse.vue";
-
 import { useGameStore } from "@/store/gameStore";
+import GameYut from "./item/GameYut.vue";
 
 export default {
   components: {
     GameBoardTile,
     GameHorse,
+    GameYut,
   },
   data() {
     return {
-      redWaitIdx: 0,
-      blueWaitIdx: 0,
-      isSelectHorse: null,
+      selectedHorse: null, // 선택한 말
+      isSelectedHorse: false, // 말을 선택했는지.
+      canSelectHorse: false, // 말을 선택할 수 있을 때
+      isShowRes: false, // 윷 던지고 결과 화면 보여줄 때.
+      isShowGoDig: false, // 대각선으로 갈지 말지 선택.
+      yutText: "", // 윷 결과 문자.
     };
   },
   computed: {
@@ -57,14 +79,82 @@ export default {
     },
   },
   methods: {
+    // 윷 던지기
     moveHorse() {
       const gameStore = useGameStore();
+      // 윷 던지기 호출
       gameStore.yutThrow();
-      gameStore.moveHorse();
+      // 윷 던지기 결과 텍스트.
+      this.yutText = gameStore.yutText;
+      this.isShowRes = true;
+      setTimeout(() => {
+        this.isShowRes = false;
+      }, 3000);
+
+      // 만약 아무 말도 안나갔는데 백도가 나오면 그냥 넘어간다.
+      if (gameStore.yutRes == -1) {
+        if (gameStore.myTeam == 1 && gameStore.redHorses[4].check != 5) return;
+        else if (gameStore.myTeam == 2 && gameStore.blueHorses[4].check != 5)
+          return;
+      }
+
+      gameStore.isSelect = true;
+      this.canSelectHorse = true;
+      // 윷 먼저 던지고 선택할때까지 기다린다.
+      this.$watch("isSelectedHorse", () => {
+        // 선택을 하였다면.
+        if (this.isSelectedHorse) {
+          // 말 이동.
+          gameStore.moveHorse(this.selectedHorse);
+          // boolean값들 초기화.
+          this.isSelectedHorse = false;
+          this.canSelectHorse = false;
+          gameStore.isSelect = false;
+        }
+      });
     },
+    // 말 선택시 이벤트 받기
     selectHorse(horse) {
-      this.$watch('')
-    }
+      // 선택할 수 있을 때만 클릭 이벤트 발생.
+      if (this.canSelectHorse) {
+        const gameStore = useGameStore();
+        const myTeam = gameStore.myTeam;
+        // 백도인데 대기중인 말을 선택하면 다시.
+        if (horse.index == 0 && gameStore.yutRes == -1) {
+          console.log("다시");
+        } else if (horse.team == myTeam) {
+          // 만약 대각선이라면.
+          if ([5, 10].includes(horse.index)) {
+            console.log("확인");
+            // 대각선으로 갈지 선택.
+            this.isShowGoDig = true;
+            this.$watch("isShowGoDig", () => {
+              // 선택을 했다면.
+              if (!this.isShowGoDig) {
+                this.selectedHorse = horse;
+                this.isSelectedHorse = true;
+              }
+            });
+          } else {
+            this.selectedHorse = horse;
+            this.isSelectedHorse = true;
+          }
+        } else {
+          console.log("같은 팀을 선택해 주세요.");
+        }
+      }
+    },
+
+    // 대각선으로 갈때
+    goDigYes() {
+      const gameStore = useGameStore();
+      gameStore.isGoDiagonal = true;
+      this.isShowGoDig = false;
+    },
+    // 대각선으로 안갈때
+    goDigNo() {
+      this.isShowGoDig = false;
+    },
   },
 };
 </script>

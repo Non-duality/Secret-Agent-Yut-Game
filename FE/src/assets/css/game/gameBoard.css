@@ -12,3 +12,34 @@
   width: 600px;
   height: 600px;
 }
+.game-yut-res{
+  position: absolute;
+  text-align: center;
+  width: 400px;
+  height: 400px;
+  /* background-color: bisque; */
+  top: 100px;
+  left: 100px;
+  z-index: 100;
+}
+
+.game-yut-res-text{
+  color:bisque;
+  font-size: 100px;
+}
+
+@keyframes throwEffect {
+  0% {
+    transform: rotate(0deg) scaleY(1);
+  }
+  50% {
+    transform: rotate(45deg) translateY(-50px) scaleY(-1);
+  }
+  100% {
+    transform: rotate(180deg) scaleY(1);
+  }
+}
+
+.throw-effect {
+  animation: throwEffect 0.5s ease-out;
+}

@@ -8,7 +8,14 @@
     >
       <img :src="imgSrc" :style="horseImgStyle" />
     </button>
-    <div v-if="isMouseOver" :style="horseModalStyle">{{ horse }}</div>
+    <div
+      @mouseover="MouseOver"
+      @mouseleave="MouseLeave"
+      v-if="isMouseOver"
+      :style="horseModalStyle"
+    >
+      {{ horse }}
+    </div>
   </div>
 </template>
 
@@ -65,20 +72,94 @@ export default {
 
           // 위치를 미리 저장한 배열에서 가져온다.
           styles.bottom = horsesIndex[1][this.horse.id - 1 - sub].bottom;
-          styles.right = horsesIndex[1][this.horse.id - 1 - sub].right;
+          styles.left = horsesIndex[1][this.horse.id - 1 - sub].left;
         }
       }
       // 말이 이동 중이면.
       else if (this.horse.status === "ing") {
         const tileHorse = gameStore.tileHorse;
+        const tiles = gameStore.tiles;
+        // 같이 이동하는 말의 개수가 2개 이상이면 위치를 수정.
+        const len = tiles[this.horse.index].horse.length;
+        if (len > 1) {
+          let bot = tileHorse[this.horse.index].bottom;
+          let rig = tileHorse[this.horse.index].right;
 
-        styles.bottom = tileHorse[this.horse.index].bottom;
-        styles.right = tileHorse[this.horse.index].right;
+          // 각각의 위치를 바꿔준다.
+          switch (len) {
+            case 2:
+              if (tiles[this.horse.index].horse[0].id === this.horse.id) {
+                rig = parseInt(rig.match(/\d+/g), 10) + 25 + "px";
+              }
+              styles.bottom = bot;
+              styles.right = rig;
+              break;
+            case 3:
+              if (tiles[this.horse.index].horse[0].id === this.horse.id) {
+                rig = parseInt(rig.match(/\d+/g), 10) + 25 + "px";
+              } else if (
+                tiles[this.horse.index].horse[2].id === this.horse.id
+              ) {
+                bot = parseInt(bot.match(/\d+/g), 10) - 15 + "px";
+                rig = parseInt(rig.match(/\d+/g), 10) + 15 + "px";
+              }
+              styles.bottom = bot;
+              styles.right = rig;
+              break;
+            case 4:
+              if (tiles[this.horse.index].horse[1].id === this.horse.id) {
+                rig = parseInt(rig.match(/\d+/g), 10) + 25 + "px";
+              } else if (
+                tiles[this.horse.index].horse[2].id === this.horse.id
+              ) {
+                bot = parseInt(bot.match(/\d+/g), 10) - 15 + "px";
+                rig = parseInt(rig.match(/\d+/g), 10) + 25 + "px";
+              } else if (
+                tiles[this.horse.index].horse[3].id === this.horse.id
+              ) {
+                bot = parseInt(bot.match(/\d+/g), 10) - 15 + "px";
+              }
+              styles.bottom = bot;
+              styles.right = rig;
+              break;
+            case 5:
+              if (tiles[this.horse.index].horse[4].id === this.horse.id) {
+                rig = parseInt(rig.match(/\d+/g), 10) - 5 + "px";
+              } else if (
+                tiles[this.horse.index].horse[1].id === this.horse.id
+              ) {
+                rig = parseInt(rig.match(/\d+/g), 10) + 25 + "px";
+              } else if (
+                tiles[this.horse.index].horse[2].id === this.horse.id
+              ) {
+                bot = parseInt(bot.match(/\d+/g), 10) - 15 + "px";
+                rig = parseInt(rig.match(/\d+/g), 10) + 25 + "px";
+              } else if (
+                tiles[this.horse.index].horse[0].id === this.horse.id
+              ) {
+                rig = parseInt(rig.match(/\d+/g), 10) - 5 + "px";
+                bot = parseInt(bot.match(/\d+/g), 10) - 15 + "px";
+              } else if (
+                tiles[this.horse.index].horse[3].id === this.horse.id
+              ) {
+                rig = parseInt(rig.match(/\d+/g), 10) + 10 + "px";
+                bot = parseInt(bot.match(/\d+/g), 10) - 7 + "px";
+              }
+              styles.bottom = bot;
+              styles.right = rig;
+              break;
+          }
+        }
+        // 하나만 움직이면 변화없다.
+        else {
+          styles.bottom = tileHorse[this.horse.index].bottom;
+          styles.right = tileHorse[this.horse.index].right;
+        }
       }
       // 말이 들어 왔다면.
       else {
       }
-
+      // console.log(styles);
       return styles;
     },
 
@@ -118,10 +199,23 @@ export default {
     horseImgStyle() {
       let styles = {
         width: "50px",
+        height: "50px",
+        borderRadius: "50%", // 원 모양 만들기
       };
+      const gameStore = useGameStore();
+      const tiles = gameStore.tiles;
+      // 그룹에 따라 크기 조정.
+      if (tiles[this.horse.index].horse.length > 1) {
+        styles.width = "30px";
+        styles.height = "30px";
+      }
+
       if (this.isMouseOver) {
         styles.transform = "scale(1.2)"; // 확대
         styles.transition = "transform 0.3s ease";
+      }
+      if (gameStore.myTeam === this.horse.team && gameStore.isSelect) {
+        styles.boxShadow = "0px 8px 5px rgba(255, 0, 0, 0.5)";
       }
       return styles;
     },

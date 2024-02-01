@@ -1,6 +1,6 @@
 <template>
   <div :style="tileStyle">
-    <!-- {{ tile.id }} -->
+    {{ tile.id }}
   </div>
 </template>
   
@@ -76,8 +76,8 @@ export default {
         styles.right = rightValue + "px";
         // 왼쪽 하단 23~24
       } else if (this.tile.position === "bottom-left") {
-        const bottomValue = 116 + (this.tile.id - 23) * 66;
-        const leftValue = 116 + (this.tile.id - 23) * 66;
+        const bottomValue = 116 + (this.tile.id === 23 ? 66 : 0);
+        const leftValue = 116 + (this.tile.id === 23 ? 66 : 0);
         styles.bottom = bottomValue + "px";
         styles.left = leftValue + "px";
         // 왼쪽 상단 25~26
@@ -88,8 +88,8 @@ export default {
         styles.left = leftValue + "px";
         // 오른쪽 하단 28~29
       } else if (this.tile.position === "bottom-right") {
-        const bottomValue = 116 + (this.tile.id - 28) * 66;
-        const rightValue = 116 + (this.tile.id - 28) * 66;
+        const bottomValue = 116 + (this.tile.id === 28 ? 66 : 0);
+        const rightValue = 116 + (this.tile.id === 28 ? 66 : 0);
         styles.bottom = bottomValue + "px";
         styles.right = rightValue + "px";
         // 가운데 22,27
