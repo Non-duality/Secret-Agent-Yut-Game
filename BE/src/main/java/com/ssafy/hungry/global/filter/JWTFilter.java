@@ -3,6 +3,7 @@ package com.ssafy.hungry.global.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hungry.domain.login.dto.LoginDto;
 import com.ssafy.hungry.domain.user.detail.CustomUserDetails;
+import com.ssafy.hungry.global.dto.TokenDTO;
 import com.ssafy.hungry.global.util.JWTUtil;
 import com.ssafy.hungry.domain.user.entity.TokenEntity;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
@@ -46,48 +47,98 @@ public class JWTFilter extends OncePerRequestFilter {
         String authorization = request.getHeader("Authorization");
 
         // Authorization 헤더 존재하거나 Bearer로 시작했는지 확인.
+        // 재발급 요청 X
         if (authorization == null || !authorization.startsWith("Bearer ")) {
+            System.out.println("올바르지 못한 토큰");
             filterChain.doFilter(request, response);
-
-            //조건이 해당되면 메소드 종료 (필수)
             return;
         }
 
-        // Bearer 부분 제거 후 순수 토큰만 획득
-        String token = authorization.split(" ")[1];
+        //requset에서 RefreshToken 헤더를 찾음
+        String refreshToken = request.getHeader("RefreshToken");
 
-        // 토큰 검증
-        // ( 비밀키 + 만료 + 잘못된 토큰 ) -- > 체크
-        if (!jwtUtil.validateToken(token)) {
-            System.out.println("토큰 검증 시도 중 문제 발생");
+        // Bearer 부분 제거 후 순수 Access 토큰만 획득
+        String accessToken = authorization.split(" ")[1];
 
-            Map<String, String> resultMap = new HashMap<>();
-            resultMap.put("msg", "토큰 검증 시도 중 문제 발생");
+        if (refreshToken != null) {
+            System.out.println("RefreshToken 검증");
 
-            response.setStatus(406);
-            response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(new ObjectMapper().writeValueAsString(resultMap));
-            response.getWriter().flush();
-//            filterChain.doFilter(request, response);
-            return;
+            if (!jwtUtil.validateToken(refreshToken)) {
+                System.out.println("Refresh 토큰 검증 시도 중 오류 발생");
+                System.out.println("재발급 필요");
+                response.sendError(406, "require login");
+            }
+
+            //refreshToken 값을 키로 accessToken을 가져온다. 두 값이 일치하면 새로운 refreshToken 과 accessToken을 발급한다.
+            TokenEntity tokenEntity = repository.findById(refreshToken).get();
+            if (accessToken.equals(tokenEntity.getAccessToken())) {
+                String email = tokenEntity.getEmail();
+                String role = tokenEntity.getRole();
+
+                //token 재발급
+                TokenDTO tokenDTO = jwtUtil.generateToken(email, role);
+
+                String acToken = tokenDTO.getAccessToken();
+                String reToken = tokenDTO.getRefreshToken();
+
+                TokenEntity token1 = new TokenEntity(reToken, acToken, email, role, 12 * 60 * 60);
+                repository.save(token1);
+
+                //이전 refreshToken 은 삭제
+                repository.deleteById(refreshToken);
+
+                response.addHeader("Authorization", "Bearer " + acToken);
+                response.addHeader("RefreshToken", reToken);
+
+                //userEntity를 생성하여 값 set
+                UserEntity userEntity = new UserEntity();
+                userEntity.setEmail(email);
+                userEntity.setPassword("temppassword");
+                userEntity.setRole(role);
+
+                //UserDetails에 회원 정보 객체 담기
+                CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
+
+                //스프링 시큐리티 인증 토큰 생성
+                Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+                //세션에 사용자 등록
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                filterChain.doFilter(request, response);
+            } else {
+                System.out.println("RefreshToken 불일치");
+                System.out.println("로그인 다시 필요");
+                response.sendError(401, "require login");
+                return;
+            }
+        }else{
+            System.out.println("AccessToken 검증");
+
+            if (jwtUtil.validateToken(accessToken)) {
+                //토큰에서 username과 role 획득
+                String email = jwtUtil.getUserId(accessToken);
+                String role = jwtUtil.getRole(accessToken);
+
+                //userEntity를 생성하여 값 set
+                UserEntity userEntity = new UserEntity();
+                userEntity.setEmail(email);
+                userEntity.setPassword("temppassword");
+                userEntity.setRole(role);
+
+                //UserDetails에 회원 정보 객체 담기
+                CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
+
+                //스프링 시큐리티 인증 토큰 생성
+                Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+                //세션에 사용자 등록
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                filterChain.doFilter(request, response);
+            }else{
+                System.out.println("token expired");
+
+                response.sendError(406, "token expired");
+            }
         }
-
-        //토큰에서 username과 role 획득
-        String email = jwtUtil.getUserId(token);
-
-        //userEntity를 생성하여 값 set
-        UserEntity user = new UserEntity();
-        user.setEmail(email);
-        user.setPassword("temppassword");
-
-        //UserDetails에 회원 정보 객체 담기
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
-
-        //스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-        //세션에 사용자 등록
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-        filterChain.doFilter(request, response);
     }
 }

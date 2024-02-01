@@ -23,7 +23,7 @@ public class JWTUtil {
     private final UserRepository userRepository;
     private SecretKey secretKey;
 
-    private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 60 * 60; // 1시간
+    private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 15 * 1000L; // 1시간
     private static final long REFRESH_TOKEN_VALIDITY_SECONDS = 1 * 12 * 60 * 60; // 12시간
 
     public JWTUtil(@Value("${spring.jwt.secret}")String secret, UserRepository userRepository){
@@ -56,6 +56,10 @@ public class JWTUtil {
     public String getUserId(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
                 .get("userId", String.class);
+    }
+
+    public String getRole(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
     public void saveRefreshToken(String email, String refreshToken) {
