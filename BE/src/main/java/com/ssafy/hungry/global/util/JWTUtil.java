@@ -20,15 +20,13 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    private final UserRepository userRepository;
     private SecretKey secretKey;
 
     private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 15 * 1000L; // 1시간
     private static final long REFRESH_TOKEN_VALIDITY_SECONDS = 1 * 12 * 60 * 60; // 12시간
 
-    public JWTUtil(@Value("${spring.jwt.secret}")String secret, UserRepository userRepository){
+    public JWTUtil(@Value("${spring.jwt.secret}")String secret){
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
-        this.userRepository = userRepository;
     }
     public TokenDTO generateToken(String userId, String role) {
 
@@ -60,17 +58,6 @@ public class JWTUtil {
 
     public String getRole(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
-    }
-
-    public void saveRefreshToken(String email, String refreshToken) {
-        UserEntity user = userRepository.findByEmail(email);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
-        }
-
-        user.updateRefreshToken(refreshToken);
-        userRepository.save(user);
     }
 
     /**

@@ -19,7 +19,7 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/api/v1").setAllowedOriginPatterns("*").setHandshakeHandler(new CustomHandshakeHandler());
+        registry.addEndpoint("/api/v1").setAllowedOriginPatterns("*").setHandshakeHandler(new CustomHandshakeHandler()).withSockJS();
     }
 
     @Override
@@ -32,5 +32,4 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(stompInterceptor);
     }
-
 }

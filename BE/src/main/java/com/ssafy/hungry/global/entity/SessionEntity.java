@@ -26,3 +26,4 @@ public class SessionEntity {
         this.stompPrincipal = stompPrincipal;
     }
 }
+

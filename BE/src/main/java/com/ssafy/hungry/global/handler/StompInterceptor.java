@@ -5,7 +5,6 @@ import com.ssafy.hungry.global.entity.StompPrincipal;
 import com.ssafy.hungry.global.repository.SessionRepository;
 import com.ssafy.hungry.global.util.JWTUtil;
 import io.jsonwebtoken.MalformedJwtException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -17,12 +16,16 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class StompInterceptor implements ChannelInterceptor {
-
     private final JWTUtil jwtUtil;
     private final SessionRepository sessionRepository;
+
+    public StompInterceptor(JWTUtil jwtUtil, SessionRepository sessionRepository){
+        this.jwtUtil = jwtUtil;
+        this.sessionRepository = sessionRepository;
+    }
+
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
@@ -32,6 +35,7 @@ public class StompInterceptor implements ChannelInterceptor {
             String authorizationHeader = String.valueOf(accessor.getNativeHeader("Authorization"));
 
             System.out.println(accessor.getUser().getName());
+
 
             if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
                 System.out.println("소켓 통신 토큰 없음");
@@ -57,5 +61,5 @@ public class StompInterceptor implements ChannelInterceptor {
         }
         return message;
     }
-
 }
+
