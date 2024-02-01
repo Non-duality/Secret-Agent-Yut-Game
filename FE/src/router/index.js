@@ -9,7 +9,7 @@ import ChangePasswordVue from '@/components/profile/ChangePassword.vue'
 import ScoreCheckVue from '@/components/profile/ScoreCheck.vue'
 import RoomListViewVue from '@/view/room/RoomListView.vue'
 import CharacterVue from '@/view/game/pick/character.vue'
-import OpenVidu from '@/view/game/pick/OpenVidu.vue'
+import OpenViduVue from '@/view/game/pick/openVidu.vue'
 
 import { useUserStore } from "@/store/userStore";
 
@@ -88,7 +88,7 @@ const router = createRouter({
     {
       path: "/rtc",
       name: 'rtc',
-      component: openVidu
+      component: OpenViduVue
     },
 
   ]
