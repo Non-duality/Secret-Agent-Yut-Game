@@ -4,7 +4,7 @@
     <div class="banner-container">
       <div class="event-container">
         <Carousel :autoplay="5000" :wrap-around="true">
-          <Slide v-for="slide in 2" :key="slide">
+          <Slide v-for="slide in 3" :key="slide">
             <div class="carousel__item">
               <img id="gallery" :src="i18n[slide].name" />
             </div>
@@ -76,12 +76,13 @@ import { Carousel, Slide, Navigation } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
 
 // Item vue
-import PatchNoteItem from "../../components/home/PatchItem.vue";
-import HelpItem from "../../components/home/HelpItem.vue";
+import PatchNoteItem from "@/components/home/PatchItem.vue";
+import HelpItem from "@/components/home/HelpItem.vue";
 
 // 이미지
-import event01 from "../../assets/img/home/event01.png";
-import event02 from "../../assets/img/home/event02.png";
+import event01 from "@/assets/img/home/carousel1.png";
+import event02 from "@/assets/img/home/carousel2.png";
+import event03 from "@/assets/img/home/carousel3.png";
 
 export default defineComponent({
   name: "Autoplay",
@@ -121,7 +122,7 @@ export default defineComponent({
 
   data() {
     return {
-      i18n: [{}, { name: event01 }, { name: event02 }],
+      i18n: [{}, { name: event01 }, { name: event02 }, { name: event03 }],
       showPatchItemModal: false,
       showHelpItemModal: false,
       showMessage: false,
