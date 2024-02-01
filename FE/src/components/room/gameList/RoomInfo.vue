@@ -6,14 +6,14 @@
         <p class="room-detail-subtitle">방 제목</p>
         <p>{{ roomInfo.title }}</p>
         <p class="room-detail-subtitle">공개</p>
-        <p v-if="roomInfo.isPublic">공개</p>
+        <p v-if="roomInfo.public">공개</p>
         <p v-else>비공개</p>
         <p class="room-detail-subtitle">속도</p>
         <p v-if="roomInfo.speed === 1">느림</p>
         <p v-else-if="roomInfo.speed === 2">보통</p>
         <p v-else-if="roomInfo.speed === 3">빠름</p>
         <p class="room-detail-subtitle">인원</p>
-        <p>{{ roomInfo.currentPlayers }} / 6</p>
+        <p>{{ roomInfo.currentUserCount }} / 6</p>
       </div>
       <div class="room-detail-theme">
         <div>
