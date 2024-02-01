@@ -41,8 +41,8 @@ public class UserEntity {
     @Column(nullable=true,length=255)
     private String profileImgUrl;
 
-    @Column(nullable=true,length=255)
-    private String refreshToken;
+//    @Column(nullable=true,length=255)
+//    private String refreshToken;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -55,7 +55,7 @@ public class UserEntity {
     @Column(nullable=false,length=30)
     private String role;
 
-    public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
+//    public void updateRefreshToken(String refreshToken) {
+//        this.refreshToken = refreshToken;
+//    }
 }
