@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useUserStore } from "@/store/userStore";
+
 import HomeView from "@/view/home/HomeView.vue";
 import RoomViewVue from "@/view/room/RoomView.vue";
 import UserViewVue from "@/view/user/UserView.vue";
@@ -9,8 +11,7 @@ import ChangePasswordVue from "@/components/profile/ChangePassword.vue";
 import ScoreCheckVue from "@/components/profile/ScoreCheck.vue";
 import RoomListViewVue from "@/view/room/RoomListView.vue";
 import CharacterVue from "@/view/game/pick/character.vue";
-import openVidu from "@/view/game/pick/openvidu.vue";
-import { useUserStore } from "@/store/userStore";
+import openviduVue from "@/view/game/pick/openVidu.vue";
 
 const router = createRouter({
   history: createWebHistory("/"),
@@ -87,7 +88,7 @@ const router = createRouter({
     {
       path: "/rtc",
       name: "rtc",
-      component: openVidu,
+      component: openviduVue,
     },
   ],
 });

@@ -39,40 +39,49 @@ button {
   cursor: pointer;
 }
 
-@keyframes backgroundAnimation {
-  0% {
-    /* 시작 스타일 */
-    background-position: 0% 50%;
-  }
-  100% {
-    /* 최종 스타일 */
-    background-position: 100% 50%;
-  }
-}
-
 .default {
-  animation: backgroundAnimation 2s 1;
   background: url("../img/MainBackground.png") no-repeat;
   background-size: cover;
   background-position: center;
+  animation: backgroundAnimation 80s infinite linear;
 }
 
 .home {
-  animation: backgroundAnimation 2s 1;
   background: url("@/assets/img/home/homeBackground.png");
   background-size: cover;
   background-position: center;
+  animation: backgroundAnimation 80s infinite linear;
 }
 
 .room-list {
-  animation: backgroundAnimation 2s 1;
   background: url("@/assets/img/room/roomListBackground.png");
   background-size: cover;
   background-position: center;
+  animation: backgroundAnimation 80s infinite linear;
 }
 
 .room-wait {
   background: url("@/assets/img/room/roomWatingBackground.png");
   background-size: cover;
   background-position: center;
+  animation: backgroundAnimation 80s infinite linear;
+}
+
+/* 애니메이션 추가 */
+@keyframes backgroundAnimation {
+  0% {
+    background-position: center;
+  }
+  25% {
+    background-position: top left;
+  }
+  50% {
+    background-position: top right;
+  }
+  75% {
+    background-position: bottom left;
+  }
+  100% {
+    background-position: center; /* 다시 시작 위치로 돌아가면서 자연스럽게 전환됩니다. */
+  }
 }

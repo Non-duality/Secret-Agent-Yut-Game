@@ -18,15 +18,17 @@
 .form-group {
   margin-bottom: 50px; /* 라벨과 입력 요소 사이에 간격 추가 */
   display: flex;
-  justify-content: space-evenly; /* 라벨과 input 사이의 간격을 균등하게 배치 */
+  align-items: center;
   width: 100%;
 }
 
 /* input과 label 사이 거리를 벌리기 */
 .form-group label {
-  margin-right: 30px;
+  margin-right: 20px;
   font-size: large;
   font-weight: bold;
+  color: #ffe600;
+  width: 6vw;
 }
 
 /* 버튼 그룹 스타일 */
@@ -86,4 +88,21 @@ select option {
   background-color: rgb(60, 58, 58);
   color: whitesmoke;
   padding: 3px 0;
+}
+
+#theme-btn {
+  background-color: #00000000; /* 회색 배경색 */
+  color: #ffffff; /* 글자색 */
+  font-weight: bold;
+  border-radius: 300px;
+}
+
+#theme-btn:hover {
+  background-color: #0037ec5a;
+  
+}
+
+#theme-btn.selected {
+  background-color: #0037ec5a; /* 빨간색 배경색 */
+  color: #fff; /* 글자색 */
 }

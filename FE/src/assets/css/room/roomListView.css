@@ -32,7 +32,6 @@ h2 {
   color: whitesmoke;
 }
 
-
 /* 방 생성 버튼 */
 .room-make-btn {
   background-color: black;
@@ -48,7 +47,7 @@ h2 {
 
 /* 방 생성 버튼 호버 */
 .room-make-btn:hover {
-  background-color: #2D81FF;
+  background-color: #2d81ff;
   text-shadow: 1px 1px 2px rgb(0 0 0 / 50%);
   box-shadow: 2px 2px 2px 1px rgb(0 0 0 / 20%);
 }
@@ -65,4 +64,24 @@ h2 {
   min-height: 450px;
   border-radius: 30px;
   padding: 30px;
+}
+
+/* 모달창 애니메이션 */
+.fade-enter-from {
+  opacity: 0;
+}
+.fade-enter-active {
+  transition: all 0.5s;
+}
+.fade-enter-to {
+  opacity: 1;
+}
+.fade-leave-from {
+  opacity: 1;
+}
+.fade-leave-active {
+  transition: all 0.5s;
+}
+.fade-leave-to {
+  opacity: 0;
 }
