@@ -101,17 +101,12 @@ export const useUserStore = defineStore("user", {
       await userDoJoin(
         joinUser,
         (response) => {
-          // 확인용
           alert('회원가입 성공')
-          console.log(response)
-          console.log("회원가입 성공")
         },
 
         (error) => {
-          // 확인용
           alert('회원가입 실패')
           console.log(error)
-          console.log("회원가입 실패")
         }
       )
     },

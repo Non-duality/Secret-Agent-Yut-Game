@@ -151,8 +151,11 @@ export default {
           gender: this.gender
         }
 
-        // 회원가입 전송 (500에러 발생!)
+        // 회원가입 전송
         useUserStore().userJoin(JSON.stringify(joinUser))
+
+        // 회원가입창 모달 닫기
+        userStore.closeModal('join')
       }
 
       // 비밀번호가 불일치하는 경우 알림을 표시합니다.
