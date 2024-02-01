@@ -1,5 +1,6 @@
 package com.ssafy.hungry.global.config;
 
+import com.ssafy.hungry.global.handler.CustomHandshakeHandler;
 import com.ssafy.hungry.global.handler.StompInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +19,7 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/api/v1").setAllowedOriginPatterns("*");
+        registry.addEndpoint("/api/v1").setAllowedOriginPatterns("*").setHandshakeHandler(new CustomHandshakeHandler());
     }
 
     @Override
