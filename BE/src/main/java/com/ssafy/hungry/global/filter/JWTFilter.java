@@ -1,14 +1,11 @@
 package com.ssafy.hungry.global.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.hungry.domain.login.dto.LoginDto;
 import com.ssafy.hungry.domain.user.detail.CustomUserDetails;
 import com.ssafy.hungry.global.dto.TokenDTO;
 import com.ssafy.hungry.global.util.JWTUtil;
 import com.ssafy.hungry.domain.user.entity.TokenEntity;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.repository.TokenRepository;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class JWTFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;

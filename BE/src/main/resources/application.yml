@@ -26,6 +26,10 @@ spring:
 
   jwt:
     secret: ssafyD205rlatnqlsdlwnaldlgmldnddidtjdrbqkrwlgnsdlwnsgmlghkdlxlddkwkdkwk
+
+springdoc:
+  show-login-endpoint: true
+
 # ?? ?? ??
 #logging:
 #  level:
