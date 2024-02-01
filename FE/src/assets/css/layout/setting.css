@@ -17,9 +17,60 @@
   align-items: center;
 }
 
+.background-value {
+  margin-bottom: 35px;
+}
+
+.background-value label {
+  display: inline-block;
+  margin-bottom: 8px;
+  margin-right: 10px;
+}
+
+
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  padding-right: 10px;
+  padding-top: 30px;
+}
+
+select {
+  width: 350px;
+  height: 40px;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+select::after {
+  content: "\25BC";
+  position: absolute;
+  top: 50%;
+  left: -30px;
+  transform: translateY(-50%);
+}
+
+option {
+  background-color: #fff;
+  color: #333;
+}
+
 .setting-value  p {
   margin-right: 30px;
   margin-left: 10px;
+  width: 100px;
+  height: 50px;
+}
+
+select:focus {
+  outline: none;
+  border-color: #5b9dd9;
+  box-shadow: 0 0 10px rgba(91, 157, 217, 0.5);
 }
 
 /* 배경음악 */
@@ -76,8 +127,10 @@
 
 .btn-confirm {
   background-color: #7EB0F2;
+  font-size: medium;
 }
 
 .btn-cancel {
   background-color: #D97171;
+  font-size: medium;
 }
