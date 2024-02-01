@@ -1,6 +1,7 @@
 package com.ssafy.hungry.domain.room.service;
 
 import com.ssafy.hungry.domain.room.dto.CreateRoomDto;
+import com.ssafy.hungry.domain.room.dto.RoomDetailDto;
 import com.ssafy.hungry.domain.room.dto.RoomDto;
 import com.ssafy.hungry.domain.room.entity.RoomEntity;
 import com.ssafy.hungry.domain.room.repository.RoomRedisRepository;
@@ -49,6 +50,20 @@ public class RoomService {
         return roomDtoList;
     }
 
+    // 방 세부 정보 조회
+    public RoomDetailDto getRoomDetail(int roomId){
+        RoomEntity roomEntity = roomRepository.findByEndAtIsNullAndRoomId(roomId);
+        RoomDetailDto roomDetail = RoomDetailDto.builder()
+                .title(roomEntity.getTitle())
+                .isPublic(roomEntity.isPublic())
+                .gameSpeed(roomEntity.getGameSpeed())
+                .currentUserCount(roomRedisRepository.getCurrentUserCount(roomEntity.getRoomCode()))
+                .theme(roomEntity.getTheme())
+                .build();
+
+        return roomDetail;
+    }
+
     // 방 생성
     public String createRoom(CreateRoomDto createRoomDto, String email){
         log.info("RoomService createRoom 호출 : " + createRoomDto);
@@ -90,7 +105,7 @@ public class RoomService {
     }
 
     // 비공개 방 비밀번호 검증
-    public boolean validatePassword(String password, String encodeddPassword){
-        return bCryptPasswordEncoder.matches(password, encodeddPassword);
+    public boolean validatePassword(String password, String encodedPassword){
+        return bCryptPasswordEncoder.matches(password, encodedPassword);
     }
 }

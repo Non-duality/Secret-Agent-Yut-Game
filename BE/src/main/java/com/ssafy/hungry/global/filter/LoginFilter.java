@@ -1,7 +1,7 @@
 package com.ssafy.hungry.global.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.hungry.domain.login.dto.LoginDto;
+import com.ssafy.hungry.domain.user.dto.LoginDto;
 import com.ssafy.hungry.domain.user.detail.CustomUserDetails;
 import com.ssafy.hungry.domain.user.entity.TokenEntity;
 import com.ssafy.hungry.domain.user.repository.TokenRepository;
@@ -90,7 +90,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         TokenDTO tokenDTO = jwtUtil.generateToken(email, role);
-        jwtUtil.saveRefreshToken(email, tokenDTO.getRefreshToken());
+        TokenEntity token = new TokenEntity(tokenDTO.getRefreshToken(), tokenDTO.getAccessToken(), email, role, 12*60*60);
+
+        repository.save(token);
 
         // JSON으로 token 전달
         Map<String, String> resultMap = new HashMap<>();

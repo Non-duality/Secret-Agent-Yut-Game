@@ -1,4 +1,4 @@
-package com.ssafy.hungry.domain.login.dto;
+package com.ssafy.hungry.domain.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
