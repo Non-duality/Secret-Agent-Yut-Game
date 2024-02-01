@@ -19,16 +19,9 @@
           <img v-if="user.name === null" src="@/assets/img/profile_picture.png" class="team-img" />
           {{ user.name }}  {{ user.status }}
           <div>
-            <!-- 친구 추가 (친구인지 판단하는 로직 넣어야 함) -->
-            <font-awesome-icon :icon="['fas', 'user-plus']" 
-            size="xl" style="color: #ffffff;" 
-            class="icon-user-plus" 
-            v-if="user.name !== null"/>
             <!-- 강퇴 (방장 자신은 안뜨게 해야하는데 이건 user 정보가 필요) -->
-            <font-awesome-icon :icon="['far', 'circle-xmark']" 
-            size="xl" style="color: #ffffff;" 
-            class="icon-circle-xmark" 
-            v-if="isManager"/>
+            <!-- 강퇴할 유저 정보도 같이 넘겨서 모달로 처리 -->
+            <button class="ban" @click="$emit('banMember')" v-if="isManager">추방</button>
           </div>
         </div>
       </div>
@@ -41,8 +34,7 @@
 // 아이콘
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons/faUserPlus";
-import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
-library.add(faUserPlus, faCircleXmark)
+library.add(faUserPlus)
 
 // 자식 컴포넌트
 import GameWaitChatVue from "./GameWaitChat.vue";
@@ -112,7 +104,10 @@ export default {
       } catch (error) {
         console.error('Error parsing userInfo:', error);
       }
+    },
 
+    banActive() {
+      this.$emit()
     }
   }
 };
