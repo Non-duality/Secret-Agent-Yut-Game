@@ -38,14 +38,9 @@ public class StompInterceptor implements ChannelInterceptor {
             String authorizationHeader = String.valueOf(accessor.getNativeHeader("Authorization"));
 
             System.out.println(accessor.getUser().getName());
-<<<<<<< HEAD
-            System.out.println(authorizationHeader);
-            if(authorizationHeader == null || !authorizationHeader.startsWith("[Bearer ")){
-=======
-
 
             if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
->>>>>>> 5f798a632d4f62d8c3959ec8009fc7203628117f
+
                 System.out.println("소켓 통신 토큰 없음");
                 throw new MessageDeliveryException("메세지 예외");
             }
@@ -62,9 +57,7 @@ public class StompInterceptor implements ChannelInterceptor {
                 }else{
                     throw new AccessDeniedException("토큰이 유효하지 않습니다.");
                 }
-                else{
-                    throw new AccessDeniedException("JWT 토큰 인증 실패");
-                }
+
             }catch (MessageDeliveryException e){
                 throw new MessageDeliveryException("메세지 에러");
             }catch (MalformedJwtException e){
