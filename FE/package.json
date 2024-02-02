@@ -22,6 +22,7 @@
     "lodash": "^4.17.21",
     "openvidu-browser": "^2.29.1",
     "pinia": "^2.1.7",
+    "three": "^0.161.0",
     "pinia-plugin-persist": "^1.0.0",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",

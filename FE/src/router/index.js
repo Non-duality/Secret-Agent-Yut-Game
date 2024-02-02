@@ -90,6 +90,13 @@ const router = createRouter({
       name: 'rtc',
       component: OpenViduVue
     },
+    
+    // 게임
+    {
+      path: '/game',
+      name: 'game',
+      component: GameViewVue
+    },
   ],
 });
 
@@ -164,4 +171,6 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-export default router;
+  
+
+export default router
