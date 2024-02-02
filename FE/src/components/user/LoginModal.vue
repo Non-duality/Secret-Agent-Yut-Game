@@ -49,6 +49,7 @@ export default {
       // console.log(token);
       
       if (isLogin) {
+        console.log(token);
         getUserInfo(token);
         closeModal();
         userStore.toggleNav();

@@ -64,20 +64,20 @@
         <div>
           <button
             id="theme-btn"
-            @click="selectSpeed('느림')"
+            @click="selectSpeed(1)"
             :class="{ selected: roomInfo.speed === 1 }"
           >
             느림
           </button>
           <button
             id="theme-btn"
-            @click="selectSpeed('보통')"
+            @click="selectSpeed(2)"
             :class="{ selected: roomInfo.speed === 2 }"
           >
             보통</button
           ><button
             id="theme-btn"
-            @click="selectSpeed('빠름')"
+            @click="selectSpeed(3)"
             :class="{ selected: roomInfo.speed === 3 }"
           >
             빠름

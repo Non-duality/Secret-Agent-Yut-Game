@@ -8,7 +8,6 @@ async function userConfirm(param, success, fail) {
 }
 
 async function userDoJoin(param, success, fail) {
-  console.log(param);
   await local.post(`/user/join`, param).then(success).catch(fail);
 }
 
@@ -18,7 +17,8 @@ async function findById(userid, success, fail) {
 }
 
 async function tokenRegeneration(user, success, fail) {
-  local.defaults.headers["refreshToken"] = sessionStorage.getItem("refreshToken"); //axios header에 refresh-token 셋팅
+  local.defaults.headers["Authorization"] = "Bearer " + useUserStore().accessToken;
+  local.defaults.headers["refreshToken"] = useUserStore().refreshToken;
   await local.post(`/user/refresh`, user).then(success).catch(fail);
 }
 
