@@ -59,6 +59,7 @@ const router = createRouter({
       name: "user",
       component: UserViewVue,
       redirect: "/user/info",
+      meta: { background: "profile" },
       children: [
         {
           path: "/user/info",

@@ -67,6 +67,13 @@ button {
   animation: backgroundAnimation 80s infinite linear;
 }
 
+.profile {
+  background: url("@/assets/img/user/profileBackground.png");
+  background-size: cover;
+  background-position: center;
+  animation: backgroundAnimation 80s infinite linear;
+}
+
 /* 애니메이션 추가 */
 @keyframes backgroundAnimation {
   0% {

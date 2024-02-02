@@ -1,15 +1,22 @@
 <template>
-  <div class="container">
-    <label for="current-password" class="change-password">현재 비밀번호 </label>
-    <input v-model="currentPassword" type="password" id="current-password" class="change-password-input">
+  <div class="password-box">
+    <div>
+      <label for="current-password" class="change-password">현재 비밀번호 </label>
+      <input v-model="currentPassword" type="password" id="current-password" class="change-password-input">
+    </div>
 
-    <label for="new-password" class="change-password">새 비밀번호 </label>
-    <input v-model="newPassword" type="password" id="new-password" class="change-password-input">
-    <span v-if="newPasswordError" class="error-message">새 비밀번호는 영문, 숫자, 특수문자를 조합하여 8자 이상이어야 합니다.</span>
+    <div>
+      <label for="new-password" class="change-password">새 비밀번호 </label>
+      <input v-model="newPassword" type="password" id="new-password" class="change-password-input">
+      <div v-if="newPasswordError" class="error-message">새 비밀번호는 영문, 숫자, 특수문자를 조합하여 8자 이상이어야 합니다.</div>
+    </div>
 
-    <label for="checked-new-password" class="change-password">새 비밀번호 확인 </label>
-    <input v-model="checkedNewPassword" type="password" id="checked-new-password" class="change-password-input">
-    <span v-if="passwordMismatch" class="error-message">새 비밀번호와 일치하지 않습니다.</span>
+    <div>
+      <label for="checked-new-password" class="change-password">새 비밀번호 확인 </label>
+      <input v-model="checkedNewPassword" type="password" id="checked-new-password" class="change-password-input">
+      <div v-if="passwordMismatch" class="error-message">새 비밀번호와 일치하지 않습니다.</div>
+    </div>
+
 
     <button @type="submit" @click="openModal('password')" class="change-password-btn">
       확인
@@ -68,5 +75,5 @@ export default {
 </script>
 
 <style scoped>
-@import "@/assets/css/profile/changePassword.css";
+@import "../../assets/css/profile/changePassword.css";
 </style>
