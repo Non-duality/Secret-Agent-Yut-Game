@@ -123,7 +123,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 const { VITE_VUE_API_URL } = import.meta.env;
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : VITE_VUE_API_URL;
+  process.env.NODE_ENV === "production" ? "" : "https://i10d205.p.ssafy.io/api/v1";
 
 export default {
   data() {
@@ -310,7 +310,7 @@ export default {
 
     async createSession(sessionId) {
       const response = await axios.post(
-        APPLICATION_SERVER_URL + "api/sessions",
+        "https://i10d205.p.ssafy.io/api/v1" + "/sessions",
         { customSessionId: sessionId },
         {
           headers: { "Content-Type": "application/json" },
@@ -321,7 +321,7 @@ export default {
 
     async createToken(sessionId) {
       const response = await axios.post(
-        APPLICATION_SERVER_URL + "api/sessions/" + sessionId + "/connections",
+        "https://i10d205.p.ssafy.io/api/v1" + "/sessions/" + sessionId + "/connections",
         {},
         {
           headers: { "Content-Type": "application/json" },
