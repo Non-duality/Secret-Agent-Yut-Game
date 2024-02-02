@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-#main-video {
-  display: flex;
-}
-
-.video{
-  max-width: 75vw;
-=======
 span {
   margin-right: 30px;
 }
@@ -24,7 +16,6 @@ span {
 
 #video-container > div {
   margin: 20px;
->>>>>>> feat/FE-OpenVidu
 }
 
 .background {
@@ -32,27 +23,17 @@ span {
   justify-content: center;
   align-items: center;
   background-color: rgba(44, 43, 43, 0.8);
-<<<<<<< HEAD
-  margin-top: 20px;
-  width: 90%;
-  max-width: 1200px;
-  height: 700px;
-=======
   margin-top: 10px;
   width: 90vw;
   max-width: 80vw;
   height: 95vh;
->>>>>>> feat/FE-OpenVidu
   border-radius: 20px;
   margin-left: 11%;
 }
 
 .content {
   text-align: center;
-<<<<<<< HEAD
-=======
   max-width: 75vw;
->>>>>>> feat/FE-OpenVidu
 }
 
 .select-character-page {
@@ -61,11 +42,7 @@ span {
 
 .web-rtc {
   border: 2px solid white;
-<<<<<<< HEAD
-  width: 600px;
-=======
   width: 600px; 
->>>>>>> feat/FE-OpenVidu
   height: 150px;
   color: white;
   margin: 0 auto;
@@ -99,18 +76,11 @@ span {
   grid-template-columns: repeat(auto-fill, minmax(13%, 1fr));
   gap: 9px;
   justify-content: center;
-<<<<<<< HEAD
-  margin: 20px 0px;
-  background-color: rgba(158, 152, 152, 0.8);
-  width: 90%;
-  max-width: 700px;
-=======
   align-items: center;
   margin: 20px 0px;
   background-color: rgba(158, 152, 152, 0.8);
   width: 100%;
   max-width: 100vw;
->>>>>>> feat/FE-OpenVidu
   padding: 10px;
   border-radius: 20px;
 }
