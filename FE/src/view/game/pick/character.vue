@@ -1,10 +1,7 @@
 <template>
   <div class="background">
     <div class="content">
-<<<<<<< HEAD
-=======
       <!-- (시작) OpenVidu -->
->>>>>>> feat/FE-OpenVidu
       <div id="main-container" class="container">
         <div id="join" v-if="!session">
           <div id="img-div"></div>
