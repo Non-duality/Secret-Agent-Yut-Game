@@ -1,6 +1,6 @@
 /* 방 상세정보 틀 */
 .wait-detail{
-    background-color: rgba(0, 0, 0, 0.628);
+    background-color: rgba(0, 0, 0, 0.9);
     border-radius: 10px;
     height: 350px;
     display: flex;

@@ -6,6 +6,12 @@ export default {
   components: {
     NavPro,
   },
+
+  methods: {
+    goToHome() {
+      this.$router.push({ name: 'home' });
+    }
+  }
 };
 </script>
 
@@ -13,7 +19,7 @@ export default {
   <div class="nav-bar">
     <!-- 로고 -->
     <div>
-      <img src="../../assets/logo/logo.png" class="img-log" />
+      <img src="../../assets/logo/logo.png" @click="goToHome" class="img-log" />
     </div>
     <!-- 홈, 게임, 게시판 클릭시 화면 이동 -->
     <!-- Named Routes로 변경 -->

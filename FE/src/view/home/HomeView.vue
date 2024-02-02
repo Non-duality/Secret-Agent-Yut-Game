@@ -58,7 +58,7 @@
 
         <div class="help-icon" @click="openModal('help')">
           <i class="fas fa-question-circle"></i>
-          <img src="../../assets/img/help/horse.png" alt="도움말 아이콘" />
+          <img src="../../assets/img/help/horse.png" @click="" alt="도움말 아이콘" />
         </div>
 
         <transition name="fade">
@@ -133,7 +133,7 @@ export default defineComponent({
     // 페이지 로드 후 3초 뒤에 메시지를 표시
     setTimeout(() => {
       this.showMessage = true;
-    }, 3000);
+    }, 4000);
   },
 });
 </script>

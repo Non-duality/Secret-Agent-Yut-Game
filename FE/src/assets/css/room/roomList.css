@@ -7,9 +7,10 @@
 
 /* 게임 목록 부제목 */
 .room-list-subtitle {
+  color: rgb(0, 255, 72);
   display: flex;
   justify-content: space-between;
-  margin: 30px;
+  margin-top: 40px;
 }
 
 /* 새로고침 돌아가는 효과 */

@@ -16,11 +16,7 @@
 </template>
 
 <script>
-  // 방 정보 데이터
   import { useRoomStore } from '@/store/roomStore'
-
-  // 유저 정보
-  import { useUserStore } from "@/store/userStore";
 
   // 자식 컴포넌트
   import RightComponentsVue from "@/components/room/gameWait/RightComponents.vue";

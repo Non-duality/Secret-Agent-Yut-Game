@@ -1,6 +1,10 @@
 <template>
   <div class="background">
     <div class="content">
+<<<<<<< HEAD
+=======
+      <!-- (시작) OpenVidu -->
+>>>>>>> feat/FE-OpenVidu
       <div id="main-container" class="container">
         <div id="join" v-if="!session">
           <div id="img-div"></div>
@@ -8,27 +12,15 @@
             <h1>Join a video session</h1>
             <div class="form-group">
               <p>
-                <label>Participant</label>
-                <input
-                  v-model="myUserName"
-                  class="form-control"
-                  type="text"
-                  required
-                />
+                <span>Participant</span>
+                <input v-model="myUserName" type="text" required />
               </p>
               <p>
-                <label>Session</label>
-                <input
-                  v-model="mySessionId"
-                  class="form-control"
-                  type="text"
-                  required
-                />
+                <span>Session</span>
+                <input v-model="mySessionId" type="text" required />
               </p>
               <p class="text-center">
-                <button class="btn btn-lg btn-success" @click="joinSession()">
-                  Join!
-                </button>
+                <button @click="joinSession()">Join!</button>
               </p>
             </div>
           </div>
@@ -45,23 +37,29 @@
               value="Leave session"
             />
           </div>
-          <div id="main-video">
-            <user-video class="video" :stream-manager="mainStreamManager" />
-          </div>
-          <div id="video-container">
-            <!-- <user-video
-              :stream-manager="publisher"
-              @click="updateMainVideoStreamManager(publisher)"
-            /> -->
-            <user-video
-              v-for="sub in subscribers"
-              :key="sub.stream.connection.connectionId"
-              :stream-manager="sub"
-              @click="updateMainVideoStreamManager(sub)"
-            />
+
+          <!-- 카메라 영역 -->
+          <div class="rtc-container">
+            <!-- <div id="main-container">
+              <user-video :stream-manager="mainStreamManager" />
+            </div> -->
+            <div id="video-container">
+              <user-video
+                :stream-manager="publisher"
+                @click="updateMainVideoStreamManager(publisher)"
+              />
+              <user-video
+                v-for="sub in subscribers"
+                :key="sub.stream.connection.connectionId"
+                :stream-manager="sub"
+                @click="updateMainVideoStreamManager(sub)"
+              />
+            </div>
           </div>
         </div>
       </div>
+      <!-- (끝) OpenVidu -->
+
       <div class="characters-wrapper">
         <div class="character-container">
           <div
@@ -119,7 +117,6 @@ import spyModal from "@/view/game/pick/spyModal.vue";
 import { useUserStore } from "@/store/userStore";
 import { storeToRefs } from "pinia";
 
-// OpenVidu 설정
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/game/openvidu/UserVideo.vue";
@@ -127,7 +124,7 @@ import UserVideo from "@/components/game/openvidu/UserVideo.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
+  process.env.NODE_ENV === "production" ? "" : "http://192.168.100.99:8080/";
 
 export default {
   data() {
@@ -148,6 +145,21 @@ export default {
   components: {
     spyModal,
     UserVideo,
+  },
+
+  data() {
+    return {
+      // OpenVidu objects
+      OV: undefined,
+      session: undefined,
+      mainStreamManager: undefined,
+      publisher: undefined,
+      subscribers: [],
+
+      // Join form
+      mySessionId: "SessionA",
+      myUserName: "Participant" + Math.floor(Math.random() * 100),
+    };
   },
 
   setup() {
@@ -218,6 +230,7 @@ export default {
       this.getToken(this.mySessionId).then((token) => {
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
+        console.log("토큰: " + token)
         this.session
           .connect(token, { clientData: this.myUserName })
           .then(() => {
@@ -379,8 +392,7 @@ export default {
   },
 
   mounted() {
-    useUserStore().showModalSide = false;
-    useUserStore().closeModal("spy");
+    useUserStore().showSpyModal = false;
   },
 };
 </script>
