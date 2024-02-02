@@ -46,7 +46,7 @@ export default {
       await userLogin(loginUser.value);
 
       let token = useUserStore().accessToken;
-      console.log(token);
+      // console.log(token);
       
       if (isLogin) {
         getUserInfo(token);

@@ -65,20 +65,20 @@
           <button
             id="theme-btn"
             @click="selectSpeed('느림')"
-            :class="{ selected: roomInfo.speed === '느림' }"
+            :class="{ selected: roomInfo.speed === 1 }"
           >
             느림
           </button>
           <button
             id="theme-btn"
             @click="selectSpeed('보통')"
-            :class="{ selected: roomInfo.speed === '보통' }"
+            :class="{ selected: roomInfo.speed === 2 }"
           >
             보통</button
           ><button
             id="theme-btn"
             @click="selectSpeed('빠름')"
-            :class="{ selected: roomInfo.speed === '빠름' }"
+            :class="{ selected: roomInfo.speed === 3 }"
           >
             빠름
           </button>
@@ -109,7 +109,7 @@ export default {
         public: true,
         password: "",
         theme: "설날",
-        speed: "보통",
+        speed: 2,
       },
 
       // 임시 유저 데이터 (삭제 필요)
@@ -124,10 +124,7 @@ export default {
     makeGame(roomInfo) {
       if (roomInfo.title === "") {
         alert("방 제목을 작성해주세요");
-      } else if (
-        roomInfo.public === false &&
-        roomInfo.password.trim() === ""
-      ) {
+      } else if (roomInfo.public === false && roomInfo.password.trim() === "") {
         alert("비공개 방으로 비밀번호를 입력하세요");
       } else if (roomInfo.theme === "") {
         alert("테마를 선택하세요");
@@ -158,10 +155,9 @@ export default {
           query: { userInfo: userInfoString, isManager: true },
         });
 
-          // 방 생성 모달 닫기
-          roomStore.closeModal('roomMaking')
-        }
-      },
+        // 방 생성 모달 닫기
+        roomStore.closeModal("roomMaking");
+      }
     },
 
     // 모달 관리
@@ -178,9 +174,10 @@ export default {
       this.roomInfo.theme = val;
     },
 
-    selectSpeed(val){
+    selectSpeed(val) {
       this.roomInfo.speed = val;
     },
+  },
 
   // 공개 여부를 계속 감시
   watch: {

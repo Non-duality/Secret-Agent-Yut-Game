@@ -1,20 +1,4 @@
-<<<<<<< HEAD
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/view/home/HomeView.vue'
-import RoomViewVue from '@/view/room/RoomView.vue'
-import UserViewVue from '@/view/user/UserView.vue'
-import GameWaitingRoomVue from '@/view/room/GameWaitingRoom.vue'
-import InitialViewVue from '@/view/home/InitialView.vue'
-import UserInfoModifyVue from '@/components/profile/UserInfoModify.vue'
-import ChangePasswordVue from '@/components/profile/ChangePassword.vue'
-import ScoreCheckVue from '@/components/profile/ScoreCheck.vue'
-import RoomListViewVue from '@/view/room/RoomListView.vue'
-import CharacterVue from '@/view/game/pick/character.vue'
-import OpenViduVue from '@/view/game/pick/openVidu.vue'
-
-=======
 import { createRouter, createWebHistory } from "vue-router";
->>>>>>> feat/FE-OpenVidu
 import { useUserStore } from "@/store/userStore";
 
 import HomeView from "@/view/home/HomeView.vue";
@@ -27,7 +11,7 @@ import ChangePasswordVue from "@/components/profile/ChangePassword.vue";
 import ScoreCheckVue from "@/components/profile/ScoreCheck.vue";
 import RoomListViewVue from "@/view/room/RoomListView.vue";
 import CharacterVue from "@/view/game/pick/character.vue";
-import openviduVue from "@/view/game/pick/openVidu.vue";
+import OpenViduVue from "@/view/game/pick/openVidu.vue";
 
 const router = createRouter({
   history: createWebHistory("/"),

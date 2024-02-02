@@ -1,11 +1,13 @@
 <template>
-  <!-- 게임 중이거나 로그인 전이면 숨기기 위해 if문 사용 -->
-  <header v-if="showModalSide">
-    <NavBar />
-    <SideBar />
-  </header>
+  <transition name="fade" mode="out-in">
+    <!-- 게임 중이거나 로그인 전이면 숨기기 위해 if문 사용 -->
+    <header v-if="showModalSide">
+      <NavBar />
+      <SideBar />
+    </header>
+  </transition>
   <main>
-    <transition name="slide-fade" mode="out-in">
+    <transition name="fade" mode="out-in">
       <router-view />
     </transition>
   </main>
@@ -34,13 +36,12 @@ export default {
 </script>
 
 <style scoped>
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: opacity 0.5s, transform 0.5s;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.85s;
 }
-.slide-fade-enter,
-.slide-fade-leave-to {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
-  transform: translateY(20px);
 }
 </style>

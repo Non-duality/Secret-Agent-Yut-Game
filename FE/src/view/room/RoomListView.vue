@@ -61,6 +61,7 @@ export default {
     defaultRoomInfo() {
       const roomStore = useRoomStore();
       return roomStore.roomListData[0] || {};
+      return roomStore.roomListSomeData[0] || {};
     },
 
     // 방 생성 모달
@@ -69,44 +70,30 @@ export default {
       return roomStore.showRoomMakingModal;
     },
 
-    computed: {
-      defaultRoomInfo() {
-        const roomStore = useRoomStore();
-        return roomStore.roomListSomeData[0] || {};
-      },
-      // 비공개방 비밀번호 체크 모달
-      showRoomPasswordCheckModal() {
-        const roomStore = useRoomStore();
-        return roomStore.showRoomPasswordCheckModal;
-      },
+    // 비공개방 비밀번호 체크 모달
+    showRoomPasswordCheckModal() {
+      const roomStore = useRoomStore();
+      return roomStore.showRoomPasswordCheckModal;
+    },
+  },
+
+  methods: {
+    // 방 상세 정보 띄우기
+    handleShowRoomInfo(roomInfo) {
+      this.roomInfo = roomInfo;
+      this.ShowDetail = true;
     },
 
-    methods: {
-      // 방 상세 정보 띄우기
-      handleShowRoomInfo(roomInfo) {
-        this.roomInfo = roomInfo;
-        this.ShowDetail = true;
-      },
-
-      methods: {
-        // 방 상세 정보 띄우기
-        handleShowRoomInfo(roomInfo) {
-          this.roomInfo = roomInfo;
-          this.ShowDetail = true;
-        },
-
-        // 모달 관리
-        openModal(modalType) {
-          const roomStore = useRoomStore();
-          roomStore.openModal(modalType);
-        },
-      },
-
-      created() {
-        const roomStore = useRoomStore();
-        roomStore.getRoomSomeListData();
-      },
+    // 모달 관리
+    openModal(modalType) {
+      const roomStore = useRoomStore();
+      roomStore.openModal(modalType);
     },
+  },
+
+  mounted() {
+    const roomStore = useRoomStore();
+    roomStore.getRoomSomeListData();
   },
 };
 </script>
