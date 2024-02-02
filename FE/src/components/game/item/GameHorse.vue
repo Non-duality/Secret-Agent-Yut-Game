@@ -41,7 +41,7 @@ export default {
 
       // 기본 스타일 설정.
       let styles = {
-        position: "fixed",
+        position: "absolute",
         zIndex: "1000",
         transition: "all 0.5s",
       };
@@ -158,6 +158,16 @@ export default {
       }
       // 말이 들어 왔다면.
       else {
+        // 홍팀이면
+        if(this.horse.team === 1){
+          styles.bottom = horsesIndex[2][this.horse.endOrder].bottom;
+          styles.left = horsesIndex[2][this.horse.endOrder].left;
+        }
+        // 청팀이면
+        else{
+          styles.bottom = horsesIndex[3][this.horse.endOrder].bottom;
+          styles.right = horsesIndex[3][this.horse.endOrder].right;
+        }
       }
       // console.log(styles);
       return styles;
@@ -226,19 +236,59 @@ export default {
     try {
       switch (this.horse.img) {
         case "horse1":
-          this.imgSrc = (await import("@/assets/img/horse/horse1.png")).default;
+          if (this.horse.team === 1) {
+            this.imgSrc = (
+              await import("@/assets/img/game/horse/red_king.png")
+            ).default;
+          } else {
+            this.imgSrc = (
+              await import("@/assets/img/game/horse/blue_king.png")
+            ).default;
+          }
           break;
         case "horse2":
-          this.imgSrc = (await import("@/assets/img/horse/horse2.png")).default;
+          if (this.horse.team === 1) {
+            this.imgSrc = (
+              await import("@/assets/img/game/horse/red_cavalry.png")
+            ).default;
+          } else {
+            this.imgSrc = (
+              await import("@/assets/img/game/horse/blue_cavalry.png")
+            ).default;
+          }
           break;
         case "horse3":
-          this.imgSrc = (await import("@/assets/img/horse/horse3.png")).default;
+          if (this.horse.team === 1) {
+            this.imgSrc = (
+              await import("@/assets/img/game/horse/red_spearman2.png")
+            ).default;
+          } else {
+            this.imgSrc = (
+              await import("@/assets/img/game/horse/blue_spearman.png")
+            ).default;
+          }
           break;
         case "horse4":
-          this.imgSrc = (await import("@/assets/img/horse/horse4.png")).default;
+          if (this.horse.team === 1) {
+            this.imgSrc = (
+              await import("@/assets/img/game/horse/red_peasant.png")
+            ).default;
+          } else {
+            this.imgSrc = (
+              await import("@/assets/img/game/horse/blue_peasant.png")
+            ).default;
+          }
           break;
         case "horse5":
-          this.imgSrc = (await import("@/assets/img/horse/horse5.png")).default;
+          if (this.horse.team === 1) {
+            this.imgSrc = (
+              await import("@/assets/img/game/horse/red_slave.png")
+            ).default;
+          } else {
+            this.imgSrc = (
+              await import("@/assets/img/game/horse/blue_slave.png")
+            ).default;
+          }
           break;
         default:
           this.imgSrc = "/path/to/default-image.png"; // 기본 이미지 경로

@@ -59,7 +59,7 @@ export default {
       selectedHorse: null, // 선택한 말
       isSelectedHorse: false, // 말을 선택했는지.
       canSelectHorse: false, // 말을 선택할 수 있을 때
-      isShowRes: false, // 윷 던지고 결과 화면 보여줄 때.
+      isShowRes: true, // 윷 던지고 결과 화면 보여줄 때.
       isShowGoDig: false, // 대각선으로 갈지 말지 선택.
       yutText: "", // 윷 결과 문자.
       goModalText1: "",
@@ -130,30 +130,42 @@ export default {
           this.selectedHorse = horse;
           // 만약 대각선이라면.
           if ([5, 10].includes(horse.index)) {
-            console.log("확인");
-            // 텍스트 바꿈.
-            this.goModalText1 = "네";
-            this.goModalText2 = "아니오";
-            // 대각선으로 갈지 선택.
-            this.isShowGoDig = true;
-            this.$watch("isShowGoDig", () => {
-              // 선택을 했다면.
-              if (!this.isShowGoDig) {
-                this.isSelectedHorse = true;
-              }
-            });
+
+            // 백도는 모달없이 간다.
+            if (gameStore.yutRes === -1) {
+              this.isSelectedHorse = true;
+            } else {
+              // 텍스트 바꿈.
+              this.goModalText1 = "네";
+              this.goModalText2 = "아니오";
+              // 대각선으로 갈지 선택.
+              this.isShowGoDig = true;
+              this.$watch("isShowGoDig", () => {
+                // 선택을 했다면.
+                if (!this.isShowGoDig) {
+                  this.isSelectedHorse = true;
+                }
+              });
+            }
           }
           // 정 가운데 왼쪽 오른쪽 선택
           else if ([22, 27].includes(horse.index)) {
-            // 텍스트 바꿈.
-            this.goModalText1 = "왼쪽";
-            this.goModalText2 = "오른쪽";
-            this.isShowGoDig = true;
-            this.$watch("isShowGoDig", () => {
-              if (!this.isShowGoDig) {
-                this.isSelectedHorse = true;
-              }
-            });
+            // 백도는 모달없이 간다.
+            if (gameStore.yutRes === -1) {
+              this.isSelectedHorse = true;
+            } else {
+              // 텍스트 바꿈.
+              this.goModalText1 = "왼쪽";
+              this.goModalText2 = "오른쪽";
+              // 대각선으로 갈지 선택.
+              this.isShowGoDig = true;
+              this.$watch("isShowGoDig", () => {
+                // 선택을 했다면.
+                if (!this.isShowGoDig) {
+                  this.isSelectedHorse = true;
+                }
+              });
+            }
           } else {
             this.isSelectedHorse = true;
           }
@@ -167,11 +179,11 @@ export default {
     goDigYes() {
       const gameStore = useGameStore();
       // 5,10번 타일에서 대각선 이동
-      if([5,10].includes(this.selectedHorse.index)){
+      if ([5, 10].includes(this.selectedHorse.index)) {
         gameStore.isGoDiagonal = true;
       }
       // 정 가운데 왼쪽 오른쪽 선택.
-      else{
+      else {
         gameStore.isCenterDir = true;
       }
       this.isShowGoDig = false;

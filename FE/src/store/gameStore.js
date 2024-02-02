@@ -5,6 +5,10 @@ export const useGameStore = defineStore("game", {
   // 반응형 상태 (data)
   state: () => {
     return {
+      // 들어온 말의 개수.
+      redEnd: 0,
+      blueEnd: 0,
+      isHorseEnd: false,
       // 윷 던진 결과
       throwRes: [false, false, false, false],
       yutText: "도",
@@ -19,10 +23,42 @@ export const useGameStore = defineStore("game", {
       isCenterDir: false,
       // 말
       redHorses: [
-        { id: 1, index: 0, team: 1, status: "wait", img: "horse1", check: 0 },
-        { id: 2, index: 0, team: 1, status: "wait", img: "horse2", check: 1 },
-        { id: 3, index: 0, team: 1, status: "wait", img: "horse3", check: 2 },
-        { id: 4, index: 0, team: 1, status: "wait", img: "horse4", check: 3 },
+        {
+          id: 1,
+          index: 0,
+          team: 1,
+          status: "wait",
+          img: "horse1",
+          check: 0,
+          endOrder: 0,
+        },
+        {
+          id: 2,
+          index: 0,
+          team: 1,
+          status: "wait",
+          img: "horse2",
+          check: 1,
+          endOrder: 0,
+        },
+        {
+          id: 3,
+          index: 0,
+          team: 1,
+          status: "wait",
+          img: "horse3",
+          check: 2,
+          endOrder: 0,
+        },
+        {
+          id: 4,
+          index: 0,
+          team: 1,
+          status: "wait",
+          img: "horse4",
+          check: 3,
+          endOrder: 0,
+        },
         {
           id: 5,
           index: 0,
@@ -34,11 +70,51 @@ export const useGameStore = defineStore("game", {
         },
       ],
       blueHorses: [
-        { id: 1, index: 0, team: 2, status: "wait", img: "horse1", check: 0 },
-        { id: 2, index: 0, team: 2, status: "wait", img: "horse2", check: 1 },
-        { id: 3, index: 0, team: 2, status: "wait", img: "horse3", check: 2 },
-        { id: 4, index: 0, team: 2, status: "wait", img: "horse4", check: 3 },
-        { id: 5, index: 0, team: 2, status: "wait", img: "horse5", check: 4 },
+        {
+          id: 1,
+          index: 0,
+          team: 2,
+          status: "wait",
+          img: "horse1",
+          check: 0,
+          endOrder: 0,
+        },
+        {
+          id: 2,
+          index: 0,
+          team: 2,
+          status: "wait",
+          img: "horse2",
+          check: 1,
+          endOrder: 0,
+        },
+        {
+          id: 3,
+          index: 0,
+          team: 2,
+          status: "wait",
+          img: "horse3",
+          check: 2,
+          endOrder: 0,
+        },
+        {
+          id: 4,
+          index: 0,
+          team: 2,
+          status: "wait",
+          img: "horse4",
+          check: 3,
+          endOrder: 0,
+        },
+        {
+          id: 5,
+          index: 0,
+          team: 2,
+          status: "wait",
+          img: "horse5",
+          check: 4,
+          endOrder: 0,
+        },
       ],
       horsesIndex: [
         [
@@ -54,6 +130,20 @@ export const useGameStore = defineStore("game", {
           { bottom: "90px", left: "1356px" },
           { bottom: "90px", left: "1426px" },
           { bottom: "30px", left: "1391px" },
+        ],
+        [
+          { bottom: "10px", left: "380px" },
+          { bottom: "10px", left: "430px" },
+          { bottom: "10px", left: "480px" },
+          { bottom: "10px", left: "530px" },
+          { bottom: "10px", left: "580px" },
+        ],
+        [
+          { bottom: "10px", rigth: "620px" },
+          { bottom: "10px", rigth: "670px" },
+          { bottom: "10px", rigth: "720px" },
+          { bottom: "10px", rigth: "770px" },
+          { bottom: "10px", rigth: "820px" },
         ],
       ],
       // 말이 이동할 위치
@@ -88,6 +178,7 @@ export const useGameStore = defineStore("game", {
         { bottom: "350px", right: "860px" }, // 27
         { bottom: "255px", right: "770px" }, // 28
         { bottom: "190px", right: "700px" }, // 29
+        { bottom: "90px", right: "610px" }, // 30
       ],
       // 타일
       tiles: [
@@ -121,6 +212,7 @@ export const useGameStore = defineStore("game", {
         { id: 27, position: "center", horse: [] },
         { id: 28, position: "bottom-right", horse: [] },
         { id: 29, position: "bottom-right", horse: [] },
+        { id: 30, position: "right", horse: [] },
       ],
     };
   },
@@ -134,23 +226,9 @@ export const useGameStore = defineStore("game", {
           ? this.redHorses.find((horse) => horse.id === selectedHorse.id)
           : this.blueHorses.find((horse) => horse.id === selectedHorse.id);
 
+      // 목적지 설정.
       let target = horseInfo.index + this.yutRes;
 
-      // 가운데 방향 설정.
-      if (horseInfo.index == 22 && !this.isCenterDir) target += 5;
-      if (horseInfo.index == 27 && this.isCenterDir) target -= 5;
-
-      if (
-        horseInfo.index <= 24 &&
-        target > 24 &&
-        target === horseInfo.index + this.yutRes
-      )
-        target -= 10;
-      if (horseInfo.index == 27 && this.isCenterDir && target > 24)
-        target -= 10;
-
-      // 5, 10 모서리 출발
-      if (this.isGoDiagonal) target += 14;
       // 처음 출발할때는 상태를 바꿔야한다.
       if (horseInfo.status === "wait") {
         // 처음 출발한 말을 0번에 넣어 시작한다.
@@ -166,10 +244,76 @@ export const useGameStore = defineStore("game", {
         horseInfo.status = "ing";
       }
 
+      // 5, 10 모서리 출발
+      if (this.isGoDiagonal) target += 14;
+
+      // 가운데 방향 설정.
+      if (horseInfo.index == 22 && !this.isCenterDir) target += 5;
+      if (horseInfo.index == 27 && this.isCenterDir) target -= 5;
+
+      if (
+        horseInfo.index <= 24 &&
+        target > 24 &&
+        target === horseInfo.index + this.yutRes
+      )
+        target -= 10;
+      if (horseInfo.index == 27 && this.isCenterDir && target > 24)
+        target -= 10;
+
+      // 말이 들어왔을 때
+      // 마지막 위치에서 출발할 때는 그냥 끝.
+      if (horseInfo.index === 30) {
+        for (var i = 0; i < this.tiles[horseInfo.index].horse.length; i++) {
+          const horseTemp =
+            horseInfo.team === 1
+              ? this.redHorses.find(
+                  (horse) =>
+                    horse.id === this.tiles[horseInfo.index].horse[i].id
+                )
+              : this.blueHorses.find(
+                  (horse) =>
+                    horse.id === this.tiles[horseInfo.index].horse[i].id
+                );
+          // 말 상태를 바꾼다.
+          horseTemp.status = "end";
+          // 카운트 한다.
+          if (horseTemp.team === 1) horseTemp.endOrder = this.redEnd++;
+          else horseTemp.endOrder = this.blueEnd++;
+        }
+        // 비워준다.
+        this.tiles[horseInfo.index].horse = [];
+        // 그냥 끝낸다.
+        return;
+      }
+      // 15번 부터 마지막 타일 또는 들어왔다면
+      if (
+        (horseInfo.index >= 15 && target > 19 && horseInfo.index < 20) ||
+        ((horseInfo.index === 22 || horseInfo.index >= 25) && target > 29)
+      ) {
+        // 마지막 타일
+        if (target === 20 || target === 30) target = 30;
+        // 그냥 들어와서 끝나면.
+        else {
+          this.isHorseEnd = true;
+          // 카운트 한다.
+          if (horseInfo.team === 1) horseInfo.endOrder = this.redEnd++;
+          else horseInfo.endOrder = this.blueEnd++;
+        }
+      }
+
+      // 만약 백도가 나왔을 때.
+      if(this.yutRes === -1){
+        if(horseInfo.index === 20 || horseInfo.index === 25){
+          target -= 14;
+        } else if(horseInfo.index == 1){
+          target = 30;
+        }
+      }
       // 다른 말 체크
-      this.horseCheck(horseInfo, target);
+      if (!this.isHorseEnd) this.horseCheck(horseInfo, target);
       // 말 이동
       this.moveTo(horseInfo.index, target);
+      this.isHorseEnd = false;
       this.isGoDiagonal = false;
       this.isCenterDir = false;
     },
@@ -211,12 +355,44 @@ export const useGameStore = defineStore("game", {
     // 말 이동 함수
     moveTo(from, to) {
       // 이동 전 타일에서 말 배열의 크기를 가져온다.
-      const len = this.tiles[to].horse.length;
+      const len = !this.isHorseEnd
+        ? this.tiles[to].horse.length
+        : this.tiles[from].horse.length;
       // 팀 정보.
-      const team = this.tiles[to].horse[0].team;
+      const team = !this.isHorseEnd
+        ? this.tiles[to].horse[0].team
+        : this.tiles[from].horse[0].team;
 
+      // 말이 들어왔다면.
+      if (this.isHorseEnd) {
+        for (var i = 0; i < len; i++) {
+          const horseInfo =
+            team === 1
+              ? this.redHorses.find(
+                  (horse) => horse.id === this.tiles[from].horse[i].id
+                )
+              : this.blueHorses.find(
+                  (horse) => horse.id === this.tiles[from].horse[i].id
+                );
+          horseInfo.index = 30;
+        }
+        setTimeout(() => {
+          for (var i = 0; i < len; i++) {
+            const horseInfo =
+              team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[from].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[from].horse[i].id
+                  );
+            horseInfo.status = "end";
+          }
+          this.tiles[from].horse = [];
+        }, 300);
+      }
       // 모서리를 통과할때.
-      if (
+      else if (
         this.yutRes != -1 &&
         Math.trunc(from / 5) != Math.trunc(to / 5) &&
         from < 20
@@ -248,25 +424,7 @@ export const useGameStore = defineStore("game", {
             horseInfo.index = to;
           }
         }, 300);
-      }
-      // 모서리에서 이동.
-      // else if ([5, 10].includes(from) && this.isGoDiagonal) {
-      //   // to += 15;
-      //   // 그룹을 다 이동 시킨다.
-      //   for (var i = 0; i < len; i++) {
-      //     const horseInfo =
-      //       team === 1
-      //         ? this.redHorses.find(
-      //             (horse) => horse.id === this.tiles[to].horse[i].id
-      //           )
-      //         : this.blueHorses.find(
-      //             (horse) => horse.id === this.tiles[to].horse[i].id
-      //           );
-      //     horseInfo.index = to;
-      //   }
-      // }
-      // 왼쪽 하단 모서리 이동
-      else if (from >= 20 && to < 20) {
+      } else if (this.yutRes != -1 && from >= 20 && to < 20) {
         // 순간이동을 방지하기 위해 24,15번 찍고 목적지로 이동한다.
         for (var i = 0; i < len; i++) {
           const horseInfo =
