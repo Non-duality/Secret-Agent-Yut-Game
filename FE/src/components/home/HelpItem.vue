@@ -11,16 +11,15 @@
         <img src="@/assets/img/help/cancel.png" alt="cancel-button" class="cancel-button" @click="closeModal('help')">
         <div class="work-npc-content" v-html="npcMessage"></div>
         <button @click="showNextIntroMessage" v-if="step === 0" class="modal-yes-btn">응, 알려줘</button>
-        <!-- <img src="@/assets/img/help/next.png" alt="previous-vector" class="previous-vector" @click="showNextMessage" v-if="step === 1"> -->
-        <img src="@/assets/img/help/next.png" alt="next-vector" class="next-vector" @click="showNextMessage" v-if="step === 1">
+        <img src="@/assets/img/help/mininextvector.png" alt="next-vector" class="next-vector" @click="showNextMessage" v-if="step === 2">
         <div class="multi-button">
           <section class="work-npc-buttons">
-            <button v-if="step === 1" @click="showCheckScore()" class="modal-exp-btn" :class="{ changedColor: isClikedScore }"># 전적 조회</button>
-            <button v-if="step === 1" @click="showCreateGameroom()" class="modal-exp-btn" :class="{ changedColor: isClikedGameRoom }"># 게임방 생성</button>
-            <button v-if="step === 1" @click="showSelectCharacter()" class="modal-exp-btn" :class="{ changedColor: isClikedCharacter }"># 말선택</button>
-            <button v-if="step === 1" @click="showSelectSpy()" class="modal-exp-btn" :class="{ changedColor: isClikedSpy }"># 밀정 선택</button>
-            <button v-if="step === 1" @click="showDoMission()" class="modal-exp-btn" :class="{ changedColor: isClikedMisson }"># 미션 수행</button>
-            <button v-if="step === 1" @click="showManageCam()" class="modal-exp-btn" :class="{ changedColor: isClikedCam }"># 캠 관리</button>
+            <button v-if="step >= 1" @click="showCheckScore()" class="modal-exp-btn" :class="{ changedColor: isClikedScore }"># 전적 조회</button>
+            <button v-if="step >= 1" @click="showCreateGameroom()" class="modal-exp-btn" :class="{ changedColor: isClikedGameRoom }"># 게임방 생성</button>
+            <button v-if="step >= 1" @click="showSelectCharacter()" class="modal-exp-btn" :class="{ changedColor: isClikedCharacter }"># 말선택</button>
+            <button v-if="step >= 1" @click="showSelectSpy()" class="modal-exp-btn" :class="{ changedColor: isClikedSpy }"># 밀정 선택</button>
+            <button v-if="step >= 1" @click="showDoMission()" class="modal-exp-btn" :class="{ changedColor: isClikedMisson }"># 미션 수행</button>
+            <button v-if="step >= 1" @click="showManageCam()" class="modal-exp-btn" :class="{ changedColor: isClikedCam }"># 캠 관리</button>
           </section>
         </div>
       </div>
@@ -46,8 +45,8 @@ export default {
 
       // 시작
       mainMessages: [
-        "게임에 대해서 설명해줄까?",
-        "너가 궁금한 점을 클릭하면 설명해줄게.",
+        "게임에 대해서 설명해줄까?>",
+        "너가 궁금한 점을 클릭하면 설명해줄게.>",
       ],
       step: 0,
 
@@ -174,6 +173,7 @@ export default {
     showCheckScore() {
       this.selectedMessages = this.checkScoreMessages
       this.selectedIndex = 0
+      this.step = 2
       this.clearMessageDelay();
       this.npcMessage = "";
       this.Setmessage(this.selectedMessages[this.selectedIndex])
@@ -181,7 +181,7 @@ export default {
       this.isClikedGameRoom = false
       this.isClikedCharacter = false
       this.isClikedSpy = false
-      this.sClikedMisson = false
+      this.isClikedMisson = false
       this.isClikedCam = false
     },
 
@@ -189,6 +189,7 @@ export default {
     showCreateGameroom(){
       this.selectedMessages = this.createGameroomMessages
       this.selectedIndex = 0
+      this.step = 2
       this.clearMessageDelay();
       this.npcMessage = "";
       this.Setmessage(this.selectedMessages[this.selectedIndex])
@@ -196,7 +197,7 @@ export default {
       this.isClikedGameRoom = true
       this.isClikedCharacter = false
       this.isClikedSpy = false
-      this.sClikedMisson = false
+      this.isClikedMisson = false
       this.isClikedCam = false
     },
 
@@ -204,6 +205,7 @@ export default {
     showSelectCharacter(){
       this.selectedMessages = this.selectCharacterMessages
       this.selectedIndex = 0
+      this.step = 2
       this.clearMessageDelay();
       this.npcMessage = "";
       this.Setmessage(this.selectedMessages[this.selectedIndex])
@@ -211,7 +213,7 @@ export default {
       this.isClikedGameRoom = false
       this.isClikedCharacter = true
       this.isClikedSpy = false
-      this.sClikedMisson = false
+      this.isClikedMisson = false
       this.isClikedCam = false
     },
 
@@ -219,6 +221,7 @@ export default {
     showSelectSpy(){
       this.selectedMessages = this.selectSpyMessages
       this.selectedIndex = 0
+      this.step = 2
       this.clearMessageDelay();
       this.npcMessage = "";
       this.Setmessage(this.selectedMessages[this.selectedIndex])
@@ -226,7 +229,7 @@ export default {
       this.isClikedGameRoom = false
       this.isClikedCharacter = false
       this.isClikedSpy = true
-      this.sClikedMisson = false
+      this.isClikedMisson = false
       this.isClikedCam = false
     },
 
@@ -234,6 +237,7 @@ export default {
     showDoMission(){
       this.selectedMessages = this.doMissionMessages
       this.selectedIndex = 0
+      this.step = 2
       this.clearMessageDelay();
       this.npcMessage = "";
       this.Setmessage(this.selectedMessages[this.selectedIndex])
@@ -241,7 +245,7 @@ export default {
       this.isClikedGameRoom = false
       this.isClikedCharacter = false
       this.isClikedSpy = false
-      this.sClikedMisson = true
+      this.isClikedMisson = true
       this.isClikedCam = false
     },
 
@@ -249,6 +253,7 @@ export default {
     showManageCam(){
       this.selectedMessages = this.manageCamMessages
       this.selectedIndex = 0
+      this.step = 2
       this.clearMessageDelay();
       this.npcMessage = "";
       this.Setmessage(this.selectedMessages[this.selectedIndex])
@@ -256,7 +261,7 @@ export default {
       this.isClikedGameRoom = false
       this.isClikedCharacter = false
       this.isClikedSpy = false
-      this.sClikedMisson = false
+      this.isClikedMisson = false
       this.isClikedCam = true
     },
 
