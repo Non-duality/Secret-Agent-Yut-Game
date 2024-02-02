@@ -91,6 +91,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         TokenDTO tokenDTO = jwtUtil.generateToken(email, role);
         TokenEntity token = new TokenEntity(tokenDTO.getRefreshToken(), tokenDTO.getAccessToken(), email, role, 12*60*60);
+
         repository.save(token);
 
         // JSON으로 token 전달

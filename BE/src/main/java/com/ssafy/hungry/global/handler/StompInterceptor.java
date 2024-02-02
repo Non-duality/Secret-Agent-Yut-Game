@@ -5,7 +5,6 @@ import com.ssafy.hungry.global.entity.StompPrincipal;
 import com.ssafy.hungry.global.repository.SessionRepository;
 import com.ssafy.hungry.global.util.JWTUtil;
 import io.jsonwebtoken.MalformedJwtException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -17,13 +16,19 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
+import javax.naming.AuthenticationException;
+
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class StompInterceptor implements ChannelInterceptor {
-
     private final JWTUtil jwtUtil;
     private final SessionRepository sessionRepository;
+
+    public StompInterceptor(JWTUtil jwtUtil, SessionRepository sessionRepository){
+        this.jwtUtil = jwtUtil;
+        this.sessionRepository = sessionRepository;
+    }
+
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
@@ -33,8 +38,14 @@ public class StompInterceptor implements ChannelInterceptor {
             String authorizationHeader = String.valueOf(accessor.getNativeHeader("Authorization"));
 
             System.out.println(accessor.getUser().getName());
+<<<<<<< HEAD
             System.out.println(authorizationHeader);
             if(authorizationHeader == null || !authorizationHeader.startsWith("[Bearer ")){
+=======
+
+
+            if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
+>>>>>>> 5f798a632d4f62d8c3959ec8009fc7203628117f
                 System.out.println("소켓 통신 토큰 없음");
                 throw new MessageDeliveryException("메세지 예외");
             }
@@ -48,6 +59,8 @@ public class StompInterceptor implements ChannelInterceptor {
                     String email = jwtUtil.getUserId(token);
                     StompPrincipal user = new StompPrincipal(accessor.getUser().getName());
                     sessionRepository.save(new SessionEntity(email, user));
+                }else{
+                    throw new AccessDeniedException("토큰이 유효하지 않습니다.");
                 }
                 else{
                     throw new AccessDeniedException("JWT 토큰 인증 실패");
@@ -66,5 +79,5 @@ public class StompInterceptor implements ChannelInterceptor {
 
         return message;
     }
-
 }
+
