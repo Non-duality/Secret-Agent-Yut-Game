@@ -30,6 +30,18 @@ spring:
 springdoc:
   show-login-endpoint: true
 
+
+OPENVIDU_URL: https://i10d205.p.ssafy.io:8443
+OPENVIDU_SECRET: ssafyD205
+
+server:
+  ssl:
+    enabled: false
+
+  servlet:
+    context-path: /api/v1
+
+  port: 8080
 # ?? ?? ??
 #logging:
 #  level:

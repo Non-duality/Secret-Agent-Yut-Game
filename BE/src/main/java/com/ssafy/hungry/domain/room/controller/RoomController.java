@@ -21,7 +21,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/room")
+@RequestMapping("/room")
 public class RoomController {
 
     private final RoomService roomService;

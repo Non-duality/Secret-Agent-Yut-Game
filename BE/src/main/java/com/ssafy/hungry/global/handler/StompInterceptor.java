@@ -13,7 +13,10 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
+
+import javax.naming.AuthenticationException;
 
 @Component
 @Slf4j
@@ -51,6 +54,8 @@ public class StompInterceptor implements ChannelInterceptor {
                     String email = jwtUtil.getUserId(token);
                     StompPrincipal user = new StompPrincipal(accessor.getUser().getName());
                     sessionRepository.save(new SessionEntity(email, user));
+                }else{
+                    throw new AccessDeniedException("토큰이 유효하지 않습니다.");
                 }
             }catch (MessageDeliveryException e){
                 throw new MessageDeliveryException("메세지 에러");
