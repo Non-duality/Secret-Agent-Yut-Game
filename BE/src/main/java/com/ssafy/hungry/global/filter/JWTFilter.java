@@ -62,6 +62,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 System.out.println("Refresh 토큰 검증 시도 중 오류 발생");
                 System.out.println("재발급 필요");
                 response.sendError(406, "require login");
+                return;
             }
 
             //refreshToken 값을 키로 accessToken을 가져온다. 두 값이 일치하면 새로운 refreshToken 과 accessToken을 발급한다.
@@ -107,6 +108,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 return;
             }
         }else{
+            // Access Token만 온 경우
             System.out.println("AccessToken 검증");
 
             if (jwtUtil.validateToken(accessToken)) {
@@ -132,7 +134,7 @@ public class JWTFilter extends OncePerRequestFilter {
             }else{
                 System.out.println("token expired");
 
-                response.sendError(406, "token expired");
+                response.sendError(406, "Refresh Token Needed");
             }
         }
     }
