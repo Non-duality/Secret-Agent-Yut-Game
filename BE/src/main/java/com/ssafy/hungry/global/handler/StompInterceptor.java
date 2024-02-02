@@ -39,7 +39,7 @@ public class StompInterceptor implements ChannelInterceptor {
 
             System.out.println(accessor.getUser().getName());
 
-            if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
+            if(authorizationHeader == null || !authorizationHeader.startsWith("[Bearer ")){
 
                 System.out.println("소켓 통신 토큰 없음");
                 throw new MessageDeliveryException("메세지 예외");
