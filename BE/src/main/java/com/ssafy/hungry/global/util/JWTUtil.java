@@ -20,9 +20,9 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    private final UserRepository userRepository;
     private SecretKey secretKey;
 
+    private final UserRepository userRepository;
     private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 15 * 1000L; // 1시간
     private static final long REFRESH_TOKEN_VALIDITY_SECONDS = 1 * 12 * 60 * 60; // 12시간
 
@@ -62,15 +62,10 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
-    public void saveRefreshToken(String email, String refreshToken) {
-        UserEntity user = userRepository.findByEmail(email);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
-        }
-
-        user.updateRefreshToken(refreshToken);
-        userRepository.save(user);
+    public UserEntity getUserEntity(String token) {
+        token = token.split(" ")[1];
+        String email = getUserId(token);
+        return userRepository.findByEmail(email);
     }
 
     /**
@@ -95,6 +90,7 @@ public class JWTUtil {
             System.out.println("JWT 토큰이 잘못되었습니다.");
             e.printStackTrace();
         }
+        System.out.println("내려오나?");
         return false;
     }
 }

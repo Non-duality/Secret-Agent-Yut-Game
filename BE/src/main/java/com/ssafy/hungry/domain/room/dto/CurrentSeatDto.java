@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CurrentSeatDto {
+public class CurrentSeatDto implements Comparable<CurrentSeatDto> {
 
     private int team;
     private int seatNumber;
@@ -21,4 +21,8 @@ public class CurrentSeatDto {
     @JsonProperty("ready")
     private boolean isReady;
 
+    @Override
+    public int compareTo(CurrentSeatDto o) {
+        return Integer.compare(this.seatNumber, o.seatNumber);
+    }
 }

@@ -1,3 +1,7 @@
+server:
+  servlet:
+    context-path: /api/v1
+
 spring:
   redis:
     host: i10d205.p.ssafy.io

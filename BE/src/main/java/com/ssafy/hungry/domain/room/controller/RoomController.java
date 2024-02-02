@@ -21,7 +21,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/room")
+@RequestMapping("/room")
 public class RoomController {
 
     private final RoomService roomService;
@@ -57,7 +57,7 @@ public class RoomController {
 
     // 방 입장 가능 여부 조회
     @PostMapping("/{roomId}")
-    public ResponseEntity<String> canEnterRoom(@PathVariable int roomId, @RequestBody Map<String, String> roomPassword){
+    public ResponseEntity<String> canEnterRoom(@PathVariable int roomId, @RequestBody(required = false) Map<String, String> roomPassword){
         log.info("canEnterRoom 진입 / roomId : " + roomId);
 
 

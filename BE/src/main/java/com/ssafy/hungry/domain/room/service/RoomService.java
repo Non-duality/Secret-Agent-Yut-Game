@@ -28,6 +28,7 @@ public class RoomService {
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
     private final RoomRedisRepository roomRedisRepository;
+    private final RoomRedisService roomRedisService;
     // 방 비밀번호를 암호화 시키기 위한 객체
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -41,7 +42,7 @@ public class RoomService {
         for(RoomEntity roomEntity : roomEntityList){
             roomDtoList.add(RoomDto.builder()
                             .roomId(roomEntity.getRoomId())
-                            .currentUserCount(roomRedisRepository.getCurrentUserCount(roomEntity.getRoomCode()))
+                            .currentUserCount(roomRedisService.getCurrentUserCount(roomEntity.getRoomCode()))
                             .title(roomEntity.getTitle())
                             .isPublic(roomEntity.isPublic())
                             .build());
@@ -57,7 +58,7 @@ public class RoomService {
                 .title(roomEntity.getTitle())
                 .isPublic(roomEntity.isPublic())
                 .gameSpeed(roomEntity.getGameSpeed())
-                .currentUserCount(roomRedisRepository.getCurrentUserCount(roomEntity.getRoomCode()))
+                .currentUserCount(roomRedisService.getCurrentUserCount(roomEntity.getRoomCode()))
                 .theme(roomEntity.getTheme())
                 .build();
 
@@ -91,7 +92,7 @@ public class RoomService {
         roomRepository.save(roomEntity);
 
         // redis에 만들어진 방에 현재 좌석 정보를 만들기
-        roomRedisRepository.createCurrentSeat(roomCode);
+        roomRedisService.createCurrentSeat(roomCode);
 
         // 만들어진 room code 반환
         return roomCode;
@@ -107,5 +108,10 @@ public class RoomService {
     // 비공개 방 비밀번호 검증
     public boolean validatePassword(String password, String encodedPassword){
         return bCryptPasswordEncoder.matches(password, encodedPassword);
+    }
+
+    // room code로 방 찾기
+    public RoomEntity getRoomByRoomCode(String roomCode){
+        return roomRepository.findByRoomCode(roomCode);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,8 +33,8 @@ public class StompInterceptor implements ChannelInterceptor {
             String authorizationHeader = String.valueOf(accessor.getNativeHeader("Authorization"));
 
             System.out.println(accessor.getUser().getName());
-
-            if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
+            System.out.println(authorizationHeader);
+            if(authorizationHeader == null || !authorizationHeader.startsWith("[Bearer ")){
                 System.out.println("소켓 통신 토큰 없음");
                 throw new MessageDeliveryException("메세지 예외");
             }
@@ -48,6 +49,9 @@ public class StompInterceptor implements ChannelInterceptor {
                     StompPrincipal user = new StompPrincipal(accessor.getUser().getName());
                     sessionRepository.save(new SessionEntity(email, user));
                 }
+                else{
+                    throw new AccessDeniedException("JWT 토큰 인증 실패");
+                }
             }catch (MessageDeliveryException e){
                 throw new MessageDeliveryException("메세지 에러");
             }catch (MalformedJwtException e){
@@ -55,6 +59,11 @@ public class StompInterceptor implements ChannelInterceptor {
             }
 
         }
+
+        if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())){
+            log.info("SUBSCRIBE 감지");
+        }
+
         return message;
     }
 

@@ -18,4 +18,6 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Integer> {
     @Query("SELECT r.roomCode FROM RoomEntity r WHERE r.roomId = ?1")
     String findByRoomId(int roomId);
 
+    // room code로 방 찾기
+    RoomEntity findByRoomCode(String roomCode);
 }
