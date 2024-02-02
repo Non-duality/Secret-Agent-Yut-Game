@@ -20,14 +20,14 @@ export const useUserStore = defineStore("user", {
       userInfo: null, // 회원정보
       accessToken: null, // 어세스 토큰
       refreshToken: null, // 리프레쉬 토큰
-      showSpyModal: false,  // 밀정 선택 모달
+      showSpyModal: false, // 밀정 선택 모달
     };
   },
 
   actions: {
     // 데이터 초기화 로직
     initData() {
-      console.log("모든 데이터 초기화")
+      console.log("모든 데이터 초기화");
       const initialState = this.$reset();
       Object.assign(this, initialState);
     },
@@ -45,7 +45,7 @@ export const useUserStore = defineStore("user", {
         this.showDropOutModal = true;
       } else if (value === "password") {
         this.showSuccessPassword = true;
-      } else if (value === 'spy') {
+      } else if (value === "spy") {
         this.showSpyModal = true;
       }
     },
@@ -62,7 +62,7 @@ export const useUserStore = defineStore("user", {
         this.showDropOutModal = false;
       } else if (value === "password") {
         this.showSuccessPassword = false;
-      } else if(value === "spy"){
+      } else if (value === "spy") {
         this.showSpyModal = false;
       }
     },
@@ -76,7 +76,7 @@ export const useUserStore = defineStore("user", {
       await userConfirm(
         loginUser,
         (response) => {
-          console.log("로그인 성공")
+          console.log("로그인 성공");
           if (response.status === httpStatusCode.OK) {
             let { data } = response;
 
@@ -106,14 +106,14 @@ export const useUserStore = defineStore("user", {
       await userDoJoin(
         joinUser,
         (response) => {
-          alert('회원가입 성공')
+          alert("회원가입 성공");
         },
 
         (error) => {
-          alert('회원가입 실패')
-          console.log(error)
+          alert("회원가입 실패");
+          console.log(error);
         }
-      )
+      );
     },
 
     getUserInfo: (token) => {
@@ -124,45 +124,49 @@ export const useUserStore = defineStore("user", {
         (response) => {
           if (response.status === httpStatusCode.OK) {
             useUserStore().userInfo = response.data.userInfo;
-          } else {
+          }
+          
+          else if(response.status === "406"){
+            console.log("Access Token 재발급");
+            tokenRegenerate();
+          }
+          
+          else {
             console.log("유저 정보 없음!!!!");
           }
         },
 
         async (error) => {
-          //error.response.status
           console.error(
-            "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: "
+            "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ",
+            error.response.status
           );
-          // this.isValidToken = false;
-          // await tokenRegenerate();
+
+          await tokenRegenerate();
         }
       );
     },
 
     tokenRegenerate: async () => {
-      console.log(
-        "토큰 재발급 >> 기존 토큰 정보 : {}",
-        sessionStorage.getItem("accessToken")
-      );
-
       await tokenRegeneration(
-        JSON.stringify(userInfo.value),
+        JSON.stringify(useUserStore().userInfo),
         (response) => {
           if (response.status === httpStatusCode.CREATE) {
             let accessToken = response.data["access-token"];
             console.log("재발급 완료 >> 새로운 토큰 : {}", accessToken);
-            sessionStorage.setItem("accessToken", accessToken);
-            isValidToken.value = true;
+            useUserStore().accessToken = accessToken;
+            // useUserStore().isValidToken = true;
           }
         },
+
         async (error) => {
           // HttpStatus.UNAUTHORIZE(401) : RefreshToken 기간 만료 >> 다시 로그인!!!!
           if (error.response.status === httpStatusCode.UNAUTHORIZED) {
-            console.log("갱신 실패");
+            console.log("RefreshToken 기간 만료");
+
             // 다시 로그인 전 DB에 저장된 RefreshToken 제거.
             await logout(
-              userInfo.value.userid,
+              useUserStore().userInfo.email,
               (response) => {
                 if (response.status === httpStatusCode.OK) {
                   console.log("리프레시 토큰 제거 성공");
@@ -170,15 +174,12 @@ export const useUserStore = defineStore("user", {
                   console.log("리프레시 토큰 제거 실패");
                 }
                 alert("RefreshToken 기간 만료!!! 다시 로그인해 주세요.");
-                isLogin.value = false;
-                userInfo.value = null;
-                isValidToken.value = false;
-                router.push({ name: "user-login" });
+                initData();
+                router.push({ name: "/" });
               },
               (error) => {
                 console.error(error);
-                isLogin.value = false;
-                userInfo.value = null;
+                initData();
               }
             );
           }
