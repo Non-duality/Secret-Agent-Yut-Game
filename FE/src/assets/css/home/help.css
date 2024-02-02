@@ -3,8 +3,8 @@
   /* 기본 스타일 유지 */
   border-color: black;
   display: flex;
-  align-items: center; /* 수직 중앙 정렬 */
-  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center;
+  justify-content: center;
   position: fixed;
   left: 0;
   top: 0px;
@@ -14,6 +14,7 @@
   z-index: 5000;
 }
 
+/* 나가기 버튼 */
 .cancel-button {
   display: flex;
   width: 25px;
@@ -21,6 +22,7 @@
   margin: 10px;
 }
 
+/* 다음 버튼 */
 .next-vector {
   width: 25px;
   height: 25px;
@@ -121,8 +123,6 @@
   background-color: #2D81FF;
   color: white;
   border-radius: 20px;
-
-  /* 트랜지션 효과 */
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -131,8 +131,6 @@
 .modal-no-btn:hover {
   background-color: #DC3545;
   color: white;
-  
-  /* 트랜지션 효과 */
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -143,7 +141,7 @@
   border-radius: 20px;
 }
 
-/* 선택됐을 때 버튼 */
+/* 선택했을 때 색깔 유지되는 버튼 */
 .changedColor {
   background-color: #db55c5;
   color: white;

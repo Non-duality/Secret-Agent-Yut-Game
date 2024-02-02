@@ -102,10 +102,12 @@ export default {
   },
 
   methods: {
+    // 모달창 닫기
     closeModal(modalId) {
       this.$emit("close-modal", modalId);
     },
 
+    // setTimeout
     Setmessage(messages) {
       this.clearMessageDelay();
       this.npcMessage = "";
@@ -134,7 +136,6 @@ export default {
       }
     },
 
-
     showNextIntroMessage() {
       if (this.step < this.mainMessages.length - 1) {
         this.step++;
@@ -143,7 +144,7 @@ export default {
         this.closeModal('help');
       }
     },
-
+    
     showNextMessage() {
       if (this.selectedIndex < this.selectedMessages.length-1) {
         this.selectedIndex++;
@@ -153,8 +154,9 @@ export default {
       }
     },
     
-    // 상황별 처리
+    // 각각 상황별 처리
 
+    // 전적 조회
     showCheckScore() {
       this.selectedMessages = this.checkScoreMessages
       this.selectedIndex = 0
@@ -167,6 +169,7 @@ export default {
       this.isClikedCam = false
     },
 
+    // 게임방 생성
     showCreateGameroom(){
       this.selectedMessages = this.createGameroomMessages
       this.selectedIndex = 0
@@ -178,6 +181,8 @@ export default {
       this.sClikedMisson = false
       this.isClikedCam = false
     },
+
+    // 말 선택
     showSelectCharacter(){
       this.selectedMessages = this.selectCharacterMessages
       this.selectedIndex = 0
@@ -189,6 +194,8 @@ export default {
       this.sClikedMisson = false
       this.isClikedCam = false
     },
+
+    // 밀정 선택
     showSelectSpy(){
       this.selectedMessages = this.selectSpyMessages
       this.selectedIndex = 0
@@ -200,6 +207,8 @@ export default {
       this.sClikedMisson = false
       this.isClikedCam = false
     },
+
+    // 미션 수행
     showDoMission(){
       this.selectedMessages = this.doMissionMessages
       this.selectedIndex = 0
@@ -211,6 +220,8 @@ export default {
       this.sClikedMisson = true
       this.isClikedCam = false
     },
+
+    // 캠 관리
     showManageCam(){
       this.selectedMessages = this.manageCamMessages
       this.selectedIndex = 0
@@ -223,15 +234,6 @@ export default {
       this.isClikedCam = true
     },
 
-
-
-
-
-
-
-
-
-
     showExpMessage() {
       if (this.check < this.checkScoreMessages.length - 1) {
         this.check++;
@@ -240,18 +242,6 @@ export default {
         this.closeModal('help');
       }
     },
-
-    // showCheckScore() {
-    //   this.clearMessageDelay();
-
-    //   if ( this.currentCheckScoreIndex < this.checkScoreMessages.length ) {
-    //     this.Setmessage(this.checkScoreMessages[this.currentCheckScoreIndex])
-    //     this.currentCheckScoreIndex++
-    //   } else {
-    //     this.closeModal('help');
-    //   }
-    // },
-
   },
 
   mounted() {
