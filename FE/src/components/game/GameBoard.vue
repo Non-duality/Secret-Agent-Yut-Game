@@ -30,14 +30,14 @@
       @click="goDigYes"
       style="top: 150px; left: 250px; position: absolute"
     >
-      네
+      {{ goModalText1 }}
     </button>
     <button
       v-if="isShowGoDig"
       @click="goDigNo"
       style="top: 250px; left: 250px; position: absolute"
     >
-      아니오
+      {{ goModalText2 }}
     </button>
   </div>
 </template>
@@ -62,6 +62,8 @@ export default {
       isShowRes: false, // 윷 던지고 결과 화면 보여줄 때.
       isShowGoDig: false, // 대각선으로 갈지 말지 선택.
       yutText: "", // 윷 결과 문자.
+      goModalText1: "",
+      goModalText2: "",
     };
   },
   computed: {
@@ -93,8 +95,8 @@ export default {
 
       // 만약 아무 말도 안나갔는데 백도가 나오면 그냥 넘어간다.
       if (gameStore.yutRes == -1) {
-        if (gameStore.myTeam == 1 && gameStore.redHorses[4].check != 5) return;
-        else if (gameStore.myTeam == 2 && gameStore.blueHorses[4].check != 5)
+        if (gameStore.myTeam == 1 && gameStore.redHorses[4].check == 5) return;
+        else if (gameStore.myTeam == 2 && gameStore.blueHorses[4].check == 5)
           return;
       }
 
@@ -119,24 +121,40 @@ export default {
       if (this.canSelectHorse) {
         const gameStore = useGameStore();
         const myTeam = gameStore.myTeam;
+
         // 백도인데 대기중인 말을 선택하면 다시.
         if (horse.index == 0 && gameStore.yutRes == -1) {
           console.log("다시");
         } else if (horse.team == myTeam) {
+          // 말 정보를 먼저 담는다.
+          this.selectedHorse = horse;
           // 만약 대각선이라면.
           if ([5, 10].includes(horse.index)) {
             console.log("확인");
+            // 텍스트 바꿈.
+            this.goModalText1 = "네";
+            this.goModalText2 = "아니오";
             // 대각선으로 갈지 선택.
             this.isShowGoDig = true;
             this.$watch("isShowGoDig", () => {
               // 선택을 했다면.
               if (!this.isShowGoDig) {
-                this.selectedHorse = horse;
+                this.isSelectedHorse = true;
+              }
+            });
+          }
+          // 정 가운데 왼쪽 오른쪽 선택
+          else if ([22, 27].includes(horse.index)) {
+            // 텍스트 바꿈.
+            this.goModalText1 = "왼쪽";
+            this.goModalText2 = "오른쪽";
+            this.isShowGoDig = true;
+            this.$watch("isShowGoDig", () => {
+              if (!this.isShowGoDig) {
                 this.isSelectedHorse = true;
               }
             });
           } else {
-            this.selectedHorse = horse;
             this.isSelectedHorse = true;
           }
         } else {
@@ -148,7 +166,14 @@ export default {
     // 대각선으로 갈때
     goDigYes() {
       const gameStore = useGameStore();
-      gameStore.isGoDiagonal = true;
+      // 5,10번 타일에서 대각선 이동
+      if([5,10].includes(this.selectedHorse.index)){
+        gameStore.isGoDiagonal = true;
+      }
+      // 정 가운데 왼쪽 오른쪽 선택.
+      else{
+        gameStore.isCenterDir = true;
+      }
       this.isShowGoDig = false;
     },
     // 대각선으로 안갈때

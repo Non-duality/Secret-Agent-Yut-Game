@@ -1,3 +1,4 @@
+import { faRProject } from "@fortawesome/free-brands-svg-icons";
 import { defineStore } from "pinia";
 
 export const useGameStore = defineStore("game", {
@@ -14,6 +15,8 @@ export const useGameStore = defineStore("game", {
       isSelect: false,
       // 대각선으로 갈지 말지 선택
       isGoDiagonal: false,
+      // 가운데 방향 선택
+      isCenterDir: false,
       // 말
       redHorses: [
         { id: 1, index: 0, team: 1, status: "wait", img: "horse1", check: 0 },
@@ -133,6 +136,19 @@ export const useGameStore = defineStore("game", {
 
       let target = horseInfo.index + this.yutRes;
 
+      // 가운데 방향 설정.
+      if (horseInfo.index == 22 && !this.isCenterDir) target += 5;
+      if (horseInfo.index == 27 && this.isCenterDir) target -= 5;
+
+      if (
+        horseInfo.index <= 24 &&
+        target > 24 &&
+        target === horseInfo.index + this.yutRes
+      )
+        target -= 10;
+      if (horseInfo.index == 27 && this.isCenterDir && target > 24)
+        target -= 10;
+
       // 5, 10 모서리 출발
       if (this.isGoDiagonal) target += 14;
       // 처음 출발할때는 상태를 바꿔야한다.
@@ -155,6 +171,7 @@ export const useGameStore = defineStore("game", {
       // 말 이동
       this.moveTo(horseInfo.index, target);
       this.isGoDiagonal = false;
+      this.isCenterDir = false;
     },
 
     // 이동하는 곳에 다른 말이 있나 체크.
@@ -199,7 +216,11 @@ export const useGameStore = defineStore("game", {
       const team = this.tiles[to].horse[0].team;
 
       // 모서리를 통과할때.
-      if (this.yutRes != -1 && Math.trunc(from / 5) != Math.trunc(to / 5)) {
+      if (
+        this.yutRes != -1 &&
+        Math.trunc(from / 5) != Math.trunc(to / 5) &&
+        from < 20
+      ) {
         // 순간이동을 방지하기 위해 모서리를 찍고 목적지로 이동한다.
         for (var i = 0; i < len; i++) {
           const horseInfo =
@@ -229,9 +250,24 @@ export const useGameStore = defineStore("game", {
         }, 300);
       }
       // 모서리에서 이동.
-      else if ([5, 10].includes(from) && this.isGoDiagonal) {
-        to += 15;
-        // 그룹을 다 이동 시킨다.
+      // else if ([5, 10].includes(from) && this.isGoDiagonal) {
+      //   // to += 15;
+      //   // 그룹을 다 이동 시킨다.
+      //   for (var i = 0; i < len; i++) {
+      //     const horseInfo =
+      //       team === 1
+      //         ? this.redHorses.find(
+      //             (horse) => horse.id === this.tiles[to].horse[i].id
+      //           )
+      //         : this.blueHorses.find(
+      //             (horse) => horse.id === this.tiles[to].horse[i].id
+      //           );
+      //     horseInfo.index = to;
+      //   }
+      // }
+      // 왼쪽 하단 모서리 이동
+      else if (from >= 20 && to < 20) {
+        // 순간이동을 방지하기 위해 24,15번 찍고 목적지로 이동한다.
         for (var i = 0; i < len; i++) {
           const horseInfo =
             team === 1
@@ -241,9 +277,24 @@ export const useGameStore = defineStore("game", {
               : this.blueHorses.find(
                   (horse) => horse.id === this.tiles[to].horse[i].id
                 );
-          horseInfo.index = to;
+          horseInfo.index = 15;
         }
+        setTimeout(() => {
+          for (var i = 0; i < len; i++) {
+            const horseInfo =
+              team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[to].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[to].horse[i].id
+                  );
+
+            horseInfo.index = to;
+          }
+        }, 300);
       }
+
       // 평범한 이동
       else {
         // 그룹을 다 이동 시킨다.
