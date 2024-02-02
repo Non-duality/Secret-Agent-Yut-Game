@@ -12,6 +12,7 @@ import ScoreCheckVue from "@/components/profile/ScoreCheck.vue";
 import RoomListViewVue from "@/view/room/RoomListView.vue";
 import CharacterVue from "@/view/game/pick/character.vue";
 import OpenViduVue from "@/view/game/pick/openVidu.vue";
+import GameViewVue from "@/view/game/GameView.vue";
 
 const router = createRouter({
   history: createWebHistory("/"),
