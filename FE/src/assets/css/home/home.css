@@ -121,7 +121,7 @@
 }
 
 .help-icon img:hover {
-  transform: rotate(360deg);
+  transform: rotate(-180deg);
 }
 
 .help-message {
@@ -136,18 +136,6 @@
   display: inline-block;
   z-index: 1;
 }
-
-/* .arrow-up {
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #333;
-} */
 
 .help-close-btn {
   position: relative;

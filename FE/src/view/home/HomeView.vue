@@ -58,7 +58,7 @@
 
         <div class="help-icon" @click="openModal('help')">
           <i class="fas fa-question-circle"></i>
-          <img src="../../assets/img/help/horse.png" @click="" alt="도움말 아이콘" />
+          <img src="../../assets/img/help/horse.png" alt="도움말 아이콘" />
         </div>
 
         <transition name="fade">

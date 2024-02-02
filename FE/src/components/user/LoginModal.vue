@@ -49,6 +49,8 @@ export default {
       // console.log(token);
       
       if (isLogin) {
+        // 소켓 추가
+        
         console.log(token);
         getUserInfo(token);
         closeModal();

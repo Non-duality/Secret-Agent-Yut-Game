@@ -1,3 +1,11 @@
+.room-list-component{
+  background-color: rgb(0, 0, 0);
+}
+
+.room-list-component:hover{
+  background-color: rgba(255, 0, 0, 0.5); 
+}
+
 /* 게임 방 검색 바 */
 .room-search {
   display: flex;

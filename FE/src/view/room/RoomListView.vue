@@ -10,7 +10,7 @@
       <h2>세부사항</h2>
       <div class="room-detail-make">
         <RoomInfo v-if="ShowDetail" :room-info="roomInfo" />
-        <RoomInfo v-else :room-info="defaultRoomInfo" />
+        <RoomInfo v-else :room-info="defaultRoomInfo" />  
         <button @click="openModal('roomMaking')" class="room-make-btn">
           방 생성
         </button>
@@ -61,7 +61,6 @@ export default {
     defaultRoomInfo() {
       const roomStore = useRoomStore();
       return roomStore.roomListData[0] || {};
-      return roomStore.roomListSomeData[0] || {};
     },
 
     // 방 생성 모달

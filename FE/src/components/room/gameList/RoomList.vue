@@ -13,19 +13,21 @@
         style="color: #ffffff"
       />
     </div>
-    <div class="room-list-subtitle">
-      <th scope="col">플레이어</th>
-      <th scope="col">게임방 이름</th>
-      <th scope="col">공개</th>
-    </div>
-    <div class="room-list-content">
-      <RoomListComponent
-        v-for="roomInfo in roomInfos"
-        :key="roomInfo.roomId"
-        :roomInfo="roomInfo"
-        @click="$emit('showRoomInfo', roomInfo)"
-        class="room-list-component"
-      />
+    <div >
+      <div class="room-list-subtitle">
+        <th scope="col">인원</th>
+        <th scope="col">게임방 이름</th>
+        <th scope="col">공개</th>
+      </div>
+      <div class="room-list-content">
+        <RoomListComponent
+          v-for="roomInfo in roomInfos"
+          :key="roomInfo.roomId"
+          :roomInfo="roomInfo"
+          @click="$emit('showRoomInfo', roomInfo)"
+          class="room-list-component"
+        />
+      </div>
     </div>
   </div>
 </template>
