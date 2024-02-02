@@ -125,7 +125,7 @@ export default {
       this.npcMessage = "";
 
       let i = 0;
-      const delay = messages.length >= 20 ? 35 : 45;
+      const delay = messages.length >= 20 ? 30 : 45;
       
       const processNextMessage = () => {
         if (i < messages.length) {
@@ -147,7 +147,6 @@ export default {
         this.npcMessage = "";
       }
     },
-
 
     showNextIntroMessage() {
       if (this.step < this.mainMessages.length - 1) {
@@ -441,5 +440,9 @@ export default {
   background-color: #db55c5;
   color: white;
   border-radius: 20px;
+}
+
+.hide-previous-message {
+  display: none;
 }
 </style>
