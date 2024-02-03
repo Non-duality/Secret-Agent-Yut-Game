@@ -22,8 +22,8 @@ public class JWTUtil {
 
     private SecretKey secretKey;
 
-    private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 15 * 1000L; // 1시간
-    private static final long REFRESH_TOKEN_VALIDITY_SECONDS = 1 * 12 * 60 * 60; // 12시간
+    private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 15 * 60 * 1000L; // 1시간
+    private static final long REFRESH_TOKEN_VALIDITY_SECONDS = 12 * 60 * 60 * 1000L; // 12시간
 
     public JWTUtil(@Value("${spring.jwt.secret}")String secret){
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
@@ -35,7 +35,7 @@ public class JWTUtil {
                 .claim("userId", userId)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS * 1000))
+                .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS))
                 .signWith(secretKey)
                 .compact();
 
@@ -44,7 +44,7 @@ public class JWTUtil {
 //        .claim("userId", userId)
 //        .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY_SECONDS * 1000))
+                .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY_SECONDS))
                 .signWith(secretKey)
                 .compact();
 

@@ -6,6 +6,7 @@ import com.ssafy.hungry.domain.user.dto.MyInfoDto;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -118,6 +119,26 @@ public class UserController {
         } else {
             result.put("message", "failed");
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //메일 인증 요청 api
+    @PostMapping("/emails/verification-requests")
+    public ResponseEntity sendMessage(@RequestParam("email") @Valid String email) {
+        userService.sendCodeToEmail(email);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //메일 인증 api
+    @GetMapping("/emails/verifications")
+    public ResponseEntity verificationEmail(@RequestParam("email") @Valid String email,
+                                            @RequestParam("code") String authCode) {
+        Boolean response = userService.verifiedCode(email, authCode);
+        if(response){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
