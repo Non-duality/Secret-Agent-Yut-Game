@@ -12,9 +12,19 @@ import ScoreCheckVue from "@/components/profile/ScoreCheck.vue";
 import RoomListViewVue from "@/view/room/RoomListView.vue";
 import CharacterVue from "@/view/game/pick/character.vue";
 
+// 테스트용 라우터
+import FlyCatch from "@/components/mission/FlyCatch.vue";
+
 const router = createRouter({
   history: createWebHistory("/"),
   routes: [
+    // 테스트용 라우터
+    {
+      path: "/flycatch",
+      name: "mission1",
+      component: FlyCatch,
+    },
+
     // 로그인 전 초기 화면
     {
       path: "/",

@@ -1,0 +1,7 @@
+.output {
+  display: none;
+  width: 100%;
+  font-size: calc(8px + 1.2vw);
+  background-color: gray;
+  color: whitesmoke;
+}
