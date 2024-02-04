@@ -25,11 +25,11 @@ public class UserController {
 
     //회원가입
     @PostMapping("/join")
-    public String join(@RequestBody JoinDto joinDto) {
+    public ResponseEntity<String> join(@RequestBody JoinDto joinDto) {
         if(!userService.join(joinDto)){
-            return "회원가입 실패";
+            return ResponseEntity.badRequest().body("회원가입실패");
         }
-        return "회원가입 성공";
+        return ResponseEntity.ok().body("회원가입성공");
     }
 
     //임시비밀번호 발급을 위한 이메일 인증 요청
@@ -61,7 +61,7 @@ public class UserController {
     }
 
     //이메일 중복체크
-    @GetMapping("/{userId}")
+    @GetMapping("/email/{userId}")
     public ResponseEntity checkId(@PathVariable("email") String email) {
         Boolean isExist = userService.checkId(email);
 
@@ -69,7 +69,7 @@ public class UserController {
 
         if (isExist) {
             result.put("message", "이미 존재하는 사용자 email 입니다.");
-            return new ResponseEntity(result, HttpStatus.OK);
+            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
         } else {
             result.put("message", "사용 가능한 email 입니다.");
             return new ResponseEntity(result, HttpStatus.OK);
@@ -77,7 +77,7 @@ public class UserController {
     }
 
     //닉네임 중복체크
-    @GetMapping("/{nickname}")
+    @GetMapping("/nickname/{nickname}")
     public ResponseEntity checkNickname(@PathVariable("nickname") String nickname) {
         Boolean isExist = userService.checkNickname(nickname);
 
@@ -85,7 +85,7 @@ public class UserController {
 
         if (isExist) {
             result.put("message", "이미 존재하는 사용자 닉네임 입니다.");
-            return new ResponseEntity(result, HttpStatus.OK);
+            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
         } else {
             result.put("message", "사용 가능한 닉네임 입니다.");
             return new ResponseEntity(result, HttpStatus.OK);
@@ -124,7 +124,7 @@ public class UserController {
     public ResponseEntity<String> changeNickname(@RequestBody String nickname){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         userService.changeNickname(email, nickname);
-        return null;
+        return ResponseEntity.ok().body("변경완료");
     }
 
     //회원 탈퇴
