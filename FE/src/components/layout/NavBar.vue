@@ -9,9 +9,9 @@ export default {
 
   methods: {
     goToHome() {
-      this.$router.push({ name: 'home' });
-    }
-  }
+      this.$router.push({ name: "home" });
+    },
+  },
 };
 </script>
 
@@ -24,9 +24,27 @@ export default {
     <!-- 홈, 게임, 게시판 클릭시 화면 이동 -->
     <!-- Named Routes로 변경 -->
     <div class="text-box">
-      <Router-link :to="{ name: 'home' }" class="nav-text">홈</Router-link>
-      <Router-link :to="{ name: 'room' }" class="nav-text">게임</Router-link>
-      <Router-link :to="{ name: 'home' }" class="nav-text">게시판</Router-link>
+      <router-link
+        :to="{ name: 'home' }"
+        class="nav-text"
+        exact
+        active-class="active-link"
+        >홈</router-link
+      >
+      <router-link
+        :to="{ name: 'room' }"
+        class="nav-text"
+        exact
+        active-class="active-link"
+        >게임</router-link
+      >
+      <router-link
+        :to="{ name: 'user' }"
+        class="nav-text"
+        exact
+        active-class="active-link"
+        >내정보</router-link
+      >
     </div>
     <!-- 프로필 가져와서 보여주기 -->
     <div class="pro-box">

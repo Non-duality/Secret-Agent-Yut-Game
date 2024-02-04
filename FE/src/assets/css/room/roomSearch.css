@@ -5,10 +5,11 @@
   background-color: whitesmoke;
   border-radius: 50px;
   box-sizing: border-box;
-  width: 100%;
+  max-width: 100vw;
   min-width: 300px;
   opacity: 100%;
   padding: 0 20px;
+  margin-left: 40px;
 }
 
 /* 방 검색 바 */

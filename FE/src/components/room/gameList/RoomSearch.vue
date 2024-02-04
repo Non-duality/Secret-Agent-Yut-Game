@@ -56,5 +56,5 @@
 </script>
 
 <style scoped>
-@import "@/assets/css/room/roomSearch.css";
+@import "../../../assets/css/room/roomSearch.css";
 </style>

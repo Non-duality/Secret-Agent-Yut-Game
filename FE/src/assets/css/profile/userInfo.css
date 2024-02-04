@@ -6,7 +6,7 @@
 
 .fade-enter-active {
   /* 전체 단계에서 적용될 부분*/
-  transition: all 0.5s;
+  transition: all 0.85s;
 }
 
 .fade-enter-to {
@@ -19,7 +19,7 @@
 }
 
 .fade-leave-active {
-  transition: all 0.5s;
+  transition: all 0.85s;
 }
 
 .fade-leave-to {

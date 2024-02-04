@@ -46,7 +46,6 @@ export default {
       await userLogin(loginUser.value);
 
       let token = useUserStore().accessToken;
-      // console.log(token);
       
       if (isLogin) {
         // 소켓 추가

@@ -2,7 +2,7 @@
   <div class="user-profile">
     <div class="left-section">
       <img src="@/assets/img/profile_picture.png" alt="profile-img" class="profile-picture"/>
-      <h3>{{ userInfo.name }}</h3>
+      <h3>{{ userInfo.nickname }}</h3>
       <button @type="submit" @click="openModal('Nick')" class="nickname-change-btn">
         닉네임 변경
       </button>
@@ -14,14 +14,20 @@
         <ChangeNicknameModal v-if="showUserInfoNick" />
       </transition>
   
-      <h4>이메일  {{ userInfo.email }}</h4>
-      <h4>비밀번호  {{ user.password }}</h4>
-      <h4>생년월일  {{ userInfo.birthDate }}</h4>
-      <!-- 성별 체크박스로 넣어서 completed 정보로 표시하기 -->
-      <div class="gender-font">
-        <label for="male">성별 </label>
-        <label for="male" v-if="userInfo.gender=='남'">남성</label>
-        <label for="female" v-if="userInfo.gender=='여'">여성</label>
+      <div>
+        <span id="title">이메일</span> <span id="content">{{ userInfo.email }}</span>
+      </div>
+
+      <div>
+        <span id="title">비밀번호</span> <span id="content">********</span>
+      </div>
+
+      <div>
+        <span id="title">생년월일</span> <span id="content">{{ userInfo.birthDate }}</span>
+      </div>
+
+      <div>
+        <span id="title">성별</span> <span id="content">{{ userInfo.gender }}성</span>
       </div>
       <button @type="submit" @click="openModal('out')" class="memberout-btn">회원 탈퇴</button>
     </div>
@@ -80,5 +86,5 @@ export default {
 </script>
 
 <style scoped>
-@import "@/assets/css/profile/userModify.css";
+@import "../../assets/css/profile/userModify.css";
 </style>
