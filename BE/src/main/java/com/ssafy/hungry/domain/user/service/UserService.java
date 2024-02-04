@@ -41,7 +41,6 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
         this.emailRepository = emailRepository;
     }
 
-
     //회원 가입 메소드
     public Boolean join(JoinDto joinDto) {
         String email = joinDto.getEmail();
@@ -70,27 +69,22 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
         return userRepository.existsByEmail(email);
     }
 
-    // 스웨거용
-    public UserEntity getProfile(String userId){
-        return userRepository.findByEmail(userId);
+    // 닉네임 중복 검사
+    public boolean checkNickname(String nickname){
+        return userRepository.existsByNickname(nickname);
+    }
+
+    //닉네임 변경
+    public void changeNickname(String email, String nickname){
+        UserEntity user = userRepository.findByEmail(email);
+        user.setNickname(nickname);
+        userRepository.save(user);
     }
 
     // 사용자 정보 변경
     public void modifyProfile(String userId, MyInfoDto dto) {
 
     }
-
-//    public MyInfoDto myInfo(String email) {
-//        MyInfoDto myInfo = new MyInfoDto();
-//        UserEntity findUser = userRepository.findByEmail(email);
-//        myInfo.setEmail(findUser.getEmail());
-//        myInfo.setNickname(findUser.getNickname());
-//        myInfo.setBirthDate(findUser.getBirthDate());
-//        myInfo.setGender(findUser.getGender());
-//        myInfo.setProfileImgUrl(findUser.getProfileImgUrl());
-//        return myInfo;
-//    }
-
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -108,8 +102,11 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
         return userRepository.findByEmail(email);
     }
 
-    public void deleteUser(String userId) {
-        userRepository.deleteByEmail(userId);
+    //회원 탈퇴
+    public void deleteUser(String email) {
+        UserEntity user = userRepository.findByEmail(email);
+        user.setDelete(true);
+        userRepository.save(user);
     }
 
     //이메일을 받아서 해당 이메일에 인증 메일 발송

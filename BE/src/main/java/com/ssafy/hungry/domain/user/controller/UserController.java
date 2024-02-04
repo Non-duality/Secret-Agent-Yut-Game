@@ -1,18 +1,15 @@
 package com.ssafy.hungry.domain.user.controller;
 
-import com.ssafy.hungry.domain.user.detail.CustomUserDetails;
 import com.ssafy.hungry.domain.user.dto.JoinDto;
 import com.ssafy.hungry.domain.user.dto.MyInfoDto;
 import com.ssafy.hungry.domain.user.dto.PasswordDto;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,18 +76,34 @@ public class UserController {
         }
     }
 
-    //회원정보조회
-    @GetMapping("/info/{userId}")
-    public ResponseEntity<Map<String, Object>> getInfo(@PathVariable("userId") String userId,
-                                                       HttpServletRequest request) {
-        System.out.println("UserController.getInfo");
+    //닉네임 중복체크
+    @GetMapping("/{nickname}")
+    public ResponseEntity checkNickname(@PathVariable("nickname") String nickname) {
+        Boolean isExist = userService.checkNickname(nickname);
 
+        Map<String, String> result = new HashMap<>();
+
+        if (isExist) {
+            result.put("message", "이미 존재하는 사용자 닉네임 입니다.");
+            return new ResponseEntity(result, HttpStatus.OK);
+        } else {
+            result.put("message", "사용 가능한 닉네임 입니다.");
+            return new ResponseEntity(result, HttpStatus.OK);
+        }
+    }
+
+    //내정보조회
+    @GetMapping("/info")
+    public ResponseEntity<Map<String, Object>> getInfo() {
+        System.out.println("UserController.getInfo");
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            UserEntity user = userService.findByEmail(userId);
+            UserEntity user = userService.findByEmail(email);
             MyInfoDto dto = MyInfoDto.builder()
+                    .profileImgUrl(user.getProfileImgUrl())
                     .email(user.getEmail())
                     .nickname(user.getNickname())
                     .gender(user.getGender())
@@ -106,55 +119,21 @@ public class UserController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
-    //내정보 조회
-    @GetMapping("/myinfo")
-    public ResponseEntity<MyInfoDto> getProfile(Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        UserEntity entity = userService.getProfile(userDetails.getUsername());
-
-        if (entity == null) {
-            Map<String, String> result = new HashMap<>();
-            result.put("message", "failed");
-            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
-        } else {
-            MyInfoDto dto = MyInfoDto.builder()
-                    .email(entity.getEmail())
-                    .nickname(entity.getNickname())
-                    .gender(entity.getGender())
-                    .birthDate(entity.getBirthDate())
-                    .build();
-
-            return new ResponseEntity<>(dto, HttpStatus.OK);
-        }
-    }
-
-    //회원정보 수정
-    @PatchMapping("/{email}")
-    public ResponseEntity modifyProfile(@PathVariable("email") String email,
-                                        @RequestBody MyInfoDto profileDto) {
-        userService.modifyProfile(email, profileDto);
-
-        Map<String, String> result = new HashMap<>();
-        result.put("message", "success");
-        return new ResponseEntity(result, HttpStatus.OK);
+    //닉네임 변경
+    @PostMapping("change-nickname")
+    public ResponseEntity<String> changeNickname(@RequestBody String nickname){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        userService.changeNickname(email, nickname);
+        return null;
     }
 
     //회원 탈퇴
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable("userId") String userId,
-                                        Authentication authentication) {
-
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<String> deleteUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Map<String, String> result = new HashMap<>();
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
-        if (userDetails.getUsername().equals(userId)) {
-            userService.deleteUser(userId);
-            result.put("message", "success");
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } else {
-            result.put("message", "failed");
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-        }
+        userService.deleteUser(email);
+        return ResponseEntity.ok().body("회원 탈퇴 성공");
     }
 
     //메일 인증 요청 api
@@ -177,9 +156,4 @@ public class UserController {
         }
     }
 
-//    @GetMapping("/myinfo")
-//    public MyInfoDto myInfo(){
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        return userService.myInfo(email);
-//    }
 }
