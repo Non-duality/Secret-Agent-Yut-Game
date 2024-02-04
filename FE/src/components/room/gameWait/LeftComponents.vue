@@ -65,17 +65,7 @@ export default {
           ], 
           maxUser: 3 }
       ],
-
-      // 방장 여부
-      isManager: false,
     };
-  },
-
-  // 들어올 때 user 세팅 (추후 수정 필요)
-  created() {
-    this.fetchUserFromQuery();
-    // URL query의 isManager 가져와서 방장 여부 판단
-    this.isManager = this.$route.query.isManager === 'true';
   },
 
   methods: {

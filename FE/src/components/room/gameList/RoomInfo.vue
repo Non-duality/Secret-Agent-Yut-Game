@@ -32,7 +32,6 @@
 
 <script>
 import { useRoomStore } from "@/store/roomStore";
-import { useUserStore } from "@/store/userStore";
 
 export default {
   // 부모로부터 받아온 방 상세정보 데이터
@@ -48,7 +47,6 @@ export default {
     join() {
       const roomInfo = useRoomStore().roomDetailData;
 
-      console.log(roomInfo);
       if (!roomInfo.public) {
         useRoomStore().openModal('roomPasswordCheck');
       }
@@ -56,6 +54,7 @@ export default {
       useRoomStore()
           .canEnterRoom()
           .then(() => {
+            // 대기방 이동 시작
             console.log("접속 완료");
        });
     },

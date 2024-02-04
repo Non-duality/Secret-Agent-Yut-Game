@@ -14,7 +14,6 @@ export default {
     const router = useRouter();
 
     const goTolist = () => {
-      store.toggleNav();
       router.push("/room");
     };
 

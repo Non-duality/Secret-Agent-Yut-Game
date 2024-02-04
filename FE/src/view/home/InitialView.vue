@@ -42,10 +42,9 @@ export default {
   },
   setup() {
     const store = useUserStore();
-    const { isLogin, showLoginModal, showJoinModal } = storeToRefs(store);
+    const {  showLoginModal, showJoinModal } = storeToRefs(store);
 
     return {
-      isLogin,
       showLoginModal,
       showJoinModal,
       openModal: store.openModal,

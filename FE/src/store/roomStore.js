@@ -1,15 +1,18 @@
 import { defineStore } from "pinia";
-import { getRoomList, getRoomDetail, getCanEnterRoom } from "@/api/room";
+import {
+  getRoomList,
+  getRoomDetail,
+  getCanEnterRoom,
+  axiosCreateRoom,
+} from "@/api/room";
 
 import { Client } from "@stomp/stompjs";
 import { useUserStore } from "./userStore";
 const { VITE_WSS_API_URL } = import.meta.env;
 
 export const useRoomStore = defineStore("room", {
-
   /* 반응형 DATA */
   state: () => ({
-
     /* 소켓 통신을 위한 DATA */
     stompClient: null,
     isConnected: false,
@@ -21,6 +24,37 @@ export const useRoomStore = defineStore("room", {
 
     /* 게임 방 상세 정보 */
     roomDetailData: null,
+
+    /* 게임 방 생성 정보 */
+    createRoomInfo: null,
+
+    /* 입장 시, 받을 정보들 */
+    seatInfo: { // 방 정보
+      seatnum1: {
+        nickname: "",
+        ready: false,
+      },
+      seatnum2: {
+        nickname: "",
+        ready: false,
+      },
+      seatnum3: {
+        nickname: "",
+        ready: false,
+      },
+      seatnum4: {
+        nickname: "",
+        ready: false,
+      },
+      seatnum5: {
+        nickname: "",
+        ready: false,
+      },
+      seatnum6: {
+        nickname: "",
+        ready: false,
+      },
+    },
 
     /* 모달 관련 */
     showRoomMakingModal: false, // 방 생성
@@ -42,7 +76,7 @@ export const useRoomStore = defineStore("room", {
 
           beforeConnect: () => {},
 
-          onConnect: () => { 
+          onConnect: () => {
             useRoomStore().isConnected = true;
             resolve();
           },
@@ -50,7 +84,6 @@ export const useRoomStore = defineStore("room", {
           onDisconnect: () => {
             useRoomStore().isConnected = false;
             useUserStore().initData();
-            reject(new Error("WebSocket disconnected"));
           },
 
           onWebSocketClose: (closeEvent) => {
@@ -58,6 +91,8 @@ export const useRoomStore = defineStore("room", {
           },
 
           onWebSocketError: (error) => {
+            useRoomStore().isConnected = false;
+            useUserStore().initData();
             useRoomStore().stompClient.deactivate();
             console.log("WebSocket error: ", error);
             reject(error);
@@ -91,31 +126,75 @@ export const useRoomStore = defineStore("room", {
               password: "",
             };
           }
-          
+
           getCanEnterRoom(
             useUserStore().roomId,
             useRoomStore().jsonPassword,
-            ({ data }) => {useUserStore
-              
+            ({ data }) => {
               useUserStore().roomCode = data;
               useRoomStore().stompClient.subscribe(
-                "/sub/room/" + useUserStore().roomCode
+                "/sub/room/" + useUserStore().roomCode,
+                (msg) => {
+                  console.log(msg);
+                }
               );
 
               useRoomStore().stompClient.publish({
                 headers: {
                   Authorization: `Bearer ${useUserStore().accessToken}`,
                 },
-                destination:
-                  "/pub/room/" + useUserStore().roomCode + "/enter",
+                destination: "/pub/room/" + useUserStore().roomCode + "/enter",
               });
 
-              console.log("/pub/room/" + useUserStore().roomCode + "/enter")
+              // 현재, 자신의 방의 정보를 넣는다.
+              // (나갈 때 정보 삭제 필요)
+              useUserStore().currentRoomInfo = useRoomStore().roomDetailData;
+              useUserStore().currentRoomInfo.roomCode = data;
               resolve();
             }
           );
         }
       });
+    },
+
+    /* 방 입장하기 */
+    // enterRoom() {
+    //   useRoomStore().stompClient.publish({
+    //     destination:
+    //       "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/enter",
+    //     headers: {
+    //       Authorization: `Bearer ${useUserStore().accessToken}`,
+    //     },
+    //   });
+    // },
+
+    /* 나가기 */
+    exitRoom() {
+      useRoomStore().stompClient.publish({
+        destination:
+          "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/exit",
+        headers: {
+          Authorization: `Bearer ${useUserStore().accessToken}`,
+        },
+      });
+    },
+
+    /* 방 생성 */
+    async createRoom() {
+      try {
+        await new Promise((resolve, reject) => {
+          axiosCreateRoom(useRoomStore().createRoomInfo, ({ data }) => {
+            useRoomStore().createRoomInfo.roomCode = data;
+            console.log(useRoomStore().createRoomInfo.roomCode);
+            resolve();
+          });
+        });
+      } catch (error) {
+        // 토큰이 만료된 경우
+        if (error.response.status === 406) {
+          await useUserStore().tokenRegenerate();
+        }
+      }
     },
 
     // 여는 모달
@@ -172,47 +251,19 @@ export const useRoomStore = defineStore("room", {
         );
       });
     },
-
-    // 플레이어 수 증가
-    // increasePlayerCount(roomId) {
-    //   const room = this.roomListData.find((room) => room.id === roomId);
-    //   if (room && room.currentPlayers < 6) {
-    //     room.currentPlayers += 1;
-    //   }
-    // },
-
-    // 플레이어 수 감소
-    // decreasePlayerCount(roomId) {
-    //   const room = this.roomListData.find((room) => room.id === roomId);
-    //   if (room && room.currentPlayers > 0) {
-    //     room.currentPlayers -= 1;
-    //   }
-    // },
-
-    // 방 삭제 (플레이어 수가 0일 때)
-    // removeEmptyRoom(roomId) {
-    //   const roomIndex = this.roomListData.findIndex(
-    //     (room) => room.id === roomId
-    //   );
-    //   if (
-    //     roomIndex !== -1 &&
-    //     this.roomListData[roomIndex].currentPlayers === 0
-    //   ) {
-    //     this.roomListData.splice(roomIndex, 1);
-    //   }
-    // },
   },
 
   persist: {
     enabled: true, //storage 저장유무
     strategies: [
       {
-        key: "counter", //storage key값 설정
-        storage: localStorage, // localStorage, sessionStorage storage 선택 default sessionStorage
+        key: "roomState",
+        storage: localStorage,
+        reducer: (state) => ({
+          isConnected: state.isConnected,
+          // 기타 필요한 상태들...
+        }),
       },
     ],
   },
-
-  // 계산된 값 (computed)
-  getters: {},
 });

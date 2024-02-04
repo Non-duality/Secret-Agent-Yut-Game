@@ -32,28 +32,20 @@
 
     data() {
       return {
-        // 방장 여부
-        isManager: false,
         // 방 정보
         roomInfo: null,
+
         // 강퇴 모달
         ban: false
       }
     },
     
     methods: {
+
       // 나갈 때 로직
       goToList() {
-        const roomStore = useRoomStore();
-        const roomNum = Number(this.$route.params.roomNum);
-        const roomInfo = roomStore.roomListData.find(room => room.id === roomNum);
-
-        if (roomInfo) {
-          // 인원 감소
-          roomStore.decreasePlayerCount(roomInfo.id);
-          // 만약 currentPlayers가 0이면 방 삭제
-          roomStore.removeEmptyRoom(roomInfo.id);
-        }
+        this.roomInfo = useRoomStore().createRoomInfo();
+        
         // 나가기
         this.navigateToRoomList();
       },
@@ -74,18 +66,6 @@
       navigateToRoomList() {
         this.$router.push({ name: 'list' })
       }
-
-    },
-
-    created() {
-      // URL query의 isManager 가져와서 방장 여부 판단
-      this.isManager = this.$route.query.isManager === 'true';
-      // URL params의 roomNum 가져오기
-      const roomNum = Number(this.$route.params.roomNum);
-      // 스토어 선언
-      const roomStore = useRoomStore()
-      // 스토어에서 해당 ID 방 정보 찾기
-      this.roomInfo = roomStore.roomListData.find(room => room.id === roomNum);
     },
   };
 </script>

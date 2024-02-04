@@ -6,8 +6,7 @@
     <form class="room-make-form" @submit.prevent>
       <div class="form-group">
         <label for="title">방 제목</label>
-        <!-- 악성 유저 고려해서 방 제목 길이 제한 -->
-        <input type="text" id="title" maxlength="10" v-model="roomInfo.title" />
+        <input type="text" id="title" maxlength="6" v-model="roomInfo.title" />
       </div>
       <div class="form-group">
         <label for="isPublic">공개 여부</label>
@@ -99,6 +98,7 @@
 <script>
 // 방 정보 데이터
 import { useRoomStore } from "@/store/roomStore";
+import { useUserStore } from "@/store/userStore";
 
 export default {
   data() {
@@ -109,12 +109,7 @@ export default {
         public: true,
         password: "",
         theme: "설날",
-        speed: 2,
-      },
-
-      // 임시 유저 데이터 (삭제 필요)
-      userInfo: {
-        userNickname: "쭈꾸미",
+        speed: 1,
       },
     };
   },
@@ -129,34 +124,40 @@ export default {
       } else if (roomInfo.theme === "") {
         alert("테마를 선택하세요");
       } else {
-        // 스토어 사용
-        const roomStore = useRoomStore();
+        useRoomStore().createRoomInfo = this.roomInfo;
 
-        // 새로운 방 정보 생성
-        const newRoom = {
-          ...roomInfo,
-          // id는 길이에서 + 1
-          id: roomStore.roomListData.length + 1,
-          // 현재 플레이어는 방장 한 명이니 한명 선정
-          currentPlayers: 1,
-        };
+        useRoomStore()
+          .createRoom()
+          .then(() => {
+            useRoomStore().stompClient.subscribe(
+              "/sub/room/" + useRoomStore().createRoomInfo.roomCode
+            );
 
-        // 스토어의 addRoom 메서드 호출
-        roomStore.addRoom(newRoom);
+            useRoomStore().stompClient.publish({
+              headers: {
+                Authorization: `Bearer ${useUserStore().accessToken}`,
+              },
+              destination:
+                "/pub/room/" +
+                useRoomStore().createRoomInfo.roomCode +
+                "/enter",
+            });
 
-        // 유저 정보 JSON으로 변형 (나중에는 store로 관리)
-        const userInfoString = JSON.stringify(this.userInfo);
+            // 방 생성 시, 자신의 현재 방을 세팅한다.
+            // (나갈 때 정보 삭제 필요)
+            useUserStore().currentRoomInfo = useRoomStore().createRoomInfo;
+            console.log(useUserStore().currentRoomInfo);
 
-        // 생성된 방으로 이동
-        this.$router.push({
-          name: "wait",
-          params: { roomNum: newRoom.id },
-          // 나중에 user는 store로 관리 필요
-          query: { userInfo: userInfoString, isManager: true },
-        });
+            this.$router.push({
+              name: "wait",
+            });
 
-        // 방 생성 모달 닫기
-        roomStore.closeModal("roomMaking");
+            useRoomStore().closeModal("roomMaking");
+          })
+          .catch((error) => {
+            alert("방 생성 실패");
+            console.log(error);
+          });
       }
     },
 

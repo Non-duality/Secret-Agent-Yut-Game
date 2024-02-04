@@ -8,14 +8,14 @@
   </transition>
   <main>
     <transition name="fade" mode="out-in">
-      <router-view v-slot="{ Component }">
-        <component :is="Component" />
-      </router-view>
+      <router-view />
     </transition>
   </main>
 </template>
 
 <script>
+import { watch } from 'vue';
+
 import NavBar from "@/components/layout/NavBar.vue";
 import SideBar from "@/components/layout/SideBar.vue";
 import { useUserStore } from "@/store/userStore";
@@ -26,9 +26,14 @@ export default {
     NavBar,
     SideBar,
   },
+
   setup() {
     const store = useUserStore();
     const { showModalSide } = storeToRefs(store);
+
+    watch(showModalSide, (newValue, oldValue) => {
+      console.log("showModalSide changed:", newValue);
+    });
 
     return {
       showModalSide, // 네비 바와 사이드 바를 숨기고 나타내기 위해 선언
