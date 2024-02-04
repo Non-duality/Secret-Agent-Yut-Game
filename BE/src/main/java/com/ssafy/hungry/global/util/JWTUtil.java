@@ -90,7 +90,7 @@ public class JWTUtil {
             System.out.println("JWT 토큰이 잘못되었습니다.");
             e.printStackTrace();
         }
-        System.out.println("내려오나?");
+
         return false;
     }
 }

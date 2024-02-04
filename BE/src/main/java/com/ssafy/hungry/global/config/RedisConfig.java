@@ -51,15 +51,12 @@ public class RedisConfig {
         RedisTemplate<byte[], byte[]> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
 
-        // 문자열을 위한 직렬화 방식
-        StringRedisSerializer stringSerializer = new StringRedisSerializer();
-        redisTemplate.setKeySerializer(stringSerializer);
-        redisTemplate.setValueSerializer(stringSerializer);
-
         // 객체를 위한 직렬화 방식 설정
         Jackson2JsonRedisSerializer<Object> jsonSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
         redisTemplate.setHashKeySerializer(jsonSerializer);
         redisTemplate.setHashValueSerializer(jsonSerializer);
+        redisTemplate.setKeySerializer(jsonSerializer);
+        redisTemplate.setValueSerializer(jsonSerializer);
 
         //모든 경우
         redisTemplate.setDefaultSerializer(jsonSerializer);

@@ -30,60 +30,36 @@ public class StompRoomController {
     public void enterRoom (@DestinationVariable String roomCode ,@Header("Authorization") String token){
         log.info("방 입장 호출 : " + roomCode);
 
+        System.out.println(token);
         // token 을 가져와 userEntity 생성
         UserEntity user = jwtUtil.getUserEntity(token);
         // room code를 가져와 roomEntity 생성
         RoomEntity room = roomService.getRoomByRoomCode(roomCode);
 
         // redis room 정보 최신화
-        roomRedisService.userEnterRoom(roomCode, user);
+        RoomLobbyInfoDto roomLobbyInfoDto = roomRedisService.userEnterRoom(room, user);
 
-        // 방에 전달할 최신화된 정보 Dto
-        RoomLobbyInfoDto roomLobbyInfoDto =RoomLobbyInfoDto.builder()
-                .ownerId(room.getOwner().getId())
-                .currentSeatDtoList(roomRedisService.getCurrentRoomInfo(room.getRoomCode()))
-                .roomDetailDto(RoomDetailDto.builder()
-                        .title(room.getTitle())
-                        .isPublic(room.isPublic())
-                        .gameSpeed(room.getGameSpeed())
-                        .currentUserCount(roomRedisService.getCurrentUserCount(room.getRoomCode()))
-                        .theme(room.getTheme())
-                        .build())
-                .message(user.getNickname() + "님이 입장하였습니다.")
-                .build();
-
+        // 해당 방 구독자들에게 메시지 전달
         messagingTemplate.convertAndSend("/sub/room/" + roomCode, roomLobbyInfoDto);
 
     }
 
     // 방 나가기
+    // Todo : 방장이 나갈 경우 방이 삭제되는 기능 구현
     @MessageMapping(value = "/room/{roomCode}/exit")
     public void exitRoom(@DestinationVariable String roomCode ,@Header("Authorization") String token){
-
+        log.info("방 나가기 호출 : " + roomCode);
         // token 을 가져와 userEntity 생성
         UserEntity user = jwtUtil.getUserEntity(token);
 
         // room code를 가져와 roomEntity 생성
         RoomEntity room = roomService.getRoomByRoomCode(roomCode);
 
-        // redis room 정보 최신화
-        roomRedisService.userEnterRoom(roomCode, user);
+        RoomLobbyInfoDto roomLobbyInfoDto = roomRedisService.userExitRoom(room, user);
 
-        // 방에 전달할 최신화된 정보 Dto
-        RoomLobbyInfoDto roomLobbyInfoDto =RoomLobbyInfoDto.builder()
-                .ownerId(room.getOwner().getId())
-                .currentSeatDtoList(roomRedisService.getCurrentRoomInfo(room.getRoomCode()))
-                .roomDetailDto(RoomDetailDto.builder()
-                        .title(room.getTitle())
-                        .isPublic(room.isPublic())
-                        .gameSpeed(room.getGameSpeed())
-                        .currentUserCount(roomRedisService.getCurrentUserCount(room.getRoomCode()))
-                        .theme(room.getTheme())
-                        .build())
-                .message(user.getNickname() + "님이 퇴장하였습니다.")
-                .build();
-
+        // 해당 방 구독자들에게 메시지 전달
         messagingTemplate.convertAndSend("/sub/room/" + roomCode, roomLobbyInfoDto);
+
 
     }
 }
