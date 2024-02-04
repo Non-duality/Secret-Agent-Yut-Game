@@ -156,4 +156,11 @@ public class UserController {
         }
     }
 
+    //로그아웃
+    @PostMapping("/logout")
+    public ResponseEntity logout(@RequestBody String refreshToken){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        userService.logout(email, refreshToken);
+        return ResponseEntity.ok().body("로그아웃");
+    }
 }

@@ -4,9 +4,11 @@ import com.ssafy.hungry.domain.user.detail.CustomUserDetails;
 import com.ssafy.hungry.domain.user.entity.EmailEntity;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.repository.EmailRepository;
+import com.ssafy.hungry.domain.user.repository.TokenRepository;
 import com.ssafy.hungry.domain.user.repository.UserRepository;
 import com.ssafy.hungry.domain.user.dto.JoinDto;
 import com.ssafy.hungry.domain.user.dto.MyInfoDto;
+import com.ssafy.hungry.global.repository.SessionRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,13 +34,17 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
     private static final String AUTH_CODE_PREFIX = "AuthCode ";
     @Value("${spring.mail.auth-code-expiration-millis}")
     private long authCodeExpirationMillis;
+    private final TokenRepository tokenRepository;
+    private final SessionRepository sessionRepository;
 
     //의존성 주입을 위한 생성자 주입 패턴
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, MailService mailService, EmailRepository emailRepository) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, MailService mailService, EmailRepository emailRepository, TokenRepository tokenRepository, SessionRepository sessionRepository) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.mailService = mailService;
         this.emailRepository = emailRepository;
+        this.tokenRepository = tokenRepository;
+        this.sessionRepository = sessionRepository;
     }
 
     //회원 가입 메소드
@@ -223,5 +229,11 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
         }else{
             return false;
         }
+    }
+
+    //로그아웃
+    public void logout(String email, String refreshToken){
+        tokenRepository.deleteById(refreshToken);
+        sessionRepository.deleteById(email);
     }
 }
