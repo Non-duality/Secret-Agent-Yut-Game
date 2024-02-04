@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { cloneDeep } from "lodash";
 import { jwtDecode } from "jwt-decode";
 
 import { userConfirm, userDoJoin, findById } from "@/api/user";
@@ -21,14 +20,15 @@ export const useUserStore = defineStore("user", {
       accessToken: null, // 어세스 토큰
       refreshToken: null, // 리프레쉬 토큰
       showSpyModal: false, // 밀정 선택 모달
+      roomId: null,
+      roomCode: null,
     };
   },
 
   actions: {
     // 데이터 초기화 로직
     initData() {
-      console.log("모든 데이터 초기화");
-      const initialState = this.$reset();
+      const initialState = useUserStore().$reset();
       Object.assign(this, initialState);
     },
 
@@ -36,40 +36,40 @@ export const useUserStore = defineStore("user", {
     // 로그인, 회원가입 차별을 준다.
     openModal(value) {
       if (value === "login") {
-        this.showLoginModal = true;
+        useUserStore().showLoginModal = true;
       } else if (value === "join") {
-        this.showJoinModal = true;
+        useUserStore().showJoinModal = true;
       } else if (value === "Nick") {
-        this.showUserInfoNick = true;
+        useUserStore().showUserInfoNick = true;
       } else if (value === "out") {
-        this.showDropOutModal = true;
+        useUserStore().showDropOutModal = true;
       } else if (value === "password") {
-        this.showSuccessPassword = true;
+        useUserStore().showSuccessPassword = true;
       } else if (value === "spy") {
-        this.showSpyModal = true;
+        useUserStore().showSpyModal = true;
       }
     },
 
     // 위와 같지만, 닫는 함수.
     closeModal(value) {
       if (value === "login") {
-        this.showLoginModal = false;
+        useUserStore().showLoginModal = false;
       } else if (value === "join") {
-        this.showJoinModal = false;
+        useUserStore().showJoinModal = false;
       } else if (value === "Nick") {
-        this.showUserInfoNick = false;
+        useUserStore().showUserInfoNick = false;
       } else if (value === "Drop") {
-        this.showDropOutModal = false;
+        useUserStore().showDropOutModal = false;
       } else if (value === "password") {
-        this.showSuccessPassword = false;
+        useUserStore().showSuccessPassword = false;
       } else if (value === "spy") {
-        this.showSpyModal = false;
+        useUserStore().showSpyModal = false;
       }
     },
 
     // 상단 바와 사이드 바 토글 함수.
     toggleNav() {
-      this.showModalSide = !this.showModalSide;
+      useUserStore().showModalSide = !useUserStore().showModalSide;
     },
 
     userLogin: async (loginUser) => {

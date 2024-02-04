@@ -1,4 +1,5 @@
 import { localAxios } from "@/util/http-commons";
+import { useUserStore } from "@/store/userStore";
 
 const local = localAxios();
 
@@ -10,8 +11,9 @@ function getRoomDetail(roomId, success, fail){
   local.get('/room/detail/' + `${roomId}`).then(success).catch(fail);
 }
 
-function canEnterRoom(roomId, password, success, fail){
-  local.post('/room/' + `${roomId}`, JSON.stringify(password)).then(success).catch(fail);
+function getCanEnterRoom(roomId, password, success, fail){
+  local.defaults.headers["Authorization"] = "Bearer " + useUserStore().accessToken;
+  local.post('/room/' + `${roomId}`, password).then(success).catch(fail);
 }
 
-export {getRoomList, getRoomDetail, canEnterRoom};
+export {getRoomList, getRoomDetail, getCanEnterRoom};

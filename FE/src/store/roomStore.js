@@ -1,12 +1,20 @@
 import { defineStore } from "pinia";
+import { getRoomList, getRoomDetail, getCanEnterRoom } from "@/api/room";
 
-import { getRoomList, getRoomDetail } from "@/api/room";
+import { Client } from "@stomp/stompjs";
+import { useUserStore } from "./userStore";
+const { VITE_WSS_API_URL } = import.meta.env;
 
 export const useRoomStore = defineStore("room", {
-  // 반응형 상태 (data)
+
+  /* 반응형 DATA */
   state: () => ({
+
+    /* 소켓 통신을 위한 DATA */
     stompClient: null,
     isConnected: false,
+    password: null,
+    jsonPassword: null,
 
     /* 게임 방 요약 정보 */
     roomList: [],
@@ -19,25 +27,112 @@ export const useRoomStore = defineStore("room", {
     showRoomPasswordCheckModal: false, // 비공개방 비밀번호 체크 모달
   }),
 
-  // 메서드 (function)
   actions: {
-    connectWS() {},
+    /* 로그인을 하게 되면, 바로 소켓 통신 */
+    connectWS() {
+      return new Promise((resolve, reject) => {
+        let token = useUserStore().accessToken;
+
+        useRoomStore().stompClient = new Client({
+          brokerURL: VITE_WSS_API_URL,
+
+          connectHeaders: {
+            Authorization: `Bearer ${token}`,
+          },
+
+          beforeConnect: () => {},
+
+          onConnect: () => { 
+            useRoomStore().isConnected = true;
+            resolve();
+          },
+
+          onDisconnect: () => {
+            useRoomStore().isConnected = false;
+            useUserStore().initData();
+            reject(new Error("WebSocket disconnected"));
+          },
+
+          onWebSocketClose: (closeEvent) => {
+            console.log("WebSocket closed", closeEvent);
+          },
+
+          onWebSocketError: (error) => {
+            useRoomStore().stompClient.deactivate();
+            console.log("WebSocket error: ", error);
+            reject(error);
+          },
+
+          // STOMP 수준의 오류 처리
+          onStompError: (frame) => {
+            useRoomStore().stompClient.deactivate();
+            console.error("STOMP Error:", frame);
+            reject(new Error("STOMP error"));
+          },
+        });
+
+        useRoomStore().stompClient.activate();
+      });
+    },
+
+    /* 방에 들어갈 수 있는지 확인 */
+    canEnterRoom() {
+      return new Promise((resolve, reject) => {
+        const roomInfo = useRoomStore().roomDetailData;
+        if (roomInfo.currentUserCount === 6) {
+          alert("방의 빈 자리가 없습니다.");
+        } else {
+          if (!roomInfo.public) {
+            useRoomStore().jsonPassword = {
+              password: useRoomStore().password,
+            };
+          } else {
+            useRoomStore().jsonPassword = {
+              password: "",
+            };
+          }
+          
+          getCanEnterRoom(
+            useUserStore().roomId,
+            useRoomStore().jsonPassword,
+            ({ data }) => {useUserStore
+              
+              useUserStore().roomCode = data;
+              useRoomStore().stompClient.subscribe(
+                "/sub/room/" + useUserStore().roomCode
+              );
+
+              useRoomStore().stompClient.publish({
+                headers: {
+                  Authorization: `Bearer ${useUserStore().accessToken}`,
+                },
+                destination:
+                  "/pub/room/" + useUserStore().roomCode + "/enter",
+              });
+
+              console.log("/pub/room/" + useUserStore().roomCode + "/enter")
+              resolve();
+            }
+          );
+        }
+      });
+    },
 
     // 여는 모달
     openModal(value) {
       if (value === "roomMaking") {
-        this.showRoomMakingModal = true;
+        useRoomStore().showRoomMakingModal = true;
       } else if (value === "roomPasswordCheck") {
-        this.showRoomPasswordCheckModal = true;
+        useRoomStore().showRoomPasswordCheckModal = true;
       }
     },
 
     // 닫는 모달
     closeModal(value) {
       if (value === "roomMaking") {
-        this.showRoomMakingModal = false;
+        useRoomStore().showRoomMakingModal = false;
       } else if (value === "roomPasswordCheck") {
-        this.showRoomPasswordCheckModal = false;
+        useRoomStore().showRoomPasswordCheckModal = false;
       }
     },
 

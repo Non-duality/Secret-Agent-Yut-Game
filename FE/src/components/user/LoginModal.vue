@@ -23,10 +23,10 @@
 </template>
   
 <script>
-
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/store/userStore";
+import { useRoomStore } from "@/store/roomStore";
 import { useRouter } from "vue-router";
 
 export default {
@@ -46,15 +46,26 @@ export default {
       await userLogin(loginUser.value);
 
       let token = useUserStore().accessToken;
-      
+
       if (isLogin) {
         // 소켓 추가
-        
-        console.log(token);
-        getUserInfo(token);
-        closeModal();
-        userStore.toggleNav();
-        router.push("/home");
+        await useRoomStore()
+          .connectWS()
+          .then(() => {
+            if (useRoomStore().isConnected) {
+              getUserInfo(token);
+              closeModal();
+              userStore.toggleNav();
+              router.push("/home");
+            } else {
+              useUserStore().isLogin = false;
+              useUserStore().initData();
+              router.push("/");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
       } else {
         router.push("/");
       }

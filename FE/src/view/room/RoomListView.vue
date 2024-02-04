@@ -28,7 +28,6 @@
     <RoomPasswordCheckModal
       v-if="showRoomPasswordCheckModal"
       class="room-password-modal"
-      :room-info="defaultRoomInfo"
     />
   </div>
 </template>
@@ -40,6 +39,7 @@ import RoomInfo from "@/components/room/gameList/RoomInfo.vue";
 import RoomMakingModal from "@/components/room/gameList/RoomMakingModal.vue";
 import RoomPasswordCheckModal from "@/components/room/gameList/RoomPasswordCheckModal.vue";
 
+import { useUserStore } from "@/store/userStore"
 import { useRoomStore } from "@/store/roomStore";
 
 export default {
@@ -88,7 +88,7 @@ export default {
 
     // 방 상세 정보 띄우기
     async handleShowRoomInfo(roomId) {
-      // this.roomId = roomId;
+      useUserStore().roomId = roomId;
       await this.selectRoomInfo(roomId);
       this.ShowDetail = true;
     },

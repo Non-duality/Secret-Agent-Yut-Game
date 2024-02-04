@@ -17,7 +17,7 @@
       </div>
       <div class="room-detail-theme">
         <div>
-          <img src="@/assets/img/playboard.png" alt="playboard">
+          <img src="@/assets/img/playboard.png" alt="playboard" />
         </div>
         <div>
           <p class="room-detail-subtitle">맵 테마</p>
@@ -26,59 +26,41 @@
       </div>
     </div>
     <!-- 예시 방 디테일일 때는 참가 버튼 없애기 -->
-    <button>참가</button>
+    <button @click="join">참가</button>
   </div>
 </template>
 
 <script>
-  import { useRoomStore } from '@/store/roomStore';
+import { useRoomStore } from "@/store/roomStore";
+import { useUserStore } from "@/store/userStore";
 
-  export default {
-    // 부모로부터 받아온 방 상세정보 데이터
-    props: {
-      roomInfo: Object
-    },
+export default {
+  // 부모로부터 받아온 방 상세정보 데이터
+  props: {
+    roomInfo: Object,
+  },
 
-    data() {
-      return {
-        // roomNum: this.roomInfo.id
+  data() {
+    return {};
+  },
+
+  methods: {
+    join() {
+      const roomInfo = useRoomStore().roomDetailData;
+
+      console.log(roomInfo);
+      if (!roomInfo.public) {
+        useRoomStore().openModal('roomPasswordCheck');
       }
+      
+      useRoomStore()
+          .canEnterRoom()
+          .then(() => {
+            console.log("접속 완료");
+       });
     },
-
-    methods: {
-      // 게임 참가 함수
-      // joinGame(roomNum) {
-      //   const roomStore = useRoomStore();
-      //   const roomInfo = roomStore.roomListData.find(room => room.id === roomNum);
-      //   // 인원이 다 찬 경우 접근 불가능
-      //   if (roomInfo.currentPlayers === 6) {
-      //     alert('해당 방 인원이 다 찼습니다!')
-      //   } else {
-      //     // 유저 정보 JSON으로 변형 (나중에는 store로 관리)
-      //     const userInfoString = JSON.stringify(this.userInfo);
-      //     // 공개 방 일 때
-      //     if ( roomInfo.isPublic ) {
-      //       this.$router.push({ name: 'wait', 
-      //       params: { roomNum: roomNum }, 
-      //       // 나중에 user는 store로 관리 필요
-      //       query: { userInfo: userInfoString, isManager: false } })
-      //       // player가 들어갔으니 사람 추가
-      //       roomStore.increasePlayerCount(roomNum);
-      //     } 
-      //     // 비공개 방 일 때
-      //     else {
-      //       this.openModal('roomPasswordCheck')
-      //     }
-      //   }
-      // },
-
-      // 모달 관리
-      openModal(modalType) {
-        const roomStore = useRoomStore();
-        roomStore.openModal(modalType);
-      },
-    }
-  }
+  },
+};
 </script>
 
 <style scoped>

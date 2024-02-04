@@ -122,41 +122,39 @@ router.beforeEach((to, from, next) => {
       // 사용자가 아니요를 선택하면 현재 경로에 남아 있음
       next(false);
     }
-  }
-
-  const isLogin = useUserStore().isLogin;
-
-  // "/" 경로 처리
-  if (to.path === "/") {
-    if (isLogin) {
-      next("/home");
-    } else {
-      next();
-    }
-  }
-
-  // routes에 설정된 경로 중에서 현재 이동하려는 경로가 있는지 확인
-  const isRouteExist = router.options.routes.some(
-    (route) => route.path === to.path
-  );
-
-  // routes 중에 children을 가지고 있는 부모 경로들만을 확인하는 변수
-  const matchingChildRoute = findChildRouteByPath(
-    router.options.routes,
-    to.path
-  );
-
-  if (isRouteExist || matchingChildRoute) {
-    if (isLogin) {
-      next();
-    } else {
-      next("/");
-    }
   } else {
-    next("/");
+    const isLogin = useUserStore().isLogin;
+
+    // "/" 경로 처리
+    if (to.path === "/") {
+      if (isLogin) {
+        next("/home");
+      } else {
+        next();
+      }
+    } else {
+      // routes에 설정된 경로 중에서 현재 이동하려는 경로가 있는지 확인
+      const isRouteExist = router.options.routes.some(
+        (route) => route.path === to.path
+      );
+
+      // routes 중에 children을 가지고 있는 부모 경로들만을 확인하는 변수
+      const matchingChildRoute = findChildRouteByPath(
+        router.options.routes,
+        to.path
+      );
+
+      if (isRouteExist || matchingChildRoute) {
+        if (isLogin) {
+          next();
+        } else {
+          next("/");
+        }
+      } else {
+        next("/");
+      }
+    }
   }
 });
 
-  
-
-export default router
+export default router;

@@ -87,7 +87,7 @@ export default {
   name: "App",
 
   setup() {
-    useUserStore().showModalSide = false;
+    useUserStore().showModalSide = true;
   },
 
   components: {
