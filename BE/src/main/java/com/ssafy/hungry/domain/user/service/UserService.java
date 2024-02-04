@@ -8,6 +8,7 @@ import com.ssafy.hungry.domain.user.repository.UserRepository;
 import com.ssafy.hungry.domain.user.dto.JoinDto;
 import com.ssafy.hungry.domain.user.dto.MyInfoDto;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -156,8 +157,6 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
         return sb.toString();
     }
 
-
-
     //사용자가 입력한 인증코드가 맞는지 이메일을 키로 레디스에서 검색
     public Boolean verifiedCode(String email, String authCode) {
         try{
@@ -213,5 +212,19 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
         UserEntity user = userRepository.findByEmail(toEmail);
         user.setPassword(bCryptPasswordEncoder.encode(tmporaryPassword));
         userRepository.save(user);
+    }
+
+    //비밀번호 변경
+    public boolean changePassword(String previousPassword, String nextPassword){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(email);
+
+        if(bCryptPasswordEncoder.matches(previousPassword, user.getPassword())) {
+            user.setPassword(bCryptPasswordEncoder.encode(nextPassword));
+            userRepository.save(user);
+            return true;
+        }else{
+            return false;
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.ssafy.hungry.domain.user.controller;
 import com.ssafy.hungry.domain.user.detail.CustomUserDetails;
 import com.ssafy.hungry.domain.user.dto.JoinDto;
 import com.ssafy.hungry.domain.user.dto.MyInfoDto;
+import com.ssafy.hungry.domain.user.dto.PasswordDto;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,6 +52,15 @@ public class UserController {
         else{
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
+    }
+
+    //비밀번호 변경
+    @PostMapping("change-password")
+    public ResponseEntity<String> changePassword(@RequestBody PasswordDto dto){
+        if(userService.changePassword(dto.getPreviousPassword(), dto.getNextPassword())){
+            return ResponseEntity.ok().body("비밀번호 변경 성공");
+        }
+        return ResponseEntity.badRequest().body("비밀번호 변경 실패");
     }
 
     //이메일 중복체크
