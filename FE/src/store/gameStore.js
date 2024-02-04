@@ -1,10 +1,11 @@
-import { faRProject } from "@fortawesome/free-brands-svg-icons";
 import { defineStore } from "pinia";
 
 export const useGameStore = defineStore("game", {
   // 반응형 상태 (data)
   state: () => {
     return {
+      // 윷을 던질 수 있는가.
+      isThrowYut: true,
       // 들어온 말의 개수.
       redEnd: 0,
       blueEnd: 0,
@@ -21,6 +22,9 @@ export const useGameStore = defineStore("game", {
       isGoDiagonal: false,
       // 가운데 방향 선택
       isCenterDir: false,
+      // 미션 장소
+      missionTiles: [4,21,8,13,18],
+      isMission: true,
       // 말
       redHorses: [
         {
@@ -313,6 +317,8 @@ export const useGameStore = defineStore("game", {
       if (!this.isHorseEnd) this.horseCheck(horseInfo, target);
       // 말 이동
       this.moveTo(horseInfo.index, target);
+      // 미션장소 체크
+      this.isMission = this.missionTiles.includes(target);
       this.isHorseEnd = false;
       this.isGoDiagonal = false;
       this.isCenterDir = false;
@@ -491,8 +497,8 @@ export const useGameStore = defineStore("game", {
       // 저장된 결과를 계산.
       switch (cnt) {
         case 0:
-          this.yutRes = 4;
-          this.yutText = "윷";
+          this.yutRes = 5;
+          this.yutText = "모";
           break;
         case 1:
           this.yutText = "도";
@@ -510,8 +516,8 @@ export const useGameStore = defineStore("game", {
           this.yutRes = 3;
           break;
         case 4:
-          this.yutText = "모";
-          this.yutRes = 5;
+          this.yutText = "윷";
+          this.yutRes = 4;
           break;
         default:
           break;
