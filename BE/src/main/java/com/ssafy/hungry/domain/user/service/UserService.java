@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.Date;
 import java.util.NoSuchElementException;
 
 @Service
@@ -115,7 +116,7 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
         //제목 세팅
         String title = "밀정 윷놀이 가입 이메일 인증 코드입니다.";
         //인증 코드 세팅
-        String authCode = this.createCode();
+        String authCode = this.createCode(6);
         mailService.sendEmail(toEmail, title, authCode);
         // 이메일 인증 요청 시 인증 번호 Redis에 저장 ( key = "AuthCode " + Email / value = AuthCode )
         EmailEntity entity = new EmailEntity(AUTH_CODE_PREFIX + toEmail, authCode, authCodeExpirationMillis );
@@ -123,9 +124,8 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
     }
 
     //인증코드를 만들어주는 메소드
-    private String createCode() {
-        //6자리의 인증코드를 생성
-        int lenth = 6;
+    private String createCode(int lenth) {
+        //정의된 길이 만큼 인증코드를 생성
         try {
             SecureRandom random = SecureRandom.getInstanceStrong();
             StringBuilder builder = new StringBuilder();
@@ -137,6 +137,26 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
             throw new RuntimeException(e);
         }
     }
+
+    //임시비밀번호 생성
+    public String getRamdomPassword(int size) {
+        char[] charSet = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+                '!', '@', '#', '$', '%', '^', '&'};
+        StringBuffer sb = new StringBuffer();
+        SecureRandom sr = new SecureRandom();
+        sr.setSeed(new Date().getTime());
+        int idx = 0;
+        int len = charSet.length;
+        for (int i = 0; i < size; i++) {
+            idx = sr.nextInt(len);
+            sb.append(charSet[idx]);
+        }
+        return sb.toString();
+    }
+
+
 
     //사용자가 입력한 인증코드가 맞는지 이메일을 키로 레디스에서 검색
     public Boolean verifiedCode(String email, String authCode) {
@@ -151,5 +171,47 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
             System.out.println("레디스에서 찾을 수 없습민당");
         }
         return false;
+    }
+
+    //임시 비밀 번호 발급 이메일 인증 요청
+    public void getTemporaryPasswordEmailVerificationRequest(String toEmail) {
+        //제목 세팅
+        String title = "밀정 윷놀이 임시 비밀 번호 이메일 인증 코드입니다.";
+        //인증 코드 세팅
+        String authCode = this.createCode(6);
+        mailService.sendEmail(toEmail, title, authCode);
+        // 이메일 인증 요청 시 인증 번호 Redis에 저장 ( key = "AuthCode " + Email / value = AuthCode )
+        EmailEntity entity = new EmailEntity("PASSWORD " + toEmail, authCode, authCodeExpirationMillis );
+        emailRepository.save(entity);
+    }
+
+    //사용자가 입력한 인증코드가 맞는지 이메일을 키로 레디스에서 검색
+    public Boolean getTemporaryPasswordEmailVerificationCode(String email, String authCode) {
+        try{
+            String redisAuthCode = emailRepository.findById("PASSWORD " + email).get().getAuthCode();
+            boolean authResult = redisAuthCode.equals(authCode);
+            if (authResult){
+                emailRepository.deleteById("PASSWORD " + email);
+                this.getTemporaryPassword(email);
+            }
+            return authResult;
+        }catch (NoSuchElementException e) {
+            System.out.println("레디스에서 찾을 수 없습민당");
+        }
+        return false;
+    }
+
+    //임시비밀번호로 비밀번호를 바꾸고 해당 비밀번호 이메일 전송
+    public void getTemporaryPassword(String toEmail) {
+        //제목 세팅
+        String title = "밀정 윷놀이 임시 비밀 번호입니다.";
+        //임시 비밀번호 세팅
+        String tmporaryPassword = this.getRamdomPassword(8);
+        //임시 비밀번호 전송
+        mailService.sendEmail(toEmail, title, tmporaryPassword);
+        //유저 비밀번호를 임시 비밀번호로 변경
+        UserEntity user = userRepository.findByEmail(toEmail);
+        user.setPassword(bCryptPasswordEncoder.encode(tmporaryPassword));
+        userRepository.save(user);
     }
 }

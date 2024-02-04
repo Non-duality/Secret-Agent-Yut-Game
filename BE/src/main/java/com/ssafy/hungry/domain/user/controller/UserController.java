@@ -25,6 +25,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    //회원가입
     @PostMapping("/join")
     public String join(@RequestBody JoinDto joinDto) {
         if(!userService.join(joinDto)){
@@ -33,6 +34,26 @@ public class UserController {
         return "회원가입 성공";
     }
 
+    //임시비밀번호 발급을 위한 이메일 인증 요청
+    @PostMapping("get-temporary-password-email-verification-request")
+    public ResponseEntity<String> getTemporaryPasswordEmailVerificationRequest(@RequestParam("email") String email){
+        userService.getTemporaryPasswordEmailVerificationRequest(email);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //임시 비밀번호 이메일 인증 검사
+    @PostMapping("get-temporary-password-email-verification")
+    public ResponseEntity<String> getTemporaryPassword(@RequestParam("email") String email, @RequestParam("code") String code){
+        Boolean response = userService.getTemporaryPasswordEmailVerificationCode(email, code);
+        if(response){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    //이메일 중복체크
     @GetMapping("/{userId}")
     public ResponseEntity checkId(@PathVariable("email") String email) {
         Boolean isExist = userService.checkId(email);
@@ -48,6 +69,7 @@ public class UserController {
         }
     }
 
+    //회원정보조회
     @GetMapping("/info/{userId}")
     public ResponseEntity<Map<String, Object>> getInfo(@PathVariable("userId") String userId,
                                                        HttpServletRequest request) {
@@ -74,7 +96,8 @@ public class UserController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
-    @GetMapping("/me")
+    //내정보 조회
+    @GetMapping("/myinfo")
     public ResponseEntity<MyInfoDto> getProfile(Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         UserEntity entity = userService.getProfile(userDetails.getUsername());
@@ -95,6 +118,7 @@ public class UserController {
         }
     }
 
+    //회원정보 수정
     @PatchMapping("/{email}")
     public ResponseEntity modifyProfile(@PathVariable("email") String email,
                                         @RequestBody MyInfoDto profileDto) {
@@ -105,6 +129,7 @@ public class UserController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
+    //회원 탈퇴
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable("userId") String userId,
                                         Authentication authentication) {
