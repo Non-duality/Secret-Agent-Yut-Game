@@ -35,6 +35,8 @@ public class RedisConfig {
         return new LettuceConnectionFactory(host, port);
     }
 
+    // redis Listener 커스텀 어댑터 등록 (RedisListener)
+    @Bean
     public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
                                                    RedisListener RedisListener,
                                                    ChannelTopic roomTopic,

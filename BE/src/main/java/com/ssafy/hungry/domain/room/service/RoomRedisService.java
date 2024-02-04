@@ -132,7 +132,7 @@ public class RoomRedisService {
             // rooms 테이블에 해당 방의 end_At 설정하여 방 삭제
             room.setEndAt(LocalDateTime.now());
             roomRepository.save(room);
-            // Todo: 해당 방 구독자들에게 방이 삭제되었습니다. 메세지 보내기
+            // 해당 방 구독자들에게 방이 삭제되었습니다. 메세지 보내기
             exitMessage = "방이 삭제되었습니다.";
         }
 
