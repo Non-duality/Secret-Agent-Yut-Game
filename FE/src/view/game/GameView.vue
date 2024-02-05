@@ -1,5 +1,6 @@
 <template>
   <div class="game-main">
+    <MessageModal/>
     <span class="game-red-team-name">홍팀</span>
     <GameVideo class="game-video-team1" />
     <GameBoard class="game-board-main" />
@@ -16,7 +17,7 @@ import GameBoard from "@/components/game/GameBoard.vue";
 import GameVideo from "@/components/game/GameVideo.vue";
 import GameChat from "@/components/game/GameChat.vue";
 import MiniGame from '@/components/game/MiniGame.vue';
-
+import MessageModal from "@/components/layout/MessageModal.vue";
 
 export default {
   components: {
@@ -24,6 +25,7 @@ export default {
     GameVideo,
     GameChat,
     MiniGame,
+    MessageModal,
   },
   computed: {
     // 턴 체크.

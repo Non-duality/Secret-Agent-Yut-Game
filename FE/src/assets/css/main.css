@@ -74,6 +74,12 @@ button {
   animation: backgroundAnimation 80s infinite linear;
 }
 
+.game {
+  background: url("@/assets/img/game/back.png");
+  background-size: cover;
+  background-position: center;
+}
+
 /* 애니메이션 추가 */
 @keyframes backgroundAnimation {
   0% {
