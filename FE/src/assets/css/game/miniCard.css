@@ -1,0 +1,47 @@
+.card-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-title {
+  margin-top: 50px;
+  font-size: xx-large;
+  color: white;
+}
+
+.card-container {
+  display: flex;
+  flex-direction: row;
+  height: 200px;
+  width: 450px;
+  justify-content: center;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.card-container .card-item:first-child {
+  margin-left: 0;
+}
+/* 5번째 마다 오는 카드 항목에 대한 마진 제거 */
+.card-container .card-item:nth-child(5n) {
+  margin-left: 0;
+}
+.card-item {
+  margin-top: 20px;
+  background-color: white;
+  margin-left: 10px;
+  border-radius: 15px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  width: 100px;
+}
+
+.card-img {
+  width: 30px;
+}
