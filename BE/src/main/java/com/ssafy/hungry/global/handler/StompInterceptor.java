@@ -1,10 +1,13 @@
 package com.ssafy.hungry.global.handler;
 
+import com.ssafy.hungry.global.entity.PrincipalEntity;
 import com.ssafy.hungry.global.entity.SessionEntity;
 import com.ssafy.hungry.global.entity.StompPrincipal;
+import com.ssafy.hungry.global.repository.PrincipalRepository;
 import com.ssafy.hungry.global.repository.SessionRepository;
 import com.ssafy.hungry.global.util.JWTUtil;
 import io.jsonwebtoken.MalformedJwtException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -20,14 +23,11 @@ import javax.naming.AuthenticationException;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class StompInterceptor implements ChannelInterceptor {
     private final JWTUtil jwtUtil;
     private final SessionRepository sessionRepository;
-
-    public StompInterceptor(JWTUtil jwtUtil, SessionRepository sessionRepository){
-        this.jwtUtil = jwtUtil;
-        this.sessionRepository = sessionRepository;
-    }
+    private final PrincipalRepository principalRepository;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -54,6 +54,7 @@ public class StompInterceptor implements ChannelInterceptor {
                     String email = jwtUtil.getUserId(token);
                     StompPrincipal user = new StompPrincipal(accessor.getUser().getName());
                     sessionRepository.save(new SessionEntity(email, user));
+                    principalRepository.save(new PrincipalEntity(user.getName(), email));
                 }else{
                     throw new AccessDeniedException("토큰이 유효하지 않습니다.");
                 }
