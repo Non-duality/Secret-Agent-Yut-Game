@@ -11,6 +11,7 @@ import ChangePasswordVue from "@/components/profile/ChangePassword.vue";
 import ScoreCheckVue from "@/components/profile/ScoreCheck.vue";
 import RoomListViewVue from "@/view/room/RoomListView.vue";
 import CharacterVue from "@/view/game/pick/character.vue";
+import MineralVue from "@/components/game/minigame/Mineral.vue"
 
 const router = createRouter({
   history: createWebHistory("/"),
@@ -82,6 +83,12 @@ const router = createRouter({
       path: "/pick",
       name: "pick",
       component: CharacterVue,
+    },
+    // 광물 캐기 게임
+    {
+      path: "/mineral",
+      name: "mineral",
+      component: MineralVue,
     },
   ],
 });

@@ -11,5 +11,17 @@
     <audio id="clickSound" src="./src/assets/sound/1.mp3"></audio>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
+    
+    <!-- 웹캠 권한 요청 -->
+    <script>
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+
+        })
+        .catch((error) => {
+          console.error("웹캠 권한이 거부되었습니다:", error);
+        });
+    </script>
   </body>
 </html>
+
