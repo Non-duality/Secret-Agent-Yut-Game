@@ -110,6 +110,7 @@ public class RoomRedisService {
                         .theme(room.getTheme())
                         .build())
                 .message(user.getNickname() + "님이 입장하였습니다.")
+                .roomState(0)
                 .build();
 
         return  roomLobbyInfoDto;
@@ -123,7 +124,7 @@ public class RoomRedisService {
         List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo(key);
 
         String exitMessage = "";
-
+        int roomState = 0;
         // 방 나가기를 누른 사람이 방장일 경우 방을 삭제
         if(user.getId() == room.getOwner().getId()){
 
@@ -134,6 +135,7 @@ public class RoomRedisService {
             roomRepository.save(room);
             // 해당 방 구독자들에게 방이 삭제되었습니다. 메세지 보내기
             exitMessage = "방이 삭제되었습니다.";
+            roomState = 1;
         }
 
         // 방장이 아닌 유저가 나갈 경우
@@ -168,9 +170,32 @@ public class RoomRedisService {
                         .theme(room.getTheme())
                         .build())
                 .message(exitMessage)
+                .roomState(roomState)
                 .build();
 
         return  roomLobbyInfoDto;
     }
+
+    // 유저의 준비 완료, 준비 취소 최신화
+    public List<CurrentSeatDto> userReadyRoom(String roomCode, int userId){
+        String key = generateKey(roomCode);
+
+        // 현재의 방 정보 들고오기
+        List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo(key);
+
+        // 현재 ready한 인원과 일치하는 좌석 정보 찾고 최신화 시키기
+        int count = 0;
+        for(CurrentSeatDto seat : currentSeatDtoList){
+            if(seat.getUserId() == userId){
+                seat.setReady(!seat.isReady());
+                roomRedisRepository.reSaveToRedis(key, seat, count);
+                break;
+            }
+            count++;
+        }
+
+        return currentSeatDtoList;
+    }
+
 
 }

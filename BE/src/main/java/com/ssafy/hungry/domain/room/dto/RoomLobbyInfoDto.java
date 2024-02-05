@@ -16,5 +16,5 @@ public class RoomLobbyInfoDto {
     private List<CurrentSeatDto> currentSeatDtoList;
     private RoomDetailDto roomDetailDto;
     private String message;
-
+    private int roomState;
 }
