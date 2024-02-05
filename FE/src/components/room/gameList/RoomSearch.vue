@@ -45,7 +45,7 @@
       async getRooms() {
         try {
           const { response } = await axios.get('url');
-          this.rooms = response.data;
+          // this.rooms = response.data;
         } catch (error) {
           console.error('error message:', error);
         }

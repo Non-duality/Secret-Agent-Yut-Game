@@ -182,7 +182,7 @@ export const useUserStore = defineStore("user", {
     enabled: true, //storage 저장유무
     strategies: [
       {
-        key: "counter", //storage key값 설정
+        key: "room", //storage key값 설정
         storage: localStorage, // localStorage, sessionStorage storage 선택 default sessionStorage
       },
     ],

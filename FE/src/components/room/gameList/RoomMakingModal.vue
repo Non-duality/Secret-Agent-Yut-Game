@@ -63,28 +63,28 @@
         <div>
           <button
             id="theme-btn"
-            @click="selectSpeed(1)"
-            :class="{ selected: roomInfo.speed === 1 }"
+            @click="selectSpeed(0)"
+            :class="{ selected: roomInfo.speed === 0 }"
           >
             느림
           </button>
           <button
             id="theme-btn"
-            @click="selectSpeed(2)"
-            :class="{ selected: roomInfo.speed === 2 }"
+            @click="selectSpeed(1)"
+            :class="{ selected: roomInfo.speed === 1 }"
           >
             보통</button
           ><button
             id="theme-btn"
-            @click="selectSpeed(3)"
-            :class="{ selected: roomInfo.speed === 3 }"
+            @click="selectSpeed(2)"
+            :class="{ selected: roomInfo.speed === 2 }"
           >
             빠름
           </button>
         </div>
       </div>
       <div class="button-group">
-        <button type="submit" class="create" @click="makeGame(roomInfo, user)">
+        <button type="submit" class="create" @click="makeGame(roomInfo)">
           생성
         </button>
         <button type="button" class="cancle" @click="closeModal('roomMaking')">
@@ -117,6 +117,11 @@ export default {
   methods: {
     // 방 생성 함수
     makeGame(roomInfo) {
+      if (!useUserStore().isLogin || !useRoomStore().isConnected) {
+        alert("연결이 끊어졌습니다.");
+        useUserStore().initData();
+      }
+
       if (roomInfo.title === "") {
         alert("방 제목을 작성해주세요");
       } else if (roomInfo.public === false && roomInfo.password.trim() === "") {
@@ -124,34 +129,86 @@ export default {
       } else if (roomInfo.theme === "") {
         alert("테마를 선택하세요");
       } else {
+        // currentRoomInfo 정보를 주기 위한 createRoomInfo
         useRoomStore().createRoomInfo = this.roomInfo;
 
         useRoomStore()
           .createRoom()
           .then(() => {
-            useRoomStore().stompClient.subscribe(
-              "/sub/room/" + useRoomStore().createRoomInfo.roomCode
-            );
+            useRoomStore().subscription.room =
+              useRoomStore().stompClient.subscribe(
+                "/sub/room/" + useRoomStore().createRoomInfo.roomCode,
 
-            useRoomStore().stompClient.publish({
-              headers: {
-                Authorization: `Bearer ${useUserStore().accessToken}`,
-              },
-              destination:
-                "/pub/room/" +
-                useRoomStore().createRoomInfo.roomCode +
-                "/enter",
-            });
+                // 구독 메시지 이벤트 처리
+                (message) => {
+                  console.log(message.body);
+                  useRoomStore().receivedMessage = JSON.parse(message.body);
 
-            // 방 생성 시, 자신의 현재 방을 세팅한다.
+                  if (
+                    useRoomStore().receivedMessage.type === "ROOM_ENTER_INFO"
+                  ) {
+                    useRoomStore().roomChatMessages.push(
+                      useRoomStore().receivedMessage.data.message
+                    );
+                    useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
+                      (seat, index) => {
+                        const seatKey = `seatnum${index + 1}`;
+                        if (useRoomStore().seatInfo[seatKey]) {
+                          useRoomStore().seatInfo[seatKey].nickname =
+                            seat.nickname;
+                          useRoomStore().seatInfo[seatKey].ready = seat.ready;
+                        }
+                      }
+                    );
+                  } else if (
+                    useRoomStore().receivedMessage.type === "ROOM_EXIT_INFO"
+                  ) {
+                    useRoomStore().roomChatMessages.push(
+                      useRoomStore().receivedMessage.data.message
+                    );
+                    useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
+                      (seat, index) => {
+                        const seatKey = `seatnum${index + 1}`;
+                        if (useRoomStore().seatInfo[seatKey]) {
+                          useRoomStore().seatInfo[seatKey].nickname =
+                            seat.nickname;
+                          useRoomStore().seatInfo[seatKey].ready = seat.ready;
+                        }
+                      }
+                    );
+                  } else if (
+                    useRoomStore().receivedMessage.type === "ROOM_CHAT"
+                  ) {
+                    useRoomStore().roomChatMessages.push(
+                      useRoomStore().receivedMessage.data.nickname +
+                        " : " +
+                        useRoomStore().receivedMessage.data.message
+                    );
+                  }
+                }
+              );
+          })
+          .then(() => {
+            // 방 생성 시, 자신의 현재 방을 세팅
             // (나갈 때 정보 삭제 필요)
-            useUserStore().currentRoomInfo = useRoomStore().createRoomInfo;
-            console.log(useUserStore().currentRoomInfo);
+            useUserStore().currentRoomInfo = {
+              ...useRoomStore().createRoomInfo,
+            };
 
             this.$router.push({
               name: "wait",
             });
 
+            useRoomStore().stompClient.publish({
+              destination:
+                "/pub/room/" +
+                useRoomStore().createRoomInfo.roomCode +
+                "/enter",
+
+              body: useUserStore().userInfo.email,
+            });
+
+            // 방 생성 모달 닫기
             useRoomStore().closeModal("roomMaking");
           })
           .catch((error) => {

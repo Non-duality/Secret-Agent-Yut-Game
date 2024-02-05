@@ -29,7 +29,8 @@ export const useRoomStore = defineStore("room", {
     createRoomInfo: null,
 
     /* 입장 시, 받을 정보들 */
-    seatInfo: { // 방 정보
+    seatInfo: {
+      // 방 정보
       seatnum1: {
         nickname: "",
         ready: false,
@@ -54,6 +55,15 @@ export const useRoomStore = defineStore("room", {
         nickname: "",
         ready: false,
       },
+    },
+
+    /* 메시지 관련 상태값 */
+    receivedMessage: null,
+    roomChatMessages: [],
+
+    /* 구독 관리 */
+    subscription: {
+      room: null,
     },
 
     /* 모달 관련 */
@@ -100,17 +110,22 @@ export const useRoomStore = defineStore("room", {
 
           // STOMP 수준의 오류 처리
           onStompError: (frame) => {
+            useRoomStore().isConnected = false;
             useRoomStore().stompClient.deactivate();
             console.error("STOMP Error:", frame);
             reject(new Error("STOMP error"));
           },
         });
 
-        useRoomStore().stompClient.activate();
+        try {
+          useRoomStore().stompClient.activate();
+        } catch (error) {
+          console.log("소켓 에러: " + error);
+        }
       });
     },
 
-    /* 방에 들어갈 수 있는지 확인 */
+    /* 방에 들어갈 수 있는지 확인하고 가능하다면 구독과 발행 실행 */
     canEnterRoom() {
       return new Promise((resolve, reject) => {
         const roomInfo = useRoomStore().roomDetailData;
@@ -127,24 +142,70 @@ export const useRoomStore = defineStore("room", {
             };
           }
 
+          // 방에 들어갈 수 있는지 확인
+          // 입력값 (roomId, jsonPassword)
           getCanEnterRoom(
             useUserStore().roomId,
             useRoomStore().jsonPassword,
             ({ data }) => {
               useUserStore().roomCode = data;
-              useRoomStore().stompClient.subscribe(
-                "/sub/room/" + useUserStore().roomCode,
-                (msg) => {
-                  console.log(msg);
-                }
-              );
+              (useRoomStore().subscription.room =
+                useRoomStore().stompClient.subscribe(
+                  "/sub/room/" + useUserStore().roomCode,
 
-              useRoomStore().stompClient.publish({
-                headers: {
-                  Authorization: `Bearer ${useUserStore().accessToken}`,
-                },
-                destination: "/pub/room/" + useUserStore().roomCode + "/enter",
-              });
+                  // 구독 메시지 이벤트 처리
+                  (message) => {
+                    console.log(message.body);
+                    useRoomStore().receivedMessage = JSON.parse(message.body);
+
+                    if (receivedMessage.value.type === "ROOM_ENTER_INFO") {
+                      useRoomStore().roomChatMessages.push(
+                        useRoomStore().receivedMessage.data.message
+                      );
+                      useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
+                        (seat, index) => {
+                          const seatKey = `seatnum${index + 1}`;
+                          if (seatInfo[seatKey]) {
+                            useRoomStore().seatInfo[seatKey].nickname =
+                              seat.nickname;
+                            useRoomStore().seatInfo[seatKey].ready = seat.ready;
+                          }
+                        }
+                      );
+                    } else if (
+                      useRoomStore().receivedMessage.type === "ROOM_EXIT_INFO"
+                    ) {
+                      useRoomStore().roomChatMessages.push(
+                        useRoomStore().receivedMessage.data.message
+                      );
+                      useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
+                        (seat, index) => {
+                          const seatKey = `seatnum${index + 1}`;
+                          if (seatInfo.value[seatKey]) {
+                            useRoomStore().seatInfo[seatKey].nickname =
+                              seat.nickname;
+                            useRoomStore().seatInfo[seatKey].ready = seat.ready;
+                          }
+                        }
+                      );
+                    } else if (
+                      useRoomStore().receivedMessage.type === "ROOM_CHAT"
+                    ) {
+                      useRoomStore().roomChatMessages.push(
+                        useRoomStore().receivedMessage.data.nickname +
+                          " : " +
+                          useRoomStore().receivedMessage.data.message
+                      );
+                    }
+                  }
+                )),
+                useRoomStore().stompClient.publish({
+                  headers: {
+                    Authorization: `Bearer ${useUserStore().accessToken}`,
+                  },
+                  destination:
+                    "/pub/room/" + useUserStore().roomCode + "/enter",
+                });
 
               // 현재, 자신의 방의 정보를 넣는다.
               // (나갈 때 정보 삭제 필요)
@@ -157,16 +218,14 @@ export const useRoomStore = defineStore("room", {
       });
     },
 
-    /* 방 입장하기 */
-    // enterRoom() {
-    //   useRoomStore().stompClient.publish({
-    //     destination:
-    //       "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/enter",
-    //     headers: {
-    //       Authorization: `Bearer ${useUserStore().accessToken}`,
-    //     },
-    //   });
-    // },
+    /* 메시지 보내기 */
+    sendMessage() {
+      sendRoomMessage.value.message = tempMessage.value;
+      stompClient.value.publish({
+        destination: "/pub/room/" + currentRoomCode.value + "/chat",
+        body: JSON.stringify(sendRoomMessage.value),
+      });
+    },
 
     /* 나가기 */
     exitRoom() {
@@ -177,6 +236,8 @@ export const useRoomStore = defineStore("room", {
           Authorization: `Bearer ${useUserStore().accessToken}`,
         },
       });
+
+      useRoomStore().subscription.room.unsubscribe();
     },
 
     /* 방 생성 */
@@ -184,8 +245,8 @@ export const useRoomStore = defineStore("room", {
       try {
         await new Promise((resolve, reject) => {
           axiosCreateRoom(useRoomStore().createRoomInfo, ({ data }) => {
+            // 방 생성 코드 받기.
             useRoomStore().createRoomInfo.roomCode = data;
-            console.log(useRoomStore().createRoomInfo.roomCode);
             resolve();
           });
         });
@@ -221,7 +282,7 @@ export const useRoomStore = defineStore("room", {
         getRoomList(
           (response) => {
             const { data } = response;
-            this.roomList = data;
+            useRoomStore().roomList = data;
             resolve();
           },
           (error) => {
@@ -240,7 +301,7 @@ export const useRoomStore = defineStore("room", {
           roomId,
           (response) => {
             const { data } = response;
-            this.roomDetailData = data;
+            useRoomStore().roomDetailData = data;
             resolve();
           },
           (error) => {
