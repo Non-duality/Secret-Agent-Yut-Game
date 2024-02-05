@@ -1,6 +1,6 @@
 <template>
   <div>
-    <transition name="fade" mode="out-in"> <router-view /></transition>
+    <transition name="fade"> <router-view /></transition>
   </div>
 </template>
 
@@ -9,11 +9,22 @@ export default {};
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
+/* 모달창 애니메이션 */
+.fade-enter-from {
+  opacity: 0;
 }
-.fade-enter,
+.fade-enter-active {
+  transition: all 0.5s;
+}
+.fade-enter-to {
+  opacity: 1;
+}
+.fade-leave-from {
+  opacity: 1;
+}
+.fade-leave-active {
+  transition: all 0.5s;
+}
 .fade-leave-to {
   opacity: 0;
 }

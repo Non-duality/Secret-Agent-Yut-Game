@@ -40,6 +40,6 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 @import "../../../assets/css/room/waitingRoomRight.css";
 </style>

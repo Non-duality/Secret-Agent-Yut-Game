@@ -60,6 +60,6 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 @import "@/assets/css/room/GameWaitChat.css";
 </style>

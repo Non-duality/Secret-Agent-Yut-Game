@@ -318,7 +318,7 @@ export const useRoomStore = defineStore("room", {
     enabled: true, //storage 저장유무
     strategies: [
       {
-        key: "roomState",
+        key: "room",
         storage: localStorage,
         reducer: (state) => ({
           isConnected: state.isConnected,

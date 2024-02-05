@@ -53,6 +53,6 @@ export default {
   </div>
 </template>
 
-<style>
+<style scoped>
 @import "../../assets/css/layout/navBar.css";
 </style>

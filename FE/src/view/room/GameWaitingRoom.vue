@@ -70,6 +70,6 @@
   };
 </script>
 
-<style>
+<style scoped>
 @import "@/assets/css/room/waitingRoom.css";
 </style>

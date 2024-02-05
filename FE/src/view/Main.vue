@@ -31,10 +31,6 @@ export default {
     const store = useUserStore();
     const { showModalSide } = storeToRefs(store);
 
-    watch(showModalSide, (newValue, oldValue) => {
-      console.log("showModalSide changed:", newValue);
-    });
-
     return {
       showModalSide, // 네비 바와 사이드 바를 숨기고 나타내기 위해 선언
     };

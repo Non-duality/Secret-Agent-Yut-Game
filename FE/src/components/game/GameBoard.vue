@@ -167,11 +167,11 @@ export default {
     goDigYes() {
       const gameStore = useGameStore();
       // 5,10번 타일에서 대각선 이동
-      if([5,10].includes(this.selectedHorse.index)){
+      if ([5, 10].includes(this.selectedHorse.index)) {
         gameStore.isGoDiagonal = true;
       }
       // 정 가운데 왼쪽 오른쪽 선택.
-      else{
+      else {
         gameStore.isCenterDir = true;
       }
       this.isShowGoDig = false;
@@ -184,7 +184,7 @@ export default {
 };
 </script>
   
-  <style>
+<style scoped>
 @import "@/assets/css/game/gameBoard.css";
 </style>
   

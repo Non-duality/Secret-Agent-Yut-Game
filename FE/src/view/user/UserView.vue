@@ -16,7 +16,7 @@
         >전적 조회</router-link
       >
 
-      <transition name="fade" mode="out-in">
+      <transition name="fade">
         <router-view />
       </transition>
     </div>
