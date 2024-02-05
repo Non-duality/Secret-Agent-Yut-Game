@@ -20,4 +20,5 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Integer> {
 
     // room code로 방 찾기
     RoomEntity findByRoomCode(String roomCode);
+
 }

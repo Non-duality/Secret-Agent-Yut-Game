@@ -23,6 +23,7 @@ public class JWTUtil {
     private SecretKey secretKey;
 
     private final UserRepository userRepository;
+
     private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 15 * 60 * 1000L; // 1시간
     private static final long REFRESH_TOKEN_VALIDITY_SECONDS = 12 * 60 * 60 * 1000L; // 12시간
 
@@ -90,7 +91,7 @@ public class JWTUtil {
             System.out.println("JWT 토큰이 잘못되었습니다.");
             e.printStackTrace();
         }
-        System.out.println("내려오나?");
+
         return false;
     }
 }

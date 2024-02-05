@@ -62,9 +62,10 @@ public class RoomController {
 
 
         String password = roomPassword.get("password");
+        // room Id로 방 entity 얻기
         RoomEntity room = roomService.getRoomByRoomId(roomId);
 
-        // 해당 방이 시작했거나 종료하지 않았는지 확인
+        // 해당 방이 시작했거나 종료하지않았는지 확인
         if(room == null){
             // 404 에러
             return new ResponseEntity<>("방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
@@ -78,6 +79,9 @@ public class RoomController {
 
         // 비공개 방 이라면
         if(!room.isPublic()){
+            if(password == null){
+                return new ResponseEntity<>("비밀번호가 틀렸습니다.", HttpStatus.FORBIDDEN);
+            }
             // 비밀번호가 틀렸다면
             if(!roomService.validatePassword(password, room.getPassword())){
                 return new ResponseEntity<>("비밀번호가 틀렸습니다.", HttpStatus.FORBIDDEN);

@@ -1,89 +1,111 @@
 package com.ssafy.hungry.domain.room.controller;
 
-import com.ssafy.hungry.domain.room.dto.RoomDetailDto;
+import com.ssafy.hungry.domain.room.dto.ChatMessageDto;
+import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.dto.RoomLobbyInfoDto;
 import com.ssafy.hungry.domain.room.entity.RoomEntity;
 import com.ssafy.hungry.domain.room.service.RoomRedisService;
 import com.ssafy.hungry.domain.room.service.RoomService;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
-import com.ssafy.hungry.global.util.JWTUtil;
+import com.ssafy.hungry.domain.user.service.UserService;
+import com.ssafy.hungry.global.dto.StompDataDto;
+import com.ssafy.hungry.global.service.RedisSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class StompRoomController {
 
-    private final JWTUtil jwtUtil;
     private final RoomService roomService;
     private final RoomRedisService roomRedisService;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final UserService userService;
+    private final RedisSender redisSender;
+    private final ChannelTopic roomTopic;
 
     // 방 입장
     @MessageMapping(value = "/room/{roomCode}/enter")
-    public void enterRoom (@DestinationVariable String roomCode ,@Header("Authorization") String token){
+    public void enterRoom (@DestinationVariable String roomCode , String email){
         log.info("방 입장 호출 : " + roomCode);
 
         // token 을 가져와 userEntity 생성
-        UserEntity user = jwtUtil.getUserEntity(token);
+        UserEntity user = userService.findByEmail(email);
         // room code를 가져와 roomEntity 생성
         RoomEntity room = roomService.getRoomByRoomCode(roomCode);
 
         // redis room 정보 최신화
-        roomRedisService.userEnterRoom(roomCode, user);
+        RoomLobbyInfoDto roomLobbyInfoDto = roomRedisService.userEnterRoom(room, user);
 
-        // 방에 전달할 최신화된 정보 Dto
-        RoomLobbyInfoDto roomLobbyInfoDto =RoomLobbyInfoDto.builder()
-                .ownerId(room.getOwner().getId())
-                .currentSeatDtoList(roomRedisService.getCurrentRoomInfo(room.getRoomCode()))
-                .roomDetailDto(RoomDetailDto.builder()
-                        .title(room.getTitle())
-                        .isPublic(room.isPublic())
-                        .gameSpeed(room.getGameSpeed())
-                        .currentUserCount(roomRedisService.getCurrentUserCount(room.getRoomCode()))
-                        .theme(room.getTheme())
-                        .build())
-                .message(user.getNickname() + "님이 입장하였습니다.")
-                .build();
-
-        messagingTemplate.convertAndSend("/sub/room/" + roomCode, roomLobbyInfoDto);
+        // redis Room Channel topic에 전달
+        redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                .type("ROOM_ENTER_INFO")
+                .code(roomCode)
+                .data(roomLobbyInfoDto)
+                .build());
 
     }
 
     // 방 나가기
+    // 방장이 나갈 경우 방이 삭제되는 기능 구현
     @MessageMapping(value = "/room/{roomCode}/exit")
-    public void exitRoom(@DestinationVariable String roomCode ,@Header("Authorization") String token){
-
+    public void exitRoom(@DestinationVariable String roomCode , String email){
+        log.info("방 나가기 호출 : " + roomCode);
         // token 을 가져와 userEntity 생성
-        UserEntity user = jwtUtil.getUserEntity(token);
+        UserEntity user = userService.findByEmail(email);
 
         // room code를 가져와 roomEntity 생성
         RoomEntity room = roomService.getRoomByRoomCode(roomCode);
 
-        // redis room 정보 최신화
-        roomRedisService.userEnterRoom(roomCode, user);
+        // 방 나가기 로직 실행
+        RoomLobbyInfoDto roomLobbyInfoDto = roomRedisService.userExitRoom(room, user);
 
-        // 방에 전달할 최신화된 정보 Dto
-        RoomLobbyInfoDto roomLobbyInfoDto =RoomLobbyInfoDto.builder()
-                .ownerId(room.getOwner().getId())
-                .currentSeatDtoList(roomRedisService.getCurrentRoomInfo(room.getRoomCode()))
-                .roomDetailDto(RoomDetailDto.builder()
-                        .title(room.getTitle())
-                        .isPublic(room.isPublic())
-                        .gameSpeed(room.getGameSpeed())
-                        .currentUserCount(roomRedisService.getCurrentUserCount(room.getRoomCode()))
-                        .theme(room.getTheme())
-                        .build())
-                .message(user.getNickname() + "님이 퇴장하였습니다.")
-                .build();
+        // redis Room Channel topic에 전달
+        redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                .type("ROOM_EXIT_INFO")
+                .code(roomCode)
+                .data(roomLobbyInfoDto)
+                .build());
+    }
 
-        messagingTemplate.convertAndSend("/sub/room/" + roomCode, roomLobbyInfoDto);
+    // 방 채팅
+    @MessageMapping(value = "/room/{roomCode}/chat")
+    public void chatRoom(@DestinationVariable String roomCode, ChatMessageDto chatMessageDto){
+        log.info("방 채팅 호출 : " + roomCode);
+
+        // redis Room Channel topic에 전달
+        redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                .type("ROOM_CHAT")
+                .code(roomCode)
+                .data(chatMessageDto)
+                .build());
 
     }
+
+    // 방 게임 준비
+    @MessageMapping(value = "/room/{roomCode}/ready")
+    public void readyRoom(@DestinationVariable String roomCode, String email){
+        log.info("방 게임 준비 호출 : " + roomCode);
+
+        // 이메일로 유저 정보 가져오기
+        UserEntity user = userService.findByEmail(email);
+
+        // ready 상태로 현재 좌석 정보 최신화 시키기
+        List<CurrentSeatDto> currentSeatDtoList = roomRedisService.userReadyRoom(roomCode, user.getId());
+
+        // redis Room Channel topic에 전달
+        redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                .type("ROOM_READY")
+                .code(roomCode)
+                .data(currentSeatDtoList)
+                .build());
+
+    }
+
 }

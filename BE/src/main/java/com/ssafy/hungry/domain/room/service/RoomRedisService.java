@@ -1,13 +1,18 @@
 package com.ssafy.hungry.domain.room.service;
 
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
+import com.ssafy.hungry.domain.room.dto.RoomDetailDto;
+import com.ssafy.hungry.domain.room.dto.RoomLobbyInfoDto;
+import com.ssafy.hungry.domain.room.entity.RoomEntity;
 import com.ssafy.hungry.domain.room.repository.RoomRedisRepository;
 import com.ssafy.hungry.domain.room.repository.RoomRepository;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -53,6 +58,11 @@ public class RoomRedisService {
         }
 
     }
+    // 현재 방 정보 얻기
+    public List<CurrentSeatDto> getCurrentRoomInfo(String roomCode){
+        String key = generateKey(roomCode);
+        return roomRedisRepository.getCurrentRoomInfo(key);
+    }
 
     // 몇 명의 유저가 방에 참여했는지 카운트
     public int getCurrentUserCount(String roomCode){
@@ -69,9 +79,9 @@ public class RoomRedisService {
         return count;
     }
 
-    // 유저가 방에 입장했을 때 redis 방 정보 최신화
-    public void userEnterRoom(String roomCode, UserEntity user){
-        String key = generateKey(roomCode);
+    // 유저가 방에 입장했을 때 redis 방 정보 최신화 후 최신화 된 dto 전달
+    public RoomLobbyInfoDto userEnterRoom(RoomEntity room, UserEntity user){
+        String key = generateKey(room.getRoomCode());
         List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo(key);
 
         int count = 0;
@@ -83,37 +93,109 @@ public class RoomRedisService {
                 seat.setProfileImgUrl(user.getProfileImgUrl());
 
                 roomRedisRepository.reSaveToRedis(key, seat, count);
-                return;
+                break;
             }
             count ++;
         }
 
-    }
-    // 현재 방 정보 얻기
-    public List<CurrentSeatDto> getCurrentRoomInfo(String roomCode){
-        String key = generateKey(roomCode);
-        return roomRedisRepository.getCurrentRoomInfo(key);
+        // 방에 전달할 최신화된 정보 Dto
+        RoomLobbyInfoDto roomLobbyInfoDto =RoomLobbyInfoDto.builder()
+                .ownerId(room.getOwner().getId())
+                .currentSeatDtoList(getCurrentRoomInfo(room.getRoomCode()))
+                .roomDetailDto(RoomDetailDto.builder()
+                        .title(room.getTitle())
+                        .isPublic(room.isPublic())
+                        .gameSpeed(room.getGameSpeed())
+                        .currentUserCount(getCurrentUserCount(room.getRoomCode()))
+                        .theme(room.getTheme())
+                        .build())
+                .message(user.getNickname() + "님이 입장하였습니다.")
+                .roomState(0)
+                .build();
+
+        return  roomLobbyInfoDto;
     }
 
-    // 유저가 방에서 나갔을 때 redis 방 정보 최신화
-    public void userExitRoom(String roomCode, UserEntity user){
-        String key = generateKey(roomCode);
+    // 유저가 방에서 나갔을 때 redis 방 정보 최신화 후 최신화 된 dto 전달
+    // 나가기를 누른 유저가 방장일 경우 방 삭제
+    @Transactional
+    public RoomLobbyInfoDto userExitRoom(RoomEntity room, UserEntity user){
+        String key = generateKey(room.getRoomCode());
         List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo(key);
 
-        int count = 0;
+        String exitMessage = "";
+        int roomState = 0;
+        // 방 나가기를 누른 사람이 방장일 경우 방을 삭제
+        if(user.getId() == room.getOwner().getId()){
 
-        for(CurrentSeatDto seat : currentSeatDtoList){
-            if(seat.getUserId() == user.getId()){
-                seat.setState(0);
-                seat.setUserId(0);
-                seat.setNickname(null);
-                seat.setProfileImgUrl(null);
-
-                roomRedisRepository.reSaveToRedis(key, seat, count);
-                return;
-            }
-            count ++;
+            // redis 방을 키값을 이용해 삭제
+            roomRedisRepository.deleteToRedis(key);
+            // rooms 테이블에 해당 방의 end_At 설정하여 방 삭제
+            room.setEndAt(LocalDateTime.now());
+            roomRepository.save(room);
+            // 해당 방 구독자들에게 방이 삭제되었습니다. 메세지 보내기
+            exitMessage = "방이 삭제되었습니다.";
+            roomState = 1;
         }
 
+        // 방장이 아닌 유저가 나갈 경우
+        else{
+            int count = 0;
+
+            for(CurrentSeatDto seat : currentSeatDtoList){
+                if(seat.getUserId() == user.getId()){
+                    seat.setState(0);
+                    seat.setUserId(0);
+                    seat.setNickname(null);
+                    seat.setProfileImgUrl(null);
+
+                    roomRedisRepository.reSaveToRedis(key, seat, count);
+                    break;
+                }
+                count ++;
+            }
+
+            exitMessage = user.getNickname() + "님이 퇴장하였습니다.";
+        }
+
+        // 방에 전달할 최신화된 정보 Dto
+        RoomLobbyInfoDto roomLobbyInfoDto =RoomLobbyInfoDto.builder()
+                .ownerId(room.getOwner().getId())
+                .currentSeatDtoList(getCurrentRoomInfo(room.getRoomCode()))
+                .roomDetailDto(RoomDetailDto.builder()
+                        .title(room.getTitle())
+                        .isPublic(room.isPublic())
+                        .gameSpeed(room.getGameSpeed())
+                        .currentUserCount(getCurrentUserCount(room.getRoomCode()))
+                        .theme(room.getTheme())
+                        .build())
+                .message(exitMessage)
+                .roomState(roomState)
+                .build();
+
+        return  roomLobbyInfoDto;
     }
+
+    // 유저의 준비 완료, 준비 취소 최신화
+    public List<CurrentSeatDto> userReadyRoom(String roomCode, int userId){
+        String key = generateKey(roomCode);
+
+        // 현재의 방 정보 들고오기
+        List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo(key);
+
+        // 현재 ready한 인원과 일치하는 좌석 정보 찾고 최신화 시키기
+        int count = 0;
+        for(CurrentSeatDto seat : currentSeatDtoList){
+            if(seat.getUserId() == userId){
+                seat.setReady(!seat.isReady());
+                roomRedisRepository.reSaveToRedis(key, seat, count);
+                break;
+            }
+            count++;
+        }
+
+        return currentSeatDtoList;
+    }
+
+
 }

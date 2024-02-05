@@ -26,7 +26,7 @@ public class RoomRedisRepository {
 
     // redis에 저장하기
     public void saveToRedis(String key, CurrentSeatDto currentSeatDto){
-        log.info("RoomRedisRepository saveToRedis 호출");
+        log.info("RoomRedisRepository saveToRedis 호출 : " + key);
 
         try {
             String jsonData = objectMapper.writeValueAsString(currentSeatDto);
@@ -40,7 +40,7 @@ public class RoomRedisRepository {
     }
     // redis에 지우고 다시 저장하기
     public void reSaveToRedis(String key, CurrentSeatDto currentSeatDto, int seatNumber){
-        log.info("RoomRedisRepository reSaveToRedis 호출");
+        log.info("RoomRedisRepository reSaveToRedis 호출 : " + key);
 
         try {
             String jsonData = objectMapper.writeValueAsString(currentSeatDto);
@@ -68,6 +68,13 @@ public class RoomRedisRepository {
         }
 
         return currentSeatDtoList;
+    }
+
+    // redis의 방 지우기
+    public void deleteToRedis(String key){
+        log.info("RoomRedisRepository deleteToRedis 호출 : " + key);
+        ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
+        redisTemplate.delete(key);
     }
 
 
