@@ -22,13 +22,15 @@
   left: 100px;
   z-index: 100;
 }
-
+.game-yut-text-div{
+  height: 100px;
+}
 .game-yut-res-text{
   color:bisque;
   font-size: 100px;
 }
 
-@keyframes throwEffect {
+/* @keyframes throwEffect {
   0% {
     transform: rotate(0deg) scaleY(1);
   }
@@ -42,4 +44,4 @@
 
 .throw-effect {
   animation: throwEffect 0.5s ease-out;
-}
+} */
