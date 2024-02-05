@@ -99,6 +99,9 @@
 // 방 정보 데이터
 import { useRoomStore } from "@/store/roomStore";
 import { useUserStore } from "@/store/userStore";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 export default {
   data() {
@@ -115,26 +118,33 @@ export default {
   },
 
   methods: {
-    // 방 생성 함수
+    /* 방 생성 함수 */
     makeGame(roomInfo) {
+      // 만약 로그인 실패거나 소켓 연결 실패라면, "초기화면"으로 이동
       if (!useUserStore().isLogin || !useRoomStore().isConnected) {
         alert("연결이 끊어졌습니다.");
         useUserStore().initData();
+        router.push("/");
       }
 
+      // 만약 입력된 곳에서 빈 공백이 있다면, 해당 부분 alert 표시
       if (roomInfo.title === "") {
         alert("방 제목을 작성해주세요");
       } else if (roomInfo.public === false && roomInfo.password.trim() === "") {
         alert("비공개 방으로 비밀번호를 입력하세요");
-      } else if (roomInfo.theme === "") {
-        alert("테마를 선택하세요");
       } else {
-        // currentRoomInfo 정보를 주기 위한 createRoomInfo
-        useRoomStore().createRoomInfo = this.roomInfo;
 
+        // 생성하기 위한 방 정보를 v-model로 된 객체 가져옴
+        useRoomStore().createRoomInfo = {
+          ...this.roomInfo,
+        };
+
+        // 방 생성을 시작
         useRoomStore()
           .createRoom()
           .then(() => {
+
+            // 먼저, create된 roomCode를 가져와서 방 구독
             useRoomStore().subscription.room =
               useRoomStore().stompClient.subscribe(
                 "/sub/room/" + useRoomStore().createRoomInfo.roomCode,
@@ -144,22 +154,30 @@ export default {
                   console.log(message.body);
                   useRoomStore().receivedMessage = JSON.parse(message.body);
 
+                  // (경우1) 입장 정보 타입
                   if (
                     useRoomStore().receivedMessage.type === "ROOM_ENTER_INFO"
                   ) {
                     useRoomStore().roomChatMessages.push(
                       useRoomStore().receivedMessage.data.message
                     );
+
                     useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
                       (seat, index) => {
                         const seatKey = `seatnum${index + 1}`;
                         if (useRoomStore().seatInfo[seatKey]) {
                           useRoomStore().seatInfo[seatKey].nickname =
-                            seat.nickname;
+                            seat.nickname? seat.nickname : '';
                           useRoomStore().seatInfo[seatKey].ready = seat.ready;
                         }
                       }
                     );
+                    // 방 생성 모달 닫기
+                    useRoomStore().showRoomMakingModal = false;
+
+                    this.$router.push({
+                      name: "wait",
+                    });
                   } else if (
                     useRoomStore().receivedMessage.type === "ROOM_EXIT_INFO"
                   ) {
@@ -189,15 +207,9 @@ export default {
               );
           })
           .then(() => {
-            // 방 생성 시, 자신의 현재 방을 세팅
-            // (나갈 때 정보 삭제 필요)
             useUserStore().currentRoomInfo = {
               ...useRoomStore().createRoomInfo,
             };
-
-            this.$router.push({
-              name: "wait",
-            });
 
             useRoomStore().stompClient.publish({
               destination:
@@ -207,10 +219,10 @@ export default {
 
               body: useUserStore().userInfo.email,
             });
-
-            // 방 생성 모달 닫기
-            useRoomStore().closeModal("roomMaking");
           })
+
+          // 방 생성 실패시, 방 삭제 요청
+          // (아직 삭제 요청 미구현)
           .catch((error) => {
             alert("방 생성 실패");
             console.log(error);

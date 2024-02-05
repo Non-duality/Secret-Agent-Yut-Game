@@ -139,13 +139,12 @@ export const useUserStore = defineStore("user", {
 
     tokenRegenerate: async () => {
       await tokenRegeneration(
-        JSON.stringify(useUserStore().userInfo),
         (response) => {
           if (response.status === httpStatusCode.CREATE) {
             let accessToken = response.data["access-token"];
-            console.log("재발급 완료 >> 새로운 토큰 : {}", accessToken);
             useUserStore().accessToken = accessToken;
-            // useUserStore().isValidToken = true;
+
+            console.log("[userStore] : 재발급 완료");
           }
         },
 

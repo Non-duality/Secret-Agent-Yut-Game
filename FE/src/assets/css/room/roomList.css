@@ -45,7 +45,7 @@
 
 /* 실게 게임 목록 스크롤바 지정 */
 .room-list-content {
-  height: 70%;
+  max-height: 40vh;
   overflow-y: auto;
   padding-right: 30px;
 }

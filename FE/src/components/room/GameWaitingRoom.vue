@@ -10,8 +10,8 @@
       <RightComponentsVue/>
 
       <!-- v-if/else로 방장 구분 -->
-      <button class="wait-btn" >시작</button>
-      <button class="wait-btn" >준비</button>
+      <button class="wait-btn">시작</button>
+      <button class="wait-btn">준비</button>
       <button class="wait-btn" @click="goToList">나가기</button>
     </div>
     <!-- <banModal @close-ban-modal="closeBanModal" v-if="ban" /> -->
@@ -26,9 +26,9 @@ const router = useRouter();
 
 export default {
   method:{
-    // goTolist() {
-    //   router.push("/room");
-    // },
+    goTolist() {
+      router.push("/room");
+    },
   },
 };
 </script>

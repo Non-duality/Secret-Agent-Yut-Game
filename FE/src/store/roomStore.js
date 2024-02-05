@@ -110,10 +110,11 @@ export const useRoomStore = defineStore("room", {
 
           // STOMP 수준의 오류 처리
           onStompError: (frame) => {
-            useRoomStore().isConnected = false;
+            useUserStore().initData();
             useRoomStore().stompClient.deactivate();
-            console.error("STOMP Error:", frame);
+            console.error("[roomStore] : STOMP 오류 발생");
             reject(new Error("STOMP error"));
+            alert("소켓이 끊어졌습니다.");
           },
         });
 
@@ -149,6 +150,7 @@ export const useRoomStore = defineStore("room", {
             useRoomStore().jsonPassword,
             ({ data }) => {
               useUserStore().roomCode = data;
+
               (useRoomStore().subscription.room =
                 useRoomStore().stompClient.subscribe(
                   "/sub/room/" + useUserStore().roomCode,
@@ -158,14 +160,14 @@ export const useRoomStore = defineStore("room", {
                     console.log(message.body);
                     useRoomStore().receivedMessage = JSON.parse(message.body);
 
-                    if (receivedMessage.value.type === "ROOM_ENTER_INFO") {
+                    if (useRoomStore().receivedMessage.type === "ROOM_ENTER_INFO") {
                       useRoomStore().roomChatMessages.push(
                         useRoomStore().receivedMessage.data.message
                       );
                       useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
                         (seat, index) => {
                           const seatKey = `seatnum${index + 1}`;
-                          if (seatInfo[seatKey]) {
+                          if (useRoomStore().seatInfo[seatKey]) {
                             useRoomStore().seatInfo[seatKey].nickname =
                               seat.nickname;
                             useRoomStore().seatInfo[seatKey].ready = seat.ready;
@@ -181,7 +183,20 @@ export const useRoomStore = defineStore("room", {
                       useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
                         (seat, index) => {
                           const seatKey = `seatnum${index + 1}`;
-                          if (seatInfo.value[seatKey]) {
+                          if (useRoomStore().seatInfo[seatKey]) {
+                            useRoomStore().seatInfo[seatKey].nickname =
+                              seat.nickname;
+                            useRoomStore().seatInfo[seatKey].ready = seat.ready;
+                          }
+                        }
+                      );
+                    } else if (
+                      useRoomStore().receivedMessage.type === "ROOM_READY"
+                    ) {
+                      useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
+                        (seat, index) => {
+                          const seatKey = `seatnum${index + 1}`;
+                          if (useRoomStore().seatInfo[seatKey]) {
                             useRoomStore().seatInfo[seatKey].nickname =
                               seat.nickname;
                             useRoomStore().seatInfo[seatKey].ready = seat.ready;
@@ -200,16 +215,18 @@ export const useRoomStore = defineStore("room", {
                   }
                 )),
                 useRoomStore().stompClient.publish({
-                  headers: {
-                    Authorization: `Bearer ${useUserStore().accessToken}`,
-                  },
                   destination:
                     "/pub/room/" + useUserStore().roomCode + "/enter",
+                  body: useUserStore().userInfo.email,
                 });
 
               // 현재, 자신의 방의 정보를 넣는다.
               // (나갈 때 정보 삭제 필요)
-              useUserStore().currentRoomInfo = useRoomStore().roomDetailData;
+              useUserStore().currentRoomInfo = null;
+              useUserStore().currentRoomInfo = {
+                ...useRoomStore().roomDetailData,
+              };
+
               useUserStore().currentRoomInfo.roomCode = data;
               resolve();
             }
@@ -219,13 +236,13 @@ export const useRoomStore = defineStore("room", {
     },
 
     /* 메시지 보내기 */
-    sendMessage() {
-      sendRoomMessage.value.message = tempMessage.value;
-      stompClient.value.publish({
-        destination: "/pub/room/" + currentRoomCode.value + "/chat",
-        body: JSON.stringify(sendRoomMessage.value),
-      });
-    },
+    // sendMessage() {
+    //   sendRoomMessage.value.message = tempMessage.value;
+    //   stompClient.value.publish({
+    //     destination: "/pub/room/" + currentRoomCode.value + "/chat",
+    //     body: JSON.stringify(sendRoomMessage.value),
+    //   });
+    // },
 
     /* 나가기 */
     exitRoom() {
@@ -251,6 +268,8 @@ export const useRoomStore = defineStore("room", {
           });
         });
       } catch (error) {
+        console.log("방 생성 오류: " + error);
+
         // 토큰이 만료된 경우
         if (error.response.status === 406) {
           await useUserStore().tokenRegenerate();

@@ -32,6 +32,9 @@
 
 <script>
 import { useRoomStore } from "@/store/roomStore";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 export default {
   // 부모로부터 받아온 방 상세정보 데이터
@@ -48,15 +51,17 @@ export default {
       const roomInfo = useRoomStore().roomDetailData;
 
       if (!roomInfo.public) {
-        useRoomStore().openModal('roomPasswordCheck');
+        useRoomStore().openModal("roomPasswordCheck");
       }
-      
+
       useRoomStore()
-          .canEnterRoom()
-          .then(() => {
-            // 대기방 이동 시작
-            console.log("접속 완료");
-       });
+        .canEnterRoom()
+        .then(() => {
+          // 대기방 이동 시작
+          this.$router.push({
+            name: "wait",
+          });
+        });
     },
   },
 };

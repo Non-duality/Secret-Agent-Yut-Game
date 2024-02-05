@@ -9,9 +9,9 @@
       <span class="content" v-if="roomInfo.public">공개</span>
       <span class="content" v-else>비공개</span>
       <span class="subject">속도</span>
-      <span class="content" v-if="roomInfo.speed === 0">느림</span>
-      <span class="content" v-else-if="roomInfo.speed === 1">보통</span>
-      <span class="content" v-else-if="roomInfo.speed === 2">빠름</span>
+      <span class="content" v-if="roomInfo.gameSpeed === 0">느림</span>
+      <span class="content" v-else-if="roomInfo.gameSpeed === 1">보통</span>
+      <span class="content" v-else-if="roomInfo.gameSpeed === 2">빠름</span>
     </div>
     <!-- 오른쪽은 이미지와 테마가 있다. -->
     <div class="detail">
@@ -30,12 +30,13 @@ import { useUserStore } from "@/store/userStore";
 export default {
   data() {
     return {
-      roomInfo: useUserStore().currentRoomInfo,
+      roomInfo: null,
     };
   },
 
-  mounted(){
-    console.log(useUserStore().currentRoomInfo);
+  created(){
+    this.roomInfo = useUserStore().currentRoomInfo;
+    console.log(this.roomInfo);
   }
 };
 </script>

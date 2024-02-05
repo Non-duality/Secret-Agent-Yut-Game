@@ -16,10 +16,10 @@ async function findByToken(success, fail) {
   await local.get(`/user/info`).then(success).catch(fail);
 }
 
-async function tokenRegeneration(user, success, fail) {
+async function tokenRegeneration(success, fail) {
   local.defaults.headers["Authorization"] = "Bearer " + useUserStore().accessToken;
   local.defaults.headers["refreshToken"] = useUserStore().refreshToken;
-  await local.post(`/user/refresh`, user).then(success).catch(fail);
+  await local.post().then(success).catch(fail);
 }
 
 async function logout(userid, success, fail) {
