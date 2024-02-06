@@ -8,7 +8,7 @@ import {
 
 import { Client } from "@stomp/stompjs";
 import { useUserStore } from "./userStore";
-const { VITE_WSS_API_URL } = import.meta.env;
+const { VUE_APP_SOCKET_URL } = import.meta.env;
 
 export const useRoomStore = defineStore("room", {
   /* 반응형 DATA */
@@ -78,7 +78,7 @@ export const useRoomStore = defineStore("room", {
         let token = useUserStore().accessToken;
 
         useRoomStore().stompClient = new Client({
-          brokerURL: VITE_WSS_API_URL,
+          brokerURL: VUE_APP_SOCKET_URL,
 
           connectHeaders: {
             Authorization: `Bearer ${token}`,

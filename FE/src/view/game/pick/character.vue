@@ -120,7 +120,7 @@ import UserVideo from "@/components/game/openvidu/UserVideo.vue";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const { VITE_VUE_API_URL } = import.meta.env;
+const { VUE_APP_API_URL } = import.meta.env;
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "https://i10d205.p.ssafy.io/api/v1";

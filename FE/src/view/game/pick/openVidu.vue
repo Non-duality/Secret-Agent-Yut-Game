@@ -73,7 +73,7 @@
 import { useUserStore } from "@/store/userStore";
 import axios from "axios";
 
-const { VITE_VUE_API_URL } = import.meta.env;
+const { VUE_APP_API_URL } = import.meta.env;
 
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/game/openvidu/UserVideo.vue";
@@ -81,7 +81,7 @@ import UserVideo from "@/components/game/openvidu/UserVideo.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : VITE_VUE_API_URL;
+  process.env.NODE_ENV === "production" ? "" : VUE_APP_API_URL;
 
 export default {
   name: "App",

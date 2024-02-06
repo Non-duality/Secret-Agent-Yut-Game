@@ -1,23 +1,12 @@
 import axios from "axios";
 import { httpStatusCode } from "./http-status";
 
-const { VITE_VUE_API_URL } = import.meta.env;
-
-// station vue api axios instance
-function stationAxios() {
-  const instance = axios.create({
-    baseURL: VITE_VUE_API_URL,
-    headers: {
-      "Content-Type": "application/json;charset=utf-8",
-    },
-  });
-  return instance;
-}
+const { VUE_APP_API_URL } = import.meta.env;
 
 // local vue api axios instance
 function localAxios() {
   const instance = axios.create({
-    baseURL: VITE_VUE_API_URL,
+    baseURL: "https://i10d205.p.ssafy.io/api/v1",
     // withCredentials: true,
     // headers: {
     //   "Content-Type": "application/json;charset=utf-8",
@@ -86,4 +75,4 @@ function localAxios() {
   return instance;
 }
 
-export { localAxios, stationAxios };
+export { localAxios };
