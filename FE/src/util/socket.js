@@ -1,9 +1,8 @@
 import { Client } from "@stomp/stompjs";
-
 let stompClient = null;
 let connected = false;
 
-export function connect(accessToken, re cvCallback) {
+export function connect(accessToken, recvCallback) {
   return new Promise((resolve, reject) => {
     let token = accessToken;
     stompClient = new Client({
