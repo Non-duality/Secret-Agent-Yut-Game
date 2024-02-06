@@ -12,17 +12,16 @@
     >
       <!-- 팀 이름을 나타낸다. -->
       <div class="team-name">{{ team.name }}</div>
+
       <!-- 유저의 정보를 나타낸다 -->
-      <div v-for="user in team.users" :key="user.name" class="user-container">
-        <div class="team-user">
-          <!-- 기본 프로필, 유저 들어오면 유저의 프로필 사진 넣기! -->
-          <img v-if="user.name === null" src="@/assets/img/profile_picture.png" class="team-img" />
-          {{ user.name }}  {{ user.status }}
-          <div>
-            <!-- 강퇴 (방장 자신은 안뜨게 해야하는데 이건 user 정보가 필요) -->
-            <!-- 강퇴할 유저 정보도 같이 넘겨서 모달로 처리 -->
-            <button class="ban" @click="$emit('banMember')" v-if="isManager">추방</button>
-          </div>
+      <div v-for="seatKey in Object.keys(team.users)" :key="seatKey">
+        <div v-if="team.users[seatKey].nickname === null">
+          <img src="@/assets/img/profile_picture.png" class="team-img" />
+          <span>비어있음</span>
+        </div>
+        <div v-else>
+          <img src="@/assets/img/profile_picture.png" class="team-img" />
+          <span>{{ team.users[seatKey].nickname }}</span>
         </div>
       </div>
     </div>
@@ -31,88 +30,58 @@
 </template>
 
 <script>
+import { useRoomStore } from "@/store/roomStore";
+
 // 아이콘
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library } from "@fortawesome/fontawesome-svg-core";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons/faUserPlus";
-library.add(faUserPlus)
+library.add(faUserPlus);
 
 // 자식 컴포넌트
 import GameWaitChatVue from "./GameWaitChat.vue";
 
 export default {
   components: {
-    GameWaitChatVue
+    GameWaitChatVue,
   },
+
   data() {
     return {
       // 팀 정보 기본 세팅
       teams: [
-        { 
-          name: "홍팀", 
-          users: [
-            { name: null, status: null },
-            { name: null, status: null },
-            { name: null, status: null },
-          ], 
-          maxUser: 3 
+        {
+          name: "홍팀",
+          users: [],
+          maxUser: 3,
         },
-        { 
-          name: "청팀", 
-          users: [
-            { name: null, status: null },
-            { name: null, status: null },
-            { name: null, status: null },
-          ], 
-          maxUser: 3 }
+        {
+          name: "청팀",
+          users: [],
+          maxUser: 3,
+        },
       ],
-
-      // 방장 여부
-      isManager: false,
     };
   },
 
-  // 들어올 때 user 세팅 (추후 수정 필요)
   created() {
-    this.fetchUserFromQuery();
-    // URL query의 isManager 가져와서 방장 여부 판단
-    this.isManager = this.$route.query.isManager === 'true';
-  },
+    // seatInfo 데이터를 가져와서 팀에 할당
+    let currentSeatInfo = useRoomStore().seatInfo;
 
-  methods: {
-    // user 세팅 (추후 수정 필요)
-    fetchUserFromQuery() {
-      const userInfoString = this.$route.query.userInfo;
-      if (!userInfoString) return;
+    console.log(currentSeatInfo);
 
-      try {
-        // 문자열 파싱 (추후 수정 필요)
-        const userInfo = JSON.parse(userInfoString);
-        // 홍팀부터 넣고 홍팀 다 차면 청팀에 넣기
-        const redTeamSlot = this.teams[0].users.find(user => user.name === null);
-        if (redTeamSlot) {
-          redTeamSlot.name = userInfo.userNickname;
-          redTeamSlot.status = "대기 중...!"
-        } else {
-          const blueTeamSlot = this.teams[1].users.find(user => user.name === null);
-          if (blueTeamSlot) {
-            blueTeamSlot.name = userInfo.userNickname;
-            blueTeamSlot.status = "대기 중...";
-          } else {
-            console.log('두 팀 모두 꽉 찼습니다.')
-          }
-        }
-      } catch (error) {
-        console.error('Error parsing userInfo:', error);
-      }
-    },
-
-    banActive() {
-      this.$emit()
+    // 홍팀에 1부터 3까지의 seatInfo 할당
+    for (let i = 1; i <= 3; i++) {
+      this.teams[0].users[`seatnum${i}`] = currentSeatInfo[`seatnum${i}`];
     }
-  }
+
+    // 청팀에 4부터 6까지의 seatInfo 할당
+    for (let i = 4; i <= 6; i++) {
+      this.teams[1].users[`seatnum${i}`] = currentSeatInfo[`seatnum${i}`];
+    }
+  },
 };
 </script>
 
-<style>
-@import "@/assets/css/room/waitingRoomLeft.css";
+<style scoped>
+@import "../../../assets/css/room/waitingRoomLeft.css";
 </style>

@@ -1,10 +1,10 @@
 <script>
 import Main from "@/view/Main.vue";
 import { initializeSnowAnimation } from "@/animations/snowAnimation";
-import { initializeClickSoundEffect  } from "@/animations/clickSound";
+import { initializeClickSoundEffect } from "@/animations/clickSound";
 
 export default {
-  components:{
+  components: {
     Main,
   },
 
@@ -15,15 +15,14 @@ export default {
     // 클릭 사운드
     initializeClickSoundEffect();
   },
-  
+
   computed: {
     // 사이트 변경될 때마다 배경화면 변경
     backgroundClass() {
-      return this.$route.meta.background || 'default';
-    }
-  }
-  
-}
+      return this.$route.meta.background || "default";
+    },
+  },
+};
 </script>
 
 <template>

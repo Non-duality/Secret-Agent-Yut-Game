@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
-import { cloneDeep } from "lodash";
-import { jwtDecode } from "jwt-decode";
+import { useRoomStore } from "./roomStore";
 
-import { userConfirm, userDoJoin, findById } from "@/api/user";
+import { userConfirm, userDoJoin, findByToken } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useUserStore = defineStore("user", {
@@ -21,85 +20,88 @@ export const useUserStore = defineStore("user", {
       accessToken: null, // 어세스 토큰
       refreshToken: null, // 리프레쉬 토큰
       showSpyModal: false, // 밀정 선택 모달
+
+      roomId: null,
+      roomCode: null,
+      currentRoomInfo: null,
     };
   },
 
   actions: {
     // 데이터 초기화 로직
     initData() {
-      console.log("모든 데이터 초기화");
-      const initialState = this.$reset();
-      Object.assign(this, initialState);
+      const initialStateUser = useUserStore().$reset();
+      const initialStateRoom = useRoomStore().$reset();
+      Object.assign(this, initialState1);
+      Object.assign(this, initialState2);
     },
 
     // 로그인, 회원가입 모달 창을 나타내기 위한 함수 매개변수를 입력받아
     // 로그인, 회원가입 차별을 준다.
     openModal(value) {
       if (value === "login") {
-        this.showLoginModal = true;
+        useUserStore().showLoginModal = true;
       } else if (value === "join") {
-        this.showJoinModal = true;
+        useUserStore().showJoinModal = true;
       } else if (value === "Nick") {
-        this.showUserInfoNick = true;
+        useUserStore().showUserInfoNick = true;
       } else if (value === "out") {
-        this.showDropOutModal = true;
+        useUserStore().showDropOutModal = true;
       } else if (value === "password") {
-        this.showSuccessPassword = true;
+        useUserStore().showSuccessPassword = true;
       } else if (value === "spy") {
-        this.showSpyModal = true;
+        useUserStore().showSpyModal = true;
       }
     },
 
     // 위와 같지만, 닫는 함수.
     closeModal(value) {
       if (value === "login") {
-        this.showLoginModal = false;
+        useUserStore().showLoginModal = false;
       } else if (value === "join") {
-        this.showJoinModal = false;
+        useUserStore().showJoinModal = false;
       } else if (value === "Nick") {
-        this.showUserInfoNick = false;
+        useUserStore().showUserInfoNick = false;
       } else if (value === "Drop") {
-        this.showDropOutModal = false;
+        useUserStore().showDropOutModal = false;
       } else if (value === "password") {
-        this.showSuccessPassword = false;
+        useUserStore().showSuccessPassword = false;
       } else if (value === "spy") {
-        this.showSpyModal = false;
+        useUserStore().showSpyModal = false;
       }
     },
 
-    // 상단 바와 사이드 바 토글 함수.
-    toggleNav() {
-      this.showModalSide = !this.showModalSide;
-    },
-
     userLogin: async (loginUser) => {
-      await userConfirm(
-        loginUser,
-        (response) => {
-          console.log("로그인 성공");
-          if (response.status === httpStatusCode.OK) {
-            let { data } = response;
+      return new Promise((resolve, reject) => {
+        userConfirm(
+          loginUser,
+          (response) => {
+            if (response.status === 200) {
+              let { data } = response;
+              console.log("로그인 성공");
+              let accessToken = data["access-token"];
+              let refreshToken = data["refresh-token"];
 
-            let accessToken = data["access-token"];
-            let refreshToken = data["refresh-token"];
+              useUserStore().accessToken = accessToken;
+              useUserStore().refreshToken = refreshToken;
 
-            useUserStore().accessToken = accessToken;
-            useUserStore().refreshToken = refreshToken;
-
-            useUserStore().isLogin = true;
-            useUserStore().showLoginModal = false;
-          } else {
-            console.log("로그인 실패");
+              useUserStore().isLogin = true;
+              useUserStore().showLoginModal = false;
+              resolve(); // 작업 완료 후 resolve 호출
+            } else {
+              console.log("로그인 실패");
+              useUserStore().isLogin = false;
+              reject(new Error("로그인 실패")); // 실패 시 reject 호출
+            }
+          },
+          (error) => {
+            // 로그인 실패 구현
+            alert("로그인 실패");
             useUserStore().isLogin = false;
+            reject(error); // 실패 시 reject 호출
           }
-        },
-
-        (error) => {
-          // 로그인 실패 구현
-          alert("로그인 실패");
-          useUserStore().isLogin = false;
-        }
-      );
+        );
+      });
     },
 
     userJoin: async (joinUser) => {
@@ -116,23 +118,11 @@ export const useUserStore = defineStore("user", {
       );
     },
 
-    getUserInfo: (token) => {
-      let decodeToken = jwtDecode(token);
-
-      findById(
-        decodeToken.userId,
+    getUserInfo: () => {
+      findByToken(
         (response) => {
           if (response.status === httpStatusCode.OK) {
             useUserStore().userInfo = response.data.userInfo;
-          }
-          
-          else if(response.status === "406"){
-            console.log("Access Token 재발급");
-            tokenRegenerate();
-          }
-          
-          else {
-            console.log("유저 정보 없음!!!!");
           }
         },
 
@@ -149,13 +139,12 @@ export const useUserStore = defineStore("user", {
 
     tokenRegenerate: async () => {
       await tokenRegeneration(
-        JSON.stringify(useUserStore().userInfo),
         (response) => {
           if (response.status === httpStatusCode.CREATE) {
             let accessToken = response.data["access-token"];
-            console.log("재발급 완료 >> 새로운 토큰 : {}", accessToken);
             useUserStore().accessToken = accessToken;
-            // useUserStore().isValidToken = true;
+
+            console.log("[userStore] : 재발급 완료");
           }
         },
 
@@ -192,7 +181,7 @@ export const useUserStore = defineStore("user", {
     enabled: true, //storage 저장유무
     strategies: [
       {
-        key: "counter", //storage key값 설정
+        key: "user", //storage key값 설정
         storage: localStorage, // localStorage, sessionStorage storage 선택 default sessionStorage
       },
     ],

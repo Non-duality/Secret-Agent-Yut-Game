@@ -23,15 +23,13 @@
 </template>
   
 <script>
-
 import { ref } from "vue";
-import { storeToRefs } from "pinia";
 import { useUserStore } from "@/store/userStore";
+import { useRoomStore } from "@/store/roomStore";
 import { useRouter } from "vue-router";
 
 export default {
   setup() {
-    const userStore = useUserStore();
     const router = useRouter();
 
     const loginUser = ref({
@@ -39,22 +37,32 @@ export default {
       password: "",
     });
 
-    const { isLogin } = storeToRefs(userStore);
-    const { userLogin, getUserInfo } = userStore;
-
     const login = async () => {
-      await userLogin(loginUser.value);
+      await useUserStore().userLogin(loginUser.value);
 
-      let token = useUserStore().accessToken;
-      // console.log(token);
-      
-      if (isLogin) {
-        console.log(token);
-        getUserInfo(token);
-        closeModal();
-        userStore.toggleNav();
-        router.push("/home");
+      if (useUserStore().isLogin) {
+        try {
+          await useRoomStore().connectWS();
+
+          if (useRoomStore().isConnected) {
+            useUserStore().getUserInfo();
+            closeModal();
+            useUserStore().showModalSide = true;
+            router.push("/home");
+          } else {
+            useUserStore().isLogin = false;
+            useUserStore().initData();
+            router.push("/");
+          }
+        } catch (error) {
+          useUserStore().isLogin = false;
+          useUserStore().initData();
+          router.push("/");
+          console.error("Error:", error);
+        }
       } else {
+        useUserStore().isLogin = false;
+        useUserStore().initData();
         router.push("/");
       }
     };
@@ -62,12 +70,12 @@ export default {
     // 회원가입으로 이동.
     const join = () => {
       closeModal();
-      userStore.openModal("join");
+      useUserStore().openModal("join");
     };
 
     // pinia 닫기 함수 호출
     const closeModal = () => {
-      userStore.closeModal("login");
+      useUserStore().closeModal("login");
     };
 
     return {

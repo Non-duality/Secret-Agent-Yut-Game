@@ -11,19 +11,19 @@ async function userDoJoin(param, success, fail) {
   await local.post(`/user/join`, param).then(success).catch(fail);
 }
 
-async function findById(userid, success, fail) {
+async function findByToken(success, fail) {
   local.defaults.headers["Authorization"] = "Bearer " + useUserStore().accessToken;
-  await local.get(`/user/info/${userid}`).then(success).catch(fail);
+  await local.get(`/user/info`).then(success).catch(fail);
 }
 
-async function tokenRegeneration(user, success, fail) {
+async function tokenRegeneration(success, fail) {
   local.defaults.headers["Authorization"] = "Bearer " + useUserStore().accessToken;
   local.defaults.headers["refreshToken"] = useUserStore().refreshToken;
-  await local.post(`/user/refresh`, user).then(success).catch(fail);
+  await local.post().then(success).catch(fail);
 }
 
 async function logout(userid, success, fail) {
   await local.get(`/user/logout/${userid}`).then(success).catch(fail);
 }
 
-export { userConfirm, userDoJoin, findById, tokenRegeneration, logout };
+export { userConfirm, userDoJoin, findByToken, tokenRegeneration, logout };

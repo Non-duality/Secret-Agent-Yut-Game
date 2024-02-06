@@ -10,22 +10,26 @@
         :class="{ 'rotate-animation': isRotating }"
         :icon="['fas', 'arrows-rotate']"
         size="2xl"
-        style="color: #ffffff"
+        style="color: #ffffff; margin-right: 50px"
       />
     </div>
-    <div class="room-list-subtitle">
-      <th scope="col">플레이어</th>
-      <th scope="col">게임방 이름</th>
-      <th scope="col">공개</th>
-    </div>
-    <div class="room-list-content">
-      <RoomListComponent
-        v-for="roomInfo in roomInfos"
-        :key="roomInfo.roomId"
-        :roomInfo="roomInfo"
-        @click="$emit('showRoomInfo', roomInfo)"
-        class="room-list-component"
-      />
+    <div>
+      <div class="room-list-subtitle">
+        <th scope="col">인원</th>
+        <th scope="col">게임방 이름</th>
+        <th scope="col">공개</th>
+      </div>
+      <div class="room-list-content">
+        <RoomListComponent
+          v-for="roomInfo in roomInfos"
+          :key="roomInfo.roomId"
+          :roomInfo="roomInfo"
+          @click="selectRoom(roomInfo)"
+          :class="{
+            'room-list-component-selected': roomInfo.roomId === selectedRoomId,
+          }"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -52,14 +56,14 @@ export default {
   data() {
     return {
       isRotating: false,
+      selectedRoomId: null,
     };
   },
 
   computed: {
     // 방 정보를 실시간으로 계산
     roomInfos() {
-      const roomStore = useRoomStore();
-      return roomStore.roomListSomeData;
+      return useRoomStore().roomList;
     },
   },
 
@@ -78,10 +82,30 @@ export default {
         roomStore.getRoomSomeListData();
       }, 2000);
     },
+
+    // 방 선택 로직 추가
+    selectRoom(roomInfo) {
+      if (this.selectedRoomId === roomInfo.roomId) {
+        // 이미 선택된 방을 다시 클릭하면 선택 해제
+        this.selectedRoomId = null;
+      } else {
+        // 새로운 방을 클릭하면 선택
+        this.selectedRoomId = roomInfo.roomId;
+      }
+
+      this.$emit("show-room-info", roomInfo.roomId);
+    },
+  },
+  
+  mounted() {
+    if (this.roomInfos.length > 0) {
+      this.selectedRoomId = this.roomInfos[0].roomId;
+      this.$emit("show-room-info", this.selectedRoomId);
+    }
   },
 };
 </script>
 
 <style scoped>
-@import "@/assets/css/room/roomList.css";
+@import "../../../assets/css/room/roomList.css";
 </style>

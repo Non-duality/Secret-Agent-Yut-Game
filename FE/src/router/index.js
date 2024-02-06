@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/store/userStore";
+import { useRoomStore } from "@/store/roomStore";
 
 import HomeView from "@/view/home/HomeView.vue";
 import RoomViewVue from "@/view/room/RoomView.vue";
@@ -43,7 +44,7 @@ const router = createRouter({
           meta: { background: "room-list" },
         },
         {
-          path: "/room/wait/:roomNum",
+          path: "/room/wait",
           name: "wait",
           component: GameWaitingRoomVue,
           meta: { background: "room-wait" },
@@ -111,52 +112,61 @@ const router = createRouter({
 //   return isTrue;
 // }
 
-// // 리다이렉션 처리
-// router.beforeEach((to, from, next) => {
-//   if (from.path.startsWith("/room/wait")) {
-//     const confirmMessage = "정말 대기방에서 나가시겠습니까?";
-//     if (confirm(confirmMessage)) {
-//       // 사용자가 예를 선택하면 다음 단계로 이동
-//       next();
-//     } else {
-//       // 사용자가 아니요를 선택하면 현재 경로에 남아 있음
-//       next(false);
-//     }
-//   }
+// 리다이렉션 처리
+router.beforeEach(async (to, from, next) => {
+  // 만약 소켓 연결이 끊어지면, 소켓 연결 다시 시도.
+  // if (useUserStore().isLogin && !useRoomStore().isConnected) {
+  //   console.log("연결이 끊어짐을 확인했습니다.")
+  //   try {
+  //     await useRoomStore().connectWS();
+  //     console.log("WebSocket connection re-established");
+  //   } catch (error) {
+  //     console.error("WebSocket connection failed:", error);
+  //   }
+  // }
 
-//   const isLogin = useUserStore().isLogin;
+  if (from.path.startsWith("/room/wait")) {
+    const confirmMessage = "정말 대기방에서 나가시겠습니까?";
+    if (confirm(confirmMessage)) {
+      // 사용자가 예를 선택하면 다음 단계로 이동
+      next();
+    } else {
+      // 사용자가 아니요를 선택하면 현재 경로에 남아 있음
+      next(false);
+    }
+  } else {
+    const isLogin = useUserStore().isLogin;
 
-//   // "/" 경로 처리
-//   if (to.path === "/") {
-//     if (isLogin) {
-//       next("/home");
-//     } else {
-//       next();
-//     }
-//   }
+    // "/" 경로 처리
+    if (to.path === "/") {
+      if (isLogin) {
+        next("/home");
+      } else {
+        next();
+      }
+    } else {
+      // routes에 설정된 경로 중에서 현재 이동하려는 경로가 있는지 확인
+      const isRouteExist = router.options.routes.some(
+        (route) => route.path === to.path
+      );
 
-//   // routes에 설정된 경로 중에서 현재 이동하려는 경로가 있는지 확인
-//   const isRouteExist = router.options.routes.some(
-//     (route) => route.path === to.path
-//   );
+      // routes 중에 children을 가지고 있는 부모 경로들만을 확인하는 변수
+      const matchingChildRoute = findChildRouteByPath(
+        router.options.routes,
+        to.path
+      );
 
-//   // routes 중에 children을 가지고 있는 부모 경로들만을 확인하는 변수
-//   const matchingChildRoute = findChildRouteByPath(
-//     router.options.routes,
-//     to.path
-//   );
+      if (isRouteExist || matchingChildRoute) {
+        if (isLogin) {
+          next();
+        } else {
+          next("/");
+        }
+      } else {
+        next("/");
+      }
+    }
+  }
+});
 
-//   if (isRouteExist || matchingChildRoute) {
-//     if (isLogin) {
-//       next();
-//     } else {
-//       next("/");
-//     }
-//   } else {
-//     next("/");
-//   }
-// });
-
-  
-
-export default router
+export default router;

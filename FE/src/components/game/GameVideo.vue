@@ -10,7 +10,7 @@
 export default {};
 </script>
 
-<style>
+<style scoped>
 .test {
   width: 180px;
   height: 130px;

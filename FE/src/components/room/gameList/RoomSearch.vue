@@ -45,7 +45,7 @@
       async getRooms() {
         try {
           const { response } = await axios.get('url');
-          this.rooms = response.data;
+          // this.rooms = response.data;
         } catch (error) {
           console.error('error message:', error);
         }
@@ -56,5 +56,5 @@
 </script>
 
 <style scoped>
-@import "@/assets/css/room/roomSearch.css";
+@import "../../../assets/css/room/roomSearch.css";
 </style>

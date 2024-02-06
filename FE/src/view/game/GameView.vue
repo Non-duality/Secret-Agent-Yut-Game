@@ -35,6 +35,6 @@ export default {
 };
 </script>
 
-<style>
-@import "@/assets/css/game/gameView.css";
+<style scoped>
+@import "../../assets/css/game/gameView.css";
 </style>

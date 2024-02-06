@@ -42,10 +42,9 @@ export default {
   },
   setup() {
     const store = useUserStore();
-    const { isLogin, showLoginModal, showJoinModal } = storeToRefs(store);
+    const {  showLoginModal, showJoinModal } = storeToRefs(store);
 
     return {
-      isLogin,
       showLoginModal,
       showJoinModal,
       openModal: store.openModal,
@@ -55,6 +54,6 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 @import url("../../assets/css/home/initial.css");
 </style>

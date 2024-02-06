@@ -9,8 +9,8 @@
       <!-- 방 세부사항 및 생성 버튼 -->
       <h2>세부사항</h2>
       <div class="room-detail-make">
-        <RoomInfo v-if="ShowDetail" :room-info="roomInfo" />
-        <RoomInfo v-else :room-info="defaultRoomInfo" />
+        <RoomInfo v-if="ShowDetail" :room-info="roomDetailInfo" />
+        <RoomInfo v-else-if="ShowInitDetail" :room-info="roomInitDetailInfo" />
         <button @click="openModal('roomMaking')" class="room-make-btn">
           방 생성
         </button>
@@ -28,7 +28,6 @@
     <RoomPasswordCheckModal
       v-if="showRoomPasswordCheckModal"
       class="room-password-modal"
-      :room-info="defaultRoomInfo"
     />
   </div>
 </template>
@@ -40,6 +39,7 @@ import RoomInfo from "@/components/room/gameList/RoomInfo.vue";
 import RoomMakingModal from "@/components/room/gameList/RoomMakingModal.vue";
 import RoomPasswordCheckModal from "@/components/room/gameList/RoomPasswordCheckModal.vue";
 
+import { useUserStore } from "@/store/userStore"
 import { useRoomStore } from "@/store/roomStore";
 
 export default {
@@ -53,34 +53,43 @@ export default {
   data() {
     return {
       ShowDetail: false,
+      ShowInitDetail: false,
+
       roomInfo: null,
+
+      roomDetailInfo: null,
+      roomInitDetailInfo: null,
+
+      roomListLoaded: false,
+      roomId: null,
     };
   },
 
   computed: {
-    defaultRoomInfo() {
-      const roomStore = useRoomStore();
-      return roomStore.roomListData[0] || {};
-      return roomStore.roomListSomeData[0] || {};
-    },
-
     // 방 생성 모달
     showRoomMaking() {
-      const roomStore = useRoomStore();
-      return roomStore.showRoomMakingModal;
+      return useRoomStore().showRoomMakingModal;
     },
 
     // 비공개방 비밀번호 체크 모달
     showRoomPasswordCheckModal() {
-      const roomStore = useRoomStore();
-      return roomStore.showRoomPasswordCheckModal;
+      return useRoomStore().showRoomPasswordCheckModal;
     },
   },
 
   methods: {
+    selectRoomInfo(val) {
+      return new Promise(async (resolve) => {
+        await useRoomStore().getRoomDetailData(val);
+        this.roomDetailInfo = useRoomStore().roomDetailData;
+        resolve();
+      });
+    },
+
     // 방 상세 정보 띄우기
-    handleShowRoomInfo(roomInfo) {
-      this.roomInfo = roomInfo;
+    async handleShowRoomInfo(roomId) {
+      useUserStore().roomId = roomId;
+      await this.selectRoomInfo(roomId);
       this.ShowDetail = true;
     },
 
@@ -91,13 +100,23 @@ export default {
     },
   },
 
-  mounted() {
-    const roomStore = useRoomStore();
-    roomStore.getRoomSomeListData();
+  async mounted() {
+    this.ShowDetail = false;
+
+    await useRoomStore().getRoomSomeListData();
+
+    // 전체 방 리스트 조회
+    this.roomInfo = useRoomStore().roomList;
+    this.roomListLoaded = true;
+
+    // 첫 번째 방만 상세 조회
+    await this.selectRoomInfo(this.roomInfo[0].roomId);
+    this.roomInitDetailInfo = useRoomStore().roomDetailData;
+    this.ShowInitDetail = true;
   },
 };
 </script>
 
 <style scoped>
-@import "@/assets/css/room/roomListView.css";
+@import "../../assets/css/room/roomListView.css";
 </style>

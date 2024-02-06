@@ -1,34 +1,58 @@
 <template>
   <div class="password-box">
     <div>
-      <label for="current-password" class="change-password">현재 비밀번호 </label>
-      <input v-model="currentPassword" type="password" id="current-password" class="change-password-input">
+      <label for="current-password" class="change-password"
+        >현재 비밀번호
+      </label>
+      <input
+        v-model="currentPassword"
+        type="password"
+        id="current-password"
+        class="change-password-input"
+      />
     </div>
 
     <div>
       <label for="new-password" class="change-password">새 비밀번호 </label>
-      <input v-model="newPassword" type="password" id="new-password" class="change-password-input">
-      <div v-if="newPasswordError" class="error-message">새 비밀번호는 영문, 숫자, 특수문자를 조합하여 8자 이상이어야 합니다.</div>
+      <input
+        v-model="newPassword"
+        type="password"
+        id="new-password"
+        class="change-password-input"
+      />
+      <div v-if="newPasswordError" class="error-message">
+        새 비밀번호는 영문, 숫자, 특수문자를 조합하여 8자 이상이어야 합니다.
+      </div>
     </div>
 
     <div>
-      <label for="checked-new-password" class="change-password">새 비밀번호 확인 </label>
-      <input v-model="checkedNewPassword" type="password" id="checked-new-password" class="change-password-input">
-      <div v-if="passwordMismatch" class="error-message">새 비밀번호와 일치하지 않습니다.</div>
+      <label for="checked-new-password" class="change-password"
+        >새 비밀번호 확인
+      </label>
+      <input
+        v-model="checkedNewPassword"
+        type="password"
+        id="checked-new-password"
+        class="change-password-input"
+      />
+      <div v-if="passwordMismatch" class="error-message">
+        새 비밀번호와 일치하지 않습니다.
+      </div>
     </div>
 
-
-    <button @type="submit" @click="openModal('password')" class="change-password-btn">
+    <button
+      @type="submit"
+      @click="openModal('password')"
+      class="change-password-btn"
+    >
       확인
     </button>
-    <transition>
-      <SuccessChangePasswordModal v-if="showSuccessPassword" />
-    </transition>
+    <SuccessChangePasswordModal v-if="showSuccessPassword" />
   </div>
 </template>
 
 <script>
-import SuccessChangePasswordModal from '@/components/profile/SuccessChangePasswordModal.vue';
+import SuccessChangePasswordModal from "@/components/profile/SuccessChangePasswordModal.vue";
 import { useUserStore } from "@/store/userStore";
 import { storeToRefs } from "pinia";
 
@@ -47,9 +71,9 @@ export default {
   },
   data() {
     return {
-      currentPassword: '',
-      newPassword: '',
-      checkedNewPassword: '',
+      currentPassword: "",
+      newPassword: "",
+      checkedNewPassword: "",
       newPasswordError: false,
       passwordMismatch: false,
       showSuccessModal: false,
@@ -58,7 +82,8 @@ export default {
   methods: {
     // 비밀번호 유효성 검사
     validateNewPassword() {
-      const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      const passwordRegex =
+        /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       this.newPasswordError = !passwordRegex.test(this.newPassword);
     },
 
@@ -68,8 +93,8 @@ export default {
     },
   },
   watch: {
-    newPassword: 'validateNewPassword',
-    checkedNewPassword: 'validatePasswordMatch',
+    newPassword: "validateNewPassword",
+    checkedNewPassword: "validatePasswordMatch",
   },
 };
 </script>

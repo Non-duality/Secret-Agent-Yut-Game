@@ -4,7 +4,6 @@
     <div class="nav-img">
       <img
         src="../../assets/icon/user.png"
-        @click="goToUserProfile"
         class="img"
       />
     </div>
@@ -33,11 +32,6 @@ export default {
   },
 
   methods: {
-    goToUserProfile() {
-      // 사용자 프로필 페이지로 이동
-      this.$router.push("/user");
-    },
-
     initializeData() {
       useUserStore().initData();
     },
@@ -54,6 +48,6 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 @import "../../assets/css/layout/navPro.css";
 </style>

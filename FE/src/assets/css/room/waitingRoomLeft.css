@@ -35,7 +35,7 @@
 }
 /* 각 유저 마다 크기를 가진다 */
 .user-container {
-  width: 300px; /* 부모 컨테이너의 전체 너비 사용 */
+  width: 25vw; /* 부모 컨테이너의 전체 너비 사용 */
 }
 /* 유저 이름 */
 .team-user {
@@ -47,8 +47,8 @@
 }
 /* 각각의 유저 프로필 사진 */
 .team-img {
-  width: 30px;
-  margin-right: 30px;
+  width: 2.3vw;
+  margin-top: 5px;
 }
 
 /* 아이콘끼리 거리감 맞추기 */
@@ -65,4 +65,13 @@
 
 .ban:hover {
   background-color: #f44336;
+}
+
+span{
+  text-align: left;
+  margin-left: 20px;
+}
+
+.user-container > div{
+
 }

@@ -1,15 +1,13 @@
-.container{
-}
+.container {
+  
+}     
 
 .banner-container {
-  margin-left: 100px;
-  margin-right: 300px;
-  padding-right: 300px;
   flex-direction: column;
   display: flex;
   position: relative;
   height: 40vh;
-  width: 85vw;
+  width: 62vw;
 }
 .carousel__item {
   max-height: 50vh;
@@ -31,21 +29,23 @@
   border: 5px solid white;
 }
 #gallery {
+  margin-top: 10px;
+  border-radius: 40px;
   object-fit: contain;
-  max-height: 300px;
-  max-width: 600px;
+  max-height: 55vh;
+  max-width: 55vw;
 }
 
 .article-container {
   display: flex;
   position: relative;
-  max-width: 75vw;
+  max-width: 55vw;
 }
 
 #patch {
   margin-top: 20px;
   margin-left: 100px;
-  width: 45vw;
+  width: 60vw;
   height: 45vh;
 }
 
@@ -109,7 +109,7 @@
   border: 5px solid #000000;
 }
 .help-icon i {
-  font-size: 18px; 
+  font-size: 18px;
 }
 
 .help-icon img {
@@ -121,7 +121,7 @@
 }
 
 .help-icon img:hover {
-  transform: rotate(360deg);
+  transform: rotate(-180deg);
 }
 
 .help-message {
@@ -137,18 +137,6 @@
   z-index: 1;
 }
 
-/* .arrow-up {
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #333;
-} */
-
 .help-close-btn {
   position: relative;
   top: -1.4vh;
@@ -161,7 +149,6 @@
   outline: none;
   padding: 0;
 }
-
 
 /* 모달창 애니메이션 */
 .fade-enter-from {

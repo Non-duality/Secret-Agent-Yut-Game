@@ -75,5 +75,5 @@
 </script>
 
 <style scoped>
-@import "@/assets/css/layout/setting.css";
+@import "../../assets/css/layout/setting.css";
 </style>

@@ -8,15 +8,15 @@
 }
 /* 왼쪽 오른쪽 나누가 위한 css */
 .detail{
-    margin-top: 50px;
+    margin-top: 25px;
     display: flex;
-    width: 200px;
+    width: 20vw;
     flex-direction: column;
     text-align: center;
 }
 /* 방 정보의 대한 suject로 주제 */
 .subject{
-    margin-top: 10px;
+    margin-top: 30px;
     color: #44A9F3;
     font-size: x-large;
 }

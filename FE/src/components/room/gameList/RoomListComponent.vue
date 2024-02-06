@@ -20,5 +20,5 @@
 </script>
 
 <style scoped>
-@import "@/assets/css/room/roomListComponent.css";
+@import "../../../assets/css/room/roomListComponent.css";
 </style>
