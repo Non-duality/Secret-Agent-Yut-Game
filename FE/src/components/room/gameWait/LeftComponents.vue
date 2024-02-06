@@ -15,7 +15,7 @@
 
       <!-- 유저의 정보를 나타낸다 -->
       <div v-for="seatKey in Object.keys(team.users)" :key="seatKey">
-        <div v-if="team.users[seatKey].nickname === ''">
+        <div v-if="team.users[seatKey].nickname === null">
           <img src="@/assets/img/profile_picture.png" class="team-img" />
           <span>비어있음</span>
         </div>

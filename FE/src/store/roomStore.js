@@ -236,13 +236,14 @@ export const useRoomStore = defineStore("room", {
     },
 
     /* 메시지 보내기 */
-    // sendMessage() {
-    //   sendRoomMessage.value.message = tempMessage.value;
-    //   stompClient.value.publish({
-    //     destination: "/pub/room/" + currentRoomCode.value + "/chat",
-    //     body: JSON.stringify(sendRoomMessage.value),
-    //   });
-    // },
+    sendMessage() {
+      sendRoomMessage.message = useUserStore().tempMessage;
+      
+      stompClient.value.publish({
+        destination: "/pub/room/" + currentRoomCode.value + "/chat",
+        body: JSON.stringify(useUserStore().sendRoomMessage),
+      });
+    },
 
     /* 나가기 */
     exitRoom() {
