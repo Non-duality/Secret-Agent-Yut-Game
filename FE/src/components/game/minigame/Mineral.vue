@@ -362,5 +362,44 @@ export default {
 </script>
 
 <style scoped>
+/* 화면 중앙 정렬 */
+.videoView {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin-left: 100px;
+  margin-right: 100px;
+  background-color: blueviolet;
+}
 
+.media-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 거울모드 */
+.media {
+  transform: rotateY(180deg);
+  -webkit-transform:rotateY(180deg); 
+}
+
+#webcam {
+  width: 70%;
+  height: auto;
+}
+
+.start-timer, .victory {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: greenyellow;
+  font-size: 5rem;
+}
 </style>
