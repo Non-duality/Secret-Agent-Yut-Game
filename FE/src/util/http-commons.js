@@ -1,12 +1,12 @@
 import axios from "axios";
 import { httpStatusCode } from "./http-status";
 
-const { VUE_APP_API_URL } = import.meta.env;
+const { VITE_VUE_API_URL } = import.meta.env;
 
 // local vue api axios instance
 function localAxios() {
   const instance = axios.create({
-    baseURL: "https://i10d205.p.ssafy.io/api/v1",
+    baseURL: VITE_VUE_API_URL,
     // withCredentials: true,
     // headers: {
     //   "Content-Type": "application/json;charset=utf-8",
