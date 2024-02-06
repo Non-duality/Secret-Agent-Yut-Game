@@ -87,30 +87,30 @@ const router = createRouter({
   ],
 });
 
-// // to.path와 일치하는 자식 라우트 찾기
-// function findChildRouteByPath(routes, pathToFind) {
-//   let isTrue = false;
+// to.path와 일치하는 자식 라우트 찾기
+function findChildRouteByPath(routes, pathToFind) {
+  let isTrue = false;
 
-//   routes.forEach((route) => {
-//     if (route.children) {
-//       // 자식 라우트가 있는 경우
-//       for (let i = 0; i < route.children.length; i++) {
-//         const path = route.children[i].path;
+  routes.forEach((route) => {
+    if (route.children) {
+      // 자식 라우트가 있는 경우
+      for (let i = 0; i < route.children.length; i++) {
+        const path = route.children[i].path;
 
-//         // 동적 세그먼트에 대한 처리 추가
-//         const regexPath = path.replace(/:\w+/g, ".*");
-//         const regex = new RegExp(`^${regexPath}$`);
-//         if (regex.test(pathToFind)) {
-//           // to.path와 일치하는 자식 라우트를 찾음
-//           isTrue = true;
-//           break;
-//         }
-//       }
-//     }
-//   });
+        // 동적 세그먼트에 대한 처리 추가
+        const regexPath = path.replace(/:\w+/g, ".*");
+        const regex = new RegExp(`^${regexPath}$`);
+        if (regex.test(pathToFind)) {
+          // to.path와 일치하는 자식 라우트를 찾음
+          isTrue = true;
+          break;
+        }
+      }
+    }
+  });
 
-//   return isTrue;
-// }
+  return isTrue;
+}
 
 // 리다이렉션 처리
 router.beforeEach(async (to, from, next) => {
