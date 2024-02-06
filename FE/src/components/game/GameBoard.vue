@@ -29,6 +29,22 @@
     />
     <!-- 버튼 임시 -->
     <button
+      @click="connectSocket"
+      style="top: 0px; left: 250px; position: absolute"
+      :disabled="!isThrowYut"
+    >
+      연결
+    </button>
+    <!-- 버튼 임시 -->
+    <button
+      @click="sendStart"
+      style="top: 0px; left: 300px; position: absolute"
+      :disabled="!isThrowYut"
+    >
+      시작
+    </button>
+    <!-- 버튼 임시 -->
+    <button
       @click="moveHorse"
       style="top: 50px; left: 250px; position: absolute"
       :disabled="!isThrowYut"
@@ -53,9 +69,11 @@
 </template>
                                                                         
 <script>
+import { connect, socketSend } from "@/util/socket.js";
 import GameBoardTile from "./item/GameBoardTile.vue";
 import GameHorse from "./item/GameHorse.vue";
 import { useGameStore } from "@/store/gameStore";
+import { useUserStore } from "@/store/userStore";
 import GameYut from "./item/GameYut.vue";
 
 export default {
@@ -75,6 +93,7 @@ export default {
       yutText: "", // 윷 결과 문자.
       goModalText1: "",
       goModalText2: "",
+      recvList: [],
     };
   },
   computed: {
@@ -100,16 +119,48 @@ export default {
     },
   },
   methods: {
+    connectSocket() {
+      const userStore = useUserStore();
+      connect(userStore.accessToken, this.handleRecvMessage);
+    },
+    handleRecvMessage(receivedMsg) {
+      console.log(receivedMsg);
+      if(!this.isThrowYut){
+        console.log(receivedMsg.actionCategory);
+        if(receivedMsg.actionCategory === 1){
+          receiveYutRes();
+        }else if(receivedMsg.actionCategory === 2){
+          receiveSelectHorse();
+        }
+      }
+    },
+    // 윷 결과를 받아 왔을 때.
+    receiveYutRes(){
+
+    },
+    // 말 선택 결과를 받아 왔을 때.
+    receiveSelectHorse(){
+
+    },
+    sendStart() {
+      socketSend("/pub/game/80ba0a/start", "");
+    },
+    //pub/game/{code}/start
     // 윷 던지기
     moveHorse() {
       // 내가 던질 차례인가 체크.
-      if(!this.isThrowYut) return;
+      if (!this.isThrowYut) return;
       // 윷 던지기 호출
       const gameStore = useGameStore();
       gameStore.yutThrow();
       // 윷 던지기 결과 텍스트.
       this.yutText = gameStore.yutText;
-      
+      // 소켓 전송
+      let msg = {
+        yutRes: gameStore.yutRes,
+        throwRes: gameStore.throwRes,
+      };
+      socketSend("/pub/game/80ba0a/throw-yut", msg);
       // 텍스트와 윷결과 판을 다른 타이밍에 나타나게 한다.
       this.isShowRes = true;
       this.$refs.yutThrow.throwYut();
@@ -139,6 +190,9 @@ export default {
           if (this.isSelectedHorse) {
             // 말 이동.
             gameStore.moveHorse(this.selectedHorse);
+            // 소켓 전송
+            msg = { unitIndex: this.selectedHorse.id };
+            socketSend("/pub/game/80ba0a/select-unit", msg);
             // boolean값들 초기화.
             this.isSelectedHorse = false;
             this.canSelectHorse = false;

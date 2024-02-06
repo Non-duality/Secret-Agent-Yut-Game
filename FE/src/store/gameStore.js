@@ -5,7 +5,17 @@ export const useGameStore = defineStore("game", {
   // 반응형 상태 (data)
   state: () => {
     return {
-      // 윷을 던질 수 있는가.
+      // 내 팀 정보.
+      myTeam: false,
+      // 턴.
+      turn: [0,0],
+      // false = 홍팀, true = 청팀.
+      teamTurn : false,
+      // 다시 던지기
+      throwChance: 1,
+      // 내 차례
+      myTurn: 0,
+      // 윷을 던질 수 있는가. 내 턴인가.
       isThrowYut: true,
       // 들어온 말의 개수.
       redEnd: 0,
@@ -15,8 +25,6 @@ export const useGameStore = defineStore("game", {
       throwRes: [false, false, false, false],
       yutText: "도",
       yutRes: 0,
-      // 내 팀 정보.
-      myTeam: 1,
       // 말 선택 flag.
       isSelect: false,
       // 대각선으로 갈지 말지 선택
@@ -228,6 +236,9 @@ export const useGameStore = defineStore("game", {
   actions: {
     // 말 이동
     moveHorse(selectedHorse) {
+      if(this.yutRes >= 4)
+        this.throwChance++;
+
       const horseInfo =
         selectedHorse.team === 1
           ? this.redHorses.find((horse) => horse.id === selectedHorse.id)
@@ -334,6 +345,24 @@ export const useGameStore = defineStore("game", {
       this.isHorseEnd = false;
       this.isGoDiagonal = false;
       this.isCenterDir = false;
+
+      // 현재 차례에 기회가 있는지 체크.
+      if(this.throwChance === 0){
+        // 홍팀이였다면,.
+        if(!this.teamTurn){
+          this.turn[0]++;
+          if(this.turn[0] > 3)
+            this.turn[0] = 0;
+        }
+        // 청팀이면.
+        else{
+          this.turn[1]++;
+          if(this.turn[1] > 3)
+            this.turn[1] = 0;
+        }
+        // 팀 차례 바꿈.
+        this.teamTurn != this.teamTurn;
+      }
     },
 
     // 이동하는 곳에 다른 말이 있나 체크.
@@ -362,6 +391,8 @@ export const useGameStore = defineStore("game", {
             else this.blueHorses[j].check += 1;
           }
         }
+        // 말을 잡았으니 기회 한번더.
+        this.throwChance++;
         this.tiles[target].horse = [];
       }
 
@@ -490,6 +521,8 @@ export const useGameStore = defineStore("game", {
 
     // 윷 던지기
     yutThrow() {
+      // 던지기 1회 차감.
+      this.throwChance--;
       // 총 4번의 랜덤을 발생
       // false가 뒤집어 진거
       let cnt = 0;

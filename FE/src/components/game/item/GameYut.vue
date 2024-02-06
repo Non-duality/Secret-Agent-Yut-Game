@@ -92,7 +92,7 @@ export default {
       const throwRes = gameStore.throwRes;
       // if (!this.modelLoaded) return;
       // 윷 던지기 시작 위치와 속도 초기화
-      console.log(this.yuts);
+      // console.log(this.yuts);
       let positions = [];
       let flag = [];
       for (var i = 0; i < 4; i++) {

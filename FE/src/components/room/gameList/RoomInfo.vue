@@ -34,8 +34,6 @@
 import { useRoomStore } from "@/store/roomStore";
 import { useRouter } from "vue-router";
 
-const router = useRouter();
-
 export default {
   // 부모로부터 받아온 방 상세정보 데이터
   props: {

@@ -101,8 +101,6 @@ import { useRoomStore } from "@/store/roomStore";
 import { useUserStore } from "@/store/userStore";
 import { useRouter } from "vue-router";
 
-const router = useRouter();
-
 export default {
   data() {
     return {
@@ -120,6 +118,7 @@ export default {
   methods: {
     /* 방 생성 함수 */
     makeGame(roomInfo) {
+      const router = useRouter();
       // 만약 로그인 실패거나 소켓 연결 실패라면, "초기화면"으로 이동
       if (!useUserStore().isLogin || !useRoomStore().isConnected) {
         alert("연결이 끊어졌습니다.");
