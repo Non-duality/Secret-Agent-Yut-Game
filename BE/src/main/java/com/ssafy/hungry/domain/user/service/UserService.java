@@ -8,7 +8,9 @@ import com.ssafy.hungry.domain.user.repository.TokenRepository;
 import com.ssafy.hungry.domain.user.repository.UserRepository;
 import com.ssafy.hungry.domain.user.dto.JoinDto;
 import com.ssafy.hungry.domain.user.dto.MyInfoDto;
+import com.ssafy.hungry.global.repository.PrincipalRepository;
 import com.ssafy.hungry.global.repository.SessionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,7 @@ import java.util.Date;
 import java.util.NoSuchElementException;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService { //회원 관련 서비스를 모아둔 클래스
     //유저 레포지토리 명령어 사용을 위한 선언
     private final UserRepository userRepository;
@@ -36,16 +39,7 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
     private long authCodeExpirationMillis;
     private final TokenRepository tokenRepository;
     private final SessionRepository sessionRepository;
-
-    //의존성 주입을 위한 생성자 주입 패턴
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, MailService mailService, EmailRepository emailRepository, TokenRepository tokenRepository, SessionRepository sessionRepository) {
-        this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.mailService = mailService;
-        this.emailRepository = emailRepository;
-        this.tokenRepository = tokenRepository;
-        this.sessionRepository = sessionRepository;
-    }
+    private final PrincipalRepository principalRepository;
 
     //회원 가입 메소드
     public Boolean join(JoinDto joinDto) {
@@ -234,6 +228,8 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
     //로그아웃
     public void logout(String email, String refreshToken){
         tokenRepository.deleteById(refreshToken);
+        String uuid = sessionRepository.findById(email).get().getStompPrincipal().getName();
         sessionRepository.deleteById(email);
+        principalRepository.deleteById(uuid);
     }
 }
