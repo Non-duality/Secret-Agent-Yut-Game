@@ -6,10 +6,11 @@
   align-items: center;
   padding-top: 30px;
   padding-bottom: 30px;
-  margin-left: 100px;
-  margin-right: 100px;
+  margin: 150px 400px;
+  border: 3px whitesmoke solid;
   background-color: blueviolet;
   position: relative;
+  border-radius: 30px;
 }
 
 .media-container {
