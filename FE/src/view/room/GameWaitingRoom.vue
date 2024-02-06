@@ -16,8 +16,6 @@
 </template>
 
 <script>
-import { useRoomStore } from "@/store/roomStore";
-
 // 자식 컴포넌트
 import RightComponentsVue from "@/components/room/gameWait/RightComponents.vue";
 import LeftComponentsVue from "@/components/room/gameWait/LeftComponents.vue";

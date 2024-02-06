@@ -23,7 +23,7 @@ export default {
     </div>
     <!-- 홈, 게임, 게시판 클릭시 화면 이동 -->
     <!-- Named Routes로 변경 -->
-    
+
     <div class="text-box">
       <router-link
         :to="{ name: 'home' }"

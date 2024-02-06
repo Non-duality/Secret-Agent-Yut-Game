@@ -39,7 +39,7 @@ import RoomInfo from "@/components/room/gameList/RoomInfo.vue";
 import RoomMakingModal from "@/components/room/gameList/RoomMakingModal.vue";
 import RoomPasswordCheckModal from "@/components/room/gameList/RoomPasswordCheckModal.vue";
 
-import { useUserStore } from "@/store/userStore"
+import { useUserStore } from "@/store/userStore";
 import { useRoomStore } from "@/store/roomStore";
 
 export default {
@@ -110,6 +110,8 @@ export default {
     this.roomListLoaded = true;
 
     // 첫 번째 방만 상세 조회
+    if(this.roomInfo.length === 0) return;
+
     await this.selectRoomInfo(this.roomInfo[0].roomId);
     this.roomInitDetailInfo = useRoomStore().roomDetailData;
     this.ShowInitDetail = true;

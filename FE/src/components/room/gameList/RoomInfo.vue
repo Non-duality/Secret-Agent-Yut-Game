@@ -32,7 +32,9 @@
 
 <script>
 import { useRoomStore } from "@/store/roomStore";
-import { useRouter } from "vue-router";
+import { useUserStore } from "@/store/userStore";
+
+import { connectRoom, pubRoom } from "@/util/socket";
 
 export default {
   // 부모로부터 받아온 방 상세정보 데이터
@@ -55,9 +57,22 @@ export default {
       useRoomStore()
         .canEnterRoom()
         .then(() => {
-          // 대기방 이동 시작
-          this.$router.push({
-            name: "wait",
+          connectRoom(this.$router, "enter").then(() => {
+            // 현재, 자신의 방의 정보를 넣는다.
+            // (나갈 때 정보 삭제 필요)
+            useUserStore().currentRoomInfo = null;
+            useUserStore().currentRoomInfo = {
+              ...useRoomStore().roomDetailData,
+            };
+
+            pubRoom(
+              "/pub/room/" + useUserStore().roomCode + "/enter",
+              useUserStore().userInfo.email
+            );
+
+            useUserStore().currentRoomInfo.roomCode = useUserStore().roomCode;
+
+            this.$router.push({name: "wait"})
           });
         });
     },
