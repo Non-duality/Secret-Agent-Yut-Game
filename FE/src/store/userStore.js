@@ -32,8 +32,8 @@ export const useUserStore = defineStore("user", {
     initData() {
       const initialStateUser = useUserStore().$reset();
       const initialStateRoom = useRoomStore().$reset();
-      Object.assign(this, initialState1);
-      Object.assign(this, initialState2);
+      Object.assign(this, initialStateUser);
+      Object.assign(this, initialStateRoom);
     },
 
     // 로그인, 회원가입 모달 창을 나타내기 위한 함수 매개변수를 입력받아

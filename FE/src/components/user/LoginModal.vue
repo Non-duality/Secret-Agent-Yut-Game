@@ -27,6 +27,7 @@ import { ref } from "vue";
 import { useUserStore } from "@/store/userStore";
 import { useRoomStore } from "@/store/roomStore";
 import { useRouter } from "vue-router";
+import { connectWS } from "@/util/socket.js"
 
 export default {
   setup() {
@@ -42,7 +43,7 @@ export default {
 
       if (useUserStore().isLogin) {
         try {
-          await useRoomStore().connectWS();
+          await connectWS();
 
           if (useRoomStore().isConnected) {
             useUserStore().getUserInfo();

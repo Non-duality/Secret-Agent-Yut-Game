@@ -1,7 +1,13 @@
 import { Client } from "@stomp/stompjs";
+import { useUserStore } from "@/store/userStore";
+import { useRoomStore } from "@/store/roomStore";
+
+const { VITE_WSS_API_URL } = import.meta.env;
+
 let stompClient = null;
 let connected = false;
 
+/* 게임 소켓 */
 export function connect(accessToken, recvCallback) {
   return new Promise((resolve, reject) => {
     let token = accessToken;
@@ -58,9 +64,61 @@ export function connect(accessToken, recvCallback) {
   });
 }
 
+/* 방, 픽창 소켓 */
+export function connectWS() {
+  return new Promise((resolve, reject) => {
+    let token = useUserStore().accessToken;
+
+    useRoomStore().stompClient = new Client({
+      brokerURL: VITE_WSS_API_URL,
+
+      connectHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+
+      beforeConnect: () => {},
+
+      onConnect: () => {
+        useRoomStore().isConnected = true;
+        resolve();
+      },
+
+      reconnectDelay: 5000, //자동재연결,
+
+      onDisconnect: () => {
+        useRoomStore().isConnected = false;
+        useUserStore().initData();
+      },
+
+      onWebSocketClose: (closeEvent) => {
+        console.log("WebSocket closed", closeEvent);
+      },
+
+      onWebSocketError: (error) => {
+        useRoomStore().isConnected = false;
+        useUserStore().initData();
+        useRoomStore().stompClient.deactivate();
+        console.log("WebSocket error: ", error);
+        reject(error);
+      },
+
+      // STOMP 수준의 오류 처리
+      onStompError: (frame) => {
+        useUserStore().initData();
+        useRoomStore().stompClient.deactivate();
+        console.error("[roomStore] : STOMP 오류 발생");
+        reject(new Error("STOMP error"));
+        alert("소켓이 끊어졌습니다.");
+      },
+    });
+
+    useRoomStore().stompClient.activate();
+  });
+}
+
 // 서버로 보내기.
 export function socketSend(destination, msg) {
-  console.log(destination)
+  console.log(destination);
   stompClient.publish({
     destination: destination,
     body: JSON.stringify(msg),
