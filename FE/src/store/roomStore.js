@@ -1,3 +1,4 @@
+import { watch } from "vue";
 import { defineStore } from "pinia";
 import {
   getRoomList,
@@ -160,18 +161,38 @@ export const useRoomStore = defineStore("room", {
                     console.log(message.body);
                     useRoomStore().receivedMessage = JSON.parse(message.body);
 
-                    if (useRoomStore().receivedMessage.type === "ROOM_ENTER_INFO") {
+                    if (
+                      useRoomStore().receivedMessage.type === "ROOM_ENTER_INFO"
+                    ) {
                       useRoomStore().roomChatMessages.push(
                         useRoomStore().receivedMessage.data.message
                       );
                       useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
                         (seat, index) => {
                           const seatKey = `seatnum${index + 1}`;
+
                           if (useRoomStore().seatInfo[seatKey]) {
                             useRoomStore().seatInfo[seatKey].nickname =
                               seat.nickname;
                             useRoomStore().seatInfo[seatKey].ready = seat.ready;
                           }
+
+                          const storedRoomData = JSON.parse(
+                            localStorage.getItem("room")
+                          );
+
+                          const updatedRoomData = {
+                            ...storedRoomData,
+                            seatInfo: {
+                              ...useRoomStore().seatInfo,
+                            },
+                          };
+
+                          // 로컬 스토리지에 업데이트된 데이터 저장
+                          localStorage.setItem(
+                            "room",
+                            JSON.stringify(updatedRoomData)
+                          );
                         }
                       );
                     } else if (
@@ -236,11 +257,12 @@ export const useRoomStore = defineStore("room", {
     },
 
     /* 메시지 보내기 */
-    sendMessage() {
-      sendRoomMessage.message = useUserStore().tempMessage;
-      
+    sendMessage(msg) {
+      useUserStore().sendRoomMessage.message = msg;
+
       stompClient.value.publish({
-        destination: "/pub/room/" + currentRoomCode.value + "/chat",
+        destination:
+          "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/chat",
         body: JSON.stringify(useUserStore().sendRoomMessage),
       });
     },
@@ -342,9 +364,20 @@ export const useRoomStore = defineStore("room", {
         storage: localStorage,
         reducer: (state) => ({
           isConnected: state.isConnected,
-          // 기타 필요한 상태들...
+          seatInfo: state.seatInfo,
         }),
       },
     ],
+  },
+
+  setup() {
+    // seatInfo가 변경될 때마다 로직 수행
+    watch(
+      () => useRoomStore().seatInfo,
+      (newVal) => {
+        localStorage.setItem("room", JSON.stringify(newVal));
+      },
+      { deep: true } // 객체 내부의 변경도 감지하기 위해 deep 옵션 추가
+    );
   },
 });

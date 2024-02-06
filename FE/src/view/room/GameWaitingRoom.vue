@@ -34,32 +34,12 @@ export default {
     return {
       // 방 정보
       roomInfo: null,
-
-      // 강퇴 모달
-      // ban: false
     };
   },
 
   methods: {
     // 나갈 때 로직
     goToList() {},
-
-    // 강퇴 모달 띄우기
-    // banMember() {
-    //   this.ban = true
-    //   console.log('강퇴')
-    // },
-
-    // 강퇴 모달 없애기
-    // closeBanModal() {
-    //   this.ban = false
-    //   console.log('강퇴 취소')
-    // },
-
-    // 나가기 라우터
-    // navigateToRoomList() {
-    //   this.$router.push({ name: 'list' })
-    // }
   },
 };
 </script>

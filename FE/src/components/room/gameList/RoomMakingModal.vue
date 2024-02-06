@@ -64,20 +64,20 @@
           <button
             id="theme-btn"
             @click="selectSpeed(0)"
-            :class="{ selected: roomInfo.speed === 0 }"
+            :class="{ selected: roomInfo.gameSpeed === 0 }"
           >
             느림
           </button>
           <button
             id="theme-btn"
             @click="selectSpeed(1)"
-            :class="{ selected: roomInfo.speed === 1 }"
+            :class="{ selected: roomInfo.gameSpeed === 1 }"
           >
             보통</button
           ><button
             id="theme-btn"
             @click="selectSpeed(2)"
-            :class="{ selected: roomInfo.speed === 2 }"
+            :class="{ selected: roomInfo.gameSpeed === 2 }"
           >
             빠름
           </button>
@@ -112,7 +112,7 @@ export default {
         public: true,
         password: "",
         theme: "설날",
-        speed: 1,
+        gameSpeed: 1,
       },
     };
   },
@@ -133,7 +133,6 @@ export default {
       } else if (roomInfo.public === false && roomInfo.password.trim() === "") {
         alert("비공개 방으로 비밀번호를 입력하세요");
       } else {
-
         // 생성하기 위한 방 정보를 v-model로 된 객체 가져옴
         useRoomStore().createRoomInfo = {
           ...this.roomInfo,
@@ -143,7 +142,6 @@ export default {
         useRoomStore()
           .createRoom()
           .then(() => {
-
             // 먼저, create된 roomCode를 가져와서 방 구독
             useRoomStore().subscription.room =
               useRoomStore().stompClient.subscribe(
@@ -167,11 +165,29 @@ export default {
                         const seatKey = `seatnum${index + 1}`;
                         if (useRoomStore().seatInfo[seatKey]) {
                           useRoomStore().seatInfo[seatKey].nickname =
-                            seat.nickname? seat.nickname : '';
+                            seat.nickname ? seat.nickname : "";
                           useRoomStore().seatInfo[seatKey].ready = seat.ready;
                         }
                       }
                     );
+
+                    const storedRoomData = JSON.parse(
+                      localStorage.getItem("room")
+                    );
+
+                    const updatedRoomData = {
+                      ...storedRoomData,
+                      seatInfo: {
+                        ...useRoomStore().seatInfo,
+                      },
+                    };
+
+                    // 로컬 스토리지에 업데이트된 데이터 저장
+                    localStorage.setItem(
+                      "room",
+                      JSON.stringify(updatedRoomData)
+                    );
+
                     // 방 생성 모달 닫기
                     useRoomStore().showRoomMakingModal = false;
 
@@ -201,6 +217,23 @@ export default {
                       useRoomStore().receivedMessage.data.nickname +
                         " : " +
                         useRoomStore().receivedMessage.data.message
+                    );
+
+                    const storedRoomData = JSON.parse(
+                      localStorage.getItem("room")
+                    );
+
+                    const updatedRoomData = {
+                      ...storedRoomData,
+                      roomChatMessages: {
+                        ...useRoomStore().roomChatMessages,
+                      },
+                    };
+
+                    // 로컬 스토리지에 업데이트된 데이터 저장
+                    localStorage.setItem(
+                      "room",
+                      JSON.stringify(updatedRoomData)
                     );
                   }
                 }

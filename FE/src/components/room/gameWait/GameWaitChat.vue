@@ -1,25 +1,19 @@
 <template>
   <div class="wait-chat">
+    <!-- 채팅 로그 -->
     <div class="chat-container">
-      <!-- 채팅을 받아오면 for문으로 출력한다. -->
-      <!-- 나중에 실시간으로 받아오는 기능을 추가해야한다. -->
-      <div
-        v-for="(message, index) in chat"
-        :key="index"
-        :class="{ 'my-chat': message.name === 'user1' }"
-      >
-        <div class="chat-div">
-          <!-- <span class="chat-name">{{ message.name }}</span>
-          <span>:</span>
-          <span class="chat-chat">{{ message.chat }}</span> -->
-        </div>
+      <div v-for="item in roomChat" :key="item">
+        {{ item }}
       </div>
     </div>
+
+    <!-- 입력 부분 -->
     <div class="chat-input-div">
       <input
         class="chat-input"
         type="text"
         placeholder="메시지를 입력하시오."
+        v-model="msg"
         @keyup.enter="sendLocalMessage"
       />
       <button class="send-btn" @click="sendLocalMessage">
@@ -36,25 +30,23 @@ import { useRoomStore } from "@/store/roomStore";
 export default {
   data() {
     return {
-      chat: [],
+      roomChat: [],
 
-      msg: {},
+      msg: "",
     };
   },
 
   // 여기서 chat 내용 계속 업데이트
   created() {
     if (useRoomStore().roomChatMessages.length > 0) {
-      this.chat = {
-        ...useRoomStore().roomChatMessages,
-      };
+      this.roomChat = useRoomStore().roomChatMessages;
     }
   },
 
   methods: {
     sendLocalMessage() {
-      this.msg = {};
-      // useRoomStore().sendMessage();
+      useRoomStore().sendMessage(this.msg);
+      this.msg = "";
     },
   },
 };

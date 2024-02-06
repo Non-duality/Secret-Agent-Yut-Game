@@ -15,7 +15,7 @@
 
       <!-- 유저의 정보를 나타낸다 -->
       <div v-for="seatKey in Object.keys(team.users)" :key="seatKey">
-        <div v-if="team.users[seatKey].nickname === null">
+        <div v-if="team.users[seatKey].nickname === ''">
           <img src="@/assets/img/profile_picture.png" class="team-img" />
           <span>비어있음</span>
         </div>
@@ -66,9 +66,7 @@ export default {
   created() {
     // seatInfo 데이터를 가져와서 팀에 할당
     let currentSeatInfo = useRoomStore().seatInfo;
-
-    console.log(currentSeatInfo);
-
+    
     // 홍팀에 1부터 3까지의 seatInfo 할당
     for (let i = 1; i <= 3; i++) {
       this.teams[0].users[`seatnum${i}`] = currentSeatInfo[`seatnum${i}`];
