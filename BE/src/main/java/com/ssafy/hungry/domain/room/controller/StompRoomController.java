@@ -1,5 +1,6 @@
 package com.ssafy.hungry.domain.room.controller;
 
+import com.ssafy.hungry.domain.pick.dto.CurrentPickDto;
 import com.ssafy.hungry.domain.room.dto.ChatMessageDto;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.dto.RoomLobbyInfoDto;
@@ -18,6 +19,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -104,6 +106,28 @@ public class StompRoomController {
                 .type("ROOM_READY")
                 .code(roomCode)
                 .data(currentSeatDtoList)
+                .build());
+
+    }
+
+
+    // 게임 시작 (캐릭터 선택 창으로 이동 전 처리)
+    @MessageMapping(value = "/room/{roomCode}/start")
+    public void startRoom(@DestinationVariable String roomCode, String email){
+        log.info("방 게임 시작 호출 : " + roomCode);
+        // 이메일로 유저 정보 가져오기
+        UserEntity user = userService.findByEmail(email);
+
+        // room code를 가져와 room의 정보 가져오기
+        RoomEntity room = roomService.getRoomByRoomCode(roomCode);
+
+        roomRedisService.enterPickRoom(room, user);
+
+        // 구독자들에게 캐릭터 선택이 시작되었음을 보내기
+        redisSender.sendToRedis(roomTopic,StompDataDto.builder()
+                .type("ROOM_START_PICK")
+                .code(roomCode)
+                .data("캐릭터 선택 시작") // Data 보내기
                 .build());
 
     }

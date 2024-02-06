@@ -1,9 +1,13 @@
 package com.ssafy.hungry.domain.room.service;
 
+import com.ssafy.hungry.domain.pick.dto.CurrentPickDto;
+import com.ssafy.hungry.domain.pick.service.PickRedisService;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.dto.RoomDetailDto;
 import com.ssafy.hungry.domain.room.dto.RoomLobbyInfoDto;
 import com.ssafy.hungry.domain.room.entity.RoomEntity;
+import com.ssafy.hungry.domain.room.exception.AllUsersNotReadyException;
+import com.ssafy.hungry.domain.room.exception.OwnerValidationException;
 import com.ssafy.hungry.domain.room.repository.RoomRedisRepository;
 import com.ssafy.hungry.domain.room.repository.RoomRepository;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
@@ -13,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -22,7 +28,7 @@ public class RoomRedisService {
 
     private final RoomRepository roomRepository;
     private final RoomRedisRepository roomRedisRepository;
-
+    private final PickRedisService pickRedisService;
     private final static String ROOM_KEY_PREFIX = "RoomInfo:";
 
     // redis키 생성하기
@@ -84,10 +90,18 @@ public class RoomRedisService {
         String key = generateKey(room.getRoomCode());
         List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo(key);
 
+        // 일반 유저라면 state가 1
+        int userState = 1;
+
+        // 방장이라면 state가 2
+        if(user.getId() == room.getOwner().getId()){
+            userState = 2;
+        }
+
         int count = 0;
         for(CurrentSeatDto seat : currentSeatDtoList){
             if(seat.getState() == 0){
-                seat.setState(1);
+                seat.setState(userState);
                 seat.setUserId(user.getId());
                 seat.setNickname(user.getNickname());
                 seat.setProfileImgUrl(user.getProfileImgUrl());
@@ -195,6 +209,32 @@ public class RoomRedisService {
         }
 
         return currentSeatDtoList;
+    }
+
+    // 준비 완료가 되면 게임 시작
+    public void enterPickRoom(RoomEntity room, UserEntity user){
+        String key = generateKey(room.getRoomCode());
+        // START를 보낸 사용자가 owner인지 확인
+        if(user.getId() != room.getOwner().getId()){
+            throw new OwnerValidationException("방장이 아닙니다.");
+        }
+
+        // 모든 사용자가 ready 상태인지 확인
+        List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo(key);
+        boolean isAllReady = true;
+        for(CurrentSeatDto seat : currentSeatDtoList){
+            if(!(seat.getState() == 2) && !seat.isReady()){
+                isAllReady = false;
+            }
+        }
+
+        if(!isAllReady){
+            throw new AllUsersNotReadyException("모든 유저가 준비완료 되지 않았습니다.");
+        }
+
+        // 조건을 다 충족했다면 레디스에 픽 정보를 담을 수 있는 sorted set 데이터 생성
+        pickRedisService.createCurrentPick(room.getRoomCode());
+
     }
 
 

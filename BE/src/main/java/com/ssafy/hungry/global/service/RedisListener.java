@@ -2,6 +2,7 @@ package com.ssafy.hungry.global.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.hungry.domain.pick.dto.CurrentPickDto;
 import com.ssafy.hungry.global.dto.StompDataDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,9 @@ import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -30,9 +34,14 @@ public class RedisListener implements MessageListener {
         try {
             StompDataDto stompDataDto = objectMapper.readValue(clientMessage, StompDataDto.class);
 
-            if (stompDataDto.getType().startsWith("ROOM")){
-                messagingTemplate.convertAndSend("/sub/room/" + stompDataDto.getCode(), stompDataDto);
-            }
+          if (stompDataDto.getType().startsWith("ROOM")){
+              messagingTemplate.convertAndSend("/sub/room/" + stompDataDto.getCode(), stompDataDto);
+          }
+          else if(stompDataDto.getType().startsWith("PICK_START")){
+              messagingTemplate.convertAndSend("/sub/room/" + stompDataDto.getCode(), stompDataDto);
+          }
+
+
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
