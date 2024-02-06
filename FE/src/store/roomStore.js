@@ -1,4 +1,3 @@
-import { watch } from "vue";
 import { defineStore } from "pinia";
 import {
   getRoomList,
