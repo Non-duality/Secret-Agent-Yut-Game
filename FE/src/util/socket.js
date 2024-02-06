@@ -1,10 +1,9 @@
 import { Client } from "@stomp/stompjs";
-import { set } from "lodash";
+
 let stompClient = null;
-let recvList = [];
 let connected = false;
 
-export function connect(accessToken, recvCallback) {
+export function connect(accessToken, re cvCallback) {
   return new Promise((resolve, reject) => {
     let token = accessToken;
     stompClient = new Client({
