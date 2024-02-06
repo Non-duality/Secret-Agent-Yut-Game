@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import { watch } from 'vue';
-
 import NavBar from "@/components/layout/NavBar.vue";
 import SideBar from "@/components/layout/SideBar.vue";
 import { useUserStore } from "@/store/userStore";
