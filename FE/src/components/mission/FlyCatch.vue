@@ -119,10 +119,9 @@
                 "/models/gesture_recognizer.task",
               delegate: "GPU"
             },
-            runningMode: this.runningMode,
+            runningMode: "VIDEO",
             numHands: 2
-          }
-        );
+          });
         const videoElement = this.$refs.webcam;
         videoElement.addEventListener('loadedmetadata', () => {
           // 로드되면 비디오 사이즈에 맞추어 캔버스 사이즈 맞추기
