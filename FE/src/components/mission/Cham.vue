@@ -1,179 +1,175 @@
 <template>
-  <div 
-  id="liveView" 
-  class="videoView"
-  ref="liveView">
-    <video
-    class="media"
-    id="webcam"
-    ref="webcam"
-    autoplay
-    playsinline>
-    </video>
+  <div id="liveView" class="videoView">
+    <video ref="webcam" autoplay playsinline @loadedmetadata="onVideoLoaded"></video>
+    <div v-if="showCountdown" class="countdown">{{ countdown }}</div>
   </div>
 </template>
 
 <script>
-  // 모션 인식 라이브러리
-  import { FaceDetector, FilesetResolver } from '@mediapipe/tasks-vision';
-  export default {
-    data() {
-      return {
-        // 웹 캠 관련'
-        faceDetector: null,
-        webcamRunning: false,
-        children: [],
-        lastVideoTime: -1,
-        constraints: {
-          video: true
+import { FaceDetector, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
+
+export default {
+  data() {
+    return {
+      children: [],
+      faceDetector: null,
+      showCountdown: false,
+      countdown: 3,
+    };
+  },
+
+  methods: {
+    // 사용자 카메라 준비
+    hasGetUserMedia() {
+      return !!navigator.mediaDevices?.getUserMedia;
+    },
+
+    // 초기화
+    async initializeFaceDetector() {
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+      );
+      this.faceDetector = await FaceDetector.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: `/models/blaze_face_short_range.tflite`,
+          delegate: "GPU"
         },
-        
-        // 제스처 인식 결과
-        results: undefined,
+        runningMode: "VIDEO"
+      });
 
-        // 게임 카운트
-        countdown: 5,
+      // 초기화 후 비디오 활성화
+      this.enableCam();
+    },
+
+
+    // 캠 사용
+    async enableCam() {
+      if (!this.faceDetector) {
+        alert("Face Detector is still loading. Please try again.");
+        return;
+      }
+      const webcam = this.$refs.webcam;
+      const constraints = { video: true };
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        webcam.srcObject = stream;
+        webcam.addEventListener('loadedmetadata', () => {
+          this.predictWebcam();
+        })
+      } catch (err) {
+        console.error(err);
       }
     },
 
-    mounted() {
-      this.createFaceDetector()
+    // 비디오 로딩 완료 핸들러
+    onVideoLoaded() {
+      // 비디오 메타데이터 로딩 시점에서 카운트다운 시작
+      this.showCountdown = true;
+      this.startCountdown();
     },
 
-    methods: {
-      async createFaceDetector() {
-        const vision = await FilesetResolver.forVisionTasks(
-          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-        );
-        this.faceDetector = await FaceDetector.createFromOptions(vision, {
-          baseOptions: {
-            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite`,
-            delegate: "GPU"
-          },
-          runningMode: "VIDEO"
-        });
-        this.video = this.$refs.webcam;
-        this.liveView = this.$refs.liveView;
-        // FaceDetector 초기화 후 카운트다운 시작
-        this.startCountdown();
-      },
-
-
-      // 카운트다운 시작
-      async startCountdown() {
-        const countdownInterval = setInterval(() => {
-          this.countdown -= 1
-          if (this.countdown === 0) {
-            clearInterval(countdownInterval)
-            this.toggleWebcam()
-          }
-        }, 1000)
-      },
-
-
-      // 웹 캠 토글
-      async toggleWebcam() {
-        if (!this.faceDetector) {
-          alert("제스처가 인식기가 로드되길 기다려주세요");
-          return;
+    // 카운트다운 시작
+    startCountdown() {
+      const countdownInterval = setInterval(() => {
+        this.countdown -= 1;
+        if (this.countdown === 0) {
+          clearInterval(countdownInterval);
+          // 3초 카운트다운 후에 얼굴 인식 시작
+          this.predictWebcam();
         }
-        // 웹 캠활성화
-        this.webcamRunning = true
+      }, 1000);
+    },
+
+    // 제스처 인식 시작
+    async predictWebcam() {
+      const webcam = this.$refs.webcam;
+      if (!webcam || webcam.readyState !== HTMLMediaElement.HAVE_ENOUGH_DATA) {
+        window.requestAnimationFrame(this.predictWebcam);
+        return;
+      }
+
+      let startTimeMs = performance.now();
+      if (webcam.videoWidth > 0 && webcam.videoHeight > 0) {
         try {
-          const stream = await navigator.mediaDevices.getUserMedia(this.constraints)
-          this.video.srcObject = stream
-          this.video.addEventListener("loadeddata", this.predictWebcam);
-          console.log("캠 로드되었습니다.")
+          const detections = await this.faceDetector.detectForVideo(webcam, startTimeMs).detections;
+          this.displayVideoDetections(detections);
         } catch (error) {
-          alert("웹 캠에 접근할 수가 없습니다.")
-          console.log(error)
+          console.error("얼굴 인식 중 오류 발생:", error);
         }
-      },
-
-
-      // 모션 인식 시작
-      async predictWebcam() {
-        // await this.faceDetector.setOptions({ runningMode: "video" });
-        // 현재 시간
-        let nowInMs = Date.now()
-        // 비디오 현재 시간과 마지막 시간과 다르면
-        if (this.video.currentTime != this.lastVideoTime) {
-          this.lastVideoTime = this.video.currentTime
-          const results = await this.faceDetector.detectForVideo(this.video, nowInMs);
-          if (results && results.detections) {
-            this.results = results.detections
-            this.displayVideoDection(this.results)
-          }
-          
-        }
-        if (this.webcamRunning) {
-          window.requestAnimationFrame(this.predictWebcam)
-        }
-      },
-
-
-      // 얼굴 모션 결과 처리
-      displayVideoDection(results) {
-        for (let child of this.children) {
-          this.liveView.removeChild(child);
-        }
-        this.children.splice(0);
-
-        for (let result of results) {
-          const p = document.createElement("p")
-          p.innerText = 
-            "정확도: " +
-            Math.round(parseFloat(result.categories[0].score) * 100) +
-            "%"
-          p.style =
-            "left: " +
-            (this.video.offsetWidth - 
-            result.boundingBox.width -
-            result.boundingBox.originX) +
-            "px;" +
-            "top: " +
-            (result.boundingBox.originY - 30) +
-            "px; " +
-            "width: " +
-            (result.boundingBox.width - 10) +
-            "px;";
-
-            const highlighter = document.createElement("div")
-            highlighter.setAttribute("class", "highlighter")
-            highlighter.style =
-              "left: " +
-              (this.video.offsetWidth -
-                result.boundingBox.width -
-                result.boundingBox.originX) +
-              "px;" +
-              "top: " +
-              result.boundingBox.originY +
-              "px;" +
-              "width: " +
-              (result.boundingBox.width - 10) +
-              "px;" +
-              "height: " +
-              result.boundingBox.height +
-              "px;";
-
-            this.liveView.appendChild(highlighter)
-            this.liveView.appendChild(p)
-
-            this.children.push(highlighter)
-            this.children.push(p)
-
-            for (let keypoint of result.keypoints) {
-              const keypointEl = document.createElement("span")
-              keypointEl.className = "key-point"
-              keypointEl.style.top = `${keypoint.y * this.video.offsetHeight - 3}px`;
-              keypointEl.style.left = `${this.video.offsetWidth - keypoint.x * this.video.offsetWidth - 3}px`;
-              this.liveView.appendChild(keypointEl)
-              this.children.push(keypointEl)
-            }
-        }
+      } else {
+        console.log("유효하지 않은 비디오 프레임");
       }
+      window.requestAnimationFrame(this.predictWebcam);
+    },
+
+    // 화면상 얼굴점 그리기
+    displayVideoDetections(detections) {
+      const webcam = this.$refs.webcam;
+      this.children.forEach(child => {
+        child.remove();
+      });
+      this.children = [];
+
+      const liveView = document.getElementById("liveView")
+
+      detections.forEach(detection => {
+        const p = document.createElement("p");
+        p.innerText = `Confidence: ${Math.round(parseFloat(detection.categories[0].score) * 100)}%`;
+        p.style.left = `${webcam.offsetWidth - detection.boundingBox.width - detection.boundingBox.originX}px`;
+        p.style.top = `${detection.boundingBox.originY - 30}px`;
+        p.style.width = `${detection.boundingBox.width - 10}px`;
+        p.style.position = 'absolute';
+        p.style.backgroundColor = '#007f8b';
+        p.style.color = '#fff';
+        p.style.fontSize = '12px';
+        p.style.padding = '5px';
+        p.style.border = '1px dashed rgba(255, 255, 255, 0.7)';
+        p.style.zIndex = '2';
+
+        const highlighter = document.createElement("div");
+        highlighter.setAttribute("class", "highlighter");
+        highlighter.style.left = `${webcam.offsetWidth - detection.boundingBox.width - detection.boundingBox.originX}px`;
+        highlighter.style.top = `${detection.boundingBox.originY}px`;
+        highlighter.style.width = `${detection.boundingBox.width - 10}px`;
+        highlighter.style.height = `${detection.boundingBox.height}px`;
+        highlighter.style.position = 'absolute';
+        highlighter.style.border = '1px dashed #fff';
+        highlighter.style.zIndex = '1';
+        highlighter.style.backgroundColor = 'rgba(0, 255, 0, 0.25)';
+
+        liveView.appendChild(highlighter);
+        liveView.appendChild(p);
+        this.children.push(highlighter, p);
+
+        detection.keypoints.forEach(keypoint => {
+          const keyPointEl = document.createElement("span");
+          keyPointEl.className = "key-point";
+          keyPointEl.style.top = `${keypoint.y * webcam.offsetHeight - 3}px`;
+          keyPointEl.style.left = `${webcam.offsetWidth - keypoint.x * webcam.offsetWidth - 3}px`;
+          keyPointEl.style.position = 'absolute';
+          keyPointEl.style.width = '6px';
+          keyPointEl.style.height = '6px';
+          keyPointEl.style.border = '1px solid #ffffff';
+          keyPointEl.style.backgroundColor = '#ff0000';
+          keyPointEl.style.borderRadius = '50%';
+          keyPointEl.style.display = 'block';
+
+          liveView.appendChild(keyPointEl);
+          this.children.push(keyPointEl);
+
+        });
+      });
+    },
+  },
+
+  mounted() {
+    if (this.hasGetUserMedia()) {
+      this.initializeFaceDetector();
+    } else {
+      console.warn("getUserMedia() is not supported by your browser");
     }
-  }
+  },
+};
 </script>
 
 <style scoped>
