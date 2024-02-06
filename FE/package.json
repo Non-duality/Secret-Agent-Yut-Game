@@ -26,6 +26,7 @@
     "pinia": "^2.1.7",
     "pinia-plugin-persist": "^1.0.0",
     "three": "^0.161.0",
+    "unzipper": "^0.10.14",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",
     "vue-web-cam": "^1.9.0",

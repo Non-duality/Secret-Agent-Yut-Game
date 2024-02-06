@@ -1,5 +1,3 @@
-newFile.js
-
 import { GestureRecognizer, FilesetResolver, DrawingUtils } from '@mediapipe/tasks-vision';
 import flyImage from '@/assets/img/mission/fly.png';
 
