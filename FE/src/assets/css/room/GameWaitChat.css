@@ -10,8 +10,12 @@
 }
 
 .chat-container {
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: scroll;
   height: 120px;
-  overflow-y: auto;
+  scrollbar-width: thin; /* Firefox에서 스크롤바 굵기 설정 */
+  scrollbar-color: #888 transparent; /* Chrome, Edge, Safari에서 스크롤바 색상 설정 */
 }
 
 .chat-name {
@@ -55,8 +59,8 @@
   background-color: rgba(72, 27, 222, 0.637);
 }
 
-.send-btn:hover{
-  background-color:rgb(150, 33, 33)
+.send-btn:hover {
+  background-color: rgb(150, 33, 33);
 }
 
 .send-btn > span {
@@ -65,31 +69,31 @@
 
 .chat-input {
   margin-left: 20px;
+  width: 17vw;
   background-color: transparent;
   border: none;
   color: white;
 }
+
 /* input을 클릭 시 테두리가 있어 제거 */
 .chat-input:focus {
   outline: none;
 }
 
-.chat-container::-webkit-scrollbar-track {
-  background: transparent; /* 스크롤바 배경을 투명하게 설정 */
-}
-
-/* 스크롤바 핸들 스타일 */
-.chat-container::-webkit-scrollbar-thumb {
-  background: #888; /* 스크롤바 핸들 색상 설정 */
-  border-radius: 10px; /* 스크롤바 핸들 둥근 모서리 설정 */
-}
-
-/* 스크롤바 핸들 호버 시 스타일 */
-.chat-container::-webkit-scrollbar-thumb:hover {
-  background: #555; /* 호버 시 스크롤바 핸들 색상 변경 */
-}
-
-/* 스크롤바 너비 설정 */
+/* Chrome, Edge, Safari에서 스크롤바 스타일 설정 */
 .chat-container::-webkit-scrollbar {
-  width: 8px; /* 스크롤바 너비 설정 */
+  width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
 }

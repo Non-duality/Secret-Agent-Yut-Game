@@ -180,6 +180,10 @@ export default {
                       seatInfo: {
                         ...useRoomStore().seatInfo,
                       },
+
+                      roomChatMessages: {
+                        ...useRoomStore().roomChatMessages,
+                      },
                     };
 
                     // 로컬 스토리지에 업데이트된 데이터 저장
