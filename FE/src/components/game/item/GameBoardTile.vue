@@ -5,7 +5,7 @@
 </template>
   
   <script>
-import taegeukImage from "@/assets/img/taegeuk.png";
+import taegeukImage from "@/assets/img/game/taegeuk.png";
 export default {
   props: ["tile"],
   data() {

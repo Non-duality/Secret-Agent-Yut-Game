@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useMsgModalStore } from "./messageModalStore.js";
 
 export const useGameStore = defineStore("game", {
   // 반응형 상태 (data)
@@ -24,7 +25,9 @@ export const useGameStore = defineStore("game", {
       isCenterDir: false,
       // 미션 장소
       missionTiles: [4,21,8,13,18],
-      isMission: true,
+      isMission: false,
+      // 기존에 있는말 말고 새로가는 말만 이동하기 위해 카운트 변수.
+      toCnt: 0,
       // 말
       redHorses: [
         {
@@ -313,12 +316,21 @@ export const useGameStore = defineStore("game", {
           target = 30;
         }
       }
+      // 도착지 말 카운트
+      this.toCnt = this.tiles[target].horse.length;
+
       // 다른 말 체크
       if (!this.isHorseEnd) this.horseCheck(horseInfo, target);
       // 말 이동
       this.moveTo(horseInfo.index, target);
       // 미션장소 체크
-      this.isMission = this.missionTiles.includes(target);
+      if(this.missionTiles.includes(target)){
+        const MsgModalStore = useMsgModalStore();
+        MsgModalStore.printMessage("미션 장소 도착");
+        setTimeout(()=>{
+          this.isMission = true;
+        },2000);
+      }
       this.isHorseEnd = false;
       this.isGoDiagonal = false;
       this.isCenterDir = false;
@@ -333,7 +345,7 @@ export const useGameStore = defineStore("game", {
         this.tiles[horseInfo.index].horse[0].team !=
           this.tiles[target].horse[0].team
       ) {
-        for (var i = 0; i < this.tiles[target].horse.length; i++) {
+        for (var i = this.toCnt; i < this.tiles[target].horse.length; i++) {
           const horsedel =
             this.tiles[target].horse[i].team === 1
               ? this.redHorses.find(
@@ -371,7 +383,7 @@ export const useGameStore = defineStore("game", {
 
       // 말이 들어왔다면.
       if (this.isHorseEnd) {
-        for (var i = 0; i < len; i++) {
+        for (var i = this.toCnt; i < len; i++) {
           const horseInfo =
             team === 1
               ? this.redHorses.find(
@@ -383,7 +395,7 @@ export const useGameStore = defineStore("game", {
           horseInfo.index = 30;
         }
         setTimeout(() => {
-          for (var i = 0; i < len; i++) {
+          for (var i = this.toCnt; i < len; i++) {
             const horseInfo =
               team === 1
                 ? this.redHorses.find(
@@ -404,7 +416,7 @@ export const useGameStore = defineStore("game", {
         from < 20
       ) {
         // 순간이동을 방지하기 위해 모서리를 찍고 목적지로 이동한다.
-        for (var i = 0; i < len; i++) {
+        for (var i = this.toCnt; i < len; i++) {
           const horseInfo =
             team === 1
               ? this.redHorses.find(
@@ -417,7 +429,7 @@ export const useGameStore = defineStore("game", {
           console.log(to / 5 + " " + Math.trunc(from / 5));
         }
         setTimeout(() => {
-          for (var i = 0; i < len; i++) {
+          for (var i = this.toCnt; i < len; i++) {
             const horseInfo =
               team === 1
                 ? this.redHorses.find(
@@ -432,7 +444,7 @@ export const useGameStore = defineStore("game", {
         }, 300);
       } else if (this.yutRes != -1 && from >= 20 && to < 20) {
         // 순간이동을 방지하기 위해 24,15번 찍고 목적지로 이동한다.
-        for (var i = 0; i < len; i++) {
+        for (var i = this.toCnt; i < len; i++) {
           const horseInfo =
             team === 1
               ? this.redHorses.find(
@@ -444,7 +456,7 @@ export const useGameStore = defineStore("game", {
           horseInfo.index = 15;
         }
         setTimeout(() => {
-          for (var i = 0; i < len; i++) {
+          for (var i = this.toCnt; i < len; i++) {
             const horseInfo =
               team === 1
                 ? this.redHorses.find(
@@ -462,7 +474,7 @@ export const useGameStore = defineStore("game", {
       // 평범한 이동
       else {
         // 그룹을 다 이동 시킨다.
-        for (var i = 0; i < len; i++) {
+        for (var i = this.toCnt; i < len; i++) {
           const horseInfo =
             team === 1
               ? this.redHorses.find(

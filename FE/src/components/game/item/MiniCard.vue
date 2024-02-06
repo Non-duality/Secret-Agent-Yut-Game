@@ -8,7 +8,7 @@
         class="card-item"
         @click="selectCard(card)"
       >
-        <img class="card-img" src="@/assets/img/taegeuk.png" />
+        <img class="card-img" src="@/assets/img/game/taegeuk.png" />
       </div>
     </div>
     <div v-if="selectedCard">

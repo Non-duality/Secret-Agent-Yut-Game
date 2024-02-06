@@ -260,7 +260,7 @@ export default {
         case "horse3":
           if (this.horse.team === 1) {
             this.imgSrc = (
-              await import("@/assets/img/game/horse/red_spearman2.png")
+              await import("@/assets/img/game/horse/red_spearman.png")
             ).default;
           } else {
             this.imgSrc = (
