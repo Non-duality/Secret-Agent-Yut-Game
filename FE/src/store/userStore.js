@@ -1,8 +1,17 @@
 import { defineStore } from "pinia";
 import { useRoomStore } from "./roomStore";
 
-import { userConfirm, userDoJoin, findByToken } from "@/api/user";
+import {
+  userConfirm,
+  userDoJoin,
+  findByToken,
+  emailCheck,
+  nickCheck,
+  emailVeificationRequest,
+  emailVeification,
+} from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
+import { error } from "jquery";
 
 export const useUserStore = defineStore("user", {
   id: "myStore",
@@ -24,6 +33,12 @@ export const useUserStore = defineStore("user", {
       roomId: null,
       roomCode: null,
       currentRoomInfo: null,
+
+      // 닉네임, 이메일 중복체크
+      isEmailCheck: false,
+      isNickCheck: false,
+      // 이메일 인증
+      isEmailCodeCheck: false,
     };
   },
 
@@ -35,7 +50,6 @@ export const useUserStore = defineStore("user", {
       Object.assign(this, initialStateUser);
       Object.assign(this, initialStateRoom);
     },
-
     // 로그인, 회원가입 모달 창을 나타내기 위한 함수 매개변수를 입력받아
     // 로그인, 회원가입 차별을 준다.
     openModal(value) {
@@ -103,14 +117,77 @@ export const useUserStore = defineStore("user", {
         );
       });
     },
-
+    // 이메일 인증 요청
+    EmailVerRequest: async (email) => {
+      await emailVeificationRequest(
+        email,
+        (response) => {
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    },
+    // 이메일 인증
+    EmailVer: async (param) => {
+      await emailVeification(
+        param,
+        (response) => {
+          if(response.status === 200){
+            useUserStore().isEmailCodeCheck = true;
+          }else{
+            useUserStore().isEmailCodeCheck = false;
+          }
+          console.log(response);
+        },
+        (error) => {
+          useUserStore().isEmailCodeCheck = false;
+          console.log(error);
+        }
+      );
+    },
+    // 이메일 중복 체크
+    emailCheck: async (email) => {
+      await emailCheck(
+        email,
+        (response) => {
+          if (response.status === 200) {
+            useUserStore().isEmailCheck = true;
+          } else {
+            useUserStore().isEmailCheck = false;
+          }
+        },
+        (error) => {
+          console.log(error);
+          useUserStore().isEmailCheck = false;
+        }
+      );
+    },
+    // 닉네임 중복 체크
+    nickCheck: async (nickname) => {
+      await nickCheck(
+        nickname,
+        (response) => {
+          if (response.status === 200) {
+            useUserStore().isNickCheck = true;
+          } else {
+            useUserStore().isNickCheck = false;
+          }
+        },
+        (error) => {
+          console.log(error);
+          useUserStore().isNickCheck = false;
+        }
+      );
+    },
+    // 회원가입
     userJoin: async (joinUser) => {
       await userDoJoin(
         joinUser,
         (response) => {
           alert("회원가입 성공");
         },
-
         (error) => {
           alert("회원가입 실패");
           console.log(error);
