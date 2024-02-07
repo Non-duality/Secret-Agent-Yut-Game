@@ -1,6 +1,5 @@
 package com.ssafy.hungry.domain.room.controller;
 
-import com.ssafy.hungry.domain.pick.dto.CurrentPickDto;
 import com.ssafy.hungry.domain.room.dto.ChatMessageDto;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.dto.RoomLobbyInfoDto;
@@ -19,7 +18,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Controller

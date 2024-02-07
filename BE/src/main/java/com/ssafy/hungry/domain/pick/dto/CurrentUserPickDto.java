@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class CurrentPickDto {
+public class CurrentUserPickDto {
 
     private int team;
     private int seatNumber;

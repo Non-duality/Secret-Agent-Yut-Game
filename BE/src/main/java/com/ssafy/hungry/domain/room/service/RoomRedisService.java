@@ -1,6 +1,5 @@
 package com.ssafy.hungry.domain.room.service;
 
-import com.ssafy.hungry.domain.pick.dto.CurrentPickDto;
 import com.ssafy.hungry.domain.pick.service.PickRedisService;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.dto.RoomDetailDto;
@@ -17,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -77,7 +74,7 @@ public class RoomRedisService {
 
         int count = 0;
         for(CurrentSeatDto seat : currentSeatDtoList){
-            if(seat.getState() == 1){
+            if(seat.getState() != 0){
                 count ++;
             }
         }
@@ -233,8 +230,8 @@ public class RoomRedisService {
         }
 
         // 조건을 다 충족했다면 레디스에 픽 정보를 담을 수 있는 sorted set 데이터 생성
-        pickRedisService.createCurrentPick(room.getRoomCode());
-
+        pickRedisService.createCurrentUserPick(room.getRoomCode());
+        pickRedisService.createCurrentUnitPick(room.getRoomCode());
     }
 
 

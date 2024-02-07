@@ -3,8 +3,8 @@ package com.ssafy.hungry.domain.pick.repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.hungry.domain.pick.dto.CurrentPickDto;
-import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
+import com.ssafy.hungry.domain.pick.dto.CurrentUnitPickDto;
+import com.ssafy.hungry.domain.pick.dto.CurrentUserPickDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,14 +22,14 @@ public class PickRedisRepository {
     private final ObjectMapper objectMapper;
     private final RedisTemplate<String, String> redisTemplate;
 
-    // redis에 저장하기
-    public void saveToRedis(String key, CurrentPickDto currentPickDto){
+    // redis에 userPick 저장하기
+    public void saveUserPickToRedis(String key, CurrentUserPickDto currentUserPickDto){
         log.info("PickRedisRepository saveToRedis 호출 : " + key);
 
         try {
-            String jsonData = objectMapper.writeValueAsString(currentPickDto);
+            String jsonData = objectMapper.writeValueAsString(currentUserPickDto);
             ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
-            zSetOps.add(key, jsonData, currentPickDto.getSeatNumber());
+            zSetOps.add(key, jsonData, currentUserPickDto.getSeatNumber());
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -37,15 +37,30 @@ public class PickRedisRepository {
 
     }
 
-    // redis에 지우고 다시 저장하기
-    public void reSaveToRedis(String key, CurrentPickDto currentPickDto, int seatNumber){
+    // redis에 unitPick 저장하기
+    public void saveUnitPickToRedis(String key, CurrentUnitPickDto currentUnitPickDto){
+        log.info("PickRedisRepository saveToRedis 호출 : " + key);
+
+        try {
+            String jsonData = objectMapper.writeValueAsString(currentUnitPickDto);
+            ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
+            zSetOps.add(key, jsonData, currentUnitPickDto.getUnitId());
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    // userPick을 redis에 지우고 다시 저장하기
+    public void reSaveUserPickToRedis(String key, CurrentUserPickDto currentUserPickDto, int seatNumber){
         log.info("PickRedisRepository reSaveToRedis 호출 : " + key);
 
         try {
-            String jsonData = objectMapper.writeValueAsString(currentPickDto);
+            String jsonData = objectMapper.writeValueAsString(currentUserPickDto);
             ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
             zSetOps.removeRange(key, seatNumber, seatNumber);
-            zSetOps.add(key, jsonData, currentPickDto.getSeatNumber());
+            zSetOps.add(key, jsonData, currentUserPickDto.getSeatNumber());
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -53,19 +68,51 @@ public class PickRedisRepository {
 
     }
 
-    // redis에서  현재 캐릭터 선택 정보 가져오기
-    public List<CurrentPickDto> getCurrentPickInfo(String key, int start, int end){
+    // unitPick을 redis에 지우고 다시 저장하기
+    public void reSaveUnitPickToRedis(String key, CurrentUnitPickDto currentUnitPickDto, int seatNumber){
+        log.info("PickRedisRepository reSaveToRedis 호출 : " + key);
+
+        try {
+            String jsonData = objectMapper.writeValueAsString(currentUnitPickDto);
+            ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
+            zSetOps.removeRange(key, seatNumber, seatNumber);
+            zSetOps.add(key, jsonData, currentUnitPickDto.getUnitId());
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    // redis에서  현재 유저의 유닛 선택 정보 가져오기
+    public List<CurrentUserPickDto> getCurrentUserPickInfo(String key, int start, int end){
 
         ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
         Set<String> list = zSetOps.range(key, start, end);
-        List<CurrentPickDto> currentPickDtoList = null;
+        List<CurrentUserPickDto> currentUserPickDtoList = null;
 
         try{
-            currentPickDtoList = objectMapper.readValue(list.toString(), new TypeReference<List<CurrentPickDto>>(){});
+            currentUserPickDtoList = objectMapper.readValue(list.toString(), new TypeReference<List<CurrentUserPickDto>>(){});
         }catch (Exception e){
             e.printStackTrace();
         }
 
-        return currentPickDtoList;
+        return currentUserPickDtoList;
+    }
+
+    // redis에서  현재 유닛 정보 가져오기
+    public List<CurrentUnitPickDto> getCurrentUnitPickInfo(String key){
+
+        ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
+        Set<String> list = zSetOps.range(key, 0, -1);
+        List<CurrentUnitPickDto> CurrentUnitPickDtoList = null;
+
+        try{
+            CurrentUnitPickDtoList = objectMapper.readValue(list.toString(), new TypeReference<List<CurrentUnitPickDto>>(){});
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return CurrentUnitPickDtoList;
     }
 }
