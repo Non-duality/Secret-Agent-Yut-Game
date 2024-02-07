@@ -149,20 +149,6 @@ export function connectRoom(router, from) {
       reconnectDelay: 5000, //자동재연결
     });
 
-<<<<<<< HEAD
-    // try {
-    //   stompClient.activate();
-    //   connected = true;
-    //   // this.socketSend("/pub/game/b2bc27/start","start");
-    //   console.log("연결 성공");
-    // } catch (error) {
-    //   connected = false;
-    //   console.log("소켓 에러: " + error);
-    // }
-    try {
-      useRoomStore().stompClient.activate();
-    } catch (error) {}
-=======
     // 여기서 소켓을 시작한다.
     try {
       if (from === "make") {
@@ -284,12 +270,11 @@ function fatalError(error, msg) {
   console.log("상세 에러 : " + msg);
 }
 
-// 방 구독하기
+// 구독한 방에 알리기.
 export function pubRoom(destination, email) {
   stompClient.publish({
     destination: destination,
     body: email,
->>>>>>> 633bfdc40f67e387cbd6a6b3dfec623c5d0c5bec
   });
 }
 

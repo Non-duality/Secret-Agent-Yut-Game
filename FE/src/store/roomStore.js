@@ -104,19 +104,6 @@ export const useRoomStore = defineStore("room", {
       });
     },
 
-    /* 나가기 */
-    exitRoom() {
-      useRoomStore().stompClient.publish({
-        destination:
-          "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/exit",
-        headers: {
-          Authorization: `Bearer ${useUserStore().accessToken}`,
-        },
-      });
-
-      useRoomStore().subscription.room.unsubscribe();
-    },
-
     /* 방 생성 */
     async createRoom() {
       try {

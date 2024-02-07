@@ -87,13 +87,12 @@ export default {
     // 방 선택 로직 추가
     selectRoom(roomInfo) {
       if (this.selectedRoomId === roomInfo.roomId) {
-        // 이미 선택된 방을 다시 클릭하면 선택 해제
-        this.selectedRoomId = null;
-      } else {
-        // 새로운 방을 클릭하면 선택
-        this.selectedRoomId = roomInfo.roomId;
+        // 이전에 선택한 방과 현재 클릭한 방이 같은 경우 아무 동작도 하지 않고 리턴
+        return;
       }
 
+      // 이전에 선택한 방과 현재 클릭한 방이 다른 경우에만 선택 상태를 변경
+      this.selectedRoomId = roomInfo.roomId;
       this.$emit("show-room-info", roomInfo.roomId);
     },
   },
@@ -104,7 +103,7 @@ export default {
         this.selectedRoomId = this.roomInfos[0].roomId;
         this.$emit("show-room-info", this.selectedRoomId);
       }
-    },100);
+    }, 100);
   },
 };
 </script>

@@ -9,13 +9,17 @@
       <RightComponentsVue />
       <button class="wait-btn">시작</button>
       <!-- <button class="wait-btn">준비</button> -->
-      <button class="wait-btn" @click="goToList">나가기</button>
+      <button class="wait-btn" @click="goTolist">나가기</button>
     </div>
     <!-- <banModal @close-ban-modal="closeBanModal" v-if="ban"/> -->
   </div>
 </template>
 
 <script>
+import { pubRoom } from "@/util/socket.js";
+import { useUserStore } from "@/store/userStore";
+import { useRoomStore } from "@/store/roomStore";
+
 // 자식 컴포넌트
 import RightComponentsVue from "@/components/room/gameWait/RightComponents.vue";
 import LeftComponentsVue from "@/components/room/gameWait/LeftComponents.vue";
@@ -37,7 +41,20 @@ export default {
 
   methods: {
     // 나갈 때 로직
-    goToList() {},
+    goTolist() {
+      // 방을 나가기 위해 pub로 알린다.
+      pubRoom(
+        "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/exit",
+        useUserStore().userInfo.email
+      );
+
+      // 구독 취소한 뒤 방 정보에 대해 모두 리셋한다.
+      useRoomStore().subscription.room.unsubscribe();
+      const initialStateRoom = useRoomStore().$reset();
+      Object.assign(this, initialStateRoom);
+
+      this.$router.push({ name: "room" });
+    },
   },
 };
 </script>
