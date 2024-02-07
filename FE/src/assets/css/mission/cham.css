@@ -47,9 +47,11 @@
 
 .victory {
   color: blue;
+  z-index: 6;
 }
 
 .fail {
   color: red;
+  z-index: 6;
 }
 
