@@ -7,6 +7,9 @@ const { VITE_WSS_API_URL } = import.meta.env;
 let stompClient = null;
 let connected = false;
 
+let stompClient2 = null;
+let connected2 = false;
+
 /* 게임 소켓 */
 export function connect(accessToken, recvCallback) {
   return new Promise((resolve, reject) => {
@@ -112,7 +115,18 @@ export function connectWS() {
       },
     });
 
-    useRoomStore().stompClient.activate();
+    // try {
+    //   stompClient.activate();
+    //   connected = true;
+    //   // this.socketSend("/pub/game/b2bc27/start","start");
+    //   console.log("연결 성공");
+    // } catch (error) {
+    //   connected = false;
+    //   console.log("소켓 에러: " + error);
+    // }
+    try {
+      useRoomStore().stompClient.activate();
+    } catch (error) {}
   });
 }
 
