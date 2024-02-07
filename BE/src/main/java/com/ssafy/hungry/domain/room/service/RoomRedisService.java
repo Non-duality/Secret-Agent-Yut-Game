@@ -48,6 +48,7 @@ public class RoomRedisService {
             roomRedisRepository.saveToRedis(key, CurrentSeatDto.builder()
                     .state(0)
                     .team(1)
+                    .nickname("")
                     .seatNumber(i)
                     .build());
         }
@@ -56,6 +57,7 @@ public class RoomRedisService {
             roomRedisRepository.saveToRedis(key, CurrentSeatDto.builder()
                     .state(0)
                     .team(2)
+                    .nickname("")
                     .seatNumber(i)
                     .build());
         }
@@ -157,7 +159,7 @@ public class RoomRedisService {
                 if(seat.getUserId() == user.getId()){
                     seat.setState(0);
                     seat.setUserId(0);
-                    seat.setNickname(null);
+                    seat.setNickname("");
                     seat.setProfileImgUrl(null);
 
                     roomRedisRepository.reSaveToRedis(key, seat, count);
