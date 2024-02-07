@@ -70,6 +70,7 @@ export default {
   methods: {
     // 방 디테일을 나타내는 함수
     showRoomInfo(roomInfo) {
+      console.log("실시간 계산");
       this.$emit("showRoomInfo", roomInfo);
     },
 
@@ -96,12 +97,14 @@ export default {
       this.$emit("show-room-info", roomInfo.roomId);
     },
   },
-  
+
   mounted() {
-    if (this.roomInfos.length > 0) {
-      this.selectedRoomId = this.roomInfos[0].roomId;
-      this.$emit("show-room-info", this.selectedRoomId);
-    }
+    setTimeout(() => {
+      if (this.roomInfos.length > 0) {
+        this.selectedRoomId = this.roomInfos[0].roomId;
+        this.$emit("show-room-info", this.selectedRoomId);
+      }
+    },100);
   },
 };
 </script>

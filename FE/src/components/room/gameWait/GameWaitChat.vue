@@ -2,8 +2,8 @@
   <div class="wait-chat">
     <!-- 채팅 로그 -->
     <div class="chat-container">
-      <div v-for="item in reversedRoomChat" :key="item">
-        {{ item }}
+      <div v-for="(message, index) in reversedRoomChat" :key="index">
+        <span :style="{ color: getColorForMessage(message).color, textAlign: 'left' }" v-html="getColorForMessage(message).text"></span>
       </div>
     </div>
 
@@ -25,6 +25,8 @@
 
 <script>
 import { useRoomStore } from "@/store/roomStore";
+import { useUserStore } from "@/store/userStore";
+import { socketSend } from "@/util/socket";
 
 export default {
   data() {
@@ -48,8 +50,32 @@ export default {
     sendLocalMessage() {
       if (this.msg === "") return;
 
-      useRoomStore().sendMessage(this.msg);
+      const tempMSG = {
+        nickname: useUserStore().userInfo.nickname,
+        message: this.msg,
+      };
+
+      socketSend(
+        "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/chat",
+        tempMSG
+      );
+
       this.msg = "";
+    },
+
+    // 메시지의 종류에 따라 색상을 반환하는 메서드
+    getColorForMessage(message) {
+      if (message.includes("님이 입장하였습니다.")) {
+        return { color: "red", text: message };
+      } else {
+        const parts = message.split(":"); // ":"를 기준으로 메시지를 분할
+
+        // 이름과 내용이 존재하는 경우
+        return {
+          color: "purple",
+          text: `<span style="color: purple; text-align: left;">${parts[0]}</span>: <span style="color: white;">${parts[1]}</span>`,
+        };
+      }
     },
   },
 };

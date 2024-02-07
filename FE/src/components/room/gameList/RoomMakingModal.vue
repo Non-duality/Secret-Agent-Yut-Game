@@ -99,7 +99,8 @@
 // 방 정보 데이터
 import { useRoomStore } from "@/store/roomStore";
 import { useUserStore } from "@/store/userStore";
-import { useRouter } from "vue-router";
+
+import { connectRoom, pubRoom } from "@/util/socket";
 
 export default {
   data() {
@@ -118,9 +119,8 @@ export default {
   methods: {
     /* 방 생성 함수 */
     makeGame(roomInfo) {
-      const router = useRouter();
-      // 만약 로그인 실패거나 소켓 연결 실패라면, "초기화면"으로 이동
-      if (!useUserStore().isLogin || !useRoomStore().isConnected) {
+      // (1) 로그인 되었는지 확인한다.
+      if (!useUserStore().isLogin) {
         alert("연결이 끊어졌습니다.");
         useUserStore().initData();
         router.push("/");
@@ -141,119 +141,17 @@ export default {
         useRoomStore()
           .createRoom()
           .then(() => {
-            // 먼저, create된 roomCode를 가져와서 방 구독
-            useRoomStore().subscription.room =
-              useRoomStore().stompClient.subscribe(
-                "/sub/room/" + useRoomStore().createRoomInfo.roomCode,
+            connectRoom(this.$router, "make").then(() => {
+              useUserStore().currentRoomInfo = {
+                ...useRoomStore().createRoomInfo,
+              };
 
-                // 구독 메시지 이벤트 처리
-                (message) => {
-                  console.log(message.body);
-                  useRoomStore().receivedMessage = JSON.parse(message.body);
-
-                  // (경우1) 입장 정보 타입
-                  if (
-                    useRoomStore().receivedMessage.type === "ROOM_ENTER_INFO"
-                  ) {
-                    useRoomStore().roomChatMessages.push(
-                      useRoomStore().receivedMessage.data.message
-                    );
-
-                    useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
-                      (seat, index) => {
-                        const seatKey = `seatnum${index + 1}`;
-                        if (useRoomStore().seatInfo[seatKey]) {
-                          useRoomStore().seatInfo[seatKey].nickname =
-                            seat.nickname ? seat.nickname : "";
-                          useRoomStore().seatInfo[seatKey].ready = seat.ready;
-                        }
-                      }
-                    );
-
-                    const storedRoomData = JSON.parse(
-                      localStorage.getItem("room")
-                    );
-
-                    const updatedRoomData = {
-                      ...storedRoomData,
-                      seatInfo: {
-                        ...useRoomStore().seatInfo,
-                      },
-
-                      roomChatMessages: {
-                        ...useRoomStore().roomChatMessages,
-                      },
-                    };
-
-                    // 로컬 스토리지에 업데이트된 데이터 저장
-                    localStorage.setItem(
-                      "room",
-                      JSON.stringify(updatedRoomData)
-                    );
-
-                    // 방 생성 모달 닫기
-                    useRoomStore().showRoomMakingModal = false;
-
-                    this.$router.push({
-                      name: "wait",
-                    });
-                  } else if (
-                    useRoomStore().receivedMessage.type === "ROOM_EXIT_INFO"
-                  ) {
-                    useRoomStore().roomChatMessages.push(
-                      useRoomStore().receivedMessage.data.message
-                    );
-                    useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
-                      (seat, index) => {
-                        const seatKey = `seatnum${index + 1}`;
-                        if (useRoomStore().seatInfo[seatKey]) {
-                          useRoomStore().seatInfo[seatKey].nickname =
-                            seat.nickname;
-                          useRoomStore().seatInfo[seatKey].ready = seat.ready;
-                        }
-                      }
-                    );
-                  } else if (
-                    useRoomStore().receivedMessage.type === "ROOM_CHAT"
-                  ) {
-                    useRoomStore().roomChatMessages.push(
-                      useRoomStore().receivedMessage.data.nickname +
-                        " : " +
-                        useRoomStore().receivedMessage.data.message
-                    );
-
-                    const storedRoomData = JSON.parse(
-                      localStorage.getItem("room")
-                    );
-
-                    const updatedRoomData = {
-                      ...storedRoomData,
-                      roomChatMessages: {
-                        ...useRoomStore().roomChatMessages,
-                      },
-                    };
-
-                    // 로컬 스토리지에 업데이트된 데이터 저장
-                    localStorage.setItem(
-                      "room",
-                      JSON.stringify(updatedRoomData)
-                    );
-                  }
-                }
-              );
-          })
-          .then(() => {
-            useUserStore().currentRoomInfo = {
-              ...useRoomStore().createRoomInfo,
-            };
-
-            useRoomStore().stompClient.publish({
-              destination:
+              pubRoom(
                 "/pub/room/" +
-                useRoomStore().createRoomInfo.roomCode +
-                "/enter",
-
-              body: useUserStore().userInfo.email,
+                  useRoomStore().createRoomInfo.roomCode +
+                  "/enter",
+                useUserStore().userInfo.email
+              );
             });
           })
 

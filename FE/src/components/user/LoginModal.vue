@@ -25,9 +25,7 @@
 <script>
 import { ref } from "vue";
 import { useUserStore } from "@/store/userStore";
-import { useRoomStore } from "@/store/roomStore";
 import { useRouter } from "vue-router";
-import { connectWS } from "@/util/socket.js"
 
 export default {
   setup() {
@@ -38,43 +36,39 @@ export default {
       password: "",
     });
 
+    // (1) 로그인을 수행한다.
     const login = async () => {
+      // (2) 비동기 통신으로 로그인 정보를 전달한다.
       await useUserStore().userLogin(loginUser.value);
 
+      // (3) 만약 로그인이 되었다면, isLogin은 True가 된다.
       if (useUserStore().isLogin) {
-        try {
-          await connectWS();
+        // (4) 유저 정보를 가져온다.
+        useUserStore().getUserInfo();
 
-          if (useRoomStore().isConnected) {
-            useUserStore().getUserInfo();
-            closeModal();
-            useUserStore().showModalSide = true;
-            router.push("/home");
-          } else {
-            useUserStore().isLogin = false;
-            useUserStore().initData();
-            router.push("/");
-          }
-        } catch (error) {
-          useUserStore().isLogin = false;
-          useUserStore().initData();
-          router.push("/");
-          console.error("Error:", error);
-        }
+        // (4-1) 모달을 닫는다.
+        closeModal();
+
+        // (4-2) 상단바와 사이드바를 나타낸다.
+        useUserStore().showModalSide = true;
+
+        // (5) 홈으로 이동한다.
+        router.push("/home");
       } else {
+        // (3) 만약 로그인이 실패한다면, 초기화면으로 이동한다.
         useUserStore().isLogin = false;
         useUserStore().initData();
         router.push("/");
       }
     };
 
-    // 회원가입으로 이동.
+    // 회원가입으로 이동한다.
     const join = () => {
       closeModal();
       useUserStore().openModal("join");
     };
 
-    // pinia 닫기 함수 호출
+    // 현재 실행된 모달을 닫는다.
     const closeModal = () => {
       useUserStore().closeModal("login");
     };

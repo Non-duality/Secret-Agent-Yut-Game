@@ -36,7 +36,6 @@ export default {
 
   created(){
     this.roomInfo = useUserStore().currentRoomInfo;
-    console.log(this.roomInfo);
   }
 };
 </script>
