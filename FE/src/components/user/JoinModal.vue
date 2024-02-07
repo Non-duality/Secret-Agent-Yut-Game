@@ -4,23 +4,55 @@
     <div class="modal-content">
       <button class="close" @click="closeModal('join')">&times;</button>
       <h2 class="join-text">Join</h2>
-      <input id="emailInput" type="text" placeholder="이메일" v-model="email" />
+      <div>
+        <input
+          id="emailInput"
+          type="text"
+          placeholder="이메일"
+          v-model="email"
+          autocomplete="email"
+          :readonly="isEmailVer"
+        />
+        <button
+          v-if="isEmailVerRequest"
+          class="email-btn"
+          @click="EmailVerRequest"
+        >
+          전송
+        </button>
+      </div>
+      <div class="password-error" v-if="!isValidEmail">
+        {{ emailMsg }}
+      </div>
+      <div v-if="isEmailVerRequest">
+        <input
+          id="emailCode"
+          type="text"
+          placeholder="이메일인증코드"
+          v-model="emailCode"
+        />
+        <button class="email-btn" @click="EmailVer">확인</button>
+      </div>
+      <div class="password-error" v-if="isEmailCode">
+        {{ emailCodeMsg }}
+      </div>
       <input
         type="password"
         placeholder="패스워드"
         id="passwordInput"
         v-model="password"
-        required
       /><br />
+      <div class="password-error" v-if="!isValidPassword">
+        영문,숫자,특수문자를 조합하여 입력해주세요.(8-16자)
+      </div>
       <input
         type="password"
         placeholder="패스워드 확인"
         id="confirmPasswordInput"
         @input="checkPassword"
         v-model="passwordCheck"
-        required
       /><br />
-      <div class="password-error" v-if="isNotPasswordMatch">
+      <div class="password-error" v-if="!isPasswordMatch">
         패스워드가 일치하지 않습니다.
       </div>
 
@@ -29,8 +61,10 @@
         placeholder="닉네임"
         id="nicknameInput"
         v-model="nickname"
-        required
       /><br />
+      <div class="password-error" v-if="!isValidNickname">
+        {{ nickMsg }}
+      </div>
 
       <div class="gender-selection">
         <button
@@ -52,11 +86,11 @@
       </div>
       <!-- 년도, 월, 일을 나란하게 표시 -->
       <div>
-        <select id="birthdateYear" v-model="year" required></select>
+        <select id="birthdateYear" v-model="year"></select>
 
-        <select id="birthdateMonth" v-model="month" required></select>
+        <select id="birthdateMonth" v-model="month"></select>
 
-        <select id="birthdateDay" v-model="day" required></select>
+        <select id="birthdateDay" v-model="day"></select>
       </div>
 
       <button class="modal-join-btn" @click="performJoin">회원가입</button>
@@ -71,97 +105,170 @@ import { useUserStore } from "@/store/userStore";
 export default {
   data() {
     return {
-      passwordMismatch: false,
-      gender: null,
-      email: null,
-      password: null,
-      passwordCheck: null,
-      nickname: null,
-      year: null,
-      month: null,
-      day: null,
+      gender: "",
+      email: "",
+      password: "",
+      passwordCheck: "",
+      nickname: "",
+      year: "",
+      month: "",
+      day: "",
+      // 이메일 닉 중복 체크
+      isNickCheck: false,
+      isEmailCheck: false, // 성공, 실패
+      // 이메일 닉 메시지는 따로 정의.
+      emailMsg: "",
+      nickMsg: "",
+      // 이메일 인증
+      showEmailMsg: false,
+      isEmailVerRequest: true, // 요청
+      isEmailVer: false, // 인증 성공, 실패
+      emailCode: "",
+      isEmailCode: false,
+      emailCodeMsg: "",
     };
   },
-
+  watch: {
+    email(newVal) {
+      if (this.isValidEmail) {
+        this.updateFieldStyle("emailInput", true);
+      }
+    },
+    password(newVal) {
+      if (this.isValidPassword) {
+        this.updateFieldStyle("passwordInput", true);
+      }
+    },
+    passwordCheck(newVal) {
+      if (this.isPasswordMatch) {
+        this.updateFieldStyle("confirmPasswordInput", true);
+      }
+    },
+    nickname(newVal) {
+      if (this.isValidNickname) {
+        this.updateFieldStyle("nicknameInput", true);
+      }
+    },
+    year(newVal) {
+      if (this.year !== "") {
+        this.updateFieldStyle("birthdateYear", true);
+      }
+    },
+    month(newVal) {
+      if (this.month !== "") {
+        this.updateFieldStyle("birthdateMonth", true);
+      }
+    },
+    day(newVal) {
+      if (this.day !== "") {
+        this.updateFieldStyle("birthdateDay", true);
+      }
+    },
+    gender(newVal) {
+      if (this.gender !== "") {
+        this.updateFieldStyle("male-button", true);
+        this.updateFieldStyle("female-button", true);
+      }
+    },
+  },
   methods: {
-    async performJoin() {
-      // 이메일, 패스워드, 닉네임 등의 필드 값이 비어 있는지 확인합니다.
-      if (
-        !this.email ||
-        !this.password ||
-        !this.passwordCheck ||
-        !this.nickname ||
-        !this.gender ||
-        !this.year ||
-        !this.month ||
-        !this.day
-      ) {
-        // 필수 필드 중 하나라도 비어 있다면 각 필드를 강조하고 알림을 표시합니다.
-        if (!this.email) {
-          // 이메일 필드가 비어있을 경우 해당 필드 강조
-          const emailInput = document.getElementById("emailInput");
-          emailInput.style.border = "2px solid red";
-        }
-        if (!this.password) {
-          // 패스워드 필드가 비어있을 경우 해당 필드 강조
-          const passwordInput = document.getElementById("passwordInput");
-          passwordInput.style.border = "2px solid red";
-        }
-        if (!this.passwordCheck) {
-          // 패스워드 체크 필드가 비어있을 경우 해당 필드 강조
-          const passwordCheckInput = document.getElementById(
-            "confirmPasswordInput"
-          );
-          passwordCheckInput.style.border = "2px solid red";
-        }
-        if (!this.nickname) {
-          // 닉네임 필드가 비어있을 경우 해당 필드 강조
-          const nicknameInput = document.getElementById("nicknameInput");
-          nicknameInput.style.border = "2px solid red";
-        }
-        if (!this.gender) {
-          // 성별이 선택되지 않았을 경우 성별 선택 버튼 강조
-          const maleButton = document.getElementById("male-button");
-          const femaleButton = document.getElementById("female-button");
-          maleButton.style.border = "2px solid red";
-          femaleButton.style.border = "2px solid red";
-        }
-        if (!this.year | !this.month | !this.day) {
-          // 생년월일 필드가 비어있을 경우 해당 필드 강조
-          const birthdateYear = document.getElementById("birthdateYear");
-          const birthdateMonth = document.getElementById("birthdateMonth");
-          const birthdateDay = document.getElementById("birthdateDay");
-          birthdateYear.style.border = "2px solid red";
-          birthdateMonth.style.border = "2px solid red";
-          birthdateDay.style.border = "2px solid red";
-        }
+    // 인증코드 발송.
+    EmailVerRequest() {
+      this.showEmailMsg = true;
+      this.emailMsg = "인증코드를 발송하였습니다.";
+      const userStore = useUserStore();
+      userStore.EmailVerRequest(this.email);
+    },
+    // 인증코드 인증.
+    EmailVer() {
+      const param = { email: this.email, code: this.emailCode };
+      const userStore = useUserStore();
+      userStore.EmailVer(param);
 
-        // 필수 필드가 비어있는 경우 알림을 표시합니다.
-        alert("필수 정보를 모두 입력하세요.");
-        return;
-         // 모든 정보가 제대로 되어 있을 경우 서버로 넘기기
-      } else {
+      if(userStore.isEmailCodeCheck){
+        this.isEmailVer = true;
+        this.isEmailVerRequest = false;
+        this.isEmailCode = false;
+        this.emailMsg = "인증에 성공하였습니다.";
+      }
+      else{
+        this.emailCodeMsg = "인증에 실패하였습니다.";
+      }
+      this.isEmailCode = true;
+    },
+    async performJoin() {
+      let isValid = true; // 모든 입력 값이 유효한지 추적하는 변수
+
+      // 필드별 유효성 검사
+      if (this.email === "" || !this.isValidEmail) {
+        this.updateFieldStyle("emailInput", false);
+        isValid = false;
+      }
+      if (this.password === "" || !this.isValidPassword) {
+        this.updateFieldStyle("passwordInput", false);
+        isValid = false;
+      }
+      if (this.passwordCheck === "" || !this.isPasswordMatch) {
+        this.updateFieldStyle("confirmPasswordInput", false);
+        isValid = false;
+      }
+      if (this.nickname === "" || !this.isValidNickname) {
+        this.updateFieldStyle("nicknameInput", false);
+        isValid = false;
+      }
+      if (!this.gender) {
+        this.updateFieldStyle("male-button", false);
+        this.updateFieldStyle("female-button", false);
+        isValid = false;
+      }
+      if (!this.year) {
+        this.updateFieldStyle("birthdateYear", false);
+        isValid = false;
+      }
+      if (!this.month) {
+        this.updateFieldStyle("birthdateMonth", false);
+        isValid = false;
+      }
+      if (!this.day) {
+        this.updateFieldStyle("birthdateDay", false);
+        isValid = false;
+      }
+      // 이메일 체크.
+      // else if (!this.isEmailCheck) {
+      // }
+      // 모든 정보가 제대로 되어 있을 경우 서버로 넘기기
+      if (isValid) {
         const userStore = useUserStore();
-        
+
         const joinUser = {
           email: this.email,
           nickname: this.nickname,
           password: this.password,
-          birthDate: `${this.year}-${this.month.toString().padStart(2, '0')}-${this.day.toString().padStart(2, '0')}`,
-          gender: this.gender
-        }
+          birthDate: `${this.year}-${this.month
+            .toString()
+            .padStart(2, "0")}-${this.day.toString().padStart(2, "0")}`,
+          gender: this.gender,
+        };
 
         // 회원가입 전송
-        useUserStore().userJoin(JSON.stringify(joinUser))
+        // useUserStore().userJoin(JSON.stringify(joinUser));
 
         // 회원가입창 모달 닫기
-        userStore.closeModal('join')
+        userStore.closeModal("join");
       }
 
       // 비밀번호가 불일치하는 경우 알림을 표시합니다.
       if (this.passwordMismatch) {
         alert("비밀번호 일치 하지 않습니다.");
         return;
+      }
+    },
+    updateFieldStyle(fieldId, isValid) {
+      const field = document.getElementById(fieldId);
+      if (isValid) {
+        field.style.border = "none"; // 기본 스타일로 복귀
+      } else {
+        field.style.border = "2px solid red"; // 유효하지 않을 때 빨간색 테두리
       }
     },
 
@@ -203,21 +310,71 @@ export default {
     closeModal() {
       const userStore = useUserStore();
       userStore.closeModal("join");
+    },
 
-    }
+    // 이메일 중복 체크
+    emailCheck() {
+      const userStore = useUserStore();
+      userStore.emailCheck(this.email);
+    },
+    nickCheck() {
+      const userStore = useUserStore();
+      userStore.nickCheck(this.nickname);
+    },
   },
 
-  // 계속 패스워드 불일치 여부 판단
   computed: {
-    isNotPasswordMatch() {
-      return this.password !== this.passwordCheck;
-    }
+    // 이메일 유효성 검사
+    isValidEmail() {
+      const re =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+      let flag = re.test(this.email) || this.email === "";
+
+      if (flag && this.email !== "") {
+        this.emailCheck();
+        const userStore = useUserStore();
+        if (!userStore.isEmailCheck) {
+          flag = false;
+          this.emailMsg = "이메일이 중복되었습니다.";
+        } else {
+          this.isEmailVerRequest = true;
+        }
+      } else {
+        this.emailMsg = "이메일 주소를 정확히 입력해주세요.";
+      }
+      return flag;
+    },
+    // 비밀번호 유효성 검사
+    isValidPassword() {
+      const validatePassword =
+        /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,16}$/;
+
+      return validatePassword.test(this.password) || this.password === "";
+    },
+    // 비밀번호 확인 일치 검사
+    isPasswordMatch() {
+      return this.password === this.passwordCheck || this.passwordCheck === "";
+    },
+    // 닉네임 유효성 검사
+    isValidNickname() {
+      let flag = this.nickname.length >= 3 || this.nickname === "";
+      if (flag && this.nickname !== "") {
+        this.nickCheck();
+        const userStore = useUserStore();
+        if (!userStore.isNickCheck) {
+          flag = false;
+          this.nickMsg = "닉네임이 중복되었습니다.";
+        }
+      } else {
+        this.nickMsg = "닉네임을 3글자 이상 입력해주세요.";
+      }
+      return flag;
+    },
   },
-  
   mounted() {
     this.populateDateOptions();
   },
-
 };
 </script>
 

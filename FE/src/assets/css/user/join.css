@@ -1,7 +1,8 @@
 .password-error {
   color: red;
-  text-align: top;
-  margin-bottom: 10px;
+  text-align: center;
+  font-size: 10px;
+  height: 10px;
 }
 .join-text {
   margin-bottom: 20px;
@@ -9,7 +10,17 @@
   color: white;
   font-family: "Palatino Linotype", "Book Antiqua", palatino, serif; /* Press Start 2P 글꼴 적용 */
 }
-
+.email-btn{
+  position: absolute;
+  right: 14%;
+  background-color: transparent;
+  color: black;
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+  border-bottom: 2px solid black;
+  border-radius: 10px 20px 20px 10px;
+  margin-top: 9px;
+}
 /* 모달 애니메이션 */
 .modal {
   /* 기본 스타일 유지 */
@@ -57,8 +68,9 @@ input[type="text"],
 input[type="password"] {
   width: 75%;
   padding: 10px;
-  margin-bottom: 10px;
+  margin-top: 10px;
   border-radius: 30px;
+  border: none;
 }
 
 .modal-join-btn {
