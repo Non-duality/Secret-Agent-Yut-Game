@@ -28,8 +28,8 @@
       </div>
       <!-- 게임 승리 -->
       <div class="victory" v-if="gameResultDp">
-        <div v-if="gameResult">게임승리</div>
-        <div v-else>게임패배</div>
+        <div class="victory" v-if="gameResult">승리</div>
+        <div class="fail" v-else>패배</div>
       </div>
     </div>
 </template>
@@ -73,7 +73,7 @@
         flyPosition: { x: Math.random(), y: Math.random() },
         flyDirection: { x: (Math.random() - 0.5) * 50, y: (Math.random() - 0.5) * 50 },
         flies: [],
-        numOfFlies: 10,
+        numOfFlies: 5,
 
         // 게임 카운트
         countdown: 5,

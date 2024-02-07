@@ -1,15 +1,55 @@
-video {
-  clear: both;
-  display: block;
-  transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg);
-  -moz-transform: rotateY(180deg);
+/* 화면 중앙 정렬 */
+.videoView {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin: 50px 400px;
+  border: 3px whitesmoke solid;
+  background-color: blueviolet;
+  position: relative;
+  border-radius: 30px;
+  min-height: 50vh;
 }
 
-.videoView {
+.media-container {
   position: relative;
-  float: left;
-  width: 48%;
-  margin: 2% 1%;
-  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
+
+.media {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+}
+
+.media-container canvas {
+  z-index: 5;
+}
+
+#webcam {
+  width: 70%;
+  height: auto;
+}
+
+.countdown, .game-result {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: greenyellow;
+  font-size: 5rem;
+}
+
+.victory {
+  color: blue;
+}
+
+.fail {
+  color: red;
+}
+
