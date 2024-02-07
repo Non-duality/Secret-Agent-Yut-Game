@@ -15,6 +15,7 @@ import CharacterVue from "@/view/game/pick/character.vue";
 // 테스트용 라우터
 import FlyCatch from "@/components/mission/FlyCatch.vue";
 import Cham from "@/components/mission/Cham.vue"
+import Egg from "@/components/mission/Egg.vue"
 
 const router = createRouter({
   history: createWebHistory("/"),
@@ -29,6 +30,11 @@ const router = createRouter({
       path: "/cham",
       name: "mission2",
       component: Cham,
+    },
+    {
+      path: "/egg",
+      name: "mission3",
+      component: Egg,
     },
 
     // 로그인 전 초기 화면
