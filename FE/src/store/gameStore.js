@@ -6,11 +6,11 @@ export const useGameStore = defineStore("game", {
   state: () => {
     return {
       // 내 팀 정보.
-      myTeam: false,
-      // 턴.
-      turn: [0,0],
+      myTeam: 1,
+      // 턴. idx 0 = 홍팅, 1 = 청팀
+      turn: [0, 0],
       // false = 홍팀, true = 청팀.
-      teamTurn : false,
+      teamTurn: false,
       // 다시 던지기
       throwChance: 1,
       // 내 차례
@@ -32,7 +32,7 @@ export const useGameStore = defineStore("game", {
       // 가운데 방향 선택
       isCenterDir: false,
       // 미션 장소
-      missionTiles: [4,21,8,13,18],
+      missionTiles: [4, 21, 8, 13, 18],
       isMission: false,
       // 기존에 있는말 말고 새로가는 말만 이동하기 위해 카운트 변수.
       toCnt: 0,
@@ -236,8 +236,7 @@ export const useGameStore = defineStore("game", {
   actions: {
     // 말 이동
     moveHorse(selectedHorse) {
-      if(this.yutRes >= 4)
-        this.throwChance++;
+      if (this.yutRes >= 4) this.throwChance++;
 
       const horseInfo =
         selectedHorse.team === 1
@@ -320,10 +319,10 @@ export const useGameStore = defineStore("game", {
       }
 
       // 만약 백도가 나왔을 때.
-      if(this.yutRes === -1){
-        if(horseInfo.index === 20 || horseInfo.index === 25){
+      if (this.yutRes === -1) {
+        if (horseInfo.index === 20 || horseInfo.index === 25) {
           target -= 14;
-        } else if(horseInfo.index == 1){
+        } else if (horseInfo.index == 1) {
           target = 30;
         }
       }
@@ -335,33 +334,32 @@ export const useGameStore = defineStore("game", {
       // 말 이동
       this.moveTo(horseInfo.index, target);
       // 미션장소 체크
-      if(this.missionTiles.includes(target)){
+      if (this.missionTiles.includes(target)) {
         const MsgModalStore = useMsgModalStore();
         MsgModalStore.printMessage("미션 장소 도착");
-        setTimeout(()=>{
+        setTimeout(() => {
           this.isMission = true;
-        },2000);
+        }, 2000);
       }
       this.isHorseEnd = false;
       this.isGoDiagonal = false;
       this.isCenterDir = false;
 
       // 현재 차례에 기회가 있는지 체크.
-      if(this.throwChance === 0){
+      if (this.throwChance === 0) {
         // 홍팀이였다면,.
-        if(!this.teamTurn){
+        if (!this.teamTurn) {
           this.turn[0]++;
-          if(this.turn[0] > 3)
-            this.turn[0] = 0;
+          if (this.turn[0] > 3) this.turn[0] = 0;
         }
         // 청팀이면.
-        else{
+        else {
           this.turn[1]++;
-          if(this.turn[1] > 3)
-            this.turn[1] = 0;
+          if (this.turn[1] > 3) this.turn[1] = 0;
         }
         // 팀 차례 바꿈.
         this.teamTurn != this.teamTurn;
+        this.throwChance = 1;
       }
     },
 
@@ -568,6 +566,28 @@ export const useGameStore = defineStore("game", {
           break;
       }
       console.log("res = " + this.yutRes);
+    },
+    setYutText(res) {
+      switch (res) {
+        case 0:
+          this.yutText = "모";
+          break;
+        case 1:
+          this.yutText = "도";
+          break;
+        case 2:
+          this.yutText = "개";
+          break;
+        case 3:
+          this.yutText = "걸";
+          break;
+        case 4:
+          this.yutText = "윷";
+          break;
+        case 5:
+          this.yutText = "모";
+          break;
+      }
     },
   },
 });

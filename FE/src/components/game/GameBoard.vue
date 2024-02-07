@@ -119,31 +119,74 @@ export default {
     },
   },
   methods: {
+    sendStart() {
+      socketSend("/pub/game/80ba0a/start", "");
+    },
+    // 연결
     connectSocket() {
       const userStore = useUserStore();
       connect(userStore.accessToken, this.handleRecvMessage);
     },
+    // 받아오기.
     handleRecvMessage(receivedMsg) {
       console.log(receivedMsg);
-      if(!this.isThrowYut){
+      if (!this.isThrowYut) {
         console.log(receivedMsg.actionCategory);
-        if(receivedMsg.actionCategory === 1){
-          receiveYutRes();
-        }else if(receivedMsg.actionCategory === 2){
-          receiveSelectHorse();
+        if (receivedMsg.actionCategory === 1) {
+          receiveYutRes(receivedMsg);
+        } else if (receivedMsg.actionCategory === 2) {
+          receiveSelectHorse(receivedMsg);
         }
       }
     },
     // 윷 결과를 받아 왔을 때.
-    receiveYutRes(){
+    receiveYutRes(receivedMsg) {
+      const gameStore = useGameStore();
+      gameStore.setYutText(receivedMsg.yutRes);
+      gameStore.yutRes = receivedMsg.yutRes;
+      gameStore.throwRes = receivedMsg.throwRes;
+      this.yutText = gameStore.yutText;
 
+      // 텍스트와 윷결과 판을 다른 타이밍에 나타나게 한다.
+      this.isShowRes = true;
+      this.$refs.yutThrow.throwYut();
+      setTimeout(() => {
+        this.isShowResText = true;
+      }, 2000);
+
+      // 윷 결과를 없앤다.
+      setTimeout(() => {
+        this.isShowRes = false;
+        this.isShowResText = false;
+      }, 3500);
+
+      // 만약 아무 말도 안나갔는데 백도가 나오면 그냥 넘어간다.
+      if (gameStore.yutRes == -1) {
+        if (
+          gameStore.myTeam == 1 &&
+          gameStore.redHorses[4].check == 5 - gameStore.redEnd &&
+          gameStore.redHorses[4].index === 0
+        )
+          return;
+        else if (
+          gameStore.myTeam == 2 &&
+          gameStore.blueHorses[4].check == 5 - gameStore.blueHorses &&
+          gameStore.redHorses[4].index === 0
+        )
+          return;
+      }
     },
     // 말 선택 결과를 받아 왔을 때.
-    receiveSelectHorse(){
-
-    },
-    sendStart() {
-      socketSend("/pub/game/80ba0a/start", "");
+    receiveSelectHorse(receivedMsg) {
+      const gameStore = useGameStore();
+      // 홍팀
+      if (!gameStore.teamTurn) {
+        gameStore.moveHorse(gameStore.redHorses[receivedMsg.unitIndex]);
+      }
+      // 청팀
+      else {
+        gameStore.moveHorse(gameStore.blueHorses[receivedMsg.unitIndex]);
+      }
     },
     //pub/game/{code}/start
     // 윷 던지기
@@ -161,7 +204,9 @@ export default {
         throwRes: gameStore.throwRes,
       };
       socketSend("/pub/game/80ba0a/throw-yut", msg);
+
       // 텍스트와 윷결과 판을 다른 타이밍에 나타나게 한다.
+
       this.isShowRes = true;
       this.$refs.yutThrow.throwYut();
       setTimeout(() => {
@@ -176,8 +221,17 @@ export default {
 
       // 만약 아무 말도 안나갔는데 백도가 나오면 그냥 넘어간다.
       if (gameStore.yutRes == -1) {
-        if (gameStore.myTeam == 1 && gameStore.redHorses[4].check == 5) return;
-        else if (gameStore.myTeam == 2 && gameStore.blueHorses[4].check == 5)
+        if (
+          gameStore.myTeam == 1 &&
+          gameStore.redHorses[4].check == 5 - gameStore.redEnd &&
+          gameStore.redHorses[4].index === 0
+        )
+          return;
+        else if (
+          gameStore.myTeam == 2 &&
+          gameStore.blueHorses[4].check == 5 - gameStore.blueHorses &&
+          gameStore.redHorses[4].index === 0
+        )
           return;
       }
       // 윷 결과가 나오고 나서 부터 선택가능하다.
@@ -277,6 +331,21 @@ export default {
     goDigNo() {
       this.isShowGoDig = false;
     },
+  },
+
+  // 윷 결과 보여주기.
+  showRes() {
+    this.isShowRes = true;
+    this.$refs.yutThrow.throwYut();
+    setTimeout(() => {
+      this.isShowResText = true;
+    }, 2000);
+
+    // 윷 결과를 없앤다.
+    setTimeout(() => {
+      this.isShowRes = false;
+      this.isShowResText = false;
+    }, 3500);
   },
 };
 </script>
