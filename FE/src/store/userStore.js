@@ -9,9 +9,10 @@ import {
   nickCheck,
   emailVeificationRequest,
   emailVeification,
+  passEmailVeification,
+  passEmailVeificationRequest,
 } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
-import { error } from "jquery";
 
 export const useUserStore = defineStore("user", {
   id: "myStore",
@@ -22,6 +23,7 @@ export const useUserStore = defineStore("user", {
       showModalSide: false, // 네비 바, 사이드 바
       showLoginModal: false, // 로그인 모달
       showJoinModal: false, // 회원가입 모달
+      showFindModal: false, // 비밀번호 찾기 모달
       showUserInfoNick: false, // 회원정보 닉네임
       showDropOutModal: false, // 탈퇴 모달
       showSuccessPassword: false, // 비밀번호 변경 모달
@@ -39,6 +41,9 @@ export const useUserStore = defineStore("user", {
       isNickCheck: false,
       // 이메일 인증
       isEmailCodeCheck: false,
+      // 비밀번호 이메일 인증
+      isPassEmailCodeCheck: false,
+
     };
   },
 
@@ -57,6 +62,8 @@ export const useUserStore = defineStore("user", {
         useUserStore().showLoginModal = true;
       } else if (value === "join") {
         useUserStore().showJoinModal = true;
+      } else if (value === "find") {
+        useUserStore().showFindModal = true;
       } else if (value === "Nick") {
         useUserStore().showUserInfoNick = true;
       } else if (value === "out") {
@@ -74,6 +81,8 @@ export const useUserStore = defineStore("user", {
         useUserStore().showLoginModal = false;
       } else if (value === "join") {
         useUserStore().showJoinModal = false;
+      } else if (value === "find") {
+        useUserStore().showFindModal = false;
       } else if (value === "Nick") {
         useUserStore().showUserInfoNick = false;
       } else if (value === "Drop") {
@@ -117,6 +126,36 @@ export const useUserStore = defineStore("user", {
         );
       });
     },
+    // 비밀번호 이메일 인증 요청
+    passEmailVerRequest: async (email) => {
+      await passEmailVeificationRequest(
+        email,
+        (response) => {
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    },
+    // 비밀번호 이메일 인증
+    passEmailVer: async (param) => {
+      await passEmailVeification(
+        param,
+        (response) => {
+          if(response.status === 200){
+            useUserStore().isPassEmailCodeCheck = true;
+          }else{
+            useUserStore().isPassEmailCodeCheck = false;
+          }
+          console.log(response);
+        },
+        (error) => {
+          useUserStore().isPassEmailCodeCheck = false;
+          console.log(error);
+        }
+      );
+    },
     // 이메일 인증 요청
     EmailVerRequest: async (email) => {
       await emailVeificationRequest(
@@ -135,6 +174,7 @@ export const useUserStore = defineStore("user", {
         param,
         (response) => {
           if(response.status === 200){
+            console.log("성공")
             useUserStore().isEmailCodeCheck = true;
           }else{
             useUserStore().isEmailCodeCheck = false;

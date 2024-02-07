@@ -57,29 +57,51 @@ input[type="text"],
 input[type="password"] {
   width: 75%;
   padding: 10px;
-  margin-bottom: 10px;
   border-radius: 30px;
 }
 
-.modal-login-btn {
-  margin-right: 10px;
+.input-code{
+  margin-top: 10px;
 }
-.modal-cancel-btn {
-  margin-left: 10px;
+
+.find-msg{
+  color: #f44336;
+  font-size: 15px;
+}
+
+.modal-login-btn {
+  margin-top: 10px;
+  width: 80%;
+}
+.modal-join-btn {
+  background-color: transparent;
+  width: 40%;
+}
+.modal-find-btn {
+  background-color: transparent;
+  width: 40%;
 }
 
 /* 로그인 버튼 호버 효과 */
-.modal-login-btn:hover,
-.modal-join-btn:hover {
+.modal-login-btn:hover{
   background-color: #f44336; /* 호버 시 배경색 변경 */
   color: white; /* 호버 시 텍스트 색상 변경 */
 }
 
 /* 취소 버튼 호버 효과 */
-.modal-cancel-btn:hover {
-  background-color: #f44336; /* 호버 시 배경색 변경 */
-  color: white; /* 호버 시 텍스트 색상 변경 */
+.modal-join-btn:hover,
+.modal-find-btn:hover {
+  color: #f44336; /* 호버 시 텍스트 색상 변경 */
 
   /* 트랜지션 효과 */
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.email-btn{
+  position: absolute;
+  right: 14%;
+  background-color: transparent;
+  color: black;
+  border-left: 3px solid #eb00009c;
+  margin-top: 2px;
 }
