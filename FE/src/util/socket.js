@@ -4,6 +4,7 @@ import { Client } from "@stomp/stompjs";
 /* LocalStorage 사용 */
 import { useUserStore } from "@/store/userStore";
 import { useRoomStore } from "@/store/roomStore";
+import { usePickStore } from "@/store/pickStore";
 
 /* .env 저장 주소 사용 */
 const { VITE_WSS_API_URL } = import.meta.env;
@@ -132,9 +133,9 @@ export function connectRoom(type, router, from) {
        */
       onWebSocketError: (error) => {
         fatalError("[socket.onWebSocketError] : 웹 소켓 에러", error);
-        reject(new Error("WebSocket error"));
         alert("세션이 끊어짐");
         router.push("/");
+        reject(new Error("WebSocket error"));
       },
 
       /*
@@ -204,6 +205,7 @@ export function initRoom(router, from) {
                 : "";
               useRoomStore().seatInfo[seatKey].ready = seat.ready;
               useRoomStore().seatInfo[seatKey].state = seat.state;
+              useRoomStore().seatInfo[seatKey].team = seat.team;
             }
           }
 
@@ -236,14 +238,18 @@ export function initRoom(router, from) {
       } else if (useRoomStore().receivedMessage.type === "ROOM_EXIT_INFO") {
         // 방장이 방을 삭제한 경우 모두 alert를 받고 나간다.
         console.log(useRoomStore().receivedMessage.data.message);
-        if (useRoomStore().receivedMessage.data.message.includes("삭제되었습니다.")) {
+        if (
+          useRoomStore().receivedMessage.data.message.includes(
+            "삭제되었습니다."
+          )
+        ) {
           alert("방장이 방을 나갔습니다.");
 
           // 구독 취소한 뒤 방 정보에 대해 모두 리셋한다.
           useRoomStore().subscription.room.unsubscribe();
           // const initialStateRoom = useRoomStore().$reset();
           // Object.assign(this, initialStateRoom);
-          router.push({name: "room"});
+          router.push({ name: "room" });
         } else {
           useRoomStore().roomChatMessages.push(
             useRoomStore().receivedMessage.data.message
@@ -255,6 +261,7 @@ export function initRoom(router, from) {
                 useRoomStore().seatInfo[seatKey].nickname = seat.nickname;
                 useRoomStore().seatInfo[seatKey].ready = seat.ready;
                 useRoomStore().seatInfo[seatKey].state = seat.state;
+                useRoomStore().seatInfo[seatKey].team = seat.team;
               }
             }
           );
@@ -266,9 +273,13 @@ export function initRoom(router, from) {
             useRoomStore().seatInfo[seatKey].nickname = seat.nickname;
             useRoomStore().seatInfo[seatKey].ready = seat.ready;
             useRoomStore().seatInfo[seatKey].state = seat.state;
+            useRoomStore().seatInfo[seatKey].team = seat.team;
           }
         });
       } else if (useRoomStore().receivedMessage.type === "ROOM_START_PICK") {
+        // 여기서 Room에 대한 구독 취소 생각해보기.
+
+        console.log("픽창 시작!!");
       } else if (useRoomStore().receivedMessage.type === "ROOM_CHAT") {
         useRoomStore().roomChatMessages.push(
           useRoomStore().receivedMessage.data.nickname +
@@ -302,10 +313,16 @@ export function initRoom(router, from) {
  */
 export function initPick(router, from) {
   // 먼저, create된 roomCode를 가져와서 방 구독
-  useRoomStore().stompClient.subscribe(
+  usePickStore().subscription.pick = stompClient.subscribe(
     "/sub/room/" + currentRoomCode.value + "/" + from,
     (message) => {
+      console.log(message.body);
       useRoomStore().receivedMessage = JSON.parse(message.body);
+
+      /* 홍팀, 청팀 정보를 받아오는 것 */
+      if(usePickStore().receivedMessage.type === "PICK_GET_PRE_INFO"){
+
+      }
     }
   );
 }

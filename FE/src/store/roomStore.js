@@ -65,6 +65,7 @@ export const useRoomStore = defineStore("room", {
     /* 구독 관리 */
     subscription: {
       room: null,
+      pick: null,
     },
 
     /* 모달 관련 */

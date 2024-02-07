@@ -1,45 +1,12 @@
 <template>
   <div class="background">
+    <div class="timer">{{ remainingTime }}</div>
     <div class="content">
       <!-- (시작) OpenVidu -->
       <div id="main-container" class="container">
-        <div id="join" v-if="!session">
-          <div id="img-div"></div>
-          <div id="join-dialog" class="jumbotron vertical-center">
-            <h1>Join a video session</h1>
-            <div class="form-group">
-              <p>
-                <span>Participant</span>
-                <input v-model="myUserName" type="text" required />
-              </p>
-              <p>
-                <span>Session</span>
-                <input v-model="mySessionId" type="text" required />
-              </p>
-              <p class="text-center">
-                <button @click="joinSession()">Join!</button>
-              </p>
-            </div>
-          </div>
-        </div>
-
         <div id="session" v-if="session">
-          <div id="session-header">
-            <h1 id="session-title">{{ mySessionId }}</h1>
-            <input
-              class="btn btn-large btn-danger"
-              type="button"
-              id="buttonLeaveSession"
-              @click="leaveSession"
-              value="Leave session"
-            />
-          </div>
-
           <!-- 카메라 영역 -->
           <div class="rtc-container">
-            <!-- <div id="main-container">
-              <user-video :stream-manager="mainStreamManager" />
-            </div> -->
             <div id="video-container">
               <user-video
                 :stream-manager="publisher"
@@ -120,11 +87,6 @@ import UserVideo from "@/components/game/openvidu/UserVideo.vue";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const { VITE_VUE_API_URL } = import.meta.env;
-
-const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://i10d205.p.ssafy.io/api/v1";
-
 export default {
   data() {
     return {
@@ -134,6 +96,9 @@ export default {
       mainStreamManager: undefined,
       publisher: undefined,
       subscribers: [],
+
+      remainingTime: 30,
+      timerInterval: null,
 
       // Join form
       mySessionId: "SessionA",
@@ -146,42 +111,12 @@ export default {
     UserVideo,
   },
 
-  data() {
-    return {
-      // OpenVidu objects
-      OV: undefined,
-      session: undefined,
-      mainStreamManager: undefined,
-      publisher: undefined,
-      subscribers: [],
-
-      // Join form
-      mySessionId: "SessionA",
-      myUserName: "Participant" + Math.floor(Math.random() * 100),
-    };
-  },
-
   setup() {
     const store = useUserStore();
     const { showSpyModal } = storeToRefs(store);
 
     const users = ["준희", "지훈", "성규", "수빈", "희웅"];
-    const characters = [
-      "캐릭터1",
-      "캐릭터2",
-      "캐릭터3",
-      "캐릭터4",
-      "캐릭터5",
-      "캐릭터6",
-      "캐릭터7",
-      "캐릭터8",
-      "캐릭터9",
-      "캐릭터10",
-      "캐릭터11",
-      "캐릭터12",
-      "캐릭터13",
-      "캐릭터14",
-    ];
+    const characters = ["캐릭터1", "캐릭터2", "캐릭터3", "캐릭터4", "캐릭터5"];
     const selectedCharacters = [];
 
     return {
@@ -229,7 +164,7 @@ export default {
       this.getToken(this.mySessionId).then((token) => {
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-        console.log("토큰: " + token)
+        console.log("토큰: " + token);
         this.session
           .connect(token, { clientData: this.myUserName })
           .then(() => {
@@ -321,7 +256,10 @@ export default {
 
     async createToken(sessionId) {
       const response = await axios.post(
-        "https://i10d205.p.ssafy.io/api/v1" + "/sessions/" + sessionId + "/connections",
+        "https://i10d205.p.ssafy.io/api/v1" +
+          "/sessions/" +
+          sessionId +
+          "/connections",
         {},
         {
           headers: { "Content-Type": "application/json" },
@@ -388,10 +326,29 @@ export default {
     changeBorderColor() {
       this.borderColor = "red";
     },
+
+    startTimer() {
+      // 1초마다 남은 시간을 감소시키는 타이머 설정
+      this.timerInterval = setInterval(() => {
+        if (this.remainingTime > 0) {
+          this.remainingTime--;
+        } else {
+          // 시간이 다 되었을 때 타이머를 멈춤
+          clearInterval(this.timerInterval);
+        }
+      }, 1000);
+    },
   },
 
   mounted() {
     useUserStore().showSpyModal = false;
+    useUserStore().showModalSide = false;
+
+    this.myUserName = "A";
+    this.mySessionId = "SessionA";
+    this.joinSession();
+
+    this.startTimer();
   },
 };
 </script>

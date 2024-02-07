@@ -2,11 +2,14 @@
   <div class="wait-chat">
     <!-- 채팅 로그 -->
     <div class="chat-container">
-      <div v-for="(message, index) in reversedRoomChat" :key="index" style="display: flex; justify-content: center;">
+      <div
+        v-for="(message, index) in reversedRoomChat"
+        :key="index"
+        class="chat-log"
+      >
         <span
           :style="{
             color: getColorForMessage(message).color,
-            textAlign: 'left',
           }"
           v-html="getColorForMessage(message).text"
         ></span>
@@ -73,12 +76,14 @@ export default {
     getColorForMessage(message) {
       if (message.includes("님이 입장하였습니다.")) {
         return { color: "red", text: message };
+      } else if (message.includes("님이 퇴장하였습니다.")) {
+        return { color: "red", text: message };
       } else {
         const parts = message.split(" :"); // ":"를 기준으로 메시지를 분할
 
         // 이름과 내용이 존재하는 경우
         return {
-          text: `<span style="color: #2d81ff;">[${parts[0]}] </span>: <span style="color: white;">${parts[1]}</span>`,
+          text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
         };
       }
     },
@@ -89,3 +94,13 @@ export default {
 <style scoped>
 @import "../../../assets/css/room/GameWaitChat.css";
 </style>
+
+<!-- 
+  
+  * 채팅 유지보수 *
+
+  1. 입장, 퇴장 메시지에 대한 특정 코드를 서버로부터 전달 받으면, 그 코드로 입장과 퇴장 메시지에 대한 CSS를 붙일 필요가 있음.
+  
+  2. 자신이 방장이거나 준비완료, 준비해제와 같이 직관적인 커스텀이 필요함.
+
+-->

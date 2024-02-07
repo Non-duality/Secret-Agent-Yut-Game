@@ -96,16 +96,24 @@ export default {
 
         if (!canStart) return;
 
-        // 게임 시작하는 메시지 알림.
+        // 게임 시작하는 메시지 알림. 
+        // (방장만 하면 됨.)
         pubRoom(
           "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/start",
           useUserStore().userInfo.email
         );
 
+        // 게임 픽창 시작 차이점
+        // 나: /pub/room으로 바로 start를 하고 바로 팀 이름을 알고 구독 신청
+        // 준희형: start를 하면 "ROOM_START_PICK" 타입 메시지가 오고 거기서 구독 신청
+        
+        // (임시)
+        // 자신의 팀 번호 확인
         for (let i = 0; i < seatKeys.length; i++) {
           const seatKey = seatKeys[i];
           if (seatInfo[seatKey].nickname === useUserStore().userInfo.nickname) {
-            if (0 <= i < 2) {
+
+            if (seatInfo[seatKey].team === 1) {
               myTeamName = "red";
             } else {
               myTeamName = "blue";
@@ -115,10 +123,20 @@ export default {
         }
       }
 
+      // 소켓을 이제 Pick 타입으로 전환 
+      // 구독이 완료가 되면, 이제 픽창으로 시작
+      // (방장만 하면 됨.)
       connectRoom("Pick", this.$router, myTeamName).then(() => {
+        
+        // 간단한 유닛과 사용자 정보를 받아온다.
         pubPick(
-          "/pub/pick/" + useRoomStore().currentRoomInfo.roomCode + "/get-info"
+          "/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/get-info"
         );
+
+        // 픽창으로 넘어가기.
+        setTimeout(()=>{
+          this.$router.push({name: "pick"})
+        }, 100);
       });
     },
 
