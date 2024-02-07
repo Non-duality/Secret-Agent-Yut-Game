@@ -234,19 +234,31 @@ export function initRoom(router, from) {
           router.push({ name: "wait" });
         }
       } else if (useRoomStore().receivedMessage.type === "ROOM_EXIT_INFO") {
-        useRoomStore().roomChatMessages.push(
-          useRoomStore().receivedMessage.data.message
-        );
-        useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
-          (seat, index) => {
-            const seatKey = `seatnum${index + 1}`;
-            if (useRoomStore().seatInfo[seatKey]) {
-              useRoomStore().seatInfo[seatKey].nickname = seat.nickname;
-              useRoomStore().seatInfo[seatKey].ready = seat.ready;
-              useRoomStore().seatInfo[seatKey].state = seat.state;
+        // 방장이 방을 삭제한 경우 모두 alert를 받고 나간다.
+        console.log(useRoomStore().receivedMessage.data.message);
+        if (useRoomStore().receivedMessage.data.message.includes("삭제되었습니다.")) {
+          alert("방장이 방을 나갔습니다.");
+
+          // 구독 취소한 뒤 방 정보에 대해 모두 리셋한다.
+          useRoomStore().subscription.room.unsubscribe();
+          // const initialStateRoom = useRoomStore().$reset();
+          // Object.assign(this, initialStateRoom);
+          router.push({name: "room"});
+        } else {
+          useRoomStore().roomChatMessages.push(
+            useRoomStore().receivedMessage.data.message
+          );
+          useRoomStore().receivedMessage.data.currentSeatDtoList.forEach(
+            (seat, index) => {
+              const seatKey = `seatnum${index + 1}`;
+              if (useRoomStore().seatInfo[seatKey]) {
+                useRoomStore().seatInfo[seatKey].nickname = seat.nickname;
+                useRoomStore().seatInfo[seatKey].ready = seat.ready;
+                useRoomStore().seatInfo[seatKey].state = seat.state;
+              }
             }
-          }
-        );
+          );
+        }
       } else if (useRoomStore().receivedMessage.type === "ROOM_READY") {
         useRoomStore().receivedMessage.data.forEach((seat, index) => {
           const seatKey = `seatnum${index + 1}`;
@@ -322,7 +334,7 @@ export function pubRoom(destination, email) {
 }
 
 // 픽창 넘어가기 전 게임 정보 알리기.
-export function pubPick(destination){
+export function pubPick(destination) {
   stompClient.publish({
     destination: destination,
   });

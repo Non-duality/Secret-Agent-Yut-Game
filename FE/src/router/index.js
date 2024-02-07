@@ -121,47 +121,47 @@ function findChildRouteByPath(routes, pathToFind) {
 
 // 리다이렉션 처리
 router.beforeEach(async (to, from, next) => {
-  if (from.path.startsWith("/room/wait")) {
-    const confirmMessage = "정말 대기방에서 나가시겠습니까?";
-    if (confirm(confirmMessage)) {
-      next();
+  // if (from.path.startsWith("/room/wait")) {
+  //   const confirmMessage = "정말 대기방에서 나가시겠습니까?";
+  //   if (confirm(confirmMessage)) {
+  //     next();
+  //   } else {
+  //     // 사용자가 아니요를 선택하면 현재 경로에 남아 있음
+  //     next(false);
+  //   }
+  // } else {
+  const isLogin = useUserStore().isLogin;
+
+  // "/" 경로 처리
+  if (to.path === "/") {
+    if (isLogin) {
+      next("/home");
     } else {
-      // 사용자가 아니요를 선택하면 현재 경로에 남아 있음
-      next(false);
+      next();
     }
   } else {
-    const isLogin = useUserStore().isLogin;
+    // routes에 설정된 경로 중에서 현재 이동하려는 경로가 있는지 확인
+    const isRouteExist = router.options.routes.some(
+      (route) => route.path === to.path
+    );
 
-    // "/" 경로 처리
-    if (to.path === "/") {
+    // routes 중에 children을 가지고 있는 부모 경로들만을 확인하는 변수
+    const matchingChildRoute = findChildRouteByPath(
+      router.options.routes,
+      to.path
+    );
+
+    if (isRouteExist || matchingChildRoute) {
       if (isLogin) {
-        next("/home");
-      } else {
         next();
-      }
-    } else {
-      // routes에 설정된 경로 중에서 현재 이동하려는 경로가 있는지 확인
-      const isRouteExist = router.options.routes.some(
-        (route) => route.path === to.path
-      );
-
-      // routes 중에 children을 가지고 있는 부모 경로들만을 확인하는 변수
-      const matchingChildRoute = findChildRouteByPath(
-        router.options.routes,
-        to.path
-      );
-
-      if (isRouteExist || matchingChildRoute) {
-        if (isLogin) {
-          next();
-        } else {
-          next("/");
-        }
       } else {
         next("/");
       }
+    } else {
+      next("/");
     }
   }
+  // }
 });
 
 export default router;

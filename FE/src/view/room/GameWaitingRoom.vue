@@ -132,20 +132,24 @@ export default {
 
     // 나갈 때 로직
     goTolist() {
-      // 방을 나가기 위해 pub로 알린다.
-      pubRoom(
-        "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/exit",
-        useUserStore().userInfo.email
-      );
+      const confirmMessage = "정말 나가시겠습니까?";
 
-      // 구독 취소한 뒤 방 정보에 대해 모두 리셋한다.
-      useRoomStore().subscription.room.unsubscribe();
-      const initialStateRoom = useRoomStore().$reset();
-      Object.assign(this, initialStateRoom);
+      if (confirm(confirmMessage)) {
+        // 방을 나가기 위해 pub로 알린다.
+        pubRoom(
+          "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/exit",
+          useUserStore().userInfo.email
+        );
 
-      this.isOut = true;
+        // 구독 취소한 뒤 방 정보에 대해 모두 리셋한다.
+        useRoomStore().subscription.room.unsubscribe();
+        const initialStateRoom = useRoomStore().$reset();
+        Object.assign(this, initialStateRoom);
 
-      this.$router.push({ name: "room" });
+        this.isOut = true;
+
+        this.$router.push({ name: "home" });
+      }
     },
   },
 
