@@ -11,6 +11,8 @@ import {
   emailVeification,
   passEmailVeification,
   passEmailVeificationRequest,
+  changePass,
+  changeNick,
 } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
@@ -235,7 +237,31 @@ export const useUserStore = defineStore("user", {
         }
       );
     },
-
+    // 비밀번호 변경
+    changePass: async(param) => {
+      await changePass(
+        param,
+        (response) => {
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      )
+    },
+    // 닉네임 변경
+    changeNick: async(param) => {
+      await changeNick(
+        param,
+        (response) => {
+          useUserStore().getUserInfo();
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      )
+    },
     getUserInfo: () => {
       findByToken(
         (response) => {

@@ -40,11 +40,7 @@
       </div>
     </div>
 
-    <button
-      @type="submit"
-      @click="openModal('password')"
-      class="change-password-btn"
-    >
+    <button @type="submit" @click="changePass" class="change-password-btn">
       확인
     </button>
     <SuccessChangePasswordModal v-if="showSuccessPassword" />
@@ -80,6 +76,24 @@ export default {
     };
   },
   methods: {
+    async changePass() {
+      if (
+        this.currentPassword === "" ||
+        this.passwordMismatch ||
+        this.newPasswordError
+      )
+        return;
+
+      const param = {
+        previousPassword: this.currentPassword,
+        nextPassword: this.newPassword,
+      };
+
+      const userStore = useUserStore();
+      await userStore.changePass(param);
+
+      this.openModal("password");
+    },
     // 비밀번호 유효성 검사
     validateNewPassword() {
       const passwordRegex =

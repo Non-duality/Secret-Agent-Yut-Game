@@ -58,6 +58,17 @@ async function passEmailVeification(param, success, fail) {
   await local.post(`/user/get-temporary-password-email-verification?email=${param.email}&code=${param.code}`).then(success).catch(fail);
 }
 
+// 비밀번호 변경
+async function changePass(param, success, fail) {
+  console.log(param);
+  await local.post(`/user/change-password`,param).then(success).catch(fail);
+}
+
+// 닉네임 변경
+async function changeNick(param, success, fail) {
+  console.log(param);
+  await local.post(`/user/change-nickname`,param).then(success).catch(fail);
+}
 
 export {
   userConfirm,
@@ -71,4 +82,6 @@ export {
   emailVeification,
   passEmailVeification,
   passEmailVeificationRequest,
+  changePass,
+  changeNick,
 };

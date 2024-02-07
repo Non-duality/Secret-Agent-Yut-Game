@@ -4,7 +4,7 @@
     <div class="modal-content">
       <input type="text" placeholder="|" v-model="nickname" />
       <h4 class="nickname-text">변경할 닉네임을 입력하시오</h4>
-      <button @click="closeModal('Nick')" class="modal-change-nickname-btn">확인</button>
+      <button @click="nicknameChange" class="modal-change-nickname-btn">확인</button>
     </div>
   </div>
 
@@ -27,21 +27,12 @@ export default {
     };
   },
   methods: {
-    nicknameChangeTest() {
-      this.$emit("nicknameChangeTest")
+    nicknameChange() {
+      if(this.nickname.length < 3)  return;
+
+      useUserStore().changeNick(this.nickname);
+      this.closeModal('Nick');
     },
-
-    // // 서버로 새로운 닉네임을 전송하고 업데이트하는 로직을 추가해야함.
-    // // axios 요청
-    // changNickname() {
-    //     axios.post('/api/change-nickname', { newNickname: this.newNickname })
-    //     .then(response => {
-    //       // 업데이트 시 로직
-    //     })
-    //     .catch(error => {
-
-    //     });
-    // },
   }
 }
 </script>
