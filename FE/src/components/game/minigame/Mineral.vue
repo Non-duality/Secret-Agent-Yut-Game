@@ -2,7 +2,7 @@
   <!-- 웹캠 화면 -->
   <div id="liveView" class="videoView">
     <div class="media-container" style="position: relative;">
-      <!-- 웹캠 : 광물 랜덤으로 배치 -->
+      <!-- 웹캠 비디오 요소 -->
       <video
         class="media"
         id="webcam"
@@ -18,40 +18,21 @@
         style="position: absolute; left: auto; top: 0px;"
       ></canvas>
     </div>
-    <!-- 게임 타이머 -->
-    <div class="game-timer" v-if="gestureOutput">
-        {{ gameTimer }}
-    </div>
-    <!-- 시작 전 타이머 -->
-    <div class="start-timer" v-else>
-      {{ countdown }}
-    </div>
-    <!-- 게임 승리 -->
-    <div class="victory" v-if="gameResultDp">
-      <div v-if="gameResult">게임승리</div>
-      <div v-else>게임패배</div>
-    </div>
   </div>
 </template>
 
 <script>
 // 모션 인식 라이브러리
-import { GestureRecognizer, FilesetResolver, DrawingUtils } from '@mediapipe/tasks-vision';
+import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 // 광물 이미지
-import jewelImage from '@/assets/img/game/minigame/mineral.png'
-
+import jewelImage from '@/assets/img/mission/mineral.png';
 export default {
   data() {
     return {
       // 웹 캠 관련
-      gestureRocognizer: GestureRecognizer,
-        runningMode: "VEDIO", // 웹캠 실행 모드
-        webcamButtonText: "제스처 인식 로드 전", // 웹캠 활성화 버튼 텍스트
+      gestureRecognizer: GestureRecognizer,
         webcamRunning: false, // 웹캠 실행 여부
         lastVideoTime: -1, // 비디오의 마지막 시간
-        constraints: {
-          video: true
-        },
 
         // 제스쳐 인식 결과
         results: undefined,
@@ -67,18 +48,12 @@ export default {
         rightXAxis: "",
         rightYAxis: "",
         gestureSequence: [],
-        lastGetureTime: Date.now(),
+        lastGestureTime: Date.now(),
 
-        // 광물 띄우기, 초기 위치, 방향, 속도 지정
+        // 광물 띄우기, 초기 위치 지정
         jewelImg: new Image(),
-        jewelPosition: { x: Math.random(), y: Math.random() },
-        jewelDirection: { x: (Math.random() - 0.5) * 50, y: (Math.random() - 0.5) * 50 },
-        jewels: [],
-        numOfJewels: 3,
-
-        // 게임 카운트
-        countdown: 3,
-        gameTimer: 10,
+        jewelPosition: {x: null, y: null},
+        initialJewelPositionSet: false,
 
         // 게임 결과
         gameResultDp: false,    // 게임 결과 표시 여부
@@ -87,238 +62,226 @@ export default {
   },
 
   mounted() {
-    this.createGestureRecognizer();   // 제스처 인식기 초기화
-    this.startCountdown();            // 게임 시작 카운트
-    window.addEventListener('resize', this.adjustCanvasSizeToVideo)
+    this.createGestureRecognizer();     // 제스처 인식기 초기화
+    // this.predictWebcam()
   },
   
   // 메모리 정리
   beforeDestroy() {
-    // 컴포넌트 파기 시 미디어파이프 정지 및 리소스 해제
-    if (this.hands) {
-      this.hands.stop();
-      this.hands.close();
-    }
-    if (this.webcam) {
-      const stream = this.webcam.srcObject;
-      if (stream) {
-        const tracks = stream.getTracks();
-        tracks.forEach((track) => track.stop());
-      }
-    }
   },
 
   methods: {
-    // 캔버스 크기 조정
-    adjustCanvasSizeToVideo() {
-      const videoElement = this.$refs.webcam
-      const jewelCanvasElement = this.$refs.jewel_canvas
-      if (videoElement && jewelCanvasElement) {
-        jewelCanvasElement.width = videoElement.offsetWidth
-        jewelCanvasElement.height = videoElement.offsetHeight
-      }
-    },
 
-    // 제스처 인식기 초기화 및 캔버스 크기 설정
+    // 모션 인식 작업을 위한 설정
     async createGestureRecognizer() {
+      // 모션 인식 작업을 위한 WASM 파일 로드
       const vision = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-      );
-      this.gestureRecognizer = await GestureRecognizer.createFromOptions(
+          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
+      )
+      // 제스처 인식 옵션
+      this.gestureRocognizer = await GestureRecognizer.createFromOptions(
         vision,
         {
           baseOptions: {
             modelAssetPath:
-              "/models/gesture_recognizer.task",
-            delegate: "GPU"
+              "/models/gesture_recognizer.task",    // 모델 저장 경로
+            delegate: "GPU"                         // 모션 인식 처리 방식
           },
-          runningMode: this.runningMode,
-          numHands: 2
+          runningMode: "VIDEO",       // 비디오 인식
+          numHands: 2                 // 두 손 사용
         }
-      );
-
-      const videoElement = this.$refs.webcam;
-      videoElement.addEventListener('loadedmetadata', () => {
-        // 로드되면 비디오 사이즈에 맞추어 캔버스 사이즈 맞추기
-        this.adjustCanvasSizeToVideo()
-      })
+      )
+      this.loadVideo()
     },
 
-
-    // 카운트다운 시작
-    startCountdown() {
-      const countdownInterval = setInterval(() => {
-        this.countdown -= 1
-        if (this.countdown === 0) {
-          clearInterval(countdownInterval)
-          this.startGameTimer();
-        }
-      }, 1000)
-    },
-
-
-    // 게임시작
-    startGameTimer() {
-      this.toggleWebcam()
-      const gameInterval = setInterval(() => {
-        this.gameTimer -= 1
-        if (this.gameTimer === 0) {
-          clearInterval(gameInterval)
-          this.webcamRunning = false
-          this.clearFlyCanvas()
-          this.gameResultDp = true
-        }
-      }, 1000)
-    },
-
-    // 웹 캠 토글
-    async toggleWebcam() {
-      // 제스처 인식기 초기화 덜 됐을 경우
+    
+    
+    
+    // 비디오 로드 함수
+    async loadVideo() {
+      // 제스처 인식기가 로드되지 않았을 때, 알림 표시 후 함수 종료
       if (!this.gestureRocognizer) {
         alert("제스처 인식기가 로드되길 기다려주세요");
         return;
       }
-
-      // 웹 캠 활성화
-      this.webcamRunning = true;
-      this.gestureOutput = true
-      this.webcamButtonText = "제스처 인식 로드 완료";
       try {
-        const stream = await navigator.mediaDevices.getUserMedia(this.constraints)
-        const videoElement = this.$refs.webcam;
-        videoElement.srcObject = stream
-        videoElement.addEventListener("loadeddata", this.predictWebcam)
-        this.initializeJewels();
+        // 비디오 스트림 제약 조건: 비디오만 사용
+        const constraints = {
+          video: true
+        }
+        const stream = await navigator.mediaDevices.getUserMedia(constraints)     // 비디오 스트림 요청
+        const videoEl = this.$refs.webcam;
+        videoEl.srcObject = stream
       } catch (error) {
         alert("웹 캠에 접근할 수가 없습니다.")
         console.log(error)
       }
+      const videoEl = this.$refs.webcam
+      await videoEl.addEventListener('loadedmetadata', () => {
+        // 로드되면 비디오 사이즈에 맞추어 캔버스 사이즈 맞추기
+        this.adjustCanvasSizeToVideo()
+        this.webcamRunning = true;
+      })
+      this.initializerJewel()             // 보석 이미지 초기화
     },
 
-
-    // // 모션 인식 시작
-    // async predictWebcam() {
-    //   // 비디오 요소 가져오기
-    //   const videoElement = this.$refs.webcam;
-    //   // 현재 시간
-    //   let nowInMs = Date.now();
-    //   // 비디오 현재 시간과 마지막 시간이 다르면
-    //   if (videoElement.currentTime !== this.lastVideoTime) {
-    //     // 마지막 시간 현재 시간으로 업데이트
-    //     this.lastVideoTime = videoElement.currentTime;
-    //     this.results = this.gestureRocognizer.recognizeForVideo(videoElement, nowInMs);
-    //   }
-    //   // 손제스처 결과 처리
-    //   this.results.gestures.forEach((gesture, index) => {
-    //     const categoryName = gesture[0].categoryName
-    //     const currentTime = Date.now()
-    //     const timeDiff = currentTime - this.lastGetureTime
-    //     if (timeDiff < 100) {
-    //       this.gestureSequence.push(categoryName)
-    //     } else {
-    //       this.gestureSequence = [categoryName];
-    //     }
-    //     this.lastGetureTime = currentTime;
-    //   })
     
-    //   // 유효한 상태 변화 확인
-    //   if (this.isValidGestureChange()) {
-    //     if (this.checkDigJewel()) {
-    //       console.log('광물 캐기 성공')
-    //       this.webcamRunning = false
-    //       this.clearFlyCanvas()
-    //       this.gameResult = true
-    //       this.gameResultDp = true
-    //     } 
-    //   }
-    //   // 인식된 손 정보
-    //   if (this.results.gestures.length == 1) {
-    //     this.leftCategoryName = this.results.gestures[0][0].categoryName
-    //     this.leftCategoryScore = parseFloat(this.results.gestures[0][0].score * 100).toFixed(2) 
-    //     this.leftXAxis = this.results.landmarks[0][9].x
-    //     this.leftYAxis = this.results.landmarks[0][9].y
-    //   } else if (this.results.gestures.length == 2) {
-    //     this.leftCategoryName = this.results.gestures[0][0].categoryName
-    //     this.leftCategoryScore = parseFloat(this.results.gestures[0][0].score * 100).toFixed(2) 
-    //     this.leftXAxis = this.results.landmarks[0][9].x
-    //     this.leftYAxis = this.results.landmarks[0][9].y
-    //     this.rightCategoryName = this.results.gestures[1][0].categoryName
-    //     this.rightCategoryScore = parseFloat(this.results.gestures[1][0].score * 100).toFixed(2) 
-    //     this.rightXAxis = this.results.landmarks[1][9].x
-    //     this.rightYAxis = this.results.landmarks[1][9].y
-    //   } else {
-    //     this.gestureOutputText = false;
-    //   }
-    //   // 손모양 계속 인식을 위해 계속 호출
-    //   if (this.webcamRunning) {
-    //     window.requestAnimationFrame(this.predictWebcam);
-    //   }
-    // },
+    // 캔버스 크기를 비디오 크기에 맞게 조정
+    adjustCanvasSizeToVideo() {
+      const videoEl = this.$refs.webcam
+      const jewelCanvasEl = this.$refs.jewel_canvas
+      // 비디오 요소와 보석 캔버스 요소가 모두 존재하면 크기 맞추기
+      if (videoEl && jewelCanvasEl) {
+        jewelCanvasEl.width = videoEl.offsetWidth
+        jewelCanvasEl.height = videoEl.offsetHeight  
+      }
+    },
+    
 
-    // 광물 초기화
-    initializeJewels() {
-      this.jewels = Array.from({ length: this.numOfJewels}).map(() => ({
-        position: { x: Math.random(), y: Math.random() },
-        direction: { x: (Math.random() - 0.5) * 30, y: (Math.random() - 0.5) * 30 },
-        break: false,
-      }))
-
+    // 보석 이미지 초기화
+    initializerJewel() {
       this.jewelImg.src = jewelImage;
-      this.jewelImg.onload = () => {
-        console.log('이미지가 성공적으로 로드되었습니다.');
-        // this.animateJewel();
-      };
-      this.jewelImg.onerror = () => {
-        console.log('이미지 로드 중에 오류가 발생했습니다.')
-      }
-    },
-
-    // 광물 이미지 랜덤으로 그리기
-    drawJewel() {
-      if (this.webcamRunning) {
-        // 광물 그리기
-        const canvasElement = this.$refs.jewel_canvas;
-        if (!canvasElement) {
-          return console.log('캔버스 오류');
+        this.jewelImg.onload = () => {
+          console.log('이미지가 성공적으로 로드되었습니다.');
+          this.drawJewel()
+        };
+        this.jewelImg.onerror = () => {
+          console.log('이미지 로드 중에 오류가 발생했습니다.')
         }
-        const canvasCtx = canvasElement.getContext("2d");
+    },
 
-        // 캔버스의 폭과 높이
-        const canvasWidth = canvasElement.width;
-        const canvasHeight = canvasElement.height;
 
-        // 광물 이미지의 폭과 높이
-        const jewelWidth = 200;
-        const jewelHeight = 200;
+    // 보석 이미지 그리기
+    async drawJewel() {
+        const jewelCanvasEl = this.$refs.jewel_canvas;
+        // 캔버스가 없는 경우 "캔버스가 오류났습니다!"
+        if (!jewelCanvasEl) {
+            return console.log("캔버스가 오류났습니다!")
+        }
+        const canvasCtx = await jewelCanvasEl.getContext("2d");   // 2d로 그리겠습니다
+        // 이미지를 그리기 전에 캔버스 초기화
+        canvasCtx.clearRect(0, 0, jewelCanvasEl.width, jewelCanvasEl.height);
+        // 보석 이미지의 위치 설정
+        let jewelX, jewelY;
+        if (!this.initialJewelPositionSet) {
+            // 보석 이미지의 초기 위치를 랜덤으로 설정
+            jewelX = Math.random() * (jewelCanvasEl.width - 100); // 캔버스 너비 내에서 랜덤한 x 위치
+            jewelY = Math.random() * (jewelCanvasEl.height - 100); // 캔버스 높이 내에서 랜덤한 y 위치
+            this.jewelPosition.x = jewelX
+            this.jewelPosition.y = jewelY
+            this.initialJewelPositionSet = true;
+        } else {
+            // 이후에는 고정된 위치에 그리기
+            jewelX = this.jewelPosition.x; // 고정된 x 위치
+            jewelY = this.jewelPosition.y; // 고정된 y 위치
+        }
 
-        // 랜덤한 위치 생성
-        const xCoordinate = Math.random() * (canvasWidth - jewelWidth);
-        const yCoordinate = Math.random() * (canvasHeight - jewelHeight);
+        // 보석 이미지 그리기
+        canvasCtx.drawImage(this.jewelImg, jewelX, jewelY, 100, 100);
 
-        // 캔버스 위에 광물 그리기
-        this.clearJewelCanvas(0, 0, canvasWidth, canvasHeight);
-        canvasCtx.drawImage(this.jewelImg, xCoordinate, yCoordinate, jewelWidth, jewelHeight);
+        // 주기적으로 drawJewel 메서드 호출하여 보석 이미지를 계속해서 유지
+        setTimeout(() => this.drawJewel(), 1000);
+    },
+
+
+    // 모션 인식 시작
+    async predictWebcam() {
+      // 비디오 요소 가져오기
+      const videoElement = this.$refs.webcam;
+      // 현재 시간
+      let nowInMs = Date.now();
+      // 비디오 현재 시간과 마지막 시간과 다르면
+      if (videoElement.currentTime !== this.lastVideoTime) {
+        // 마지막 시간 현재 시간으로 업데이트
+        this.lastVideoTime = videoElement.currentTime;
+        this.results = this.gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
+      }
+      // 손제스쳐 결과 처리
+      this.results.gestures.forEach((gesture, index) => {
+          const categoryName = gesture[0].categoryName
+          const currentTime = Date.now()
+          const timeDiff = currentTime - this.lastGestureTime
+          if (timeDiff < 100) {
+            this.gestureSequence.push(categoryName)
+          } else {
+            this.gestureSequence = [categoryName];
+          }
+          this.lastGetureTime = currentTime;
+        })
+      // 유효한 상태 변화 확인
+      if (this.isValidGestureChange()) {
+        if (this.checkBreakJewel()) {
+          console.log('광물 부수기 성공')
+          this.webcamRunning = false
+          this.clearJewelCanvas()
+          this.gameResult = true
+          this.gameResultDp = true
+        }
+      }
+
+      // 인식된 손 정보
+      if (this.results.gestures.length == 1) {
+        this.leftCategoryName = this.results.gestures[0][0].categoryName
+        this.leftCategoryScore = parseFloat(this.results.gestures[0][0].score * 100).toFixed(2) 
+        this.leftXAxis = this.results.landmarks[0][9].x
+        this.leftYAxis = this.results.landmarks[0][9].y
+      } else if (this.results.gestures.length == 2) {
+        this.leftCategoryName = this.results.gestures[0][0].categoryName
+        this.leftCategoryScore = parseFloat(this.results.gestures[0][0].score * 100).toFixed(2) 
+        this.leftXAxis = this.results.landmarks[0][9].x
+        this.leftYAxis = this.results.landmarks[0][9].y
+        this.rightCategoryName = this.results.gestures[1][0].categoryName
+        this.rightCategoryScore = parseFloat(this.results.gestures[1][0].score * 100).toFixed(2) 
+        this.rightXAxis = this.results.landmarks[1][9].x
+        this.rightYAxis = this.results.landmarks[1][9].y
+      } else {
+        this.gestureOutput = false;
+      }
+      // 손모양 계속 인식을 위해 계속 호출
+      if (this.webcamRunning) {
+        window.requestAnimationFrame(this.predictWebcam);
       }
     },
 
-    // 광물에 손이 닿였는지 판단
+    // 파리와 손의 위치가 가까운지 판단
+    checkFlyCaught() {
+        const vedioElement = this.$refs.webcam;
+        const leftHandX = this.leftXAxis * vedioElement.width
+        const leftHandY = this.leftYAxis * vedioElement.height
+        const rightHandX = this.rightXAxis * vedioElement.width
+        const rightHandY = this.rightYAxis * vedioElement.height
+        const flyX = this.flyPosition.x
+        const flyY = this.flyPosition.y
+        const leftDistance = Math.sqrt(Math.pow(leftHandX - flyX, 2) + Math.pow(leftHandY - flyY, 2))
+        const rightDistance = Math.sqrt(Math.pow(rightHandX - flyX, 2) + Math.pow(rightHandY - flyY, 2))
+        if (leftDistance < 50 || rightDistance < 50) {
+          console.log('가까워요')
+          return true
+      }
+    },
 
 
+    // 움켜잡는 상태 관리
+    isValidGestureChange() {
+      const validSequence = ['Open_Palm', 'None', 'Closed_Fist']
+      return validSequence.every((el) => this.gestureSequence.includes(el))
+    },
 
-    // 광물 캔버    // clearJewelCanvas() {
-    //   const jewelCanvasElement = this.$refs.jewel_canvas;
-    //   if (jewelCanvasElement) {
-    //     const jewelCanvasCtx = jewelCanvasElement.getContext("2d");
-    //     jewelCanvasCtx.clearRect(0, 0, jewelCanvasElement.width, jewelCanvasElement.height)
-    //   }
-    // },스 클리어
 
-  },
+    // 파리 캔버스 클리어
+    clearFlyCanvas() {
+      const flyCanvasElement = this.$refs.fly_canvas;
+      if (flyCanvasElement) {
+        const flyCanvasCtx = flyCanvasElement.getContext("2d");
+        flyCanvasCtx.clearRect(0, 0, flyCanvasElement.width, flyCanvasElement.height)
+      }
+    },
+
+  }
 };
 </script>
 
 <style scoped>
-/* 화면 중앙 정렬 */
 .videoView {
   display: flex;
   flex-direction: column;
@@ -326,9 +289,12 @@ export default {
   align-items: center;
   padding-top: 30px;
   padding-bottom: 30px;
-  margin-left: 100px;
-  margin-right: 100px;
   background-color: blueviolet;
+  border-radius: 20px;
+  width: 50%;
+  height: 70%;
+  margin: 0 auto;
+  margin-top: 50px;
 }
 
 .media-container {

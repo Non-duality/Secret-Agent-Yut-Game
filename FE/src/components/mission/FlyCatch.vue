@@ -87,7 +87,7 @@
     
     mounted() {
       this.createGestureRecognizer(); // 제스처 인식기 초기화
-      this.startCountdown(); // 게임 시작 카운트
+      this.startCountdown();          // 게임 시작 카운트
       window.addEventListener('resize', this.adjustCanvasSizeToVideo)
     },
 
@@ -216,7 +216,7 @@
             this.gameResultDp = true
           }
         }
-        
+
         // 인식된 손 정보
         if (this.results.gestures.length == 1) {
           this.leftCategoryName = this.results.gestures[0][0].categoryName
