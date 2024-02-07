@@ -13,9 +13,6 @@ let stompClient = null;
 let connected = false;
 let roomCode = null;
 
-let stompClient2 = null;
-let connected2 = false;
-
 /* 게임 소켓 */
 export function connect(accessToken, recvCallback) {
   return new Promise((resolve, reject) => {
@@ -82,7 +79,7 @@ export function connect(accessToken, recvCallback) {
  *
  * 방 또는 픽창에서 방을 구독을 위해 사용한다.
  */
-export function connectRoom(router, from) {
+export function connectRoom(type, router, from) {
   return new Promise((resolve, reject) => {
     let token = useUserStore().accessToken;
     console.log(router);
@@ -98,9 +95,15 @@ export function connectRoom(router, from) {
 
       onConnect: () => {
         console.log("[socket.onConnect] : 연결 실행합니다.");
-        // 구독한다
-        initRoom(router, from);
-        resolve();
+
+        if (type === "Room") {
+          // 구독한다
+          initRoom(router, from);
+          resolve();
+        } else if (type === "Pick") {
+          initPick(router, from);
+          resolve();
+        }
       },
 
       /*
@@ -131,7 +134,7 @@ export function connectRoom(router, from) {
         fatalError("[socket.onWebSocketError] : 웹 소켓 에러", error);
         reject(new Error("WebSocket error"));
         alert("세션이 끊어짐");
-        router.push("/")
+        router.push("/");
       },
 
       /*
@@ -143,7 +146,7 @@ export function connectRoom(router, from) {
         fatalError("[roomStore] : STOMP 오류 발생", frame);
         reject(new Error("STOMP error"));
         alert("세션이 끊어짐");
-        router.push("/")
+        router.push("/");
       },
 
       reconnectDelay: 5000, //자동재연결
@@ -168,6 +171,14 @@ export function connectRoom(router, from) {
   });
 }
 
+/*
+ * 방 구독 함수
+ *
+ * 방과 관련된 정보를 수신하는 함수이다.
+ *
+ * router : 해당 vue 라우터 변수
+ * from : 방 생성인지 그냥 참여하는지 확인하는 변수
+ */
 export function initRoom(router, from) {
   // 먼저, create된 roomCode를 가져와서 방 구독
   useRoomStore().subscription.room = stompClient.subscribe(
@@ -192,8 +203,11 @@ export function initRoom(router, from) {
                 ? seat.nickname
                 : "";
               useRoomStore().seatInfo[seatKey].ready = seat.ready;
+              useRoomStore().seatInfo[seatKey].state = seat.state;
             }
           }
+
+          // useRoomStore().receivedMessage.data.roomDetailDto.currentUserCount;
         );
 
         const storedRoomData = JSON.parse(localStorage.getItem("room"));
@@ -229,9 +243,20 @@ export function initRoom(router, from) {
             if (useRoomStore().seatInfo[seatKey]) {
               useRoomStore().seatInfo[seatKey].nickname = seat.nickname;
               useRoomStore().seatInfo[seatKey].ready = seat.ready;
+              useRoomStore().seatInfo[seatKey].state = seat.state;
             }
           }
         );
+      } else if (useRoomStore().receivedMessage.type === "ROOM_READY") {
+        useRoomStore().receivedMessage.data.forEach((seat, index) => {
+          const seatKey = `seatnum${index + 1}`;
+          if (useRoomStore().seatInfo[seatKey]) {
+            useRoomStore().seatInfo[seatKey].nickname = seat.nickname;
+            useRoomStore().seatInfo[seatKey].ready = seat.ready;
+            useRoomStore().seatInfo[seatKey].state = seat.state;
+          }
+        });
+      } else if (useRoomStore().receivedMessage.type === "ROOM_START_PICK") {
       } else if (useRoomStore().receivedMessage.type === "ROOM_CHAT") {
         useRoomStore().roomChatMessages.push(
           useRoomStore().receivedMessage.data.nickname +
@@ -256,6 +281,24 @@ export function initRoom(router, from) {
 }
 
 /*
+ * 픽창 구독 함수
+ *
+ * 픽창과 관련된 정보를 수신한다.
+ *
+ * router : 해당 vue 라우터 변수
+ * from : 자신의 팀 이름 변수
+ */
+export function initPick(router, from) {
+  // 먼저, create된 roomCode를 가져와서 방 구독
+  useRoomStore().stompClient.subscribe(
+    "/sub/room/" + currentRoomCode.value + "/" + from,
+    (message) => {
+      useRoomStore().receivedMessage = JSON.parse(message.body);
+    }
+  );
+}
+
+/*
  * 치명적 오류
  *
  * 여기서는 소켓을 모두 초기화하고 사용자 LocalStoage를 초기화 후
@@ -275,6 +318,13 @@ export function pubRoom(destination, email) {
   stompClient.publish({
     destination: destination,
     body: email,
+  });
+}
+
+// 픽창 넘어가기 전 게임 정보 알리기.
+export function pubPick(destination){
+  stompClient.publish({
+    destination: destination,
   });
 }
 

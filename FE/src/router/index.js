@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/store/userStore";
-import { useRoomStore } from "@/store/roomStore";
 
 import HomeView from "@/view/home/HomeView.vue";
 import RoomViewVue from "@/view/room/RoomView.vue";
@@ -122,21 +121,9 @@ function findChildRouteByPath(routes, pathToFind) {
 
 // 리다이렉션 처리
 router.beforeEach(async (to, from, next) => {
-  // 만약 소켓 연결이 끊어지면, 소켓 연결 다시 시도.
-  // if (useUserStore().isLogin && !useRoomStore().isConnected) {
-  //   console.log("연결이 끊어짐을 확인했습니다.")
-  //   try {
-  //     await useRoomStore().connectWS();
-  //     console.log("WebSocket connection re-established");
-  //   } catch (error) {
-  //     console.error("WebSocket connection failed:", error);
-  //   }
-  // }
-
   if (from.path.startsWith("/room/wait")) {
     const confirmMessage = "정말 대기방에서 나가시겠습니까?";
     if (confirm(confirmMessage)) {
-      // 사용자가 예를 선택하면 다음 단계로 이동
       next();
     } else {
       // 사용자가 아니요를 선택하면 현재 경로에 남아 있음

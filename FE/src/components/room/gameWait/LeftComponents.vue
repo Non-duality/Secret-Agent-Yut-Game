@@ -19,13 +19,29 @@
         :key="seatKey"
         class="team-container"
       >
-        <div v-if="team.users[seatKey].nickname === ''">
-          <img src="@/assets/img/profile_picture.png" class="team-img" />
-          <span>비어있음</span>
+        <div v-if="team.users[seatKey].nickname === ''" class="per">
+          <div class="img-div">
+            <img src="@/assets/img/profile_picture.png" class="team-img" />
+          </div>
+          <div class="text-container">
+          </div>
+
+          <div class="ready-div">
+          </div>
         </div>
-        <div v-else>
-          <img src="@/assets/img/profile_picture.png" class="team-img" />
-          <span>{{ team.users[seatKey].nickname }}</span>
+        <div v-else class="per">
+          <div class="img-div">
+            <img src="@/assets/img/profile_picture.png" class="team-img" />
+          </div>
+          <div class="text-container">
+            <span>{{ team.users[seatKey].nickname }}</span>
+          </div>
+
+          <div class="ready-div">
+            <span v-if="team.users[seatKey].ready">준비완료</span>
+            <span v-else-if="team.users[seatKey].state===2" id="owner">방장</span>
+            <span v-else>레디하지 않음</span>
+          </div>
         </div>
       </div>
     </div>

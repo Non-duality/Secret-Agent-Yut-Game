@@ -98,9 +98,15 @@ export default {
       const roomStore = useRoomStore();
       roomStore.openModal(modalType);
     },
+
+    delay(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    },
   },
 
   async mounted() {
+    await this.delay(100); // 100 밀리초 동안 기다립니다.
+
     this.ShowDetail = false;
 
     await useRoomStore().getRoomSomeListData();
@@ -110,7 +116,7 @@ export default {
     this.roomListLoaded = true;
 
     // 첫 번째 방만 상세 조회
-    if(this.roomInfo.length === 0) return;
+    if (this.roomInfo.length === 0) return;
 
     await this.selectRoomInfo(this.roomInfo[0].roomId);
     this.roomInitDetailInfo = useRoomStore().roomDetailData;

@@ -141,7 +141,7 @@ export default {
         useRoomStore()
           .createRoom()
           .then(() => {
-            connectRoom(this.$router, "make").then(() => {
+            connectRoom("Room", this.$router, "make").then(() => {
               useUserStore().currentRoomInfo = {
                 ...useRoomStore().createRoomInfo,
               };

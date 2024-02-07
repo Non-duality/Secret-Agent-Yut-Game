@@ -2,8 +2,14 @@
   <div class="wait-chat">
     <!-- 채팅 로그 -->
     <div class="chat-container">
-      <div v-for="(message, index) in reversedRoomChat" :key="index">
-        <span :style="{ color: getColorForMessage(message).color, textAlign: 'left' }" v-html="getColorForMessage(message).text"></span>
+      <div v-for="(message, index) in reversedRoomChat" :key="index" style="display: flex; justify-content: center;">
+        <span
+          :style="{
+            color: getColorForMessage(message).color,
+            textAlign: 'left',
+          }"
+          v-html="getColorForMessage(message).text"
+        ></span>
       </div>
     </div>
 
@@ -68,12 +74,11 @@ export default {
       if (message.includes("님이 입장하였습니다.")) {
         return { color: "red", text: message };
       } else {
-        const parts = message.split(":"); // ":"를 기준으로 메시지를 분할
+        const parts = message.split(" :"); // ":"를 기준으로 메시지를 분할
 
         // 이름과 내용이 존재하는 경우
         return {
-          color: "purple",
-          text: `<span style="color: purple; text-align: left;">${parts[0]}</span>: <span style="color: white;">${parts[1]}</span>`,
+          text: `<span style="color: #2d81ff;">[${parts[0]}] </span>: <span style="color: white;">${parts[1]}</span>`,
         };
       }
     },
