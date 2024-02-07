@@ -17,7 +17,7 @@
       </div>
     </div>
     <!-- 방 생성 모달 -->
-    <transition name="fade">
+    <transition name="fade" mode="out-in">
       <RoomMakingModal
         v-if="showRoomMaking"
         class="room-make-modal"
@@ -25,10 +25,13 @@
       />
     </transition>
     <!-- 비공개방 비밀번호 체크 모달 -->
-    <RoomPasswordCheckModal
-      v-if="showRoomPasswordCheckModal"
-      class="room-password-modal"
-    />
+
+    <transition name="fade" mode="out-in">
+      <RoomPasswordCheckModal
+        v-if="showRoomPasswordCheckModal"
+        @close="showRoomPasswordCheckModal = false"
+        class="room-password-modal"
+    /></transition>
   </div>
 </template>
 
@@ -38,7 +41,6 @@ import RoomList from "@/components/room/gameList/RoomList.vue";
 import RoomInfo from "@/components/room/gameList/RoomInfo.vue";
 import RoomMakingModal from "@/components/room/gameList/RoomMakingModal.vue";
 import RoomPasswordCheckModal from "@/components/room/gameList/RoomPasswordCheckModal.vue";
-
 import { useUserStore } from "@/store/userStore";
 import { useRoomStore } from "@/store/roomStore";
 
@@ -105,7 +107,7 @@ export default {
   },
 
   async mounted() {
-    await this.delay(100); // 100 밀리초 동안 기다립니다.
+    await this.delay(100);
 
     this.ShowDetail = false;
 

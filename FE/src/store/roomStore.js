@@ -67,8 +67,6 @@ export const useRoomStore = defineStore("room", {
       room: null,
     },
 
-    /* 방 인원 수 */
-
     /* 모달 관련 */
     showRoomMakingModal: false, // 방 생성
     showRoomPasswordCheckModal: false, // 비공개방 비밀번호 체크 모달

@@ -11,7 +11,6 @@ import {
   emailVeification,
 } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
-import { error } from "jquery";
 
 export const useUserStore = defineStore("user", {
   id: "myStore",
@@ -50,6 +49,7 @@ export const useUserStore = defineStore("user", {
       Object.assign(this, initialStateUser);
       Object.assign(this, initialStateRoom);
     },
+    
     // 로그인, 회원가입 모달 창을 나타내기 위한 함수 매개변수를 입력받아
     // 로그인, 회원가입 차별을 준다.
     openModal(value) {

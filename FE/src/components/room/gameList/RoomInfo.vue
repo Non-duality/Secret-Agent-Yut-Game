@@ -57,7 +57,7 @@ export default {
       useRoomStore()
         .canEnterRoom()
         .then(() => {
-          connectRoom("Room", this.$router, "enter").then(() => {
+          connectRoom(this.$router, "enter").then(() => {
             // 현재, 자신의 방의 정보를 넣는다.
             // (나갈 때 정보 삭제 필요)
             useUserStore().currentRoomInfo = null;

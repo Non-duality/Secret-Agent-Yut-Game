@@ -2,10 +2,7 @@
   <div class="nav-pro">
     <!-- 사용자가 설정한 사진을 보여준다 -->
     <div class="nav-img">
-      <img
-        src="../../assets/icon/user.png"
-        class="img"
-      />
+      <img src="../../assets/icon/user.png" class="img" />
     </div>
     <!-- 사용자의 정보를 간략히 보여준다 -->
     <div class="nav-info">
@@ -27,20 +24,25 @@ import { useUserStore } from "@/store/userStore";
 
 export default {
   data() {
-    return {
-    };
+    return {};
   },
 
   methods: {
+    // 로그아웃하기.
     initializeData() {
-      useUserStore().initData();
+      const confirmMessage = "정말 로그아웃 하시겠습니까?";
+
+      if (confirm(confirmMessage)) {
+        useUserStore().initData();
+        this.$router.push("/");
+      }
     },
   },
 
   computed: {
     userName() {
       const userInfo = useUserStore().userInfo;
-      
+
       // userInfo를 이용한 로직
       return userInfo ? userInfo.nickname : "로딩 중...";
     },

@@ -43,35 +43,35 @@ button {
   background: url("../img/MainBackground.png") no-repeat;
   background-size: cover;
   background-position: center;
-  animation: backgroundAnimation 80s infinite linear;
+  animation: backgroundAnimation 70s infinite linear;
 }
 
 .home {
   background: url("@/assets/img/home/homeBackground.png");
   background-size: cover;
   background-position: center;
-  animation: backgroundAnimation 80s infinite linear;
+  animation: backgroundAnimation 70s infinite linear;
 }
 
 .room-list {
   background: url("@/assets/img/room/roomListBackground.png");
   background-size: cover;
   background-position: center;
-  animation: backgroundAnimation 80s infinite linear;
+  animation: backgroundAnimation 70s infinite linear;
 }
 
 .room-wait {
   background: url("@/assets/img/room/roomWatingBackground.png");
   background-size: cover;
   background-position: center;
-  animation: backgroundAnimation 80s infinite linear;
+  animation: backgroundAnimation 70s infinite linear;
 }
 
 .profile {
   background: url("@/assets/img/user/profileBackground.png");
   background-size: cover;
   background-position: center;
-  animation: backgroundAnimation 80s infinite linear;
+  animation: backgroundAnimation 70s infinite linear;
 }
 
 .game {

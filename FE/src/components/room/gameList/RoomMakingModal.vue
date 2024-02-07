@@ -29,11 +29,10 @@
       </div>
       <div class="form-group" v-if="!roomInfo.public">
         <label for="password">비밀번호</label>
-        <!-- 악성 유저 고려해서 비밀번호 길이 제한 -->
         <input
           type="text"
           id="password"
-          maxlength="10"
+          maxlength="8"
           v-model="roomInfo.password"
         />
       </div>
