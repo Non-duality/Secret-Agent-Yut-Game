@@ -17,72 +17,56 @@
       </label>
       <br />
       <button @click="login()" class="modal-login-btn">로그인</button>
-      <button @click="join()" class="modal-cancel-btn">회원가입</button>
+      <button @click="find()" class="modal-find-btn">비밀번호찾기</button>
+      <span>|</span>
+      <button @click="join()" class="modal-join-btn">회원가입</button>
     </div>
   </div>
 </template>
   
 <script>
-import { ref } from "vue";
 import { useUserStore } from "@/store/userStore";
-import { useRouter } from "vue-router";
 
 export default {
-  setup() {
-    const router = useRouter();
-
-    const loginUser = ref({
-      email: "",
-      password: "",
-    });
-
-    // (1) 로그인을 수행한다.
-    const login = async () => {
-      // (2) 비동기 통신으로 로그인 정보를 전달한다.
-      await useUserStore().userLogin(loginUser.value);
-
-      // (3) 만약 로그인이 되었다면, isLogin은 True가 된다.
-      if (useUserStore().isLogin) {
-        // (4) 유저 정보를 가져온다.
-        useUserStore().getUserInfo();
-
-        // (4-1) 모달을 닫는다.
-        closeModal();
-
-        // (4-2) 상단바와 사이드바를 나타낸다.
-        useUserStore().showModalSide = true;
-
-        // (5) 홈으로 이동한다.
-        router.push("/home");
-      } else {
-        // (3) 만약 로그인이 실패한다면, 초기화면으로 이동한다.
-        useUserStore().isLogin = false;
-        useUserStore().initData();
-        router.push("/");
-      }
-    };
-
-    // 회원가입으로 이동한다.
-    const join = () => {
-      closeModal();
-      useUserStore().openModal("join");
-    };
-
-    // 현재 실행된 모달을 닫는다.
-    const closeModal = () => {
-      useUserStore().closeModal("login");
-    };
-
+  name: "LoginComponent",
+  data() {
     return {
-      loginUser,
-      closeModal,
-      login,
-      join,
+      loginUser: {
+        email: "",
+        password: "",
+      },
     };
+  },
+  methods: {
+    async login() {
+      const userStore = useUserStore();
+      await userStore.userLogin(this.loginUser);
+      if (userStore.isLogin) {
+        userStore.getUserInfo();
+        this.closeModal();
+        userStore.showModalSide = true;
+        this.$router.push("/home");
+      } else {
+        userStore.isLogin = false;
+        userStore.initData();
+        this.$router.push("/");
+      }
+    },
+    join() {
+      this.closeModal();
+      useUserStore().openModal("join");
+    },
+    find(){
+      this.closeModal();
+      useUserStore().openModal("find");
+    },
+    closeModal() {
+      useUserStore().closeModal("login");
+    },
   },
 };
 </script>
 
 <style scoped>
-@import "../../assets/css/user/login.css";
+@import "@/assets/css/user/login.css";
 </style>

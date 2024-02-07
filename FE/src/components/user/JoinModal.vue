@@ -184,14 +184,13 @@ export default {
       const param = { email: this.email, code: this.emailCode };
       const userStore = useUserStore();
       userStore.EmailVer(param);
-
-      if(userStore.isEmailCodeCheck){
+      console.log(userStore.isEmailCodeCheck);
+      if (userStore.isEmailCodeCheck) {
         this.isEmailVer = true;
         this.isEmailVerRequest = false;
         this.isEmailCode = false;
         this.emailMsg = "인증에 성공하였습니다.";
-      }
-      else{
+      } else {
         this.emailCodeMsg = "인증에 실패하였습니다.";
       }
       this.isEmailCode = true;
@@ -200,7 +199,7 @@ export default {
       let isValid = true; // 모든 입력 값이 유효한지 추적하는 변수
 
       // 필드별 유효성 검사
-      if (this.email === "" || !this.isValidEmail) {
+      if (this.email === "" || (!this.isValidEmail && !this.isEmailVer)) {
         this.updateFieldStyle("emailInput", false);
         isValid = false;
       }
@@ -251,7 +250,7 @@ export default {
         };
 
         // 회원가입 전송
-        // useUserStore().userJoin(JSON.stringify(joinUser));
+        useUserStore().userJoin(JSON.stringify(joinUser));
 
         // 회원가입창 모달 닫기
         userStore.closeModal("join");

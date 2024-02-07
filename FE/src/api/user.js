@@ -47,6 +47,18 @@ async function emailVeification(param, success, fail) {
   await local.get(`/user/emails/verifications?email=${param.email}&code=${param.code}`).then(success).catch(fail);
 }
 
+// 비밀번호 이메일 인증 코드 요청
+async function passEmailVeificationRequest(param, success, fail) {
+  console.log(param);
+  await local.post(`/user/get-temporary-password-email-verification-request?email=${param}`).then(success).catch(fail);
+}
+
+// 비밀번호 이메일 인증 코드 확인
+async function passEmailVeification(param, success, fail) {
+  await local.post(`/user/get-temporary-password-email-verification?email=${param.email}&code=${param.code}`).then(success).catch(fail);
+}
+
+
 export {
   userConfirm,
   userDoJoin,
@@ -57,4 +69,6 @@ export {
   nickCheck,
   emailVeificationRequest,
   emailVeification,
+  passEmailVeification,
+  passEmailVeificationRequest,
 };
