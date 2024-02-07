@@ -148,7 +148,7 @@ export const useUserStore = defineStore("user", {
           }else{
             useUserStore().isPassEmailCodeCheck = false;
           }
-          console.log(response);
+          console.log(useUserStore().isPassEmailCodeCheck);
         },
         (error) => {
           useUserStore().isPassEmailCodeCheck = false;

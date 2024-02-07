@@ -185,13 +185,12 @@ export default {
       const userStore = useUserStore();
       userStore.EmailVer(param);
       console.log(userStore.isEmailCodeCheck);
-      if(userStore.isEmailCodeCheck){
+      if (userStore.isEmailCodeCheck) {
         this.isEmailVer = true;
         this.isEmailVerRequest = false;
         this.isEmailCode = false;
         this.emailMsg = "인증에 성공하였습니다.";
-      }
-      else{
+      } else {
         this.emailCodeMsg = "인증에 실패하였습니다.";
       }
       this.isEmailCode = true;

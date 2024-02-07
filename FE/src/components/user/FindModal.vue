@@ -14,7 +14,7 @@
         <button class="email-btn" @click="passEmailVerRequest">요청</button>
       </div>
       <input type="text" placeholder="이메일 인증 코드" v-model="code" />
-      <br/>
+      <br />
       <span class="find-msg">{{ msg }}</span>
       <br />
       <button @click="passEmailVer()" class="modal-login-btn">확인</button>
@@ -27,6 +27,7 @@
     
   <script>
 import { useUserStore } from "@/store/userStore";
+import { useStore } from "@/store";
 
 export default {
   name: "LoginComponent",
@@ -58,10 +59,10 @@ export default {
       const param = { email: this.email, code: this.code };
       const userStore = useUserStore();
       userStore.passEmailVer(param);
-
+      console.log(useStore.isPassEmailCodeCheck);
       if (userStore.isPassEmailCodeCheck) {
         this.flag = true;
-        this.msg = "인증에 성공하였습니다.";
+        this.msg = "임시 비밀번호를 전송하였습니다.";
       } else {
         this.msg = "인증에 실패하였습니다.";
       }

@@ -55,7 +55,7 @@ async function passEmailVeificationRequest(param, success, fail) {
 
 // 비밀번호 이메일 인증 코드 확인
 async function passEmailVeification(param, success, fail) {
-  await local.get(`/user/get-temporary-password-email-verification?email=${param.email}&code=${param.code}`).then(success).catch(fail);
+  await local.post(`/user/get-temporary-password-email-verification?email=${param.email}&code=${param.code}`).then(success).catch(fail);
 }
 
 
