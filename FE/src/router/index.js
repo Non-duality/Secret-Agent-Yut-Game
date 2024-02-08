@@ -15,9 +15,9 @@ import GameViewVue from "@/view/game/GameView.vue";
 import MineralVue from "@/components/game/minigame/Mineral.vue"
 
 // 테스트용 라우터
-import FlyCatch from "@/components/mission/FlyCatch.vue";
-import Cham from "@/components/mission/Cham.vue"
-import Cake from "@/components/mission/Cake.vue"
+import FlyCatch from "@/components/game/minigameFlyCatch.vue";
+import Cham from "@/components/game/minigame/Cham.vue"
+import Cake from "@/components/game/minigame/Cake.vue"
 
 const router = createRouter({
   history: createWebHistory("/"),
