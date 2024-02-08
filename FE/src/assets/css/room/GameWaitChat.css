@@ -14,8 +14,8 @@
   flex-direction: column-reverse;
   overflow-y: scroll;
   height: 120px;
-  scrollbar-width: thin; /* Firefox에서 스크롤바 굵기 설정 */
-  scrollbar-color: #888 transparent; /* Chrome, Edge, Safari에서 스크롤바 색상 설정 */
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent;
 }
 
 .chat-name {

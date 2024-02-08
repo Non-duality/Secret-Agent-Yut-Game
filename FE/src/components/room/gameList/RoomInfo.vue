@@ -72,7 +72,7 @@ export default {
 
             useUserStore().currentRoomInfo.roomCode = useUserStore().roomCode;
 
-            this.$router.push({name: "wait"})
+            this.$router.push({ name: "wait" });
           });
         });
     },
