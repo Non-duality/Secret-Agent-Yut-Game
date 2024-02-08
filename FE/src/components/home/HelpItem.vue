@@ -59,8 +59,8 @@ export default {
       //전적 조회
       checkScoreMessages: [
         "",
-        '마이페이지의 전적 조회를 누르면<br> 너의 최근 10개의 전적을 확인할 수 있어. <img src="https://forums.pokemmo.com/uploads/monthly_2023_06/image.gif.28060811b6ae32d103dbe9b1c343a564.gif" style="height: 1.8rem; padding-top: 2.5rem">',
-        '전적을 클릭하면<br> 승패 여부, 미션 성공률, 말을 잡은 수 등<br> 상세 정보도 확인할 수 있어. <img src="https://forums.pokemmo.com/uploads/monthly_2023_06/image.gif.28060811b6ae32d103dbe9b1c343a564.gif" style="height: 1.8rem; padding-top: 2.5rem">' ,
+        '마이페이지의 전적 조회를 누르면<br> 너의 최근 10개의 전적을 확인할 수 있어. 👉',
+        '전적을 클릭하면<br> 승패 여부, 미션 성공률, 말을 잡은 수 등<br> 상세 정보도 확인할 수 있어. 👉' ,
         '다른 정보가 궁금하다면 다른 태그를 눌러보고,<br> 궁금한게 없다면 다음에 궁금할 때 또 와.'
       ],
       currentCheckScoreIndex: 0,
@@ -68,9 +68,9 @@ export default {
       // 게임방 생성
       createGameroomMessages: [
         "",
-        '게임방 생성은 방장만이 할 수 있어.<br> 방장이 게임을 시작하면<br> 다른 플레이어들이 참여할 수 있어.  <img src="https://forums.pokemmo.com/uploads/monthly_2023_06/image.gif.28060811b6ae32d103dbe9b1c343a564.gif" style="height: 1.8rem; padding-top: 2.5rem">',
-        '그리고 게임방은<br> 공개와 비공개 방으로 만들 수 있어.  <img src="https://forums.pokemmo.com/uploads/monthly_2023_06/image.gif.28060811b6ae32d103dbe9b1c343a564.gif" style="height: 1.8rem; padding-top: 2.5rem">',
-        '만약 게임을 하던 도중 나가더라도<br> 재참여가 가능해.  <img src="https://forums.pokemmo.com/uploads/monthly_2023_06/image.gif.28060811b6ae32d103dbe9b1c343a564.gif" style="height: 1.8rem; padding-top: 2.5rem">',
+        '게임방 생성은 방장만이 할 수 있어.<br> 방장이 게임을 시작하면<br> 다른 플레이어들이 참여할 수 있어. 👉',
+        '그리고 게임방은<br> 공개와 비공개 방으로 만들 수 있어. 👉',
+        '만약 게임을 하던 도중 나가더라도<br> 재참여가 가능해. 👉',
         '다른 정보가 궁금하다면 다른 태그를 눌러보고,<br> 궁금한게 없다면 다음에 궁금할 때 또 와. '
       ],
       currentCreateGameroomIndex: 0,
