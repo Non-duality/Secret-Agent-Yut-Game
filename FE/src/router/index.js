@@ -12,6 +12,7 @@ import ScoreCheckVue from "@/components/profile/ScoreCheck.vue";
 import RoomListViewVue from "@/view/room/RoomListView.vue";
 import CharacterVue from "@/view/game/pick/character.vue";
 import GameViewVue from "@/view/game/GameView.vue";
+import MineralVue from "@/components/game/minigame/Mineral.vue"
 
 const router = createRouter({
   history: createWebHistory("/"),
@@ -90,6 +91,13 @@ const router = createRouter({
       name: "game",
       meta: { background: "game" },
       component: GameViewVue,
+    },
+    
+    // 광물 캐기 게임
+    {
+      path: "/mineral",
+      name: "mineral",
+      component: MineralVue,
     },
   ],
 });
