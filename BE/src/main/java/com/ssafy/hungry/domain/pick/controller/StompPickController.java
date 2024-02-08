@@ -98,9 +98,7 @@ public class StompPickController {
         // 팀 정보를 확인하여 해당 팀의 픽 정보를 수정
         pickRedisService.updateCurrentPickInfo(roomCode, donePickDto);
 
-        // 들어온 팀의 다음번 픽 순서를 확인
-        String pickEmail = pickRedisService.findPickOrder(roomCode, donePickDto.getTeam());
-
+        // 전달할 팀
         String targetRoomCode = "";
         if (donePickDto.getTeam().equals("홍팀")) {
             targetRoomCode = roomCode + "/red";
@@ -108,32 +106,50 @@ public class StompPickController {
             targetRoomCode = roomCode + "/blue";
         }
 
-        // 픽을 다 했다면 밀정 픽으로 넘어가기
-        if (pickEmail.equals("")) {
+
+        // 양팀 픽이 다 끝났는지 확인하기
+        // 양팀 픽이 다 끝났다면 밀정 픽 시작
+        if(pickRedisService.isDonePick(roomCode)){
+
             log.info("밀정 픽 시작 : " + roomCode);
 
-            List<CurrentUnitPickDto> pickList = null;
+            // 선택했던 유닛 정보 불러오기
+            List<CurrentUnitPickDto> RedPickList = pickRedisService.getPickUnitList(roomCode, "홍팀");
+            List<CurrentUnitPickDto> BluePickList = pickRedisService.getPickUnitList(roomCode, "청팀");
 
-            // Todo : 밀정 픽 선택을 위해 상대방의 pick 정보 받아오기
-            if(donePickDto.getTeam().equals("홍팀")){
-                pickList = pickRedisService.getPickUnitList(roomCode, "청팀");
-            }else if(donePickDto.getTeam().equals("청팀")){
-                pickList = pickRedisService.getPickUnitList(roomCode, "홍팀");
-            }
-
-            // 상대방의 픽 정보 넘기기
+            // 각 팀에게 상대방의 픽 정보 넘기기
             redisSender.sendToRedis(roomTopic, StompDataDto.builder()
                     .type("PICK_SELECT_SPY")
-                    .code(targetRoomCode)
-                    .data(pickList) // Data 보내기
+                    .code(roomCode + "/red")
+                    .data(BluePickList) // Data 보내기
                     .build());
+
+            redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                    .type("PICK_SELECT_SPY")
+                    .code(roomCode + "/blue")
+                    .data(RedPickList) // Data 보내기
+                    .build());
+
         }
 
-        // 픽을 다 하지 않았다면 다음 픽으로 넘어가기
-        else {
+        // 양팀 픽이 끝나지 않았다면 다음 픽 순서를 확인 후 다음 픽할 사람을 지목
+        else{
             log.info("다음 픽 정보 전달 : " +donePickDto.getTeam() + roomCode);
 
+            // 들어온 팀의 다음번 픽 순서를 확인
+            String pickEmail = pickRedisService.findPickOrder(roomCode, donePickDto.getTeam());
+
+            // 한 팀만 끝났을 경우
+            if(pickEmail.equals("")){
+                redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                        .type("PICK_WAIT")
+                        .code(targetRoomCode)
+                        .data("모든 픽이 완료될 때까지 기다려주세요.") // Data 보내기
+                        .build());
+            }
+
             // 다음 픽을 할 유저 정보 전달
+            else{
             redisSender.sendToRedis(roomTopic, StompDataDto.builder()
                     .type("PICK_NEXT")
                     .code(targetRoomCode)
@@ -142,7 +158,11 @@ public class StompPickController {
                             .time(PICK_TIME)
                             .build()) // Data 보내기
                     .build());
+            }
+
+
         }
+
     }
 
     // 밀정 선택 완료

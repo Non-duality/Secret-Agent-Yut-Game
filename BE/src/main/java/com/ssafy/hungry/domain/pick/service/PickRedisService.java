@@ -6,16 +6,13 @@ import com.ssafy.hungry.domain.pick.dto.CurrentUnitPickDto;
 import com.ssafy.hungry.domain.pick.dto.CurrentUserPickDto;
 import com.ssafy.hungry.domain.pick.dto.DonePickDto;
 import com.ssafy.hungry.domain.pick.exception.TeamNotFoundException;
-import com.ssafy.hungry.domain.pick.exception.UserNotFoundException;
 import com.ssafy.hungry.domain.pick.repository.PickRedisRepository;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.repository.RoomRedisRepository;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.repository.UserRepository;
-import com.ssafy.hungry.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -244,6 +241,21 @@ public class PickRedisService {
             count++;
         }
 
+    }
+    // 상대팀 픽이 다 끝났는지 확인하기
+    public boolean isDonePick(String roomCode){
+       String key = generateKey(PICK_KEY_PREFIX, roomCode);
+
+       Boolean isDone = true;
+       List<CurrentUserPickDto> userPickDtoList = pickRedisRepository.getCurrentUserPickInfo(key, 0,-1);
+
+        for(CurrentUserPickDto userPick : userPickDtoList){
+            if(!userPick.isPick()){
+                isDone = false;
+            }
+        }
+
+        return isDone;
     }
 
     // 선택한 유닛의 정보 찾아오기
