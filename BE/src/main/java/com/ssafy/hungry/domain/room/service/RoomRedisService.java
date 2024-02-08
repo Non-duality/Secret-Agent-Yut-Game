@@ -227,9 +227,9 @@ public class RoomRedisService {
             }
         }
 
-        if(!isAllReady){
-            throw new AllUsersNotReadyException("모든 유저가 준비완료 되지 않았습니다.");
-        }
+//        if(!isAllReady){
+//            throw new AllUsersNotReadyException("모든 유저가 준비완료 되지 않았습니다.");
+//        }
 
         // 조건을 다 충족했다면 레디스에 픽 정보를 담을 수 있는 sorted set 데이터 생성
         pickRedisService.createCurrentUserPick(room.getRoomCode());

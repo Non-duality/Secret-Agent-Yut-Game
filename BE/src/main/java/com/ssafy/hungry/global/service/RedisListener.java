@@ -33,7 +33,7 @@ public class RedisListener implements MessageListener {
           if (stompDataDto.getType().startsWith("ROOM")){
               messagingTemplate.convertAndSend("/sub/room/" + stompDataDto.getCode(), stompDataDto);
           }
-          else if(stompDataDto.getType().startsWith("PICK_START")){
+          else if(stompDataDto.getType().startsWith("PICK")){
               messagingTemplate.convertAndSend("/sub/room/" + stompDataDto.getCode(), stompDataDto);
           }
 
