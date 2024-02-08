@@ -1,6 +1,6 @@
 package com.ssafy.hungry.domain.room.controller;
 
-import com.ssafy.hungry.domain.room.dto.ChatMessageDto;
+import com.ssafy.hungry.domain.room.dto.RoomChatMessageDto;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.dto.RoomLobbyInfoDto;
 import com.ssafy.hungry.domain.room.entity.RoomEntity;
@@ -76,14 +76,14 @@ public class StompRoomController {
 
     // 방 채팅
     @MessageMapping(value = "/room/{roomCode}/chat")
-    public void chatRoom(@DestinationVariable String roomCode, ChatMessageDto chatMessageDto){
+    public void chatRoom(@DestinationVariable String roomCode, RoomChatMessageDto roomChatMessageDto){
         log.info("방 채팅 호출 : " + roomCode);
 
         // redis Room Channel topic에 전달
         redisSender.sendToRedis(roomTopic, StompDataDto.builder()
                 .type("ROOM_CHAT")
                 .code(roomCode)
-                .data(chatMessageDto)
+                .data(roomChatMessageDto)
                 .build());
 
     }

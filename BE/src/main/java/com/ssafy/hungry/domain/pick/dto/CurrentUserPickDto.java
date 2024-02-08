@@ -14,6 +14,6 @@ public class CurrentUserPickDto {
     private int userId;
     private String nickname;
     private int selectUnitId;
-    private int state;
+    private boolean pick;
 
 }

@@ -69,13 +69,13 @@ public class PickRedisRepository {
     }
 
     // unitPick을 redis에 지우고 다시 저장하기
-    public void reSaveUnitPickToRedis(String key, CurrentUnitPickDto currentUnitPickDto, int seatNumber){
+    public void reSaveUnitPickToRedis(String key, CurrentUnitPickDto currentUnitPickDto, int index){
         log.info("PickRedisRepository reSaveToRedis 호출 : " + key);
 
         try {
             String jsonData = objectMapper.writeValueAsString(currentUnitPickDto);
             ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
-            zSetOps.removeRange(key, seatNumber, seatNumber);
+            zSetOps.removeRange(key, index, index);
             zSetOps.add(key, jsonData, currentUnitPickDto.getUnitId());
 
         } catch (JsonProcessingException e) {
