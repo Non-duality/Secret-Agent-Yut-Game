@@ -81,7 +81,7 @@ export const useGameStore = defineStore("game", {
           status: "wait",
           img: "horse5",
           check: 4,
-          group: false,
+          endOrder: 0,
         },
       ],
       blueHorses: [

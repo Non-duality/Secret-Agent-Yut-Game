@@ -32,7 +32,7 @@ async function emailCheck(param, success, fail) {
   console.log(param);
   await local.post(`/user/email/${param}`).then(success).catch(fail);
 }
-// 패스워드 중복 체크
+// 닉네임 중복 체크
 async function nickCheck(param, success, fail) {
   await local.get(`/user/nickname/${param}`).then(success).catch(fail);
 }

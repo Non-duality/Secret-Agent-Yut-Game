@@ -1,9 +1,17 @@
 <template>
   <div class="user-profile">
     <div class="left-section">
-      <img src="@/assets/img/profile_picture.png" alt="profile-img" class="profile-picture"/>
+      <img
+        src="@/assets/img/profile_picture.png"
+        alt="profile-img"
+        class="profile-picture"
+      />
       <h3>{{ userInfo.nickname }}</h3>
-      <button @type="submit" @click="openModal('Nick')" class="nickname-change-btn">
+      <button
+        @type="submit"
+        @click="showUserInfoNick = true"
+        class="nickname-change-btn"
+      >
         닉네임 변경
       </button>
     </div>
@@ -11,11 +19,12 @@
     <div class="right-section">
       <!-- 닉네임 변경 모달 -->
       <transition name="fade">
-        <ChangeNicknameModal v-if="showUserInfoNick" />
+        <ChangeNicknameModal v-if="showUserInfoNick" @close="handleClose"/>
       </transition>
-  
+
       <div>
-        <span id="title">이메일</span> <span id="content">{{ userInfo.email }}</span>
+        <span id="title">이메일</span>
+        <span id="content">{{ userInfo.email }}</span>
       </div>
 
       <div>
@@ -23,16 +32,20 @@
       </div>
 
       <div>
-        <span id="title">생년월일</span> <span id="content">{{ userInfo.birthDate }}</span>
+        <span id="title">생년월일</span>
+        <span id="content">{{ userInfo.birthDate }}</span>
       </div>
 
       <div>
-        <span id="title">성별</span> <span id="content">{{ userInfo.gender }}성</span>
+        <span id="title">성별</span>
+        <span id="content">{{ userInfo.gender }}성</span>
       </div>
-      <button @type="submit" @click="openModal('out')" class="memberout-btn">회원 탈퇴</button>
+      <button @type="submit" @click="openModal('out')" class="memberout-btn">
+        회원 탈퇴
+      </button>
     </div>
     <transition>
-      <DropoutModal v-if="showDropOutModal" @close="showDropOutModal = false"/>
+      <DropoutModal v-if="showDropOutModal" @close="showDropOutModal = false" />
     </transition>
   </div>
 </template>
@@ -50,10 +63,9 @@ export default {
   },
   setup() {
     const store = useUserStore();
-    const { showUserInfoNick, showDropOutModal } = storeToRefs(store);
+    const { showDropOutModal } = storeToRefs(store);
 
     return {
-      showUserInfoNick,
       showDropOutModal,
       openModal: store.openModal,
     };
@@ -68,6 +80,7 @@ export default {
         birthdate: "",
         gender: "",
       },
+      showUserInfoNick: false,
     };
   },
 
@@ -81,6 +94,9 @@ export default {
   methods: {
     // 회원 탈퇴 메서드
     withdraw() {},
+    handleClose() {
+      this.showUserInfoNick = false; // 모달 닫을 때 상태 변경
+    },
   },
 };
 </script>

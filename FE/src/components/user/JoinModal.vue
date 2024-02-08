@@ -4,7 +4,7 @@
     <div class="modal-content">
       <button class="close" @click="closeModal('join')">&times;</button>
       <h2 class="join-text">Join</h2>
-      <div>
+      <div :class="{ 'shake-animation': showError }">
         <input
           id="emailInput"
           type="text"
@@ -24,7 +24,7 @@
       <div class="password-error" v-if="!isValidEmail">
         {{ emailMsg }}
       </div>
-      <div v-if="isEmailVerRequest">
+      <div v-if="isEmailVerRequest" :class="{ 'shake-animation': showError }">
         <input
           id="emailCode"
           type="text"
@@ -41,6 +41,7 @@
         placeholder="패스워드"
         id="passwordInput"
         v-model="password"
+        :class="{ 'shake-animation': showError }"
       /><br />
       <div class="password-error" v-if="!isValidPassword">
         영문,숫자,특수문자를 조합하여 입력해주세요.(8-16자)
@@ -51,6 +52,7 @@
         id="confirmPasswordInput"
         @input="checkPassword"
         v-model="passwordCheck"
+        :class="{ 'shake-animation': showError }"
       /><br />
       <div class="password-error" v-if="!isPasswordMatch">
         패스워드가 일치하지 않습니다.
@@ -61,12 +63,13 @@
         placeholder="닉네임"
         id="nicknameInput"
         v-model="nickname"
+        :class="{ 'shake-animation': showError }"
       /><br />
       <div class="password-error" v-if="!isValidNickname">
         {{ nickMsg }}
       </div>
 
-      <div class="gender-selection">
+      <div class="gender-selection" :class="{ 'shake-animation': showError }">
         <button
           id="male-button"
           class="gender-button"
@@ -85,7 +88,7 @@
         </button>
       </div>
       <!-- 년도, 월, 일을 나란하게 표시 -->
-      <div>
+      <div :class="{ 'shake-animation': showError }">
         <select id="birthdateYear" v-model="year"></select>
 
         <select id="birthdateMonth" v-model="month"></select>
@@ -126,6 +129,7 @@ export default {
       emailCode: "",
       isEmailCode: false,
       emailCodeMsg: "",
+      showError: false,
     };
   },
   watch: {
@@ -184,16 +188,18 @@ export default {
       const param = { email: this.email, code: this.emailCode };
       const userStore = useUserStore();
       userStore.EmailVer(param);
-      console.log(userStore.isEmailCodeCheck);
-      if (userStore.isEmailCodeCheck) {
-        this.isEmailVer = true;
-        this.isEmailVerRequest = false;
-        this.isEmailCode = false;
-        this.emailMsg = "인증에 성공하였습니다.";
-      } else {
-        this.emailCodeMsg = "인증에 실패하였습니다.";
-      }
-      this.isEmailCode = true;
+      console.log(useUserStore().isEmailCodeCheck);
+      setTimeout(() => {
+        if (useUserStore().isEmailCodeCheck) {
+          this.isEmailVer = true;
+          this.isEmailVerRequest = false;
+          this.isEmailCode = false;
+          this.emailMsg = "인증에 성공하였습니다.";
+        } else {
+          this.isEmailCode = true;
+          this.emailCodeMsg = "인증에 실패하였습니다.";
+        }
+      }, 3000);
     },
     async performJoin() {
       let isValid = true; // 모든 입력 값이 유효한지 추적하는 변수
@@ -254,6 +260,13 @@ export default {
 
         // 회원가입창 모달 닫기
         userStore.closeModal("join");
+      } else {
+        this.showError = true;
+
+        setTimeout(() => {
+          this.showError = false;
+        }, 500);
+        return;
       }
 
       // 비밀번호가 불일치하는 경우 알림을 표시합니다.

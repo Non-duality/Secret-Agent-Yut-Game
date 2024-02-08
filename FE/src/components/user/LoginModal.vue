@@ -17,7 +17,7 @@
       </label>
       <br />
       <button @click="login()" class="modal-login-btn">로그인</button>
-      <button @click="find()" class="modal-find-btn">비밀번호찾기</button>
+      <button @click="find()" class="modal-find-btn">비밀번호발급</button>
       <span>|</span>
       <button @click="join()" class="modal-join-btn">회원가입</button>
     </div>

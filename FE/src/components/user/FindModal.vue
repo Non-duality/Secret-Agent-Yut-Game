@@ -3,7 +3,7 @@
   <div id="loginModal" class="modal">
     <div class="modal-content">
       <button class="close" @click="closeModal">&times;</button>
-      <h2 class="login-text">비밀번호 찾기</h2>
+      <h2 class="login-text">임시 비밀번호 발급</h2>
       <div>
         <input
           type="text"
@@ -59,13 +59,14 @@ export default {
       const param = { email: this.email, code: this.code };
       const userStore = useUserStore();
       userStore.passEmailVer(param);
-      console.log(useStore.isPassEmailCodeCheck);
-      if (userStore.isPassEmailCodeCheck) {
-        this.flag = true;
-        this.msg = "임시 비밀번호를 전송하였습니다.";
-      } else {
-        this.msg = "인증에 실패하였습니다.";
-      }
+      setTimeout(() => {
+        if (useUserStore().isPassEmailCodeCheck) {
+          this.flag = true;
+          this.msg = "임시 비밀번호를 전송하였습니다.";
+        } else {
+          this.msg = "인증에 실패하였습니다.";
+        }
+      }, 3000);
     },
     join() {
       this.closeModal();
