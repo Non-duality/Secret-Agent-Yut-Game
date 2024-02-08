@@ -276,11 +276,63 @@ export function initRoom(router, from) {
             useRoomStore().seatInfo[seatKey].team = seat.team;
           }
         });
-      } else if (useRoomStore().receivedMessage.type === "ROOM_START_PICK") {
-        // 여기서 Room에 대한 구독 취소 생각해보기.
+      }
+      // 방장이 게임을 시작을 눌렀을 경우
+      else if (useRoomStore().receivedMessage.type === "ROOM_START_PICK") {
+        // Room에 대한 구독 취소 생각해보기.
+        console.log("방장이 게임 시작을 눌렀습니다!!");
 
-        console.log("픽창 시작!!");
-      } else if (useRoomStore().receivedMessage.type === "ROOM_CHAT") {
+        /* 자신의 자리 번호 */
+        // (1~3) red, (4~6) blue
+        let myTeamName = null;
+        let isOwner = false;
+
+        const seatInfo = useRoomStore().seatInfo;
+        const seatKeys = Object.keys(seatInfo);
+
+        // (임시)
+        // 자신의 팀 번호 확인
+        for (let i = 0; i < seatKeys.length; i++) {
+          const seatKey = seatKeys[i];
+          if (seatInfo[seatKey].nickname === useUserStore().userInfo.nickname) {
+            // 자신이 방장인지 확인
+            if (seatInfo[seatKey].state === 2) {
+              isOwner = true;
+            }
+
+            // 팀 이름 결정
+            if (seatInfo[seatKey].team === 1) {
+              myTeamName = "red";
+            } else {
+              myTeamName = "blue";
+            }
+            break;
+          }
+        }
+
+        // 소켓을 이제 Pick 타입으로 전환
+        // 구독이 완료가 되면, 이제 픽창으로 시작
+        connectRoom("Pick", router, myTeamName).then(() => {
+          // 여기서는 유닛 정보, 사용자 픽 정보를 초기화로 받는다.
+          // (방장만 하면 됨.)
+          if (isOwner) {
+            console.log("방장이 게임 정보를 뿌렸습니다.");
+
+            pubPick(
+              "/pub/pick/" +
+                useUserStore().currentRoomInfo.roomCode +
+                "/get-pre-info"
+            );
+          }
+
+          // 픽창으로 넘어가기.
+          setTimeout(() => {
+            router.push({ name: "pick" });
+          }, 300);
+        });
+      }
+      //
+      else if (useRoomStore().receivedMessage.type === "ROOM_CHAT") {
         useRoomStore().roomChatMessages.push(
           useRoomStore().receivedMessage.data.nickname +
             " : " +
@@ -314,14 +366,15 @@ export function initRoom(router, from) {
 export function initPick(router, from) {
   // 먼저, create된 roomCode를 가져와서 방 구독
   usePickStore().subscription.pick = stompClient.subscribe(
-    "/sub/room/" + currentRoomCode.value + "/" + from,
+    "/sub/room/" + useUserStore().currentRoomInfo.roomCode + "/" + from,
     (message) => {
       console.log(message.body);
-      useRoomStore().receivedMessage = JSON.parse(message.body);
+      usePickStore().receivedMessage = JSON.parse(message.body);
 
       /* 홍팀, 청팀 정보를 받아오는 것 */
-      if(usePickStore().receivedMessage.type === "PICK_GET_PRE_INFO"){
-
+      if (usePickStore().receivedMessage.type === "PICK_GET_PRE_INFO") {
+        usePickStore().unitInfo = usePickStore().receivedMessage.data.unitInfo;
+        usePickStore().userInfo = usePickStore().receivedMessage.data.userInfo;
       }
     }
   );

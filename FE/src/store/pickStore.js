@@ -9,6 +9,10 @@ export const usePickStore = defineStore("pick", {
     unitInfo: [],
 
     subscription: {},
+
+    receivedMessage: {},
+
+    publisher: {},
   }),
 
   actions: {},

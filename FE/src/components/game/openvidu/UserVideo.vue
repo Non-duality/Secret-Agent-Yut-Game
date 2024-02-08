@@ -5,6 +5,7 @@
       v-if="streamManager"
       :stream-manager="streamManager"
     /><span id="user-name">{{ nickname }}</span>
+    <!-- <button @click="toggleMic">마이크</button> -->
   </div>
   <!-- <div><p>{{ clientData }}</p></div> -->
 </template>
@@ -12,6 +13,7 @@
 <script>
 import OvVideo from "./OvVideo.vue";
 import { useUserStore } from "@/store/userStore";
+
 
 export default {
   name: "UserVideo",
@@ -25,12 +27,6 @@ export default {
   },
 
   computed: {
-    clientData() {
-      const { clientData } = this.getConnectionData();
-      // console.log(clientData);
-      return clientData;
-    },
-
     nickname() {
       return useUserStore().userInfo.nickname;
     },
@@ -39,7 +35,6 @@ export default {
   methods: {
     getConnectionData() {
       const { connection } = this.streamManager.stream;
-      console.log(JSON.parse(connection.data));
       return JSON.parse(connection.data);
     },
   },
