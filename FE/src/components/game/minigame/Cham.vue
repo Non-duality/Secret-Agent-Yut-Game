@@ -314,5 +314,5 @@ export default {
 </script>
 
 <style scoped>
-@import url('@/assets/css/mission/cham.css');
+@import url('@/assets/css/game/minigame/cham.css');
 </style>
