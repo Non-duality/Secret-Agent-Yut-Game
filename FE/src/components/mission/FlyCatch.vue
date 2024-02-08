@@ -50,7 +50,7 @@
         lastVideoTime: -1, // 비디오의 마지막 시간
         constraints: {
           video: true
-        },
+        },ge
 
         // 제스쳐 인식 결과
         results: undefined,
