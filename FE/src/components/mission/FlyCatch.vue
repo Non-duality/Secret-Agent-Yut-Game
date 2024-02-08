@@ -28,8 +28,8 @@
       </div>
       <!-- 게임 승리 -->
       <div class="victory" v-if="gameResultDp">
-        <div v-if="gameResult">게임승리</div>
-        <div v-else>게임패배</div>
+        <div class="victory" v-if="gameResult">승리</div>
+        <div class="fail" v-else>패배</div>
       </div>
     </div>
 </template>
@@ -50,7 +50,7 @@
         lastVideoTime: -1, // 비디오의 마지막 시간
         constraints: {
           video: true
-        },ge
+        },
 
         // 제스쳐 인식 결과
         results: undefined,
@@ -73,7 +73,7 @@
         flyPosition: { x: Math.random(), y: Math.random() },
         flyDirection: { x: (Math.random() - 0.5) * 50, y: (Math.random() - 0.5) * 50 },
         flies: [],
-        numOfFlies: 3,
+        numOfFlies: 5,
 
         // 게임 카운트
         countdown: 5,
@@ -87,7 +87,7 @@
     
     mounted() {
       this.createGestureRecognizer(); // 제스처 인식기 초기화
-      this.startCountdown();          // 게임 시작 카운트
+      this.startCountdown(); // 게임 시작 카운트
       window.addEventListener('resize', this.adjustCanvasSizeToVideo)
     },
 
@@ -119,10 +119,9 @@
                 "/models/gesture_recognizer.task",
               delegate: "GPU"
             },
-            runningMode: this.runningMode,
+            runningMode: "VIDEO",
             numHands: 2
-          }
-        );
+          });
         const videoElement = this.$refs.webcam;
         videoElement.addEventListener('loadedmetadata', () => {
           // 로드되면 비디오 사이즈에 맞추어 캔버스 사이즈 맞추기
@@ -199,7 +198,7 @@
             const categoryName = gesture[0].categoryName
             const currentTime = Date.now()
             const timeDiff = currentTime - this.lastGetureTime
-            if (timeDiff < 100) {
+            if (timeDiff < 50) {
               this.gestureSequence.push(categoryName)
             } else {
               this.gestureSequence = [categoryName];
@@ -207,16 +206,13 @@
             this.lastGetureTime = currentTime;
           })
         // 유효한 상태 변화 확인
-        if (this.isValidGestureChange()) {
-          if (this.checkFlyCaught()) {
+        if (this.checkFlyCaught()) {
             console.log('파리 잡기 성공')
             this.webcamRunning = false
             this.clearFlyCanvas()
             this.gameResult = true
             this.gameResultDp = true
-          }
         }
-
         // 인식된 손 정보
         if (this.results.gestures.length == 1) {
           this.leftCategoryName = this.results.gestures[0][0].categoryName
@@ -244,7 +240,7 @@
       // 파리 초기화
       initializeFlies() {
         this.flies = Array.from({ length: this.numOfFlies }).map(() => ({
-          position: { x: Math.random(), y: Math.random() },
+          position: { x: Math.random() * 200, y: Math.random() * 200 },
           direction: { x: (Math.random() - 0.5) * 30, y: (Math.random() - 0.5) * 30 },
           caught: false,
         }))
@@ -259,41 +255,30 @@
         }
       },
 
-      // // 파리 이미지 로드 및 애니메이션 시작
-      // loadAndAnimateFly() {
-      //   this.flyImg.src = flyImage;
-      //   this.flyImg.onload = () => {
-      //     console.log('이미지가 성공적으로 로드되었습니다.');
-      //     this.animateFly();
-      //   };
-      //   this.flyImg.onerror = () => {
-      //     console.log('이미지 로드 중에 오류가 발생했습니다.')
-      //   }
-      // },
-      
 
       // 파리 이미지 그리기
       drawFly() {
         if (this.webcamRunning) {
           // 파리 그리기
-          const canvasElement = this.$refs.fly_canvas;
-          if(!canvasElement) {
+          const flyCanvas = this.$refs.fly_canvas;
+          if(!flyCanvas) {
             return console.log('파리 캔버스 오류')
           }
-          const canvasCtx = canvasElement.getContext("2d");
-          canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height) // 캔버스 클리어
+          const canvasCtx = flyCanvas.getContext("2d");
+          canvasCtx.clearRect(0, 0, flyCanvas.width, flyCanvas.height) // 캔버스 클리어
 
-          // 파리의 이동 방향에 따라 이미지 반전
-          if (this.flyDirection.x < 0) {
-            // 왼쪽으로 이동 중이면 이미지 반전
-            canvasCtx.save(); // 현재 캔버스 상태 저장
-            canvasCtx.scale(-1, 1); // x축 방향으로 반전
-            canvasCtx.drawImage(this.flyImg, -this.flyPosition.x - 50, this.flyPosition.y, 50, 50); // 이미지 그리기 (위치 조정 필요)
-            canvasCtx.restore(); // 캔버스 상태 복원
-          } else {
-            // 오른쪽으로 이동 중이면 정상 방향
-            canvasCtx.drawImage(this.flyImg, this.flyPosition.x, this.flyPosition.y, 50, 50); // 파리 그리기
-          }
+          this.flies.forEach(fly => {
+            if (!fly.caught) {
+              canvasCtx.save(); // 현재 캔버스 상태 저장
+              if (fly.direction.x < 0) {
+                canvasCtx.scale(-1, 1); // x축 방향으로 반전
+                canvasCtx.drawImage(this.flyImg, -fly.position.x - 50, fly.position.y, 50, 50); // 이미지 그리기 (위치 조정 필요)
+              } else {
+                canvasCtx.drawImage(this.flyImg, fly.position.x - 50, fly.position.y, 50, 50); // 이미지 그리기 (위치 조정 필요)
+              }
+              canvasCtx.restore(); // 캔버스 상태 복원
+            }
+          })
         }
       },
       
@@ -304,41 +289,26 @@
           const flyCanvas = this.$refs.fly_canvas
           const canvasWidth = flyCanvas.width;
           const canvasHeight = flyCanvas.height;
-          // 파리의 새 위치 계산
-          let newX = this.flyPosition.x + this.flyDirection.x;
-          let newY = this.flyPosition.y + this.flyDirection.y;
-          // 경계에서 튕기기 로직
-          if (newX <= 0 || newX >= canvasWidth - 50) {
-            this.flyDirection.x = -this.flyDirection.x;
-            newX = this.flyPosition.x + this.flyDirection.x;
-          }
-          if (newY <= 0 || newY >= canvasHeight - 50) {
-            this.flyDirection.y = -this.flyDirection.y;
-            newY = this.flyPosition.y + this.flyDirection.y;
-          } 
-          // 파리 위치 업데이트
-          this.flyPosition.x = newX;
-          this.flyPosition.y = newY;
-          this.drawFly(); // 업데이트 된 위치에 파리 그리기
-          requestAnimationFrame(this.animateFly) // 다음 프레임을 위해 재귀 호출
-        }
-      },
+          this.flies.forEach((fly, index) => {
+            if (!fly.caught) {
+              let newX = fly.position.x + fly.direction.x
+              let newY = fly.position.y + fly.direction.y
 
-
-      // 파리와 손의 위치가 가까운지 판단
-      checkFlyCaught() {
-          const vedioElement = this.$refs.webcam;
-          const leftHandX = this.leftXAxis * vedioElement.width
-          const leftHandY = this.leftYAxis * vedioElement.height
-          const rightHandX = this.rightXAxis * vedioElement.width
-          const rightHandY = this.rightYAxis * vedioElement.height
-          const flyX = this.flyPosition.x
-          const flyY = this.flyPosition.y
-          const leftDistance = Math.sqrt(Math.pow(leftHandX - flyX, 2) + Math.pow(leftHandY - flyY, 2))
-          const rightDistance = Math.sqrt(Math.pow(rightHandX - flyX, 2) + Math.pow(rightHandY - flyY, 2))
-          if (leftDistance < 50 || rightDistance < 50) {
-            console.log('가까워요')
-            return true
+              if (newX <= 0 || newX >= canvasWidth - 50) {
+                fly.direction.x *= -1
+                newX = fly.position.x + fly.direction.x
+              }
+              if (newY <= 0 || newY >= canvasHeight - 50) {
+                fly.direction.y *= -1
+                newY = fly.position.y + fly.direction.y
+              }
+              // 파리 위치 업데이트
+              fly.position.x = newX
+              fly.position.y = newY
+            }
+          })
+          this.drawFly();
+          requestAnimationFrame(this.animateFly)
         }
       },
 
@@ -347,6 +317,46 @@
       isValidGestureChange() {
         const validSequence = ['Open_Palm', 'None', 'Closed_Fist']
         return validSequence.every((el) => this.gestureSequence.includes(el))
+      },
+
+
+      // 파리와 손의 위치가 가까운지 판단
+      checkFlyCaught() {
+          const vedioElement = this.$refs.webcam;
+          let caughtAnyFly = false;
+
+          this.flies.forEach(fly => {
+            if (!fly.caught) {
+              const leftHandX = this.leftXAxis * vedioElement.offsetWidth
+              const leftHandY = this.leftYAxis * vedioElement.offsetHeight
+              const rightHandX = this.rightXAxis * vedioElement.offsetWidth
+              const rightHandY = this.rightYAxis * vedioElement.offsetHeight
+
+              const flyX = fly.position.x
+              const flyY = fly.position.y
+              const leftDistance = Math.sqrt(Math.pow(leftHandX - flyX, 2) + Math.pow(leftHandY - flyY, 2))
+              const rightDistance = Math.sqrt(Math.pow(rightHandX - flyX, 2) + Math.pow(rightHandY - flyY, 2))
+              if ((leftDistance < 20 || rightDistance < 20) && this.isValidGestureChange()) {
+                console.log('파리 잡힘')
+                fly.caught = true
+                caughtAnyFly = true
+              }
+            }
+          })
+
+          if (caughtAnyFly) {
+            return this.checkAllFliesCaught()
+          }
+      },
+
+
+      // 모든 파리 잡혔는지 확인
+      checkAllFliesCaught() {
+        const allCaught = this.flies.every(fly => fly.caught)
+        if (allCaught) {
+          console.log('모든 파리가 잡혔습니다.')
+          return true
+        }
       },
 
 
