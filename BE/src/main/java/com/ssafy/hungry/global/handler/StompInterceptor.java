@@ -36,39 +36,42 @@ public class StompInterceptor implements ChannelInterceptor {
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             // 헤더 토큰 얻기
             String authorizationHeader = String.valueOf(accessor.getNativeHeader("Authorization"));
+            if (authorizationHeader == null || !authorizationHeader.startsWith("[Bearer ")) {
 
-            System.out.println(accessor.getUser().getName());
-
-            if(authorizationHeader == null || !authorizationHeader.startsWith("[Bearer ")){
-
-                System.out.println("소켓 통신 토큰 없음");
+                log.info("소켓 통신 토큰 없음");
                 throw new MessageDeliveryException("메세지 예외");
             }
 
             String token = authorizationHeader.split(" ")[1];
             // 토큰 인증
 
-            try{
-                if(jwtUtil.validateToken(token)){
-                    System.out.println("소켓통신에서 토큰 검증");
+            try {
+                if (jwtUtil.validateToken(token)) {
+                    log.info("소켓통신에서 토큰 검증");
                     String email = jwtUtil.getUserId(token);
                     StompPrincipal user = new StompPrincipal(accessor.getUser().getName());
                     sessionRepository.save(new SessionEntity(email, user));
                     principalRepository.save(new PrincipalEntity(user.getName(), email));
-                }else{
+                } else {
                     throw new AccessDeniedException("토큰이 유효하지 않습니다.");
                 }
 
-            }catch (MessageDeliveryException e){
+            } catch (MessageDeliveryException e) {
                 throw new MessageDeliveryException("메세지 에러");
-            }catch (MalformedJwtException e){
+            } catch (MalformedJwtException e) {
                 throw new MessageDeliveryException("예외3");
             }
 
         }
 
-        if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())){
+        if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
             log.info("SUBSCRIBE 감지");
+        } else if (StompCommand.UNSUBSCRIBE.equals(accessor.getCommand())) {
+            log.info("UNSUBSCRIBE 감지");
+        } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+            log.info("DISCONNECT 감지");
+        } else if (StompCommand.SEND.equals(accessor.getCommand())) {
+            log.info("SEND 감지");
         }
 
         return message;

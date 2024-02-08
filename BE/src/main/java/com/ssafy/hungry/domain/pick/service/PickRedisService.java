@@ -45,7 +45,6 @@ public class PickRedisService {
         String RoomKey = generateKey(ROOM_KEY_PREFIX, roomCode);
 
         List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo(RoomKey);
-        System.out.println(currentSeatDtoList.toString());
         // 팀을 나눠서 저장 0 ~ 2번은 1팀(홍팀), 3 ~ 5번은 2팀(청팀)
         for(int i = 0; i < 3; i++){
             pickRedisRepository.saveUserPickToRedis(PickKey, CurrentUserPickDto.builder()

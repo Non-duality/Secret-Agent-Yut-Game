@@ -10,6 +10,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 public class JWTFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
 
@@ -44,7 +46,7 @@ public class JWTFilter extends OncePerRequestFilter {
         // Authorization 헤더 존재하거나 Bearer로 시작했는지 확인.
         // 재발급 요청 X
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-            System.out.println("올바르지 못한 토큰");
+            log.info("올바르지 못한 토큰");
             filterChain.doFilter(request, response);
             return;
         }
@@ -56,11 +58,10 @@ public class JWTFilter extends OncePerRequestFilter {
         String accessToken = authorization.split(" ")[1];
 
         if (refreshToken != null) {
-            System.out.println("RefreshToken 검증");
+            log.info("RefreshToken 검증");
 
             if (!jwtUtil.validateToken(refreshToken)) {
-                System.out.println("Refresh 토큰 검증 시도 중 오류 발생");
-                System.out.println("재발급 필요");
+                log.info("Refresh 토큰 검증 시도 중 오류 발생, 재발급 필요");
                 response.sendError(406, "require login");
             }
 
@@ -101,13 +102,12 @@ public class JWTFilter extends OncePerRequestFilter {
 
                 filterChain.doFilter(request, response);
             } else {
-                System.out.println("RefreshToken 불일치");
-                System.out.println("로그인 다시 필요");
+                log.info("RefreshToken 불일치, 로그인 다시 필요");
                 response.sendError(401, "require login");
                 return;
             }
-        }else{
-            System.out.println("AccessToken 검증");
+        } else {
+            log.info("AccessToken 검증");
 
             if (jwtUtil.validateToken(accessToken)) {
                 //토큰에서 username과 role 획득
@@ -129,8 +129,8 @@ public class JWTFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
                 filterChain.doFilter(request, response);
-            }else{
-                System.out.println("token expired");
+            } else {
+                log.info("token expired");
 
                 response.sendError(406, "token expired");
             }
