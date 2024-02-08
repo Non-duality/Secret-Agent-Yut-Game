@@ -107,8 +107,6 @@ export default {
   },
 
   async mounted() {
-    await this.delay(100);
-
     this.ShowDetail = false;
 
     await useRoomStore().getRoomSomeListData();
@@ -116,6 +114,8 @@ export default {
     // 전체 방 리스트 조회
     this.roomInfo = useRoomStore().roomList;
     this.roomListLoaded = true;
+
+    await this.delay(100);
 
     // 첫 번째 방만 상세 조회
     if (this.roomInfo.length === 0) return;
@@ -130,3 +130,16 @@ export default {
 <style scoped>
 @import "../../assets/css/room/roomListView.css";
 </style>
+
+<!-- 
+  * 유지보수 *
+
+  1. 비공개 방에 대한 비밀번호 입력 모달창 true false가 씹혀서 제대로 된 로직 구현 필요
+
+  2. 방 리스트가 하나 이상이라면, 최상단에 위치한 방이 클릭되어야 하며, 무조건 하나를 선택된
+  상태이어야 됨. 지금은 하나 선택하면 다시 해제가 발생함.
+
+
+  * 해결 *
+
+ -->

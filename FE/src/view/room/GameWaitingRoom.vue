@@ -63,63 +63,44 @@ export default {
   },
 
   methods: {
-    // 픽창으로 게임 시작
+    /* 방장이 게임 시작을 누름 */
     gameStart() {
-      /* 자신의 자리 번호 */
-      // (1~3) red, (4~6) blue
-      let myTeamName = null;
-      let canStart = true;
+      // 게임 시작 가능한 상태인지 확인 (시작)
+      // let canStart = true;
+      // const seatInfo = useRoomStore().seatInfo;
+      // const seatKeys = Object.keys(seatInfo);
 
-      // 한 번더 주인인지 체크함.
-      if (this.isOwner) {
-        const seatInfo = useRoomStore().seatInfo;
-        const seatKeys = Object.keys(seatInfo);
+      // for (let i = 1; i < seatKeys.length; i++) {
+      //   const seatKey = seatKeys[i];
+      //   if (!seatInfo[seatKey].nickname) {
+      //     alert("빈 자리가 존재합니다.");
+      //     canStart = false;
+      //     return;
+      //     break;
+      //   }
+      // }
 
-        for (let i = 1; i < seatKeys.length; i++) {
-          const seatKey = seatKeys[i];
-          if (!seatInfo[seatKey].nickname) {
-            alert("빈 자리가 존재합니다.");
-            canStart = false;
-            return;
-            break;
-          }
-        }
+      // for (let i = 1; i < seatKeys.length; i++) {
+      //   const seatKey = seatKeys[i];
+      //   if (!seatInfo[seatKey].ready) {
+      //     alert("모두 준비완료가 되지 않았습니다.");
+      //     canStart = false;
+      //     break;
+      //   }
+      // }
 
-        for (let i = 1; i < seatKeys.length; i++) {
-          const seatKey = seatKeys[i];
-          if (!seatInfo[seatKey].ready) {
-            alert("모두 준비완료가 되지 않았습니다.");
-            canStart = false;
-            break;
-          }
-        }
+      // if(!canStart) return;
+      // 게임 시작 가능한 상태인지 확인 (끝)
+      
+      // 게임 방 사람에게 알린다.
+      pubRoom(
+        "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/start",
+        useUserStore().userInfo.email
+      );
 
-        if (!canStart) return;
-
-        // 게임 시작하는 메시지 알림.
-        pubRoom(
-          "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/start",
-          useUserStore().userInfo.email
-        );
-
-        for (let i = 0; i < seatKeys.length; i++) {
-          const seatKey = seatKeys[i];
-          if (seatInfo[seatKey].nickname === useUserStore().userInfo.nickname) {
-            if (0 <= i < 2) {
-              myTeamName = "red";
-            } else {
-              myTeamName = "blue";
-            }
-            break;
-          }
-        }
-      }
-
-      connectRoom("Pick", this.$router, myTeamName).then(() => {
-        pubPick(
-          "/pub/pick/" + useRoomStore().currentRoomInfo.roomCode + "/get-info"
-        );
-      });
+      // 게임 픽창 시작 차이점
+      // 나: /pub/room으로 바로 start를 하고 바로 팀 이름을 알고 구독 신청
+      // 준희형: start를 하면 "ROOM_START_PICK" 타입 메시지가 오고 거기서 구독 신청
     },
 
     // 준비완료
@@ -132,37 +113,41 @@ export default {
 
     // 나갈 때 로직
     goTolist() {
-      // 방을 나가기 위해 pub로 알린다.
-      pubRoom(
-        "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/exit",
-        useUserStore().userInfo.email
-      );
+      const confirmMessage = "정말 나가시겠습니까?";
 
-      // 구독 취소한 뒤 방 정보에 대해 모두 리셋한다.
-      useRoomStore().subscription.room.unsubscribe();
-      const initialStateRoom = useRoomStore().$reset();
-      Object.assign(this, initialStateRoom);
+      if (confirm(confirmMessage)) {
+        // 방을 나가기 위해 pub로 알린다.
+        pubRoom(
+          "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/exit",
+          useUserStore().userInfo.email
+        );
 
-      this.isOut = true;
+        // 구독 취소한 뒤 방 정보에 대해 모두 리셋한다.
+        useRoomStore().subscription.room.unsubscribe();
+        const initialStateRoom = useRoomStore().$reset();
+        Object.assign(this, initialStateRoom);
 
-      this.$router.push({ name: "room" });
+        this.isOut = true;
+
+        this.$router.push({ name: "home" });
+      }
     },
   },
 
-  unmounted() {
-    if (!this.isOut) {
-      // 방을 나가기 위해 pub로 알린다.
-      pubRoom(
-        "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/exit",
-        useUserStore().userInfo.email
-      );
+  // unmounted() {
+  //   if (!this.isOut) {
+  //     // 방을 나가기 위해 pub로 알린다.
+  //     pubRoom(
+  //       "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/exit",
+  //       useUserStore().userInfo.email
+  //     );
 
-      // 구독 취소한 뒤 방 정보에 대해 모두 리셋한다.
-      useRoomStore().subscription.room.unsubscribe();
-      const initialStateRoom = useRoomStore().$reset();
-      Object.assign(this, initialStateRoom);
-    }
-  },
+  //     // 구독 취소한 뒤 방 정보에 대해 모두 리셋한다.
+  //     useRoomStore().subscription.room.unsubscribe();
+  //     const initialStateRoom = useRoomStore().$reset();
+  //     Object.assign(this, initialStateRoom);
+  //   }
+  // },
 };
 </script>
 

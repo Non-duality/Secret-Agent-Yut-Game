@@ -5,7 +5,7 @@
 <script>
 export default {
   name: "OvVideo",
-
+  
   props: {
     streamManager: Object,
   },

@@ -1,36 +1,58 @@
 <template>
-	<ov-video v-if="streamManager" :stream-manager="streamManager"/>
-	<!-- <div><p>{{ clientData }}</p></div> -->
+  <div id="my-container">
+    <ov-video
+      class="my-video"
+      v-if="streamManager"
+      :stream-manager="streamManager"
+    /><span id="user-name">{{ nickname }}</span>
+    <!-- <button @click="toggleMic">마이크</button> -->
+  </div>
+  <!-- <div><p>{{ clientData }}</p></div> -->
 </template>
 
 <script>
-import OvVideo from './OvVideo.vue';
+import OvVideo from "./OvVideo.vue";
+import { useUserStore } from "@/store/userStore";
+
 
 export default {
-	name: 'UserVideo',
+  name: "UserVideo",
 
-	components: {
-		OvVideo,
-	},
+  components: {
+    OvVideo,
+  },
 
-	props: {
-		streamManager: Object,
-	},
+  props: {
+    streamManager: Object,
+  },
 
-	computed: {
-		clientData () {
-			const { clientData } = this.getConnectionData();
-			console.log(clientData);
-			return clientData;
-		},
-	},
+  computed: {
+    nickname() {
+      return useUserStore().userInfo.nickname;
+    },
+  },
 
-	methods: {
-		getConnectionData () {
-			const { connection } = this.streamManager.stream;
-			console.log(JSON.parse(connection.data));
-			return JSON.parse(connection.data);
-		},
-	},
+  methods: {
+    getConnectionData() {
+      const { connection } = this.streamManager.stream;
+      return JSON.parse(connection.data);
+    },
+  },
 };
 </script>
+
+
+<style scoped>
+#user-name {
+  color: aliceblue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.my-video {
+  margin: 10px;
+  border-radius: 50px;
+}
+</style>

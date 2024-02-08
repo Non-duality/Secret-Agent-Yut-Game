@@ -1,45 +1,12 @@
 <template>
   <div class="background">
+    <div class="timer">{{ remainingTime }}</div>
     <div class="content">
       <!-- (시작) OpenVidu -->
       <div id="main-container" class="container">
-        <div id="join" v-if="!session">
-          <div id="img-div"></div>
-          <div id="join-dialog" class="jumbotron vertical-center">
-            <h1>Join a video session</h1>
-            <div class="form-group">
-              <p>
-                <span>Participant</span>
-                <input v-model="myUserName" type="text" required />
-              </p>
-              <p>
-                <span>Session</span>
-                <input v-model="mySessionId" type="text" required />
-              </p>
-              <p class="text-center">
-                <button @click="joinSession()">Join!</button>
-              </p>
-            </div>
-          </div>
-        </div>
-
         <div id="session" v-if="session">
-          <div id="session-header">
-            <h1 id="session-title">{{ mySessionId }}</h1>
-            <input
-              class="btn btn-large btn-danger"
-              type="button"
-              id="buttonLeaveSession"
-              @click="leaveSession"
-              value="Leave session"
-            />
-          </div>
-
           <!-- 카메라 영역 -->
           <div class="rtc-container">
-            <!-- <div id="main-container">
-              <user-video :stream-manager="mainStreamManager" />
-            </div> -->
             <div id="video-container">
               <user-video
                 :stream-manager="publisher"
@@ -64,7 +31,7 @@
             :key="user"
             @click="toggleCharacterSelection(user)"
           >
-            <div class="character-item" v-if="userHasPermission('user')">
+            <div class="character-item">
               <img
                 src="@/assets/img/sample.png"
                 alt="sample-img"
@@ -77,23 +44,24 @@
           </div>
         </div>
         <div class="character-box">
-          <div
-            v-for="character in characters"
-            :key="character"
-            @click="selectCharacter(character)"
-          >
+          <div v-for="character in characters" :key="character" class="box">
             <div class="character">
-              <p
-                class="character-detail"
-                :class="{
-                  selected: isCharacterSelected('현재 사용자', character),
+              <img
+                :src="character"
+                class="select-img"
+                @click="selectCharacter(character)"
+                :style="{
+                  filter: isCharacterSelected(character)
+                    ? 'grayscale(100%)'
+                    : 'none',
                 }"
-                :style="{ border: `2px solid ${borderColor}` }"
-                @click="changeBorderColor"
-              >
-                {{ character }}
-              </p>
+              />
             </div>
+            <span v-if="character.includes('king')">왕</span>
+            <span v-if="character.includes('spearman')">창병</span>
+            <span v-if="character.includes('cavalry')">기병</span>
+            <span v-if="character.includes('peasant')">농민</span>
+            <span v-if="character.includes('slave')">노비</span>
           </div>
         </div>
         <button @type="submit" @click="openModal('spy')" class="ready">
@@ -112,35 +80,22 @@
 <script>
 import spyModal from "@/view/game/pick/spyModal.vue";
 import { useUserStore } from "@/store/userStore";
+import { usePickStore } from "@/store/pickStore";
 import { storeToRefs } from "pinia";
 
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/game/openvidu/UserVideo.vue";
 
+import king from "@/assets/img/game/pick/king.png";
+import cavalry from "@/assets/img/game/pick/cavalry.png";
+import peasant from "@/assets/img/game/pick/peasant.png";
+import slave from "@/assets/img/game/pick/slave.png";
+import spearman from "@/assets/img/game/pick/spearman.png";
+
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const { VITE_VUE_API_URL } = import.meta.env;
-
-const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://i10d205.p.ssafy.io/api/v1";
-
 export default {
-  data() {
-    return {
-      // OpenVidu objects
-      OV: undefined,
-      session: undefined,
-      mainStreamManager: undefined,
-      publisher: undefined,
-      subscribers: [],
-
-      // Join form
-      mySessionId: "SessionA",
-      myUserName: "Participant" + Math.floor(Math.random() * 100),
-    };
-  },
-
   components: {
     spyModal,
     UserVideo,
@@ -155,9 +110,11 @@ export default {
       publisher: undefined,
       subscribers: [],
 
-      // Join form
-      mySessionId: "SessionA",
-      myUserName: "Participant" + Math.floor(Math.random() * 100),
+      remainingTime: 30,
+      timerInterval: null,
+
+      mySessionId: "",
+      myUserName: "",
     };
   },
 
@@ -166,22 +123,7 @@ export default {
     const { showSpyModal } = storeToRefs(store);
 
     const users = ["준희", "지훈", "성규", "수빈", "희웅"];
-    const characters = [
-      "캐릭터1",
-      "캐릭터2",
-      "캐릭터3",
-      "캐릭터4",
-      "캐릭터5",
-      "캐릭터6",
-      "캐릭터7",
-      "캐릭터8",
-      "캐릭터9",
-      "캐릭터10",
-      "캐릭터11",
-      "캐릭터12",
-      "캐릭터13",
-      "캐릭터14",
-    ];
+    const characters = [king, spearman, cavalry, peasant, slave];
     const selectedCharacters = [];
 
     return {
@@ -229,7 +171,6 @@ export default {
       this.getToken(this.mySessionId).then((token) => {
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-        console.log("토큰: " + token)
         this.session
           .connect(token, { clientData: this.myUserName })
           .then(() => {
@@ -244,24 +185,23 @@ export default {
               publishVideo: true, // Whether you want to start publishing with your video enabled or not
               resolution: "640x480", // The resolution of your video
               frameRate: 30, // The frame rate of your video
-              insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
+              insertMode: "PREPEND", // How the video is inserted in the target element 'video-container'
               mirror: false, // Whether to mirror your local video or not
             });
 
-            // Set the main video in the page to display our webcam and store our Publisher
+            // Set the main video in the page to display our webcam and store our Publish er
             this.mainStreamManager = publisher;
             this.publisher = publisher;
 
             // --- 6) Publish your stream ---
-
             this.session.publish(this.publisher);
           })
           .catch((error) => {
-            console.log(
-              "There was an error connecting to the session:",
-              error.code,
-              error.message
-            );
+            // console.log(
+            //   "There was an error connecting to the session:",
+            //   error.code,
+            //   error.message
+            // );
           });
       });
 
@@ -272,37 +212,31 @@ export default {
       // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
       if (this.session) this.session.disconnect();
 
-      // Empty all properties...
       this.session = undefined;
       this.mainStreamManager = undefined;
       this.publisher = undefined;
       this.subscribers = [];
       this.OV = undefined;
 
-      // Remove beforeunload listener
       window.removeEventListener("beforeunload", this.leaveSession);
     },
 
     updateMainVideoStreamManager(stream) {
-      if (this.mainStreamManager === stream) return;
-      this.mainStreamManager = stream;
+      let publisher = this.OV.initPublisher(undefined, {
+        audioSource: undefined, // The source of audio. If undefined default microphone
+        videoSource: undefined, // The source of video. If undefined default webcam
+        publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+        publishVideo: false, // Whether you want to start publishing with your video enabled or not
+        resolution: "640x480", // The resolution of your video
+        frameRate: 30, // The frame rate of your video
+        insertMode: "PREPEND", // How the video is inserted in the target element 'video-container'
+        mirror: false, // Whether to mirror your local video or not
+      });
+
+      if (this.publisher === publisher) return;
+      this.publisher = publisher;
     },
 
-    /**
-     * --------------------------------------------
-     * GETTING A TOKEN FROM YOUR APPLICATION SERVER
-     * --------------------------------------------
-     * The methods below request the creation of a Session and a Token to
-     * your application server. This keeps your OpenVidu deployment secure.
-     *
-     * In this sample code, there is no user control at all. Anybody could
-     * access your application server endpoints! In a real production
-     * environment, your application server must identify the user to allow
-     * access to the endpoints.
-     *
-     * Visit https://docs.openvidu.io/en/stable/application-server to learn
-     * more about the integration of OpenVidu in your application server.
-     */
     async getToken(mySessionId) {
       const sessionId = await this.createSession(mySessionId);
       return await this.createToken(sessionId);
@@ -321,18 +255,16 @@ export default {
 
     async createToken(sessionId) {
       const response = await axios.post(
-        "https://i10d205.p.ssafy.io/api/v1" + "/sessions/" + sessionId + "/connections",
+        "https://i10d205.p.ssafy.io/api/v1" +
+          "/sessions/" +
+          sessionId +
+          "/connections",
         {},
         {
           headers: { "Content-Type": "application/json" },
         }
       );
       return response.data; // The token
-    },
-
-    userHasPermission(user) {
-      // 사용자의 권한을 확인하는 로직 추가해야함
-      return true;
     },
 
     // 캐릭터를 선택했는지 확인하는 로직
@@ -380,7 +312,7 @@ export default {
         );
 
         if (!userHasSelectedCharacter) {
-          console.log(`User ${user} selected character ${character}`);
+          // console.log(`User ${user} selected character ${character}`);
           this.selectedCharacters.push({ user, character });
         }
       }
@@ -388,10 +320,39 @@ export default {
     changeBorderColor() {
       this.borderColor = "red";
     },
+
+    startTimer() {
+      // 1초마다 남은 시간을 감소시키는 타이머 설정
+      this.timerInterval = setInterval(() => {
+        if (this.remainingTime > 0) {
+          this.remainingTime--;
+        } else {
+          // 시간이 다 되었을 때 타이머를 멈춤
+          clearInterval(this.timerInterval);
+        }
+      }, 1000);
+    },
   },
 
   mounted() {
     useUserStore().showSpyModal = false;
+    useUserStore().showModalSide = false;
+
+    // mounted 되면 바로 세션 접속
+    this.myUserName = "A"; // userInfo.nickname
+    this.mySessionId = "SessionA"; // {임의코드}/red 또는 {임의코드}/blue
+
+    this.joinSession();
+
+    // 서버로부터 픽 시작은 받으면, 타이머 시작
+    this.startTimer();
+  },
+
+  unmounted() {
+    this.leaveSession();
+    useUserStore().initData();
+    alert("홈으로!!");
+    this.$router.push({ name: "/" });
   },
 };
 </script>
