@@ -5,6 +5,8 @@ export const useGameStore = defineStore("game", {
   // 반응형 상태 (data)
   state: () => {
     return {
+      // 게임 코드
+      gameCode: "",
       // 내 팀 정보.
       myTeam: 1,
       // 턴. idx 0 = 홍팅, 1 = 청팀
@@ -36,6 +38,8 @@ export const useGameStore = defineStore("game", {
       isMission: false,
       // 기존에 있는말 말고 새로가는 말만 이동하기 위해 카운트 변수.
       toCnt: 0,
+      redUser: [],
+      blueUser: [],
       // 말
       redHorses: [
         {

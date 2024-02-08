@@ -129,7 +129,16 @@ export default {
     },
     // 받아오기.
     handleRecvMessage(receivedMsg) {
+      const gameStore = useGameStore();
       console.log(receivedMsg);
+      if(receivedMsg.actionCategory === 0){
+        // gameStore.missionTiles = receivedMsg.missionRegion;
+        // gameStore.redUser = receivedMsg.redUser;
+        // gameStore.blueUser = receivedMsg.blueUser;
+        // gameStore.gameCode = receivedMsg.gameCode;
+        // gameStore.redHorses = receivedMsg.redUnit;
+        // gameStore.blueHorses = receivedMsg.blueUnit;
+      }
       if (!this.isThrowYut) {
         console.log(receivedMsg.actionCategory);
         if (receivedMsg.actionCategory === 1) {

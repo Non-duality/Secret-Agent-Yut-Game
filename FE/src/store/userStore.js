@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { useRoomStore } from "./roomStore";
-
+import { useFriendStore } from "./friendStore";
 import {
   userConfirm,
   userDoJoin,
@@ -104,7 +104,6 @@ export const useUserStore = defineStore("user", {
           (response) => {
             if (response.status === 200) {
               let { data } = response;
-              console.log("로그인 성공");
               let accessToken = data["access-token"];
               let refreshToken = data["refresh-token"];
 
@@ -113,9 +112,10 @@ export const useUserStore = defineStore("user", {
 
               useUserStore().isLogin = true;
               useUserStore().showLoginModal = false;
+
+              useFriendStore().getFriend();
               resolve(); // 작업 완료 후 resolve 호출
             } else {
-              console.log("로그인 실패");
               useUserStore().isLogin = false;
               reject(new Error("로그인 실패")); // 실패 시 reject 호출
             }
