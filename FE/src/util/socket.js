@@ -373,26 +373,33 @@ export function initPick(router, from) {
 
       /* 홍팀, 청팀 정보를 받아오는 것 */
       if (usePickStore().receivedMessage.type === "PICK_GET_PRE_INFO") {
+        usePickStore().code = usePickStore().receivedMessage.code;
         usePickStore().unitInfo = usePickStore().receivedMessage.data.unitInfo;
         usePickStore().userInfo = usePickStore().receivedMessage.data.userInfo;
+
+        // 로컬 스토리지에 업데이트된 데이터 저장
+        const storedPickData = JSON.parse(localStorage.getItem("pick"));
+        const updatedPickData = {
+          ...storedPickData,
+          code: usePickStore().code,
+          unitInfo: {
+            ...usePickStore().unitInfo,
+          },
+          userInfo: {
+            ...usePickStore().userInfo,
+          },
+        };
+        localStorage.setItem("pick", JSON.stringify(updatedPickData));
+      } /* 픽 순서를 받아오는 것 */ else if (
+        usePickStore().receivedMessage.type === "PICK_ORDER"
+      ) {
+        usePickStore().nowPickPlayerInfo.email =
+          usePickStore().receivedMessage.data.email;
+        usePickStore().nowPickPlayerInfo.time =
+          usePickStore().receivedMessage.data.email;
       }
     }
   );
-}
-
-/*
- * 치명적 오류
- *
- * 여기서는 소켓을 모두 초기화하고 사용자 LocalStoage를 초기화 후
- * 초기 화면으로 이동하게 된다.
- */
-function fatalError(error, msg) {
-  stompClient = null;
-  connected = false;
-  useUserStore().initData();
-  useRoomStore().stompClient.deactivate();
-  console.log("[socket.fatalError] : " + error);
-  console.log("상세 에러 : " + msg);
 }
 
 // 구독한 방에 알리기.
@@ -410,6 +417,14 @@ export function pubPick(destination) {
   });
 }
 
+// 캐릭터 픽 정보 알리기.
+export function pubPickInfo(destination, content) {
+  stompClient.publish({
+    destination: destination,
+    body: JSON.stringify(content),
+  });
+}
+
 // 서버로 보내기.
 export function socketSend(destination, msg) {
   console.log(destination);
@@ -417,4 +432,19 @@ export function socketSend(destination, msg) {
     destination: destination,
     body: JSON.stringify(msg),
   });
+}
+
+/*
+ * 치명적 오류
+ *
+ * 여기서는 소켓을 모두 초기화하고 사용자 LocalStoage를 초기화 후
+ * 초기 화면으로 이동하게 된다.
+ */
+function fatalError(error, msg) {
+  stompClient = null;
+  connected = false;
+  useUserStore().initData();
+  useRoomStore().stompClient.deactivate();
+  console.log("[socket.fatalError] : " + error);
+  console.log("상세 에러 : " + msg);
 }

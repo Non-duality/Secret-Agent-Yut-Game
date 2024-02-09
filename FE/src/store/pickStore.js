@@ -13,6 +13,11 @@ export const usePickStore = defineStore("pick", {
     receivedMessage: {},
 
     publisher: {},
+
+    nowPickPlayerInfo: {
+      email: "",
+      time: "",
+    }
   }),
 
   actions: {},

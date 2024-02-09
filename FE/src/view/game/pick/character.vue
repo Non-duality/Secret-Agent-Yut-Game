@@ -4,14 +4,22 @@
     <div class="content">
       <!-- (시작) OpenVidu -->
       <div id="main-container" class="container">
+        <!-- 사용자의 이름 표시 -->
+        <!-- <div class="nickname-container">
+          <div v-for="user in userInfo" :key="user.userId">
+            <p>{{ user.nickname }}</p>
+          </div>
+        </div> -->
         <div id="session" v-if="session">
-          <!-- 카메라 영역 -->
+          <!-- (시작) 카메라 영역 -->
           <div class="rtc-container">
             <div id="video-container">
               <user-video
                 :stream-manager="publisher"
                 @click="updateMainVideoStreamManager(publisher)"
+                :nickname="currentUserNickname"
               />
+
               <user-video
                 v-for="sub in subscribers"
                 :key="sub.stream.connection.connectionId"
@@ -20,48 +28,39 @@
               />
             </div>
           </div>
+          <!-- (끝) 카메라 영역 -->
         </div>
       </div>
       <!-- (끝) OpenVidu -->
 
       <div class="characters-wrapper">
+        <!-- (시작) 캐릭터 선택 -->
         <div class="character-container">
-          <div
-            v-for="user in users"
-            :key="user"
-            @click="toggleCharacterSelection(user)"
-          >
+          <div v-for="user in userInfo" :key="user.userId">
             <div class="character-item">
               <img
                 src="@/assets/img/sample.png"
                 alt="sample-img"
                 class="sample-img"
               />
-              <p class="select">
-                {{ isCharacterSelected(user) ? "선택완료" : "선택중..." }}
-              </p>
+              <p>{{ user.nickname }}</p>
+              <!-- 픽 버튼 또는 픽된 유닛 정보를 표시하는 부분 -->
             </div>
           </div>
         </div>
+        <!-- (끝) 캐릭터 선택 -->
         <div class="character-box">
           <div v-for="character in characters" :key="character" class="box">
             <div class="character">
-              <img
-                :src="character"
-                class="select-img"
-                @click="selectCharacter(character)"
-                :style="{
-                  filter: isCharacterSelected(character)
-                    ? 'grayscale(100%)'
-                    : 'none',
-                }"
-              />
+              <img :src="character" class="select-img" />
             </div>
-            <span v-if="character.includes('king')">왕</span>
-            <span v-if="character.includes('spearman')">창병</span>
-            <span v-if="character.includes('cavalry')">기병</span>
-            <span v-if="character.includes('peasant')">농민</span>
-            <span v-if="character.includes('slave')">노비</span>
+            <div class="character-name">
+              <span v-if="character.includes('king')">대왕</span>
+              <span v-if="character.includes('spearman')">창병</span>
+              <span v-if="character.includes('cavalry')">기병</span>
+              <span v-if="character.includes('peasant')">농민</span>
+              <span v-if="character.includes('slave')">노비</span>
+            </div>
           </div>
         </div>
         <button @type="submit" @click="openModal('spy')" class="ready">
@@ -81,6 +80,7 @@
 import spyModal from "@/view/game/pick/spyModal.vue";
 import { useUserStore } from "@/store/userStore";
 import { usePickStore } from "@/store/pickStore";
+import { pubPick, pubPickInfo } from "@/util/socket";
 import { storeToRefs } from "pinia";
 
 import axios from "axios";
@@ -115,6 +115,13 @@ export default {
 
       mySessionId: "",
       myUserName: "",
+
+      userInfo: null,
+      unitInfo: null,
+
+      myTurnNumber: null,
+
+      currentUserNickname: "",
     };
   },
 
@@ -267,60 +274,6 @@ export default {
       return response.data; // The token
     },
 
-    // 캐릭터를 선택했는지 확인하는 로직
-    isCharacterSelected(user) {
-      return this.selectedCharacters.some(
-        (entry) => entry.user === user && entry.character !== null
-      );
-    },
-
-    // 캐릭터를 선택 후 다시 해제 할 수 있는 로직
-    toggleCharacterSelection(user, character) {
-      const existingIndex = this.selectedCharacters.findIndex(
-        (entry) => entry.user === user
-      );
-
-      if (existingIndex !== -1) {
-        // 이미 선택한 캐릭터면 선택 해제
-        this.selectedCharacters.splice(existingIndex, 1);
-      } else {
-        // 아직 캐릭터 선택 안했으면 선택
-        const userHasSelectedCharacter = this.selectedCharacters.some(
-          (entry) => entry.user === user && entry.character !== null
-        );
-
-        if (!userHasSelectedCharacter) {
-          this.selectedCharacters.push({ user, character: null });
-        }
-      }
-    },
-
-    // 캐릭터 선택하는 로직 >> 캐릭터 하나만 선택할 수 있도록 하면 됨 !
-    selectCharacter(character) {
-      const user = "현재 사용자"; // 사용자 정보 가져오는 곳
-      const existingIndex = this.selectedCharacters.findIndex(
-        (entry) => entry.user === user
-      );
-
-      // 이미 선택한 캐릭터면 선택 해제
-      if (existingIndex !== -1) {
-        this.selectedCharacters[existingIndex].character = character;
-      } else {
-        // 아직 캐릭터 선택 안했으면 선택
-        const userHasSelectedCharacter = this.selectedCharacters.some(
-          (entry) => entry.user === user && entry.character !== null
-        );
-
-        if (!userHasSelectedCharacter) {
-          // console.log(`User ${user} selected character ${character}`);
-          this.selectedCharacters.push({ user, character });
-        }
-      }
-    },
-    changeBorderColor() {
-      this.borderColor = "red";
-    },
-
     startTimer() {
       // 1초마다 남은 시간을 감소시키는 타이머 설정
       this.timerInterval = setInterval(() => {
@@ -332,31 +285,64 @@ export default {
         }
       }, 1000);
     },
+
+    leave(event) {
+      event.preventDefault();
+      event.returnValue = "홈으로...";
+      // 홈으로 이동
+      this.leaveSession();
+      useUserStore().initData();
+      alert("홈으로!!");
+      window.location.href = "/";
+      return event.returnValue;
+    },
   },
 
+  /* 캐릭터 픽창 시작 */
   mounted() {
+    window.addEventListener("beforeunload", this.leave);
+    this.currentUserNickname = useUserStore().userInfo.nickname;
+
     useUserStore().showSpyModal = false;
     useUserStore().showModalSide = false;
 
-    // mounted 되면 바로 세션 접속
-    this.myUserName = "A"; // userInfo.nickname
-    this.mySessionId = "SessionA"; // {임의코드}/red 또는 {임의코드}/blue
+    // (1) 서버에게 픽 시작을 알린다.
+    pubPick("/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/start");
 
-    this.joinSession();
+    // (2) 픽창으로부터 홍팀 또는 청팀의 정보를 받아온다.
+    // * userInfo : 사용자 픽 순서, 픽 유무 등
+    // * unitInfo : 현재 구현한 캐릭터 정보
+    setTimeout(() => {
+      this.userInfo = usePickStore().userInfo;
+      this.unitInfo = usePickStore().unitInfo;
 
-    // 서버로부터 픽 시작은 받으면, 타이머 시작
-    this.startTimer();
+      let myTurnNumber = -1;
+
+      for (let i = 0; i < this.userInfo.length; i++) {
+        if (this.userInfo[i].nickname === useUserStore().userInfo.nickname) {
+          myTurnNumber = i + 1;
+          break;
+        }
+      }
+
+      // (3) 자신의 픽 순서를 보고 자신의 팀 OpenVidu에 접속한다.
+      setTimeout(() => {
+        this.myUserName = useUserStore().userInfo.nickname;
+        this.mySessionId = usePickStore().code.replace(/\//g, "");
+        this.joinSession();
+      }, 100 * this.myTurnNumber);
+
+      // 서버로부터 픽 시작 요청을 받으면, 타이머 시작
+      // this.startTimer();
+    }, 100);
   },
 
-  unmounted() {
-    this.leaveSession();
-    useUserStore().initData();
-    alert("홈으로!!");
-    this.$router.push({ name: "/" });
+  beforeUnmount() {
+    // beforeUnload 이벤트 리스너 제거
+    window.removeEventListener("beforeunload", this.confirmExit);
   },
 };
 </script>
-
 
 <style scoped>
 @import url("../../../assets/css/game/character.css");

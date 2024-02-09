@@ -15,6 +15,14 @@
   display: flex;
 }
 
+.nickname-container{
+  display: flex;
+}
+
+p{
+  color: white;
+}
+
 .select-img {
   width: 6vw;
   height: 12vh;
@@ -25,8 +33,8 @@
   border: 4px solid red;
 }
 
-.character-box > .character img {
-  transition: filter 0.3s ease-in-out; /* 흑백으로 변환하는 애니메이션 효과 */
+.character-name > span {
+  color: white;
 }
 
 .background {
@@ -63,6 +71,7 @@
   display: flex;
   justify-content: space-evenly;
   flex-direction: row;
+  gap: 70px;
 }
 
 .character-item {
@@ -84,15 +93,15 @@
 
 .character-box {
   display: flex;
-  gap: 50px;
   justify-content: center;
   align-items: center;
-  margin: 20px 0px;
+  margin: 30px auto; /* 수평 마진을 auto로 설정하여 가운데 정렬 */
   background-color: rgba(158, 152, 152, 0.8);
   width: 50vw;
   height: 19vh;
   padding: 5px;
   border-radius: 20px;
+  gap: 50px;
 }
 
 .character-box > .character {
@@ -100,10 +109,9 @@
   justify-content: start;
   align-items: start;
   font-size: 10px;
-  margin-top: 20px;
 }
 
-.character-box > .box{
+.character-box > .box {
   width: 6vw;
 }
 

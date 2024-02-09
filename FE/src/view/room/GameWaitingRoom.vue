@@ -34,9 +34,6 @@ export default {
 
   data() {
     return {
-      // 방 정보
-      roomInfo: null,
-
       // 방 주인이지 확인
       isOwner: false,
 

@@ -4,16 +4,13 @@
       class="my-video"
       v-if="streamManager"
       :stream-manager="streamManager"
-    /><span id="user-name">{{ nickname }}</span>
-    <!-- <button @click="toggleMic">마이크</button> -->
+    />
   </div>
   <!-- <div><p>{{ clientData }}</p></div> -->
 </template>
 
 <script>
 import OvVideo from "./OvVideo.vue";
-import { useUserStore } from "@/store/userStore";
-
 
 export default {
   name: "UserVideo",
@@ -24,12 +21,6 @@ export default {
 
   props: {
     streamManager: Object,
-  },
-
-  computed: {
-    nickname() {
-      return useUserStore().userInfo.nickname;
-    },
   },
 
   methods: {
