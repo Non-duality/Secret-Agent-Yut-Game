@@ -1,0 +1,60 @@
+/* 화면 중앙 정렬 */
+.videoView {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin: 50px 400px;
+  border: 3px whitesmoke solid;
+  background-color: blueviolet;
+  position: relative;
+  border-radius: 30px;
+  min-height: 50vh;
+}
+
+.media-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 거울모드 */
+.media {
+  transform: rotateY(180deg);
+  -webkit-transform:rotateY(180deg); 
+}
+
+#webcam {
+  width: 70%;
+  height: auto;
+}
+
+.start-timer, .victory {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: greenyellow;
+  font-size: 5rem;
+}
+
+.game-timer {
+  position: absolute;
+  top: 3%;
+  right: 3%;
+  color: white;
+  font-size: 2rem;
+}
+
+.victory {
+  color: blue;
+}
+
+.fail {
+  color: red;
+}
+
