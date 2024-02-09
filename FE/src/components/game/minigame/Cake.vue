@@ -158,9 +158,6 @@ export default {
             FaceLandmarker.FACE_LANDMARKS_LIPS,
             { color: "red" }
           );
-          // 나중에 랜드마크 확인해봐서 번호확인!
-          console.log(`랜드마크 ${landmarks}`)
-          console.log(`입술 랜드마크 ${FaceLandmarker.FACE_LANDMARKS_LIPS}`)
           this.detectCakeCollision(landmarks)
         }
       }
@@ -172,13 +169,13 @@ export default {
 
     // 케이크 충돌 감지
       detectCakeCollision(landmarks) {
-        const moutLandmarks = landmarks[FaceLandmarker.FACE_LANDMARKS_LIPS0]
+        const webcam = this.$refs.webcam
         this.cakes.forEach((cake, index) => {
           if (
-            cake.x >= mouthLandmarks[0].x &&
-            cake.x <= mouthLandmarks[6].x &&
-            cake.y >= mouthLandmarks[0].y &&
-            cake.y <= mouthLandmarks[6].y
+            cake.x >= landmarks[57].x * webcam.offsetWidth &&
+            cake.x <= landmarks[287].x * webcam.offsetWidth &&
+            cake.y >= landmarks[164].y * webcam.offsetHeight &&
+            cake.y <= landmarks[18].y * webcam.offsetHeight
           ) {
             this.eatCake(index)
           }
@@ -226,7 +223,7 @@ export default {
       ctx.clearRect(0, 0, cakeCanvas.width, cakeCanvas.height)
       this.cakes.forEach(cake => {
         cake.y += 6;
-        ctx.drawImage(this.cakeImg, cake.x, cake.y, 30, 30)
+        ctx.drawImage(this.cakeImg, cake.x, cake.y, 20, 20)
         // 화면 밖으로 나간 케이크 제거
         if (cake.y > cakeCanvas.height) {
           this.cakes.shift()
