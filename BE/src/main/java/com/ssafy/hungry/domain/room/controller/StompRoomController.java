@@ -18,6 +18,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -84,6 +85,22 @@ public class StompRoomController {
                 .type("ROOM_CHAT")
                 .code(roomCode)
                 .data(roomChatMessageDto)
+                .build());
+
+    }
+    // 방 팀 변경
+    @MessageMapping(value = "/room/{roomCode}/change")
+    public void changeTeam(@DestinationVariable String roomCode, String email){
+        log.info("팀 변경 호출 : " + roomCode);
+        // 이메일로 유저 찾기
+        UserEntity user = userService.findByEmail(email);
+
+        List<CurrentSeatDto> updateSeatDtoList= roomRedisService.changeTeam(roomCode, user);
+
+        redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                .type("ROOM_CHANGE_TEAM")
+                .code(roomCode)
+                .data(updateSeatDtoList)
                 .build());
 
     }

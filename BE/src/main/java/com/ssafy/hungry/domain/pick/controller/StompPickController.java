@@ -2,6 +2,8 @@ package com.ssafy.hungry.domain.pick.controller;
 
 import com.ssafy.hungry.domain.pick.dto.*;
 import com.ssafy.hungry.domain.pick.service.PickRedisService;
+import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
+import com.ssafy.hungry.domain.room.service.RoomRedisService;
 import com.ssafy.hungry.global.dto.StompDataDto;
 import com.ssafy.hungry.global.service.RedisSender;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.Map;
 public class StompPickController {
 
     private final PickRedisService pickRedisService;
+    private final RoomRedisService roomRedisService;
     private final RedisSender redisSender;
     private final ChannelTopic roomTopic;
 
@@ -48,6 +51,7 @@ public class StompPickController {
         blueTeamPickInfo.put("userInfo", currentUserPickInfo.get("청팀"));
         blueTeamPickInfo.put("unitInfo", currentUnitPickInfo.get("청팀"));
 
+
         // 홍팀에게 홍팀 캐릭터 선택 정보 보내기
         redisSender.sendToRedis(roomTopic, StompDataDto.builder()
                 .type("PICK_GET_PRE_INFO")
@@ -59,7 +63,7 @@ public class StompPickController {
         redisSender.sendToRedis(roomTopic, StompDataDto.builder()
                 .type("PICK_GET_PRE_INFO")
                 .code(roomCode + "/blue")
-                .data("") // Data 보내기
+                .data(blueTeamPickInfo) // Data 보내기
                 .build());
 
     }
@@ -114,7 +118,7 @@ public class StompPickController {
 
         // 양팀 픽이 다 끝났는지 확인하기
         // 양팀 픽이 다 끝났다면 밀정 픽 시작
-        if(pickRedisService.isDonePick(roomCode)){
+        if (pickRedisService.isDonePick(roomCode)) {
 
             log.info("밀정 픽 시작 : " + roomCode);
 
@@ -138,14 +142,14 @@ public class StompPickController {
         }
 
         // 양팀 픽이 끝나지 않았다면 다음 픽 순서를 확인 후 다음 픽할 사람을 지목
-        else{
-            log.info("다음 픽 정보 전달 : " +donePickDto.getTeam() + roomCode);
+        else {
+            log.info("다음 픽 정보 전달 : " + donePickDto.getTeam() + roomCode);
 
             // 들어온 팀의 다음번 픽 순서를 확인
             String pickEmail = pickRedisService.findPickOrder(roomCode, donePickDto.getTeam());
 
             // 한 팀만 끝났을 경우
-            if(pickEmail.equals("")){
+            if (pickEmail.equals("")) {
                 redisSender.sendToRedis(roomTopic, StompDataDto.builder()
                         .type("PICK_WAIT")
                         .code(targetRoomCode)
@@ -154,15 +158,15 @@ public class StompPickController {
             }
 
             // 다음 픽을 할 유저 정보 전달
-            else{
-            redisSender.sendToRedis(roomTopic, StompDataDto.builder()
-                    .type("PICK_NEXT")
-                    .code(targetRoomCode)
-                    .data(OrderPickDto.builder()
-                            .Email(pickEmail)
-                            .time(PICK_TIME)
-                            .build()) // Data 보내기
-                    .build());
+            else {
+                redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                        .type("PICK_NEXT")
+                        .code(targetRoomCode)
+                        .data(OrderPickDto.builder()
+                                .Email(pickEmail)
+                                .time(PICK_TIME)
+                                .build()) // Data 보내기
+                        .build());
             }
 
 
@@ -171,9 +175,71 @@ public class StompPickController {
     }
 
     // 밀정 선택 완료
-    @MessageMapping(value="/pick/{roomCode}/spy")
-    public void spyPick(@DestinationVariable String roomCode){
+    @MessageMapping(value = "/pick/{roomCode}/spy")
+    public void spyPick(@DestinationVariable String roomCode, SpyPickDto spyPickDto) {
+        log.info("SPY PICK 완료 : " + spyPickDto.getTeam() + roomCode);
 
+        // 밀정 선택 정보 최신화
+        pickRedisService.updateSpyInfo(roomCode, spyPickDto.getTeam(), spyPickDto.getUnitId());
+
+        // 전달할 팀
+        String targetRoomCode = "";
+        if (spyPickDto.getTeam().equals("홍팀")) {
+            targetRoomCode = roomCode + "/red";
+        } else if (spyPickDto.getTeam().equals("청팀")) {
+            targetRoomCode = roomCode + "/blue";
+        }
+
+        // 한 팀만 들어온 경우
+        if (pickRedisService.countSpyInfo(roomCode) == 1){
+            redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                    .type("PICK_SPY_WAIT")
+                    .code(targetRoomCode)
+                    .data("모든 픽이 완료될 때까지 기다려주세요.")
+                    .build());
+        }
+        // 두 팀 다 들어온 경우
+        if (pickRedisService.countSpyInfo(roomCode) == 2){
+
+            Map<String, Object> redTeamAllPickInfo = new HashMap<>();
+            Map<String, Object> blueTeamAllPickInfo = new HashMap<>();
+
+            // 밀정 정보 불러오기
+            Map<Object,Object> spyPickInfo = pickRedisService.getSpyInfo(roomCode);
+
+            // 각자 선택한 밀정 정보 가져오기 (적에 심어둔 우리팀의 밀정)
+            redTeamAllPickInfo.put("EnemySpyInfo",spyPickInfo.get("청팀"));
+            blueTeamAllPickInfo.put("EnemySpyInfo", spyPickInfo.get("홍팀"));
+
+            // 현재 모든 유저 정보 가져오기
+            List<CurrentSeatDto> currentSeatDtoList = roomRedisService.getCurrentRoomInfo(roomCode);
+
+            redTeamAllPickInfo.put("allUserInfo",currentSeatDtoList);
+            blueTeamAllPickInfo.put("allUserInfo",currentSeatDtoList);
+
+            // 유닛 정보 가져오기
+            List<CurrentUnitPickDto> redTeamUnitList = pickRedisService.getPickUnitList(roomCode,"홍팀");
+            List<CurrentUnitPickDto> blueTeamUnitList= pickRedisService.getPickUnitList(roomCode,"청팀");
+            redTeamAllPickInfo.put("redTeamUnitList",redTeamUnitList);
+            redTeamAllPickInfo.put("redTeamUnitList",redTeamUnitList);
+            redTeamAllPickInfo.put("blueTeamUnitList",blueTeamUnitList);
+            blueTeamAllPickInfo.put("blueTeamUnitList",blueTeamUnitList);
+
+
+            // 각 팀에게 정보 전달
+            redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                    .type("GAME_START")
+                    .code(roomCode + "/red")
+                    .data(redTeamAllPickInfo)
+                    .build());
+
+            redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                    .type("GAME_START")
+                    .code(roomCode + "/blue")
+                    .data(blueTeamAllPickInfo)
+                    .build());
+
+        }
     }
 
     // 유닛 선택창의 팀 채팅

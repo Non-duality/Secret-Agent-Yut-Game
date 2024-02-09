@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hungry.domain.pick.dto.CurrentUnitPickDto;
 import com.ssafy.hungry.domain.pick.dto.CurrentUserPickDto;
+import com.ssafy.hungry.domain.pick.dto.SpyPickDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +13,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -52,6 +54,11 @@ public class PickRedisRepository {
 
     }
 
+    // redis에 우리팀이 픽한 상대팀의 밀정 유닛 아이디를 저장
+    public void saveSpyPickToRedis(String key, String team, int unitId){
+        redisTemplate.opsForHash().put(key, team, unitId);
+    }
+
     // userPick을 redis에 지우고 다시 저장하기
     public void reSaveUserPickToRedis(String key, CurrentUserPickDto currentUserPickDto, int seatNumber){
         log.info("PickRedisRepository reSaveToRedis 호출 : " + key);
@@ -65,6 +72,7 @@ public class PickRedisRepository {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+
 
     }
 
@@ -115,4 +123,10 @@ public class PickRedisRepository {
 
         return CurrentUnitPickDtoList;
     }
+
+    public Map<Object, Object> getCurrentSpyPickInfo(String key){
+        Map<Object, Object> spyPickInfo = redisTemplate.opsForHash().entries(key);
+        return spyPickInfo;
+    }
+
 }

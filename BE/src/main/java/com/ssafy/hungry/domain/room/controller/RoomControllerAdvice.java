@@ -1,6 +1,7 @@
 package com.ssafy.hungry.domain.room.controller;
 
 import com.ssafy.hungry.domain.room.exception.AllUsersNotReadyException;
+import com.ssafy.hungry.domain.room.exception.CannotChangeTeamException;
 import com.ssafy.hungry.domain.room.exception.OwnerValidationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,6 +20,9 @@ public class RoomControllerAdvice {
         return ResponseEntity.status(403).body("Not all users are ready.");
     }
 
-
+    @ExceptionHandler({CannotChangeTeamException.class})
+    public ResponseEntity<String> handleCannotChangeTeamException(CannotChangeTeamException e){
+        return ResponseEntity.status(403).body("Can not change team.");
+    }
 
 }

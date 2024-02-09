@@ -6,6 +6,7 @@ import com.ssafy.hungry.domain.room.dto.RoomDetailDto;
 import com.ssafy.hungry.domain.room.dto.RoomLobbyInfoDto;
 import com.ssafy.hungry.domain.room.entity.RoomEntity;
 import com.ssafy.hungry.domain.room.exception.AllUsersNotReadyException;
+import com.ssafy.hungry.domain.room.exception.CannotChangeTeamException;
 import com.ssafy.hungry.domain.room.exception.OwnerValidationException;
 import com.ssafy.hungry.domain.room.repository.RoomRedisRepository;
 import com.ssafy.hungry.domain.room.repository.RoomRepository;
@@ -127,6 +128,87 @@ public class RoomRedisService {
                 .build();
 
         return  roomLobbyInfoDto;
+    }
+
+    public List<CurrentSeatDto> changeTeam(String roomCode, UserEntity user){
+        String key = generateKey(roomCode);
+        List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo(key);
+
+        //해당 유저가 어느 자리, 어느 팀에 있었는지 확인, state 값도 가져오기
+        int currentSeatNumber = -1;
+        int currentState = 0;
+        for(CurrentSeatDto seat : currentSeatDtoList){
+            if(seat.getUserId() == user.getId()){
+                currentSeatNumber = seat.getSeatNumber();
+                currentState = seat.getState();
+                break;
+            }
+        }
+
+        // 이동하려는 팀이 가득 찼는지 확인
+        boolean canChange = false;
+        int emptySeatNumber = -1;
+        int currentTeamNumber = 0;
+        int changeTeamNumber = 0;
+        //홍팀이라면 청팀 자리를 확인
+        if(currentSeatNumber >= 0 && currentSeatNumber < 3){
+            currentTeamNumber = 1;
+            changeTeamNumber = 2;
+            for(int i = 3; i < 6; i++){
+                if(currentSeatDtoList.get(i).getState() == 0){
+                    canChange = true;
+                    emptySeatNumber = currentSeatDtoList.get(i).getSeatNumber();
+                    break;
+                }
+
+            }
+        }
+
+        // 청팀이라면 홍팀 자리를 확인
+        else if(currentSeatNumber >= 3 && currentSeatNumber < 6){
+            currentTeamNumber = 2;
+            changeTeamNumber = 1;
+            for(int i = 0; i < 2; i++){
+                if(currentSeatDtoList.get(i).getState() == 0){
+                    canChange = true;
+                    emptySeatNumber = currentSeatDtoList.get(i).getSeatNumber();
+                    break;
+                }
+
+            }
+        }
+
+        // 자리 이동
+        if(canChange){
+            // 현재 자리는 공백으로 만들고 재 저장
+            CurrentSeatDto beforeSeatDto = CurrentSeatDto.builder()
+                    .state(0)
+                    .team(currentTeamNumber)
+                    .nickname("")
+                    .seatNumber(currentSeatNumber)
+                    .build();
+            roomRedisRepository.reSaveToRedis(key, beforeSeatDto, currentSeatNumber);
+
+            // 바꿀 자리에는 현재 유저 정보를 넣고 재 저장
+            CurrentSeatDto afterSeatDto = CurrentSeatDto.builder()
+                    .state(currentState)
+                    .team(changeTeamNumber)
+                    .userId(user.getId())
+                    .nickname(user.getNickname())
+                    .profileImgUrl(user.getProfileImgUrl())
+                    .seatNumber(emptySeatNumber)
+                    .build();
+            roomRedisRepository.reSaveToRedis(key, afterSeatDto, emptySeatNumber);
+        }
+        // 자리 이동 불가
+        else{
+            throw new CannotChangeTeamException("팀을 변경할 수 없습니다.");
+        }
+
+        // 최신화 된 방 정보 가져오기
+        List<CurrentSeatDto> updateSeatDtoList = roomRedisRepository.getCurrentRoomInfo(key);
+
+        return updateSeatDtoList;
     }
 
     // 유저가 방에서 나갔을 때 redis 방 정보 최신화 후 최신화 된 dto 전달
