@@ -322,31 +322,31 @@
 
       // 파리와 손의 위치가 가까운지 판단
       checkFlyCaught() {
-          const vedioElement = this.$refs.webcam;
-          let caughtAnyFly = false;
+        const vedioElement = this.$refs.webcam;
+        let caughtAnyFly = false;
 
-          this.flies.forEach(fly => {
-            if (!fly.caught) {
-              const leftHandX = this.leftXAxis * vedioElement.offsetWidth
-              const leftHandY = this.leftYAxis * vedioElement.offsetHeight
-              const rightHandX = this.rightXAxis * vedioElement.offsetWidth
-              const rightHandY = this.rightYAxis * vedioElement.offsetHeight
+        this.flies.forEach(fly => {
+          if (!fly.caught) {
+            const leftHandX = this.leftXAxis * vedioElement.offsetWidth
+            const leftHandY = this.leftYAxis * vedioElement.offsetHeight
+            const rightHandX = this.rightXAxis * vedioElement.offsetWidth
+            const rightHandY = this.rightYAxis * vedioElement.offsetHeight
 
-              const flyX = fly.position.x
-              const flyY = fly.position.y
-              const leftDistance = Math.sqrt(Math.pow(leftHandX - flyX, 2) + Math.pow(leftHandY - flyY, 2))
-              const rightDistance = Math.sqrt(Math.pow(rightHandX - flyX, 2) + Math.pow(rightHandY - flyY, 2))
-              if ((leftDistance < 20 || rightDistance < 20) && this.isValidGestureChange()) {
-                console.log('파리 잡힘')
-                fly.caught = true
-                caughtAnyFly = true
-              }
+            const flyX = fly.position.x
+            const flyY = fly.position.y
+            const leftDistance = Math.sqrt(Math.pow(leftHandX - flyX, 2) + Math.pow(leftHandY - flyY, 2))
+            const rightDistance = Math.sqrt(Math.pow(rightHandX - flyX, 2) + Math.pow(rightHandY - flyY, 2))
+            if ((leftDistance < 20 || rightDistance < 20) && this.isValidGestureChange()) {
+              console.log('파리 잡힘')
+              fly.caught = true
+              caughtAnyFly = true
             }
-          })
-
-          if (caughtAnyFly) {
-            return this.checkAllFliesCaught()
           }
+        })
+
+        if (caughtAnyFly) {
+          return this.checkAllFliesCaught()
+        }
       },
 
 

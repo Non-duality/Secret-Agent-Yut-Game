@@ -1,3 +1,4 @@
+/* 화면 중앙 정렬 */
 .videoView {
   display: flex;
   flex-direction: column;
@@ -13,6 +14,7 @@
   min-height: 50vh;
 }
 
+
 .media-container {
   position: relative;
   display: flex;
@@ -26,7 +28,11 @@
   -webkit-transform: rotateY(180deg);
 }
 
+.countdown {
+  background-color: white;
+}
+
 #webcam {
-  width: 70vh;
+  width: 70%;
   height: auto;
 }
