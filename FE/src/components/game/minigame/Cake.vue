@@ -251,5 +251,5 @@ export default {
 </script>
 
 <style scoped>
-@import url('@/assets/css/mission/cake.css');
+@import url('@/assets/css/game/minigame/cake.css');
 </style>

@@ -15,7 +15,7 @@ import GameViewVue from "@/view/game/GameView.vue";
 import MineralVue from "@/components/game/minigame/Mineral.vue"
 
 // 테스트용 라우터
-import FlyCatch from "@/components/game/minigameFlyCatch.vue";
+import FlyCatch from "@/components/game/minigame/FlyCatch.vue";
 import Cham from "@/components/game/minigame/Cham.vue"
 import Cake from "@/components/game/minigame/Cake.vue"
 

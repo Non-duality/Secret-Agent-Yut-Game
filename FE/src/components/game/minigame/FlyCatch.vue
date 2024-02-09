@@ -373,5 +373,5 @@
 </script>
 
 <style scoped>
-@import url('@/assets/css/mission/flyCatch.css');
+@import url('@/assets/css/game/minigame/flyCatch.css');
 </style>
