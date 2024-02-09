@@ -51,7 +51,7 @@ export default {
         gestureRecognizer: GestureRecognizer,
         webcamRunning: false, // 웹캠 실행 여부
         lastVideoTime: -1, // 비디오의 마지막 시간:
-        countdown: 3,
+        countdown: 5,
         
         // 제스쳐 인식 결과
         results: undefined,
@@ -411,14 +411,15 @@ canvas.media {
   left: 50%;
   transform: translate(-50%, -50%);
   color: rgb(255, 255, 255);
+  font-stretch: expanded;
   font-size: 5rem;
-  background-color: rgb(255, 60, 0);
+  background-color: rgba(255, 22, 6, 0.863);
   width: 100px;
   height: 100px;
   text-align: center;
   font-weight: bold;
-  padding-bottom: 10px;
-  border-radius: 80px;
+  padding-bottom: 15px;
+  border-radius: 30px;
 }
 
 
