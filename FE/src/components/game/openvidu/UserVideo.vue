@@ -5,7 +5,12 @@
       v-if="streamManager"
       :stream-manager="streamManager"
     /><span id="user-name">{{ nickname }}</span>
-    <!-- <button @click="toggleMic">마이크</button> -->
+    <button @click="toggleMic">마이크</button>
+
+    <div class="mission-modal">
+      <jewelModal v-if="showMissionModal"/>
+    </div>
+
   </div>
   <!-- <div><p>{{ clientData }}</p></div> -->
 </template>
@@ -13,13 +18,21 @@
 <script>
 import OvVideo from "./OvVideo.vue";
 import { useUserStore } from "@/store/userStore";
+import jewelModal from "@/components/game/minigame/Mineral.vue"
 
 
 export default {
+  data() {
+    return {
+      showMissionModal: false,
+    }
+  },
+
   name: "UserVideo",
 
   components: {
     OvVideo,
+    jewelModal,
   },
 
   props: {
@@ -37,22 +50,17 @@ export default {
       const { connection } = this.streamManager.stream;
       return JSON.parse(connection.data);
     },
+
+    toggleMic() {
+      this.showMissionModal = !this.showMissionModal;
+    }
+    
   },
-};
+
+}
 </script>
 
 
 <style scoped>
-#user-name {
-  color: aliceblue;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.my-video {
-  margin: 10px;
-  border-radius: 50px;
-}
+@import url("@/assets/css/openvidu/userVideo.css");
 </style>
