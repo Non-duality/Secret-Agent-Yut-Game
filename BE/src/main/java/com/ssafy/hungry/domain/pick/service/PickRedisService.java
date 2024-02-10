@@ -205,9 +205,9 @@ public class PickRedisService {
         String userInfoKey = generateKey(PICK_KEY_PREFIX, roomCode);
         String teamKey = "";
         log.info("updateCurrentPickInfo 들어온 팀 정보 : " + pickInfoDto.getTeam());
-        if (pickInfoDto.getTeam() == "홍팀") {
+        if (pickInfoDto.getTeam().equals("홍팀")) {
             teamKey = generateKey(RED_KEY_PREFIX, roomCode);
-        } else if (pickInfoDto.getTeam() == "청팀") {
+        } else if (pickInfoDto.getTeam().equals("청팀")) {
             teamKey = generateKey(BLUE_KEY_PREFIX, roomCode);
         } else {
             throw new TeamNotFoundException("존재하지 않은 팀입니다.");
