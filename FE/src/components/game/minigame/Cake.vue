@@ -2,28 +2,42 @@
   <div id="liveView" class="videoView">
     <div class="media-container">
       <video 
-      class="media"
       ref="webcam" 
+      class="media"
       id="webcam"  
-      style="position: absolute;"
       autoplay 
       playsinline
       ></video>
       <canvas 
-      ref="outputCanvas" 
+      ref="faceCanvas" 
       class="media" 
-      id="outputCanvas" 
-      style="position: absolute; left: 0px; top: 0px;"
+      id="faceCanvas" 
+      style="position: absolute; left: auto; top: 0px;"
       ></canvas>
       <canvas 
       ref="cakeCanvas" 
       class="media" 
       id="cakeCanvas" 
-      style="position: absolute; left: 0px; top: 0px;"
+      style="position: absolute; left: auto; top: 0px;"
       ></canvas>
     </div>
     <!-- 시작 전 타이머 -->
-    <div v-if="showCountdown" class="countdown">{{ countdown }}</div>
+    <div v-if="countdown > 0" class="countdown">
+      {{ countdown }}
+    </div>
+    <!-- 게임 타이머 -->
+    <div v-if="showGameCount" class="game-timer">
+      <h1>Timer : {{ gameTimer }}</h1>
+    </div>
+    <!-- 남은 케이크 개수 -->
+    <div class="target-count">
+      남은 케이크 개수 : {{ targetCount }}
+    </div>
+    <!-- 게임 결과 -->
+    <div class="game-result" v-if="gameResult">
+      <div v-if="victory">게임 승리!</div>
+      <div v-else>게임 실패</div>
+    </div>
   </div>
 </template>
 
@@ -46,10 +60,19 @@ export default {
       cakes: [],
       cakeDropInterval: null,
       cakeDropping: false,
+      targetCount: 5,
 
       // 카운트다운
       countdown: 3,
-      showCountdown: false
+      gameTimer: 10,
+
+
+      // 게임 결과
+      gameResult: false,
+      showGameCount: false,
+      victory: false
+
+      
     };
   },
 
@@ -57,25 +80,27 @@ export default {
     await this.createFaceLandmarker();
   },
 
-  mounted() {
+  async mounted() {
     this.cakeImg.src = cakeImage
+    window.addEventListener('resize', () => this.adjustCanvasSizeToVideo())
   },
 
   methods: {
-
+    // 비디오 사이즈에 캔버스 사이즈 맞추기
     adjustCanvasSizeToVideo() {
       const webcam = this.$refs.webcam
-      const faceCanvas = this.$refs.outputCanvas
+      const faceCanvas = this.$refs.faceCanvas
       const cakeCanvas = this.$refs.cakeCanvas
-      if (webcam && FaceCanvas && cakeCanvas) {
+      if (webcam && faceCanvas && cakeCanvas) {
         faceCanvas.width = webcam.offsetWidth
-        cakeCanvas.width = webcam.offsetWidth
         faceCanvas.height = webcam.offsetHeight
+        cakeCanvas.width = webcam.offsetWidth
         cakeCanvas.height = webcam.offsetHeight
       }
     },
 
 
+    // 모션 인식 라이브러리 호출
     async createFaceLandmarker() {
       const filesetResolver = await FilesetResolver.forVisionTasks(
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
@@ -90,27 +115,28 @@ export default {
         numFaces: 1
       });
       const webcam = this.$refs.webcam
-      webcam.addEventListener('loadedmetadata', () => {
+      await webcam.addEventListener('loadedmetadata', () => {
         this.adjustCanvasSizeToVideo()
       })
       await this.enableCam()
     },
 
 
+    // 캠에 접근
     async enableCam() {
       if (!this.faceLandmarker) {
         console.log("faceLandmarker가 아직 로드되지 않았습니다.");
         return;
       }
       this.webcamRunning = true
-      const video = this.$refs.webcam
+      const webcam = this.$refs.webcam
       const constraints = {
         video: true, 
       };
       try {
         const stream = await navigator.mediaDevices.getUserMedia(constraints)
-        video.srcObject = stream
-        video.addEventListener("loadeddata", () => {
+        webcam.srcObject = stream
+        webcam.addEventListener("loadeddata", () => {
           this.predictWebcam()
           this.startCountdown()
         });
@@ -120,34 +146,46 @@ export default {
     },
 
 
+    // 숫자 카운트 다운
     startCountdown() {
       const countdownInterval = setInterval(() => {
         this.countdown -= 1;
         if (this.countdown <= 0) {
           clearInterval(countdownInterval);
-          // 3초 카운트다운 후에 얼굴 인식 시작
-          this.showCountdown = false
+          // 3초 카운트다운 후에 케이크 떨어짐
+          this.startGameTimer()
           this.startCakeDropping()
         }
       }, 1000);
     },
 
+
+    // 게임 시작
+    startGameTimer() {
+      this.showGameCount = true
+      const gameInterval = setInterval(() => {
+        --this.gameTimer
+        if (this.gameTimer === 0) {
+          clearInterval(gameInterval)
+          this.stopWebcam()
+          this.gameResult = true
+        }
+      }, 1000)
+    },
+
+
+    // 얼굴 모션 인식
     async predictWebcam() {
       if (!this.webcamRunning || !this.faceLandmarker) return;
-      const video = this.$refs.webcam;
-      const canvasElement = this.$refs.outputCanvas;
-      const canvasCtx = canvasElement.getContext("2d");
-      const drawingUtils = new DrawingUtils(canvasCtx);
-      // 캔버스랑 비디오 크기 맞추기
-      const ratio = video.videoHeight / video.videoWidth;
-      canvasElement.style.width = video.videoWidth + "px";
-      canvasElement.style.height = video.videoHeight * ratio + "px";
-      canvasElement.width = video.videoWidth;
-      canvasElement.height = video.videoHeight;
+      const webcam = this.$refs.webcam;
+      const faceCanvas = this.$refs.faceCanvas;
+      const ctx = faceCanvas.getContext("2d");
+      ctx.clearRect(0, 0, faceCanvas.width, faceCanvas.height)
+      const drawingUtils = new DrawingUtils(ctx);
 
-      if (this.lastVideoTime !== video.currentTime) {
-        this.lastVideoTime = video.currentTime;
-        this.results = await this.faceLandmarker.detectForVideo(video, performance.now());
+      if (this.lastVideoTime !== webcam.currentTime) {
+        this.lastVideoTime = webcam.currentTime;
+        this.results = await this.faceLandmarker.detectForVideo(webcam, performance.now());
       }
       if (this.results && this.results.faceLandmarks) {
         for (const landmarks of this.results.faceLandmarks) {
@@ -157,6 +195,7 @@ export default {
             FaceLandmarker.FACE_LANDMARKS_LIPS,
             { color: "red" }
           );
+          this.detectCakeCollision(landmarks)
         }
       }
       if (this.webcamRunning === true) {
@@ -165,23 +204,44 @@ export default {
     },
 
 
+    // 케이크 충돌 감지
+      detectCakeCollision(landmarks) {
+        const webcam = this.$refs.webcam
+        this.cakes.forEach((cake, index) => {
+          if (
+            cake.x >= landmarks[57].x * webcam.offsetWidth &&
+            cake.x <= landmarks[287].x * webcam.offsetWidth &&
+            cake.y >= landmarks[164].y * webcam.offsetHeight &&
+            cake.y <= landmarks[18].y * webcam.offsetHeight
+          ) {
+            this.eatCake(index)
+          }
+        })
+    },
+
+
+    // 케이크 먹은 경우 처리
+    eatCake(index) {
+      this.cakes.splice(index, 1)
+      --this.targetCount
+      if (this.targetCount <= 0) {
+        this.stopWebcam()
+        this.victory = true
+        this.gameResult = true
+      }
+    },
+
+
     // 케이크 떨어뜨리기
     startCakeDropping() {
       this.cakes = []
       this.cakeDropping = true
-      // 캔버스 크기 조정
-      const video = this.$refs.webcam;
-      console.log(video.videoHeight)
-      const canvasElement = this.$refs.cakeCanvas;
-      const ratio = video.videoHeight / video.videoWidth;
-      canvasElement.style.width = video.videoWidth + "px";
-      canvasElement.style.height = video.videoHeight * ratio + "px";
-      canvasElement.width = video.videoWidth;
-      canvasElement.height = video.videoHeight;
+      const cakeCanvas = this.$refs.cakeCanvas;
+
       if (this.cakeDropInterval) clearInterval(this.cakeDropInterval)
       this.cakeDropInterval = setInterval(() => {
         this.cakes.push({
-          x: Math.random() * (canvasElement.width - 50),
+          x: Math.random() * (cakeCanvas.width - 50),
           y: -50
         })
       }, 500)
@@ -200,14 +260,14 @@ export default {
 
     // 케이크 그리기
     drawCake() {
-      const canvasElement = this.$refs.cakeCanvas
-      const ctx = canvasElement.getContext('2d')
-      ctx.clearRect(0, 0, canvasElement.width, canvasElement.height)
+      const cakeCanvas = this.$refs.cakeCanvas
+      const ctx = cakeCanvas.getContext('2d')
+      ctx.clearRect(0, 0, cakeCanvas.width, cakeCanvas.height)
       this.cakes.forEach(cake => {
         cake.y += 6;
-        ctx.drawImage(this.cakeImg, cake.x, cake.y, 30, 30)
+        ctx.drawImage(this.cakeImg, cake.x, cake.y, 20, 20)
         // 화면 밖으로 나간 케이크 제거
-        if (cake.y > canvasElement.height) {
+        if (cake.y > cakeCanvas.height) {
           this.cakes.shift()
         }
       })
@@ -216,19 +276,13 @@ export default {
 
     // 캠 중단
     stopWebcam() {
+      this.webcamRunning = false
+      // 입술 모션 중단
+      const faceCanvas = this.$refs.faceCanvas;
+      const ctx = faceCanvas.getContext("2d");
+      ctx.clearRect(0, 0, faceCanvas.width, faceCanvas.height)
       // 케이크 떨어지는 것 중단
       this.stopCakeDropping()
-      const video = this.$refs.webcam
-      if (video.srcObject) {
-        const stream = video.srcObject
-        const track = stream.getTracks()
-        tracks.forEach((track) => {
-          track.stop();
-        });
-        video.srcObject = null
-      }
-      const tracks = stream.getTracks();
-      this.$refs.webcam.srcObject = null;
     },
 
 
@@ -239,13 +293,16 @@ export default {
         clearInterval(this.cakeDropInterval)
         this.cakeDropInterval = null
       }
+      const cakeCanvas = this.$refs.cakeCanvas
+      const ctx = cakeCanvas.getContext('2d')
+      ctx.clearRect(0, 0, cakeCanvas.width, cakeCanvas.height)
     },
 
   },
 
   // 끝내면 다 버리기
   beforeDestroy() {
-    this.stopWebcam();
+    window.removeEventListener('resize', this.adjustCanvasSizeToWindow);
   },
 };
 </script>
