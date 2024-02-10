@@ -12,15 +12,17 @@
       <canvas
         ref="pointerCanvas"
         class="media"
-        style="position: absolute; left: auto; top: 0px;"
+        id="handCanvas"
       ></canvas>
     </div>
     <!-- 시작 전 타이머 -->
-    <div v-if="showCountdown" class="countdown">{{ countdown }}</div>
+    <div v-if="countdown > 0" class="start-timer">
+      {{ countdown }}
+    </div>
     <!-- 게임 승리 -->
-    <div v-if="showResult">
-      <p class="game-result victory" v-if="gameResult">승리</p>
-      <p class="game-result fail" v-else>패배</p>
+    <div v-if="gameResult" class="game-result">
+      <p v-if="victory">게임 승리!</p>
+      <p v-else>게임 실패!</p>
     </div>
   </div>
 </template>
@@ -33,7 +35,6 @@ export default {
     return {
       children: [],
       faceDetector: null,
-      showCountdown: false,
       countdown: 3,
 
       // 손 모양
@@ -42,7 +43,7 @@ export default {
       isPointerMove: false,
 
       // 게임 결과
-      showResult: false,
+      victory: false,
       gameResult: false
 
 
@@ -108,7 +109,6 @@ export default {
     // 비디오 로딩 완료 핸들러
     onVideoLoaded() {
       // 비디오 메타데이터 로딩 시점에서 카운트다운 시작
-      this.showCountdown = true;
       this.startCountdown();
       this.initializePointer()
     },
@@ -121,7 +121,6 @@ export default {
         if (this.countdown === 0) {
           clearInterval(countdownInterval);
           // 3초 카운트다운 후에 얼굴 인식 시작
-          this.showCountdown = false
           this.predictWebcam();
         }
       }, 1000);
@@ -297,9 +296,9 @@ export default {
       // 기계와의 게임 승리 여부 판단
       this.isPointerMove = true
       if ((machineRight && userDirection === 'left') || (machineLeft && userDirection === 'right')) {
-        this.gameResult = true
+        this.victory = true
       }
-      this.showResult = true
+      this.gameResult = true
     }
   },
 

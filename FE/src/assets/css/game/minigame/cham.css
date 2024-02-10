@@ -1,4 +1,4 @@
-/* 화면 중앙 정렬 */
+/* 최상위 block */
 .videoView {
   display: flex;
   flex-direction: column;
@@ -6,14 +6,16 @@
   align-items: center;
   padding-top: 30px;
   padding-bottom: 30px;
-  margin: 50px 400px;
-  border: 3px whitesmoke solid;
-  background-color: blueviolet;
+  margin: 0 auto;
+  background-color: rgb(10, 10, 10);
+  width: 50%;
+  height: 70%;
   position: relative;
-  border-radius: 30px;
-  min-height: 50vh;
+  border-radius: 15px;
+  margin-top: 50px;
 }
 
+/* 캔버스 및 비디오 담는 block */
 .media-container {
   position: relative;
   display: flex;
@@ -22,36 +24,59 @@
   justify-content: center;
 }
 
+/* 캔버스 및 비디오 거울모드 */
 .media {
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
 }
 
-.media-container canvas {
-  z-index: 5;
-}
-
+/* 웹캠 */
 #webcam {
   width: 70%;
   height: auto;
+  border-radius: 20px;
 }
 
-.countdown, .game-result {
+/* 캔버스 */
+#handCanvas {
   position: absolute;
-  top: 30%;
+  left: 0;
+  top: 0;
+  z-index: 1;
+}
+
+/* 시작 타이머 */
+.start-timer {
+  position: fixed;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: greenyellow;
+  color: rgb(255, 255, 255);
+  font-stretch: expanded;
   font-size: 5rem;
+  background-color: rgba(255, 22, 6, 0.863);
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  font-weight: bold;
+  padding-bottom: 15px;
+  border-radius: 30px;
 }
 
-.victory {
-  color: blue;
-  z-index: 6;
+/* 게임 결과 */
+.game-result {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgb(5, 5, 5);
+  font-size: 5rem;
+  background-color: rgb(245, 202, 12);
+  width: 23vw;
+  height: 10.5vh;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 50px;
+  border: 5px solid black;
+  font-size: 50px;
 }
-
-.fail {
-  color: red;
-  z-index: 6;
-}
-

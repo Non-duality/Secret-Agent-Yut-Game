@@ -20,16 +20,20 @@
       </div>
       <!-- 게임 타이머 -->
       <div class="game-timer" v-if="gestureOutput">
-        {{ gameTimer }}
+        <h1>Timer : {{ gameTimer }}</h1>
       </div>
       <!-- 시작 전 타이머 -->
-      <div class="start-timer" v-else>
+      <div class="start-timer" v-if="countdown > 0">
         {{ countdown }}
       </div>
-      <!-- 게임 승리 -->
-      <div class="victory" v-if="gameResultDp">
-        <div class="victory" v-if="gameResult">승리</div>
-        <div class="fail" v-else>패배</div>
+      <!-- 게임 결과 -->
+      <div class="game-result" v-if="gameResult">
+        <div v-if="victory">게임 승리!</div>
+        <div v-else>게임 패배!</div>
+      </div>
+      <!-- 남은 파리 개수 -->
+      <div class="target-count">
+        남은 파리 개수 : {{ targetCount }}
       </div>
     </div>
 </template>
@@ -74,14 +78,15 @@
         flyDirection: { x: (Math.random() - 0.5) * 50, y: (Math.random() - 0.5) * 50 },
         flies: [],
         numOfFlies: 5,
+        targetCount: 5,
 
         // 게임 카운트
         countdown: 5,
         gameTimer: 10,
 
         // 게임 결과
-        gameResultDp: false,
         gameResult: false,
+        victory: false,
       }
     },
     
@@ -151,7 +156,7 @@
             clearInterval(gameInterval)
             this.webcamRunning = false
             this.clearFlyCanvas()
-            this.gameResultDp = true
+            this.gameResult = true
           }
         }, 1000)
       },
@@ -210,8 +215,8 @@
             console.log('파리 잡기 성공')
             this.webcamRunning = false
             this.clearFlyCanvas()
+            this.victory = true
             this.gameResult = true
-            this.gameResultDp = true
         }
         // 인식된 손 정보
         if (this.results.gestures.length == 1) {
@@ -340,6 +345,7 @@
               console.log('파리 잡힘')
               fly.caught = true
               caughtAnyFly = true
+              --this.targetCount
             }
           }
         })

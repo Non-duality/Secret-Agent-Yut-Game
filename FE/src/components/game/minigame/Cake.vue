@@ -22,7 +22,22 @@
       ></canvas>
     </div>
     <!-- 시작 전 타이머 -->
-    <div v-if="showCountdown" class="countdown">{{ countdown }}</div>
+    <div v-if="countdown > 0" class="countdown">
+      {{ countdown }}
+    </div>
+    <!-- 게임 타이머 -->
+    <div v-if="showGameCount" class="game-timer">
+      <h1>Timer : {{ gameTimer }}</h1>
+    </div>
+    <!-- 남은 케이크 개수 -->
+    <div class="target-count">
+      남은 케이크 개수 : {{ targetCount }}
+    </div>
+    <!-- 게임 결과 -->
+    <div class="game-result" v-if="gameResult">
+      <div v-if="victory">게임 승리!</div>
+      <div v-else>게임 실패</div>
+    </div>
   </div>
 </template>
 
@@ -45,11 +60,19 @@ export default {
       cakes: [],
       cakeDropInterval: null,
       cakeDropping: false,
-      cakeCount: 0,
+      targetCount: 5,
 
       // 카운트다운
       countdown: 3,
-      showCountdown: false
+      gameTimer: 10,
+
+
+      // 게임 결과
+      gameResult: false,
+      showGameCount: false,
+      victory: false
+
+      
     };
   },
 
@@ -129,11 +152,25 @@ export default {
         this.countdown -= 1;
         if (this.countdown <= 0) {
           clearInterval(countdownInterval);
-          // 3초 카운트다운 후에 얼굴 인식 시작
-          this.showCountdown = false
+          // 3초 카운트다운 후에 케이크 떨어짐
+          this.startGameTimer()
           this.startCakeDropping()
         }
       }, 1000);
+    },
+
+
+    // 게임 시작
+    startGameTimer() {
+      this.showGameCount = true
+      const gameInterval = setInterval(() => {
+        --this.gameTimer
+        if (this.gameTimer === 0) {
+          clearInterval(gameInterval)
+          this.stopWebcam()
+          this.gameResult = true
+        }
+      }, 1000)
     },
 
 
@@ -186,7 +223,12 @@ export default {
     // 케이크 먹은 경우 처리
     eatCake(index) {
       this.cakes.splice(index, 1)
-      ++this.cakeCount
+      --this.targetCount
+      if (this.targetCount <= 0) {
+        this.stopWebcam()
+        this.victory = true
+        this.gameResult = true
+      }
     },
 
 
@@ -234,17 +276,13 @@ export default {
 
     // 캠 중단
     stopWebcam() {
+      this.webcamRunning = false
+      // 입술 모션 중단
+      const faceCanvas = this.$refs.faceCanvas;
+      const ctx = faceCanvas.getContext("2d");
+      ctx.clearRect(0, 0, faceCanvas.width, faceCanvas.height)
       // 케이크 떨어지는 것 중단
       this.stopCakeDropping()
-      const webcam = this.$refs.webcam
-      const stream = webcam.srcObject
-      if (stream) {
-        const tracks = stream.getTracks()
-        tracks.forEach((track) => {
-          track.stop();
-        });
-        webcam.srcObject = null
-      }
     },
 
 
@@ -255,13 +293,15 @@ export default {
         clearInterval(this.cakeDropInterval)
         this.cakeDropInterval = null
       }
+      const cakeCanvas = this.$refs.cakeCanvas
+      const ctx = cakeCanvas.getContext('2d')
+      ctx.clearRect(0, 0, cakeCanvas.width, cakeCanvas.height)
     },
 
   },
 
   // 끝내면 다 버리기
   beforeDestroy() {
-    this.stopWebcam();
     window.removeEventListener('resize', this.adjustCanvasSizeToWindow);
   },
 };
