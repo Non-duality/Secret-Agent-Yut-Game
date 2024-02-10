@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class DonePickDto {
+public class PickInfoDto {
 
     private String team;
     private String email;

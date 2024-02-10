@@ -4,6 +4,8 @@ import com.ssafy.hungry.domain.pick.dto.*;
 import com.ssafy.hungry.domain.pick.service.PickRedisService;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.service.RoomRedisService;
+import com.ssafy.hungry.domain.user.entity.UserEntity;
+import com.ssafy.hungry.domain.user.service.UserService;
 import com.ssafy.hungry.global.dto.StompDataDto;
 import com.ssafy.hungry.global.service.RedisSender;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class StompPickController {
 
     private final PickRedisService pickRedisService;
     private final RoomRedisService roomRedisService;
+    private final UserService userService;
     private final RedisSender redisSender;
     private final ChannelTopic roomTopic;
 
@@ -98,20 +101,43 @@ public class StompPickController {
                 .build());
 
     }
+    // 한 유저가 유닛을 고르는 상황을 전달
+    @MessageMapping(value ="/pick/{roomCode}/select")
+    public void selectPick(@DestinationVariable String roomCode, PickInfoDto pickInfoDto){
+        log.info("유닛 선택 상황 최신화 호출 " + roomCode);
+
+        // 팀 정보를 확인하여 해당 팀의 픽 정보를 수정, 수정된 정보 얻기
+        Map<String, Object> allPickInfo = pickRedisService.updateCurrentPickInfo(roomCode, pickInfoDto);
+
+        // 전달할 팀 고르기
+        String targetRoomCode = "";
+        if (pickInfoDto.getTeam().equals("홍팀")) {
+            targetRoomCode = roomCode + "/red";
+        } else if (pickInfoDto.getTeam().equals("청팀")) {
+            targetRoomCode = roomCode + "/blue";
+        }
+
+        redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                .type("PICK_SELECT")
+                .code(targetRoomCode)
+                .data(allPickInfo) // Data 보내기
+                .build());
+
+    }
 
     // 한 유저가 pick이 완료 되었다면 redis에 수정사항 최신화
     @MessageMapping(value = "/pick/{roomCode}/done")
-    public void pickDone(@DestinationVariable String roomCode, DonePickDto donePickDto) {
+    public void pickDone(@DestinationVariable String roomCode, PickInfoDto pickInfoDto) {
         log.info("유닛 픽 완료 호출 : " + roomCode);
 
         // 팀 정보를 확인하여 해당 팀의 픽 정보를 수정
-        pickRedisService.updateCurrentPickInfo(roomCode, donePickDto);
+        Map<String, Object> allPickInfo = pickRedisService.updateCurrentPickInfo(roomCode, pickInfoDto);
 
         // 전달할 팀
         String targetRoomCode = "";
-        if (donePickDto.getTeam().equals("홍팀")) {
+        if (pickInfoDto.getTeam().equals("홍팀")) {
             targetRoomCode = roomCode + "/red";
-        } else if (donePickDto.getTeam().equals("청팀")) {
+        } else if (pickInfoDto.getTeam().equals("청팀")) {
             targetRoomCode = roomCode + "/blue";
         }
 
@@ -143,10 +169,10 @@ public class StompPickController {
 
         // 양팀 픽이 끝나지 않았다면 다음 픽 순서를 확인 후 다음 픽할 사람을 지목
         else {
-            log.info("다음 픽 정보 전달 : " + donePickDto.getTeam() + roomCode);
+            log.info("다음 픽 정보 전달 : " + pickInfoDto.getTeam() + roomCode);
 
             // 들어온 팀의 다음번 픽 순서를 확인
-            String pickEmail = pickRedisService.findPickOrder(roomCode, donePickDto.getTeam());
+            String pickEmail = pickRedisService.findPickOrder(roomCode, pickInfoDto.getTeam());
 
             // 한 팀만 끝났을 경우
             if (pickEmail.equals("")) {
@@ -171,6 +197,12 @@ public class StompPickController {
 
 
         }
+
+        redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                .type("PICK_SELECT_DONE")
+                .code(targetRoomCode)
+                .data(allPickInfo) // Data 보내기
+                .build());
 
     }
 

@@ -4,8 +4,7 @@ import com.ssafy.hungry.domain.game.entity.UnitEntity;
 import com.ssafy.hungry.domain.game.repository.GameRepository;
 import com.ssafy.hungry.domain.pick.dto.CurrentUnitPickDto;
 import com.ssafy.hungry.domain.pick.dto.CurrentUserPickDto;
-import com.ssafy.hungry.domain.pick.dto.DonePickDto;
-import com.ssafy.hungry.domain.pick.dto.SpyPickDto;
+import com.ssafy.hungry.domain.pick.dto.PickInfoDto;
 import com.ssafy.hungry.domain.pick.exception.TeamNotFoundException;
 import com.ssafy.hungry.domain.pick.repository.PickRedisRepository;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
@@ -202,12 +201,12 @@ public class PickRedisService {
     }
 
     // 각 팀의 픽 정보 최신화
-    public void updateCurrentPickInfo(String roomCode, DonePickDto donePickDto) {
+    public Map<String, Object> updateCurrentPickInfo(String roomCode, PickInfoDto pickInfoDto) {
         String userInfoKey = generateKey(PICK_KEY_PREFIX, roomCode);
         String teamKey = "";
-        if (donePickDto.getTeam() == "홍팀") {
+        if (pickInfoDto.getTeam() == "홍팀") {
             teamKey = generateKey(RED_KEY_PREFIX, roomCode);
-        } else if (donePickDto.getTeam() == "청팀") {
+        } else if (pickInfoDto.getTeam() == "청팀") {
             teamKey = generateKey(BLUE_KEY_PREFIX, roomCode);
         } else {
             throw new TeamNotFoundException("존재하지 않은 팀입니다.");
@@ -215,14 +214,14 @@ public class PickRedisService {
 
         // UserPickInfo와 UnitInfo 수정하기
 
-        List<CurrentUserPickDto> currentUserPickDtoList = getCurrentUserPickInfo(roomCode).get(donePickDto.getTeam());
-        UserEntity user = userRepository.findByEmail(donePickDto.getEmail());
+        List<CurrentUserPickDto> currentUserPickDtoList = getCurrentUserPickInfo(roomCode).get(pickInfoDto.getTeam());
+        UserEntity user = userRepository.findByEmail(pickInfoDto.getEmail());
 
         // UserPickInfo를 가지고 와서 픽 정보 수정하기
         int count = 0;
         for (CurrentUserPickDto userPick : currentUserPickDtoList) {
             if (userPick.getUserId() == user.getId()) {
-                userPick.setSelectUnitId(donePickDto.getUnitId());
+                userPick.setSelectUnitId(pickInfoDto.getUnitId());
                 pickRedisRepository.reSaveUserPickToRedis(userInfoKey, userPick, count);
                 break;
             }
@@ -230,18 +229,21 @@ public class PickRedisService {
         }
 
         // UnitInfo를 가지고 와서 픽 정보 수정하기
-        List<CurrentUnitPickDto> currentUnitPickDtoList = getCurrentUnitPickInfo(roomCode).get(donePickDto.getTeam());
+        List<CurrentUnitPickDto> currentUnitPickDtoList = getCurrentUnitPickInfo(roomCode).get(pickInfoDto.getTeam());
 
         count = 0;
         for (CurrentUnitPickDto unitPick : currentUnitPickDtoList) {
-            if (unitPick.getUnitId() == donePickDto.getUnitId()) {
+            if (unitPick.getUnitId() == pickInfoDto.getUnitId()) {
                 unitPick.setPick(true);
                 pickRedisRepository.reSaveUnitPickToRedis(teamKey, unitPick, count);
                 break;
             }
             count++;
         }
-
+        Map<String, Object> allPickInfo = new HashMap<>();
+        allPickInfo.put("userInfo",currentUnitPickDtoList);
+        allPickInfo.put("unitInfo", currentUnitPickDtoList);
+        return allPickInfo;
     }
 
     // 상대팀 픽이 다 끝났는지 확인하기
