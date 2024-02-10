@@ -199,9 +199,8 @@ public class PickRedisService {
 
         return pickEmail;
     }
-
-    // 각 팀의 픽 정보 최신화
-    public Map<String, Object> updateCurrentPickInfo(String roomCode, PickInfoDto pickInfoDto) {
+    // 각 팀의 픽 상태 최신화
+    public List<CurrentUserPickDto> updateCurrentPickInfo(String roomCode, PickInfoDto pickInfoDto){
         String userInfoKey = generateKey(PICK_KEY_PREFIX, roomCode);
         String teamKey = "";
         log.info("updateCurrentPickInfo 들어온 팀 정보 : " + pickInfoDto.getTeam());
@@ -214,7 +213,36 @@ public class PickRedisService {
         }
 
         // UserPickInfo와 UnitInfo 수정하기
+        List<CurrentUserPickDto> currentUserPickDtoList = getCurrentUserPickInfo(roomCode).get(pickInfoDto.getTeam());
+        UserEntity user = userRepository.findByEmail(pickInfoDto.getEmail());
 
+        // UserPickInfo를 가지고 와서 픽 정보 수정하기
+        int count = 0;
+        for (CurrentUserPickDto userPick : currentUserPickDtoList) {
+            if (userPick.getUserId() == user.getId()) {
+                userPick.setSelectUnitId(pickInfoDto.getUnitId());
+                pickRedisRepository.reSaveUserPickToRedis(userInfoKey, userPick, count);
+                break;
+            }
+            count++;
+        }
+        return currentUserPickDtoList;
+    }
+
+    // 각 팀의 픽 정보 확정 최신화
+    public Map<String, Object> updateFinalPickInfo(String roomCode, PickInfoDto pickInfoDto) {
+        String userInfoKey = generateKey(PICK_KEY_PREFIX, roomCode);
+        String teamKey = "";
+        log.info("updateCurrentPickInfo 들어온 팀 정보 : " + pickInfoDto.getTeam());
+        if (pickInfoDto.getTeam().equals("홍팀")) {
+            teamKey = generateKey(RED_KEY_PREFIX, roomCode);
+        } else if (pickInfoDto.getTeam().equals("청팀")) {
+            teamKey = generateKey(BLUE_KEY_PREFIX, roomCode);
+        } else {
+            throw new TeamNotFoundException("존재하지 않은 팀입니다.");
+        }
+
+        // UserPickInfo와 UnitInfo 수정하기
         List<CurrentUserPickDto> currentUserPickDtoList = getCurrentUserPickInfo(roomCode).get(pickInfoDto.getTeam());
         UserEntity user = userRepository.findByEmail(pickInfoDto.getEmail());
 
@@ -242,7 +270,7 @@ public class PickRedisService {
             count++;
         }
         Map<String, Object> allPickInfo = new HashMap<>();
-        allPickInfo.put("userInfo",currentUnitPickDtoList);
+        allPickInfo.put("userInfo",currentUserPickDtoList);
         allPickInfo.put("unitInfo", currentUnitPickDtoList);
         return allPickInfo;
     }

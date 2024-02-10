@@ -4,7 +4,6 @@ import com.ssafy.hungry.domain.pick.dto.*;
 import com.ssafy.hungry.domain.pick.service.PickRedisService;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.service.RoomRedisService;
-import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.service.UserService;
 import com.ssafy.hungry.global.dto.StompDataDto;
 import com.ssafy.hungry.global.service.RedisSender;
@@ -107,7 +106,7 @@ public class StompPickController {
         log.info("유닛 선택 상황 최신화 호출 " + roomCode);
 
         // 팀 정보를 확인하여 해당 팀의 픽 정보를 수정, 수정된 정보 얻기
-        Map<String, Object> allPickInfo = pickRedisService.updateCurrentPickInfo(roomCode, pickInfoDto);
+        List<CurrentUserPickDto> currentUserPickDtoList = pickRedisService.updateCurrentPickInfo(roomCode, pickInfoDto);
 
         // 전달할 팀 고르기
         String targetRoomCode = "";
@@ -117,10 +116,13 @@ public class StompPickController {
             targetRoomCode = roomCode + "/blue";
         }
 
+        Map<String, Object> sendData = new HashMap<>();
+        sendData.put("userInfo", currentUserPickDtoList);
+
         redisSender.sendToRedis(roomTopic, StompDataDto.builder()
                 .type("PICK_SELECT")
                 .code(targetRoomCode)
-                .data(allPickInfo) // Data 보내기
+                .data(sendData) // Data 보내기
                 .build());
 
     }
@@ -131,7 +133,7 @@ public class StompPickController {
         log.info("유닛 픽 완료 호출 : " + roomCode);
 
         // 팀 정보를 확인하여 해당 팀의 픽 정보를 수정
-        Map<String, Object> allPickInfo = pickRedisService.updateCurrentPickInfo(roomCode, pickInfoDto);
+        Map<String, Object> allPickInfo = pickRedisService.updateFinalPickInfo(roomCode, pickInfoDto);
 
         // 전달할 팀
         String targetRoomCode = "";
