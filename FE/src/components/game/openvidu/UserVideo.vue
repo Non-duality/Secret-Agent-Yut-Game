@@ -4,19 +4,17 @@
       class="my-video"
       v-if="streamManager"
       :stream-manager="streamManager"
-    /><span id="user-name">{{ nickname }}</span>
+    />
 
     <div class="mission-modal">
       <jewelModal v-if="showMissionModal"/>
     </div>
 
   </div>
-  <!-- <div><p>{{ clientData }}</p></div> -->
 </template>
 
 <script>
 import OvVideo from "./OvVideo.vue";
-import { useUserStore } from "@/store/userStore";
 import jewelModal from "@/components/game/minigame/Mineral.vue"
 
 

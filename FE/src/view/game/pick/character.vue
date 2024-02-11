@@ -128,7 +128,6 @@ export default {
       userInfo: null,
       unitInfo: null,
 
-      myTurnNumber: null,
       myTeamName: "",
       isMyturn: false,
 
@@ -309,6 +308,7 @@ export default {
       return new Promise((resolve) => setTimeout(resolve, ms));
     },
 
+    // 새로고침 방지 이벤트
     leave(event) {
       event.preventDefault();
       event.returnValue = "홈으로...";
@@ -321,6 +321,7 @@ export default {
       return event.returnValue;
     },
 
+    // 픽 차례가 자신에게 왔을때 빨간색 보더 추가
     applyBorderToActiveUser(idx) {
       const userElements = document.querySelectorAll(".character-item");
       let i = 0;
@@ -333,12 +334,12 @@ export default {
       });
     },
 
-    // 선택하면 "4px solid red" 적용
+    // 캐릭터를 선택하면 "4px solid red" 적용
     applyBorder(character) {
       const selectedCharacterInfo = this.getUnitInfo.find(
         (info) => info.name === this.getCharacterName(character)
       );
-      const selectedCharacter = document.querySelector(`[src='${character}']`);
+      const select = document.querySelector(`[src='${character}']`);
 
       // 모든 캐릭터에 설정된 보더를 초기화
       const allCharacters = document.querySelectorAll(".character img");
@@ -349,8 +350,8 @@ export default {
 
       // 선택된 캐릭터에 보더를 적용 (비활성화된 경우 보더를 적용하지 않음)
       if (!selectedCharacterInfo.pick) {
-        selectedCharacter.style.border = "4px solid red";
-        selectedCharacter.classList.remove("empty-image");
+        select.style.border = "4px solid red";
+        select.classList.remove("empty-image");
       }
     },
 
@@ -359,8 +360,8 @@ export default {
       if (!this.getIsMyTurn) return;
 
       // 보더 색상 추가
-      this.selectedCharacter = character;
       this.applyBorder(character);
+      this.selectedCharacter = character;
 
       // 선택한 인덱스 번호
       this.selectedIdx = this.getCharacterIdx(character);
@@ -443,6 +444,8 @@ export default {
     useUserStore().showSpyModal = false;
     useUserStore().showModalSide = false;
 
+    let myTurnNumber = -1;
+
     // (1) 픽창으로부터 홍팀 또는 청팀의 정보를 받아온다.
     // * userInfo : 사용자 픽 순서, 픽 유무 등
     // * unitInfo : 현재 구현한 캐릭터 정보
@@ -456,8 +459,6 @@ export default {
       if (this.myTeamName === "red") this.myTeamName = "홍팀";
       else this.myTeamName = "청팀";
 
-      let myTurnNumber = -1;
-
       for (let i = 0; i < this.getUserInfo.length; i++) {
         if (this.getUserInfo[i].nickname === useUserStore().userInfo.nickname) {
           myTurnNumber = i + 1;
@@ -469,17 +470,17 @@ export default {
       setTimeout(() => {
         this.myUserName = useUserStore().userInfo.nickname;
         this.mySessionId = usePickStore().code.replace(/\//g, "");
-        console.log("세션 아이디 --> " + this.mySessionId);
         this.joinSession();
-      }, 1000 * this.myTurnNumber);
+      }, 500 * myTurnNumber);
 
       // (3) 서버에게 받은 현재 픽 해야하는 이메일과 타임을 가져온다.
       setTimeout(async () => {
         for (let i = 0; i < 3; i++) {
-          this.currentIdx = i;
           // 초기 랜더링 작업 때문에,
           // 3초 정도 기다리고 그 후부터는 픽 시간에 맞춤.
-          if (i === 0) await this.delay(3500);
+          await this.delay(3000);
+
+          this.currentIdx = i;
 
           // 시간은 누구에게나 다 보여줘야 함.
           this.nowRemainTime = usePickStore().nowPickPlayerInfo.time;
@@ -492,15 +493,16 @@ export default {
           // 단, "선택하기"를 누를 경우 이 this.delay는 종료되어야 함.
           await this.delay(usePickStore().nowPickPlayerInfo.time * 1000);
 
-          // 선택 시간이 종료되었기 때문에 false 추가
-          this.isMyturn = false;
-
-          // 여기서는 픽한 값을 처리
-          if (this.getCurrentEmail === usePickStore().nowPickPlayerInfo.email) {
+          // 만약 현재 자신의 턴이라면
+          if (this.getIsMyTurn) {
             let idx = -1;
             let selectedCharacterName = null;
 
-            if (!this.selectedCharacter === null) {
+            console.log(this.selectedCharacter);
+
+            // 캐릭터를 픽 하였다면, idx에 선택한 유닛의 ID 저장
+            if (this.selectedCharacter !== null) {
+              console.log("너 픽을 했구나!!")
               selectedCharacterName = this.getCharacterName(
                 this.selectedCharacter
               );
@@ -513,7 +515,12 @@ export default {
                   break;
                 }
               }
-            } else {
+            }
+
+            // 캐릭터를 픽하지 않을 경우, 살아있는 유닛의 ID 들 중 랜덤으로 하나 저장
+            else {
+              console.log("너 픽을 안 했구나!!")
+
               const notSelectedCharacters = [];
 
               for (let j = 0; j < this.getUnitInfo.length; j++) {
@@ -523,8 +530,6 @@ export default {
               idx = this.getRandomPick(notSelectedCharacters);
             }
 
-            // 여기서는 자신이 픽한 값을 저장하는 로직
-            // (만약 어떠한 것도 값이 할당되지 않으면 랜덤값)
             // 여기서는 자신이 픽한 것을 pub로 서버에게 알리는 로직
             const sendData = {
               team: this.myTeamName,
@@ -533,22 +538,14 @@ export default {
             };
 
             // 서버로부터 픽을 보내고 다음 픽을 받도록 준비한다.
-            console.log("최종 픽 --> " + JSON.stringify(sendData));
             pubPickInfo(
               "/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/done",
               sendData
             );
-
-            // 여기서 값이 비동기로 오기 때문에 저장할 시간 있어야 함.
-            this.delay(50);
-
-            // 받아온 unitInfo의 대한 값 업데이트
-            // this.userInfo = usePickStore().userInfo;
-            // this.unitInfo = usePickStore().unitInfo;
           }
         }
-      }, 1000);
-    }, 200);
+      }, 500 * (4 - myTurnNumber));
+    }, 100);
   },
 
   // mounted에 설정한 새로고침 방지 이벤트 리스너를 삭제한다.
@@ -559,11 +556,13 @@ export default {
   computed: {
     // userInfo를 반환
     getUserInfo() {
+      console.log(usePickStore().userInfo);
       return usePickStore().userInfo;
     },
 
     // unitInfo 반환하는 computed 속성
     getUnitInfo() {
+      console.log(usePickStore().unitInfo);
       return usePickStore().unitInfo;
     },
 
