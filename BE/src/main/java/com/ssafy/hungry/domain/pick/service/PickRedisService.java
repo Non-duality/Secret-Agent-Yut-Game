@@ -233,7 +233,7 @@ public class PickRedisService {
     public Map<String, Object> updateFinalPickInfo(String roomCode, PickInfoDto pickInfoDto) {
         String userInfoKey = generateKey(PICK_KEY_PREFIX, roomCode);
         String teamKey = "";
-        log.info("updateCurrentPickInfo 들어온 팀 정보 : " + pickInfoDto.getTeam());
+        log.info("updateFinalPickInfo 들어온 팀 정보 : " + pickInfoDto.getTeam());
         if (pickInfoDto.getTeam().equals("홍팀")) {
             teamKey = generateKey(RED_KEY_PREFIX, roomCode);
         } else if (pickInfoDto.getTeam().equals("청팀")) {
@@ -251,6 +251,7 @@ public class PickRedisService {
         for (CurrentUserPickDto userPick : currentUserPickDtoList) {
             if (userPick.getUserId() == user.getId()) {
                 userPick.setSelectUnitId(pickInfoDto.getUnitId());
+                userPick.setPick(true);
                 pickRedisRepository.reSaveUserPickToRedis(userInfoKey, userPick, count);
                 break;
             }
