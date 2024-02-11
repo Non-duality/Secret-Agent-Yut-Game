@@ -322,7 +322,6 @@ export default {
     },
 
     applyBorderToActiveUser(idx) {
-      // 현재 이메일과 일치하는 사용자의 이미지에 클래스를 적용
       const userElements = document.querySelectorAll(".character-item");
       let i = 0;
 
@@ -470,16 +469,17 @@ export default {
       setTimeout(() => {
         this.myUserName = useUserStore().userInfo.nickname;
         this.mySessionId = usePickStore().code.replace(/\//g, "");
+        console.log("세션 아이디 --> " + this.mySessionId);
         this.joinSession();
-      }, 50 * this.myTurnNumber);
+      }, 1000 * this.myTurnNumber);
 
       // (3) 서버에게 받은 현재 픽 해야하는 이메일과 타임을 가져온다.
       setTimeout(async () => {
         for (let i = 0; i < 3; i++) {
           this.currentIdx = i;
           // 초기 랜더링 작업 때문에,
-          // 1.5초 정도 기다리고 그 후부터는 픽 시간에 맞춤.
-          if (i === 0) await this.delay(3000);
+          // 3초 정도 기다리고 그 후부터는 픽 시간에 맞춤.
+          if (i === 0) await this.delay(3500);
 
           // 시간은 누구에게나 다 보여줘야 함.
           this.nowRemainTime = usePickStore().nowPickPlayerInfo.time;
