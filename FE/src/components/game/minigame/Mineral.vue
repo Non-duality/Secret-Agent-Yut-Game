@@ -21,7 +21,7 @@
     </div>
     <!-- 게임 타이머 -->
     <div class="game-timer" v-if="gestureOutput">
-      Timer : {{ gameTimer }}
+      <h1>Timer : {{ gameTimer }}</h1>
     </div>
     <!-- 시작 전 타이머 -->
     <div class="start-timer" v-if="countdown > 0">
@@ -51,7 +51,7 @@ export default {
         gestureRecognizer: GestureRecognizer,
         webcamRunning: false, // 웹캠 실행 여부
         lastVideoTime: -1, // 비디오의 마지막 시간:
-        countdown: 3,
+        countdown: 5,
         
         // 제스쳐 인식 결과
         results: undefined,
@@ -342,11 +342,12 @@ export default {
   padding-top: 30px;
   padding-bottom: 30px;
   background-color: rgb(10, 10, 10);
-  border-radius: 20px;
+  border-radius: 15px;
   width: 50%;
   height: 70%;
   margin: 0 auto;
   margin-top: 50px;
+  /* border: 3px solid rgb(245, 202, 12); */
 }
 
 .media-container {
@@ -366,6 +367,8 @@ export default {
 #webcam {
   width: 70%;
   height: auto;
+  border-radius: 20px;
+  margin-top: 10px;
 }
 
 .victory {
@@ -373,14 +376,16 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: rgb(255, 255, 255);
+  color: rgb(5, 5, 5);
   font-size: 5rem;
-  background-color: rgb(255, 60, 0);
-  width: 450px;
-  height: 115px;
+  background-color: rgb(245, 202, 12);
+  width: 23vw;
+  height: 10.5vh;
   text-align: center;
   font-weight: bold;
-  border-radius: 80px;
+  border-radius: 50px;
+  border: 5px solid black;
+  font-size: 50px;
 }
 
 /* 캔버스 스타일링 */
@@ -393,12 +398,11 @@ canvas.media {
 
 .game-timer {
   color: white;
-  padding-top: 20px;
 }
 
 .target-count {
   color: yellow;
-  padding-top: 5px;
+  padding-bottom: 10px;
 }
 
 .start-timer {
@@ -407,13 +411,16 @@ canvas.media {
   left: 50%;
   transform: translate(-50%, -50%);
   color: rgb(255, 255, 255);
+  font-stretch: expanded;
   font-size: 5rem;
-  background-color: rgb(255, 60, 0);
+  background-color: rgba(255, 22, 6, 0.863);
   width: 100px;
   height: 100px;
   text-align: center;
   font-weight: bold;
-  padding-bottom: 10px;
-  border-radius: 80px;
+  padding-bottom: 15px;
+  border-radius: 30px;
 }
+
+
 </style>
