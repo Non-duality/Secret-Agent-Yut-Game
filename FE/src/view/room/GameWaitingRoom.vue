@@ -88,7 +88,7 @@ export default {
 
       // if(!canStart) return;
       // 게임 시작 가능한 상태인지 확인 (끝)
-      
+
       // 게임 방 사람에게 알린다.
       pubRoom(
         "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/start",
@@ -129,22 +129,36 @@ export default {
         this.$router.push({ name: "home" });
       }
     },
+
+    // 새로고침 방지
+    leave(event) {
+      // 나가기로 알림.
+      pubRoom(
+        "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/exit",
+        useUserStore().userInfo.email
+      );
+
+      // 구독 취소한 뒤 방 정보에 대해 모두 리셋한다.
+      useRoomStore().subscription.room.unsubscribe();
+      useUserStore().initData();
+
+      // 홈으로 이동
+      event.preventDefault();
+      event.returnValue = "홈으로..";
+      window.location.href = "/home";
+      return event.returnValue;
+    },
   },
 
-  // unmounted() {
-  //   if (!this.isOut) {
-  //     // 방을 나가기 위해 pub로 알린다.
-  //     pubRoom(
-  //       "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/exit",
-  //       useUserStore().userInfo.email
-  //     );
+  mounted() {
+    // 새로고침 방지 이벤트를 추가한다.
+    window.addEventListener("beforeunload", this.leave);
+  },
 
-  //     // 구독 취소한 뒤 방 정보에 대해 모두 리셋한다.
-  //     useRoomStore().subscription.room.unsubscribe();
-  //     const initialStateRoom = useRoomStore().$reset();
-  //     Object.assign(this, initialStateRoom);
-  //   }
-  // },
+  // mounted에 설정한 새로고침 방지 이벤트 리스너를 삭제한다.
+  beforeUnmount() {
+    window.removeEventListener("beforeunload", this.leave);
+  },
 };
 </script>
 

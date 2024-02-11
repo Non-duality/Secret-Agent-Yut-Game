@@ -1,15 +1,9 @@
 <template>
   <div class="background">
-    <div class="timer">{{ remainingTime }}</div>
+    <div class="timer">{{ nowRemainTime }}</div>
     <div class="content">
       <!-- (시작) OpenVidu -->
       <div id="main-container" class="container">
-        <!-- 사용자의 이름 표시 -->
-        <!-- <div class="nickname-container">
-          <div v-for="user in userInfo" :key="user.userId">
-            <p>{{ user.nickname }}</p>
-          </div>
-        </div> -->
         <div id="session" v-if="session">
           <!-- (시작) 카메라 영역 -->
           <div class="rtc-container">
@@ -34,35 +28,50 @@
       <!-- (끝) OpenVidu -->
 
       <div class="characters-wrapper">
-        <!-- (시작) 캐릭터 선택 -->
         <div class="character-container">
-          <div v-for="user in userInfo" :key="user.userId">
+          <div v-for="user in getUserInfo" :key="user.userId">
             <div class="character-item">
               <img
-                src="@/assets/img/sample.png"
-                alt="sample-img"
                 class="sample-img"
+                :src="getCharacterImage(user.selectUnitId)"
               />
               <p>{{ user.nickname }}</p>
-              <!-- 픽 버튼 또는 픽된 유닛 정보를 표시하는 부분 -->
             </div>
           </div>
         </div>
-        <!-- (끝) 캐릭터 선택 -->
-        <div class="character-box">
+
+        <!-- (시작) 캐릭터 활성화/비활성화 -->
+        <div class="character-box" v-if="getUnitInfo">
           <div v-for="character in characters" :key="character" class="box">
-            <div class="character">
+            <div
+              class="character"
+              :class="{
+                disabled: getUnitInfo.find(
+                  (info) => info.name === getCharacterName(character)
+                )?.pick,
+              }"
+              :style="{
+                opacity: getUnitInfo.find(
+                  (info) => info.name === getCharacterName(character)
+                )?.pick
+                  ? '0.2'
+                  : '1',
+              }"
+              @click="selectCharacter(character)"
+            >
               <img :src="character" class="select-img" />
             </div>
             <div class="character-name">
               <span v-if="character.includes('king')">대왕</span>
-              <span v-if="character.includes('spearman')">창병</span>
-              <span v-if="character.includes('cavalry')">기병</span>
-              <span v-if="character.includes('peasant')">농민</span>
-              <span v-if="character.includes('slave')">노비</span>
+              <span v-else-if="character.includes('spearman')">창병</span>
+              <span v-else-if="character.includes('cavalry')">기병</span>
+              <span v-else-if="character.includes('peasant')">농민</span>
+              <span v-else-if="character.includes('slave')">노비</span>
             </div>
           </div>
         </div>
+        <!-- (끝) 캐릭터 활성화/비활성화 -->
+
         <button @type="submit" @click="openModal('spy')" class="ready">
           준비완료
         </button>
@@ -120,8 +129,17 @@ export default {
       unitInfo: null,
 
       myTurnNumber: null,
+      myTeamName: "",
+      isMyturn: false,
 
       currentUserNickname: "",
+      currentIdx: "",
+
+      nowDoPickPlayerEmail: "",
+      nowRemainTime: null,
+
+      selectedCharacter: null,
+      selectedIdx: 0,
     };
   },
 
@@ -129,14 +147,12 @@ export default {
     const store = useUserStore();
     const { showSpyModal } = storeToRefs(store);
 
-    const users = ["준희", "지훈", "성규", "수빈", "희웅"];
     const characters = [king, spearman, cavalry, peasant, slave];
     const selectedCharacters = [];
 
     return {
       showSpyModal,
       openModal: store.openModal,
-      users,
       characters,
       selectedCharacters,
       borderColor: "initialBorderColor",
@@ -257,7 +273,7 @@ export default {
           headers: { "Content-Type": "application/json" },
         }
       );
-      return response.data; // The sessionId
+      return response.data;
     },
 
     async createToken(sessionId) {
@@ -275,20 +291,28 @@ export default {
     },
 
     startTimer() {
-      // 1초마다 남은 시간을 감소시키는 타이머 설정
-      this.timerInterval = setInterval(() => {
-        if (this.remainingTime > 0) {
-          this.remainingTime--;
-        } else {
-          // 시간이 다 되었을 때 타이머를 멈춤
-          clearInterval(this.timerInterval);
+      // 현재 남은 시간을 나타내는 변수
+      let remainingTime = 15;
+
+      const timer = () => {
+        if (remainingTime > 0) {
+          remainingTime--;
+          this.nowRemainTime = remainingTime;
+          setTimeout(timer, 1000);
         }
-      }, 1000);
+      };
+
+      timer();
+    },
+
+    async delay(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
     },
 
     leave(event) {
       event.preventDefault();
       event.returnValue = "홈으로...";
+
       // 홈으로 이동
       this.leaveSession();
       useUserStore().initData();
@@ -296,50 +320,262 @@ export default {
       window.location.href = "/";
       return event.returnValue;
     },
+
+    applyBorderToActiveUser(idx) {
+      // 현재 이메일과 일치하는 사용자의 이미지에 클래스를 적용
+      const userElements = document.querySelectorAll(".character-item");
+      let i = 0;
+
+      userElements.forEach((element) => {
+        const userEmail = element.getElementsByClassName("sample-img")[0];
+        if (idx === i) userEmail.style.border = "5px solid red";
+        else userEmail.style.border = "";
+        i++;
+      });
+    },
+
+    // 선택하면 "4px solid red" 적용
+    applyBorder(character) {
+      const selectedCharacterInfo = this.getUnitInfo.find(
+        (info) => info.name === this.getCharacterName(character)
+      );
+      const selectedCharacter = document.querySelector(`[src='${character}']`);
+
+      // 모든 캐릭터에 설정된 보더를 초기화
+      const allCharacters = document.querySelectorAll(".character img");
+      allCharacters.forEach((img) => {
+        img.style.border = "none";
+        img.classList.add("empty-image");
+      });
+
+      // 선택된 캐릭터에 보더를 적용 (비활성화된 경우 보더를 적용하지 않음)
+      if (!selectedCharacterInfo.pick) {
+        selectedCharacter.style.border = "4px solid red";
+        selectedCharacter.classList.remove("empty-image");
+      }
+    },
+
+    // 캐릭터 이미지를 클릭하면 보더 색상 추가
+    selectCharacter(character) {
+      if (!this.getIsMyTurn) return;
+
+      // 보더 색상 추가
+      this.selectedCharacter = character;
+      this.applyBorder(character);
+
+      // 선택한 인덱스 번호
+      this.selectedIdx = this.getCharacterIdx(character);
+
+      if (this.selectedIdx === 0) return;
+
+      // 실시간으로 값을 전달
+      const sendData = {
+        team: this.myTeamName,
+        email: useUserStore().userInfo.email,
+        unitId: this.selectedIdx,
+      };
+
+      // 서버로부터 픽을 보내고 현재 무엇을 선택하고 있는지 정보를 pub한다.
+      pubPickInfo(
+        "/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/select",
+        sendData
+      );
+    },
+
+    // 선택한 캐릭터 이름 가져오기.
+    getCharacterName(str) {
+      if (str.includes("king")) {
+        return "대왕";
+      } else if (str.includes("spearman")) {
+        return "창병";
+      } else if (str.includes("cavalry")) {
+        return "기병";
+      } else if (str.includes("peasant")) {
+        return "농민";
+      } else {
+        return "노비";
+      }
+    },
+
+    // 선택한 캐릭터 이름 가져오기.
+    getCharacterIdx(str) {
+      if (str.includes("king")) {
+        return 1;
+      } else if (str.includes("spearman")) {
+        return 2;
+      } else if (str.includes("cavalry")) {
+        return 3;
+      } else {
+        return 0;
+      }
+    },
+
+    // 랜덤 인덱스 접근하여 가져오기.
+    getRandomPick(arr) {
+      return Math.floor(Math.random() * arr.length);
+    },
+
+    // 선택한 유닛 아이디 확인
+    getCharacterImage(selectedUnitId) {
+      if (selectedUnitId === 1) {
+        return king;
+      } else if (selectedUnitId === 2) {
+        return spearman;
+      } else if (selectedUnitId === 3) {
+        return cavalry;
+      } else {
+        return "";
+      }
+    },
   },
 
   /* 캐릭터 픽창 시작 */
   mounted() {
+    // 새로고침 방지 이벤트를 추가한다.
     window.addEventListener("beforeunload", this.leave);
+
+    // 먼저, 서버에게 픽 시작을 알리고 픽 순서와 타임을 입력 받는다.
+    pubPick("/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/start");
+
+    // 자신의 이름과 이메일
     this.currentUserNickname = useUserStore().userInfo.nickname;
 
+    // 게임 진행에 방해되는 요소는 잠시 false
     useUserStore().showSpyModal = false;
     useUserStore().showModalSide = false;
 
-    // (1) 서버에게 픽 시작을 알린다.
-    pubPick("/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/start");
-
-    // (2) 픽창으로부터 홍팀 또는 청팀의 정보를 받아온다.
+    // (1) 픽창으로부터 홍팀 또는 청팀의 정보를 받아온다.
     // * userInfo : 사용자 픽 순서, 픽 유무 등
     // * unitInfo : 현재 구현한 캐릭터 정보
     setTimeout(() => {
-      this.userInfo = usePickStore().userInfo;
-      this.unitInfo = usePickStore().unitInfo;
+      // this.userInfo = usePickStore().userInfo;
+      // this.unitInfo = usePickStore().unitInfo;
+
+      const str = usePickStore().code;
+      this.myTeamName = str.substring(str.lastIndexOf("/") + 1);
+
+      if (this.myTeamName === "red") this.myTeamName = "홍팀";
+      else this.myTeamName = "청팀";
 
       let myTurnNumber = -1;
 
-      for (let i = 0; i < this.userInfo.length; i++) {
-        if (this.userInfo[i].nickname === useUserStore().userInfo.nickname) {
+      for (let i = 0; i < this.getUserInfo.length; i++) {
+        if (this.getUserInfo[i].nickname === useUserStore().userInfo.nickname) {
           myTurnNumber = i + 1;
           break;
         }
       }
 
-      // (3) 자신의 픽 순서를 보고 자신의 팀 OpenVidu에 접속한다.
+      // (2) 자신의 픽 순서를 보고 자신의 팀 OpenVidu에 접속한다.
       setTimeout(() => {
         this.myUserName = useUserStore().userInfo.nickname;
         this.mySessionId = usePickStore().code.replace(/\//g, "");
         this.joinSession();
-      }, 100 * this.myTurnNumber);
+      }, 50 * this.myTurnNumber);
 
-      // 서버로부터 픽 시작 요청을 받으면, 타이머 시작
-      // this.startTimer();
-    }, 100);
+      // (3) 서버에게 받은 현재 픽 해야하는 이메일과 타임을 가져온다.
+      setTimeout(async () => {
+        for (let i = 0; i < 3; i++) {
+          this.currentIdx = i;
+          // 초기 랜더링 작업 때문에,
+          // 1.5초 정도 기다리고 그 후부터는 픽 시간에 맞춤.
+          if (i === 0) await this.delay(3000);
+
+          // 시간은 누구에게나 다 보여줘야 함.
+          this.nowRemainTime = usePickStore().nowPickPlayerInfo.time;
+          this.startTimer();
+
+          // 여기서는 자신이 픽이라는 것을 red 색상으로 보더 색칠
+          this.applyBorderToActiveUser(i);
+
+          // 픽 할 시간을 줌.
+          // 단, "선택하기"를 누를 경우 이 this.delay는 종료되어야 함.
+          await this.delay(usePickStore().nowPickPlayerInfo.time * 1000);
+
+          // 선택 시간이 종료되었기 때문에 false 추가
+          this.isMyturn = false;
+
+          // 여기서는 픽한 값을 처리
+          if (this.getCurrentEmail === usePickStore().nowPickPlayerInfo.email) {
+            let idx = -1;
+            let selectedCharacterName = null;
+
+            if (!this.selectedCharacter === null) {
+              selectedCharacterName = this.getCharacterName(
+                this.selectedCharacter
+              );
+
+              for (let j = 0; j < this.getUnitInfo.length; j++) {
+                if (this.getUnitInfo[j].pick) continue;
+
+                if (this.getUnitInfo[j].name === selectedCharacterName) {
+                  idx = j;
+                  break;
+                }
+              }
+            } else {
+              const notSelectedCharacters = [];
+
+              for (let j = 0; j < this.getUnitInfo.length; j++) {
+                if (this.getUnitInfo[j].pick) continue;
+                notSelectedCharacters.push(j);
+              }
+              idx = this.getRandomPick(notSelectedCharacters);
+            }
+
+            // 여기서는 자신이 픽한 값을 저장하는 로직
+            // (만약 어떠한 것도 값이 할당되지 않으면 랜덤값)
+            // 여기서는 자신이 픽한 것을 pub로 서버에게 알리는 로직
+            const sendData = {
+              team: this.myTeamName,
+              email: this.getCurrentEmail,
+              unitId: idx + 1,
+            };
+
+            // 서버로부터 픽을 보내고 다음 픽을 받도록 준비한다.
+            console.log("최종 픽 --> " + JSON.stringify(sendData));
+            pubPickInfo(
+              "/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/done",
+              sendData
+            );
+
+            // 여기서 값이 비동기로 오기 때문에 저장할 시간 있어야 함.
+            this.delay(50);
+
+            // 받아온 unitInfo의 대한 값 업데이트
+            // this.userInfo = usePickStore().userInfo;
+            // this.unitInfo = usePickStore().unitInfo;
+          }
+        }
+      }, 1000);
+    }, 200);
   },
 
+  // mounted에 설정한 새로고침 방지 이벤트 리스너를 삭제한다.
   beforeUnmount() {
-    // beforeUnload 이벤트 리스너 제거
     window.removeEventListener("beforeunload", this.confirmExit);
+  },
+
+  computed: {
+    // userInfo를 반환
+    getUserInfo() {
+      return usePickStore().userInfo;
+    },
+
+    // unitInfo 반환하는 computed 속성
+    getUnitInfo() {
+      return usePickStore().unitInfo;
+    },
+
+    // 자신의 차례인지 여부를 반환하는 computed 속성
+    getIsMyTurn() {
+      return this.getCurrentEmail === usePickStore().nowPickPlayerInfo.email;
+    },
+
+    // 현재 내 이메일
+    getCurrentEmail() {
+      return useUserStore().userInfo.email;
+    },
   },
 };
 </script>

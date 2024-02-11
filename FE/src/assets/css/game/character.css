@@ -15,11 +15,11 @@
   display: flex;
 }
 
-.nickname-container{
+.nickname-container {
   display: flex;
 }
 
-p{
+p {
   color: white;
 }
 
@@ -31,6 +31,10 @@ p{
 
 .select-img:hover {
   border: 4px solid red;
+}
+
+.character.disabled .select-img:hover {
+  border: none;
 }
 
 .character-name > span {
@@ -71,7 +75,7 @@ p{
   display: flex;
   justify-content: space-evenly;
   flex-direction: row;
-  gap: 70px;
+  gap: 50px;
 }
 
 .character-item {
@@ -79,11 +83,15 @@ p{
   margin: 15px;
 }
 
-.sample-img {
+.character-item > img {
   width: 60px;
   height: 60px;
-  border: 2px solid white;
   border-radius: 50px;
+  background-size: cover;
+}
+
+.empty-image {
+  background-image: none;
 }
 
 .select {

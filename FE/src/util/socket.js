@@ -83,7 +83,6 @@ export function connect(accessToken, recvCallback) {
 export function connectRoom(type, router, from) {
   return new Promise((resolve, reject) => {
     let token = useUserStore().accessToken;
-    console.log(router);
 
     stompClient = new Client({
       brokerURL: VITE_WSS_API_URL,
@@ -187,7 +186,7 @@ export function initRoom(router, from) {
 
     // 구독 메시지 이벤트 처리
     (message) => {
-      console.log(message.body);
+      // console.log(message.body);
       useRoomStore().receivedMessage = JSON.parse(message.body);
 
       // (경우1) 입장 정보 타입
@@ -368,10 +367,9 @@ export function initPick(router, from) {
   usePickStore().subscription.pick = stompClient.subscribe(
     "/sub/room/" + useUserStore().currentRoomInfo.roomCode + "/" + from,
     (message) => {
-      console.log(message.body);
       usePickStore().receivedMessage = JSON.parse(message.body);
 
-      /* 홍팀, 청팀 정보를 받아오는 것 */
+      // 홍팀, 청팀 정보를 받아오는 것
       if (usePickStore().receivedMessage.type === "PICK_GET_PRE_INFO") {
         usePickStore().code = usePickStore().receivedMessage.code;
         usePickStore().unitInfo = usePickStore().receivedMessage.data.unitInfo;
@@ -390,13 +388,73 @@ export function initPick(router, from) {
           },
         };
         localStorage.setItem("pick", JSON.stringify(updatedPickData));
-      } /* 픽 순서를 받아오는 것 */ else if (
-        usePickStore().receivedMessage.type === "PICK_ORDER"
+      }
+
+      // 처음에 "PICK_ORDER"로 첫 번째 순서를 배정받고,
+      // 그 다음으로 "PICK_NEXT"로 다음 순서를 배정받는다.
+      else if (
+        usePickStore().receivedMessage.type === "PICK_ORDER" ||
+        usePickStore().receivedMessage.type === "PICK_NEXT"
       ) {
         usePickStore().nowPickPlayerInfo.email =
           usePickStore().receivedMessage.data.email;
         usePickStore().nowPickPlayerInfo.time =
-          usePickStore().receivedMessage.data.email;
+          usePickStore().receivedMessage.data.time;
+
+        console.log(
+          "픽 해야 하는 이메일 --> " + usePickStore().nowPickPlayerInfo.email
+        );
+
+        // 로컬 스토리지에 업데이트된 데이터 저장
+        const storedPickData = JSON.parse(localStorage.getItem("pick"));
+        const updatedPickData = {
+          ...storedPickData,
+          nowPickPlayerInfo: {
+            email: usePickStore().nowPickPlayerInfo.email,
+            time: usePickStore().nowPickPlayerInfo.time,
+          },
+        };
+
+        localStorage.setItem("pick", JSON.stringify(updatedPickData));
+      }
+
+      // 픽을 실시간으로 무엇을 선택하고 있는지 받아오는 것
+      else if (usePickStore().receivedMessage.type === "PICK_SELECT") {
+        usePickStore().userInfo = usePickStore().receivedMessage.data.userInfo;
+
+        // 로컬 스토리지에 업데이트된 데이터 저장
+        const storedPickData = JSON.parse(localStorage.getItem("pick"));
+        const updatedPickData = {
+          ...storedPickData,
+          userInfo: {
+            ...usePickStore().userInfo,
+          },
+        };
+        localStorage.setItem("pick", JSON.stringify(updatedPickData));
+      }
+
+      // 픽한 결과를 받는 것
+      else if (usePickStore().receivedMessage.type === "PICK_SELECT_DONE") {
+        usePickStore().userInfo = usePickStore().receivedMessage.data.userInfo;
+        usePickStore().unitInfo = usePickStore().receivedMessage.data.unitInfo;
+
+        // 로컬 스토리지에 업데이트된 데이터 저장
+        const storedPickData = JSON.parse(localStorage.getItem("pick"));
+        const updatedPickData = {
+          ...storedPickData,
+          userInfo: {
+            ...usePickStore().userInfo,
+          },
+          unitInfo: {
+            ...usePickStore().unitInfo,
+          },
+        };
+        localStorage.setItem("pick", JSON.stringify(updatedPickData));
+      }
+
+      // 자신의 팀 픽만 끝났다면, 이 메시지를 받고 모달로 대기를 해야됨.
+      else if(usePickStore().receivedMessage.type === "PICK_WAIT"){
+
       }
     }
   );
