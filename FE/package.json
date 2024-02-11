@@ -28,10 +28,7 @@
     "pinia": "^2.1.7",
     "pinia-plugin-persist": "^1.0.0",
     "three": "^0.161.0",
-<<<<<<< HEAD
     "three-addons": "^1.2.0",
-=======
->>>>>>> 225404defe9a344c1a7e97efa6019279995e3443
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",
     "vue3-carousel": "^0.3.1"
