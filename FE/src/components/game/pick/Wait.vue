@@ -17,30 +17,29 @@ library.add(faX);
 export default {
   data() {
     return {
-      loadingText: ".", // 초기로딩 텍스트는 하나의 점부터 시작합니다.
-      loadingPercent: 0, // 로딩 상태를 나타내는 변수
-      intervalId: null, // setInterval 메서드의 반환값을 저장할 변수
+      loadingText: ".",
+      loadingPercent: 0, 
+      intervalId: null, 
     };
   },
   methods: {
     startLoadingAnimation() {
-      const dots = [".", "..", "...", "....", "....."]; // 점을 배열로 정의합니다.
-      let index = 0; // 현재 점의 인덱스를 추적합니다.
+      const dots = [".", "..", "...", "....", "....."];
+      let index = 0; 
       this.intervalId = setInterval(() => {
-        this.loadingText = dots[index]; // 현재 인덱스의 점을 텍스트로 설정합니다.
-        index = (index + 1) % dots.length; // 다음 점의 인덱스를 계산합니다. 배열의 길이를 초과하면 다시 처음부터 시작합니다.
-        // h2.title 요소의 텍스트를 업데이트합니다.
+        this.loadingText = dots[index];
+        index = (index + 1) % dots.length; 
         this.$refs.titleElement.innerText =
           "상대 팀 픽을 기다리고 있습니다" + this.loadingText;
-      }, 800); // 1초마다 실행됩니다.
+      }, 800);
       this.$emit("close-modal", "start");
     },
   },
   mounted() {
-    this.startLoadingAnimation(); // 컴포넌트가 마운트되면 로딩 애니메이션 시작
+    this.startLoadingAnimation(); 
   },
   beforeDestroy() {
-    clearInterval(this.intervalId); // 컴포넌트가 소멸되기 전에 interval을 정리하여 메모리 누수 방지
+    clearInterval(this.intervalId);
   },
 };
 </script>

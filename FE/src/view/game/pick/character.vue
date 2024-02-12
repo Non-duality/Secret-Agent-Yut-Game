@@ -3,16 +3,17 @@
     <transition name="fade">
       <Loading v-if="showStartModal" @close-modal="closeModal" />
     </transition>
-    
+
     <transition name="fade">
       <Wait v-if="showWaitModal" @close-modal="closeModal" />
     </transition>
-    <!-- <transition name="fade"
+
+    <transition name="fade"
       ><spyModal
         v-if="showSpyModal"
         @close-modal="closeModal"
         class="spy-modal"
-    /></transition> -->
+    /></transition>
 
     <div class="timer">{{ nowRemainTime }}</div>
     <div class="content">
@@ -168,13 +169,11 @@ export default {
 
   setup() {
     const store = useUserStore();
-    // const { showSpyModal } = storeToRefs(store);
 
     const characters = [king, spearman, cavalry, peasant, slave];
     const selectedCharacters = [];
 
     return {
-      // showSpyModal,
       openModal: store.openModal,
       characters,
       selectedCharacters,
@@ -508,6 +507,14 @@ export default {
       }
     );
 
+    watch(
+      () => pickStore.pickRealFinished,
+      (newValue) => {
+        this.showWaitModal = false;
+        this.showSpyModal = true;
+      }
+    );
+
     // 새로고침 방지 이벤트를 추가한다.
     window.addEventListener("beforeunload", this.leave);
 
@@ -515,7 +522,6 @@ export default {
     this.currentUserNickname = useUserStore().userInfo.nickname;
 
     // 게임 진행에 방해되는 요소는 잠시 false
-    useUserStore().showSpyModal = false;
     useUserStore().showModalSide = false;
 
     let myTurnNumber = -1;
