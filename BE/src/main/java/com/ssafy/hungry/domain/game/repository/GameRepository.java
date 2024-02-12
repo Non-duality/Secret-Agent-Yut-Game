@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface GameRepository extends JpaRepository<Game, String> {
     Game findByGameCode(String gameCode);
+    Boolean existsByGameCode(String gameCode);
 }

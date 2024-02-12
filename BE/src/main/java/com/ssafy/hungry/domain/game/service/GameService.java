@@ -2,11 +2,15 @@ package com.ssafy.hungry.domain.game.service;
 
 import com.ssafy.hungry.domain.game.dto.GameStartDto;
 import com.ssafy.hungry.domain.game.dto.UserInfo;
-import com.ssafy.hungry.domain.game.entity.game.*;
+import com.ssafy.hungry.domain.game.entity.UnitEntity;
+import com.ssafy.hungry.domain.game.entity.game.Game;
+import com.ssafy.hungry.domain.game.entity.game.blue.BlueTeamMember;
+import com.ssafy.hungry.domain.game.entity.game.blue.BlueTeamUnit;
 import com.ssafy.hungry.domain.game.entity.game.red.RedTeamMember;
-import com.ssafy.hungry.domain.game.entity.game.red.RedTeamStatus;
 import com.ssafy.hungry.domain.game.entity.game.red.RedTeamUnit;
 import com.ssafy.hungry.domain.game.repository.*;
+import com.ssafy.hungry.domain.pick.dto.CurrentUnitPickDto;
+import com.ssafy.hungry.domain.pick.repository.PickRedisRepository;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.entity.RoomEntity;
 import com.ssafy.hungry.domain.room.repository.RoomRedisRepository;
@@ -22,6 +26,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -31,10 +36,11 @@ public class GameService {
     private final UserGameHistoryRepository userGameHistoryRepository;
     private final GameRepository gameRepository;
     private final RedTeamMemberRepository redTeamMemberRepository;
-    private final GameStatusRepository gameStatusRepository;
-    private final RedTeamStatusRepository redTeamStatusRepository;
     private final RedTeamUnitRepository redTeamUnitRepository;
-
+    private final BlueTeamMemberRepository blueTeamMemberRepository;
+    private final PickRedisRepository pickRedisRepository;
+    private final UnitRepository unitRepository;
+    private final BlueTeamUnitRepository blueTeamUnitRepository;
 
     public int[] generateMissionRegion() {
         // 0 5 10 15 22 27 을 제외하고 0~29까지중 랜덤으로 4개를 선택
@@ -81,54 +87,111 @@ public class GameService {
         return dto;
     }
 
+    //추리 성공시 저장
+    public void reasoning(String team, String gameCode){
+        Game game = gameRepository.findByGameCode(gameCode);
+        if(team.equals("청팀")){
+            game.setBlueTeamReasoningResult(true);
+            gameRepository.save(game);
+        }else{
+            game.setRedTeamReasoningResult(true);
+            gameRepository.save(game);
+        }
+    }
 
-    public void gameSaveTest(){
+    //유닛 도착시 저장
+    public void unitGole(String team, int unitIndex, String gameCode){
+        Game game = gameRepository.findByGameCode(gameCode);
+        if(team.equals("청팀")){
+            BlueTeamUnit blueTeamUnit = blueTeamUnitRepository.findByGameCodeAndUnitIndex(game, unitIndex);
+            blueTeamUnit.setGole(true);
+            blueTeamUnitRepository.save(blueTeamUnit);
+        }else{
+            RedTeamUnit redTeamUnit = redTeamUnitRepository.findByGameCodeAndUnitIndex(game, unitIndex);
+            redTeamUnit.setGole(true);
+            redTeamUnitRepository.save(redTeamUnit);
+        }
+    }
+
+    //게임 종료 시 저장
+    public void saveGameResult(String gameCode, int winner){
+        Game game = gameRepository.findByGameCode(gameCode);
+        game.setWinner(winner);
+        gameRepository.save(game);
+    }
+
+    //게임 시작 시 저장
+    public void initGame(RoomEntity room, int[] missionRegion){
+        //룸코드를 바탕으로 게임 생성
+        //밀정 정보 받아오기
+        Map<Object, Object> spy = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + room.getRoomCode());
+
         Game game = new Game();
-        game.setGameCode("test1");
-        game.setGameTheme("theme");
-        game.setGameSpeed(1);
-        game.setMissionRegion(this.generateMissionRegion());
-
+        game.setGameCode(room.getRoomCode());
+        game.setGameSpeed(room.getGameSpeed());
+        game.setGameTheme(room.getTheme());
+        game.setMissionRegion(missionRegion);
+        game.setBlueSpyId((Integer) spy.get("청팀"));
+        game.setRedSpyId((Integer) spy.get("홍팀"));
         gameRepository.save(game);
 
-        int[] userlist = new int[] {1, 2, 18, 21, 22, 23};
-
+        //게임코드와 참여자로 게임 전적 생성
+        List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo("RoomInfo : " + room.getRoomCode());
         for(int i = 0; i < 6; i++){
-            UserEntity user = userRepository.findById(userlist[i]);
+            UserEntity user = userRepository.findById(currentSeatDtoList.get(i).getUserId());
             UserGameHistoryEntity entity = new UserGameHistoryEntity();
             entity.setUser(user);
-            entity.setGameCode(gameRepository.findByGameCode("test1"));
-
+            entity.setGameCode(game);
             userGameHistoryRepository.save(entity);
         }
 
-        for(int i = 0; i < 3; i++){
+        //홍팀 멤버 저장
+        for (int i = 0; i < 3; i++){
             RedTeamMember redTeamMember = new RedTeamMember();
-            UserEntity user = userRepository.findById(userlist[i]);
-            redTeamMember.setUserId(user);
+            UserEntity user = userRepository.findById(currentSeatDtoList.get(i).getUserId());
             redTeamMember.setGameCode(game);
+            redTeamMember.setUserId(user);
             redTeamMember.setUserIndex(i);
             redTeamMemberRepository.save(redTeamMember);
         }
 
-        GameStatus gameStatus = new GameStatus();
-        gameStatus.setId(new GameStatusId(game,1,1));
-        gameStatusRepository.save(gameStatus);
+        //청팀 멤버 저장
+        for (int i = 3; i < 6; i++){
+            BlueTeamMember blueTeamMember = new BlueTeamMember();
+            UserEntity user = userRepository.findById(currentSeatDtoList.get(i).getUserId());
+            blueTeamMember.setGameCode(game);
+            blueTeamMember.setUserId(user);
+            blueTeamMember.setUserIndex(i);
+            blueTeamMemberRepository.save(blueTeamMember);
+        }
 
-        RedTeamStatus redTeamStatus = new RedTeamStatus();
-        redTeamStatus.setId(new TeamStatusId(gameStatus));
-        redTeamStatus.setSuccessReasoning(true);
-        redTeamStatusRepository.save(redTeamStatus);
+        //유닛 정보 받아오기
+        List<CurrentUnitPickDto> blueUnitInfo = pickRedisRepository.getCurrentUnitPickInfo("BlueUnitInfo: " + room.getRoomCode());
+        List<CurrentUnitPickDto> redUnitInfo = pickRedisRepository.getCurrentUnitPickInfo("RedUnitInfo: " + room.getRoomCode());
 
-        RedTeamUnit redTeamUnit = new RedTeamUnit();
-        redTeamUnit.setId(new RedTeamUnitId(redTeamStatus, 1));
-        redTeamUnit.setPosition(1);
-        redTeamUnitRepository.save(redTeamUnit);
+        //청팀 유닛 정보 저장
+        for(int i = 0; i < 5; i++){
+            UnitEntity unit = unitRepository.findById(blueUnitInfo.get(i).getUnitId());
+            BlueTeamUnit blueTeamUnit = new BlueTeamUnit();
+            blueTeamUnit.setGameCode(game);
+            blueTeamUnit.setUnitId(unit);
+            blueTeamUnit.setGole(false);
+            blueTeamUnitRepository.save(blueTeamUnit);
+        }
+
+        //홍팀 유닛 정보 저장
+        for(int i = 0; i < 5; i++){
+            UnitEntity unit = unitRepository.findById(redUnitInfo.get(i).getUnitId());
+            RedTeamUnit redTeamUnit = new RedTeamUnit();
+            redTeamUnit.setGameCode(game);
+            redTeamUnit.setUnitId(unit);
+            redTeamUnit.setGole(false);
+            redTeamUnitRepository.save(redTeamUnit);
+        }
     }
 
     @Transactional
     public void gameSelectTest() {
-        System.out.println(gameRepository.findById("test1"));
-//        System.out.println(redTeamUnitRepository.findAll());
+        System.out.println(gameRepository.findAll());
     }
 }

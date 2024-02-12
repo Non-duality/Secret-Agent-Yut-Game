@@ -1,7 +1,9 @@
 package com.ssafy.hungry.domain.game.entity.game;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ssafy.hungry.domain.game.entity.game.blue.BlueTeamMember;
+import com.ssafy.hungry.domain.game.entity.game.blue.BlueTeamUnit;
 import com.ssafy.hungry.domain.game.entity.game.red.RedTeamMember;
+import com.ssafy.hungry.domain.game.entity.game.red.RedTeamUnit;
 import com.ssafy.hungry.domain.user.entity.UserGameHistoryEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,6 +25,11 @@ public class Game {
     private int gameSpeed;
     private String gameTheme;
     private int[] missionRegion;
+    private int winner;
+    private int blueSpyId;
+    private int redSpyId;
+    private boolean redTeamReasoningResult;
+    private boolean blueTeamReasoningResult;
 
     @OneToMany(mappedBy = "gameCode")
     private List<UserGameHistoryEntity> userList = new ArrayList<>();
@@ -31,5 +38,11 @@ public class Game {
     private List<RedTeamMember> redteamMemberList = new ArrayList<>();
 
     @OneToMany(mappedBy = "gameCode")
-    private List<GameStatus> gameStatusList = new ArrayList<>();
+    private List<BlueTeamMember> blueTeamMemberList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "gameCode")
+    private List<BlueTeamUnit> blueTeamUnitList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "gameCode")
+    private List<RedTeamUnit> redTeamUnitList = new ArrayList<>();
 }
