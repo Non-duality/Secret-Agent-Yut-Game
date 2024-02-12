@@ -29,7 +29,7 @@ public class GameRedisRepository {
                 .profileImgUrl(user.getProfileImgUrl())
                 .build();
 
-        redisTemplate.opsForHash().put(key, user.getId(), userInfo);
+        redisTemplate.opsForHash().put(key, String.valueOf(user.getId()), userInfo);
     }
 
     public Map<Object, Object> getCurrentUserInfo(String key){

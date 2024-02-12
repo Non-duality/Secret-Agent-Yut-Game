@@ -43,6 +43,7 @@ public class GameStompController {
         String email = principalRepository.findById(principal.getName()).get().getEmail();
         log.info("gameStart 호출 : " + roomCode + " " + email);
         UserEntity user = userRepository.findByEmail(email);
+        log.info("gameStart user검색 : " + roomCode + " " + user.toString());
         gameService.updateEnterUserInfo(roomCode, user);
 
         // 들어온 유저가 6명일 때만 game start
