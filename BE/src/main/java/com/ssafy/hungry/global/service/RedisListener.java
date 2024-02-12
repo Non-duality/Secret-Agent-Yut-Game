@@ -37,6 +37,9 @@ public class RedisListener implements MessageListener {
               messagingTemplate.convertAndSend("/sub/room/" + stompDataDto.getCode(), stompDataDto);
           }
 
+          else if(stompDataDto.getType().startsWith("MINIGAME")){
+              messagingTemplate.convertAndSend("/sub/game/" + stompDataDto.getCode(), stompDataDto);
+          }
 
 
         } catch (JsonProcessingException e) {
