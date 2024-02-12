@@ -2,6 +2,8 @@ package com.ssafy.hungry.domain.game.dto;
 
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Builder

@@ -1,5 +1,6 @@
 package com.ssafy.hungry.domain.game.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hungry.domain.game.dto.UserInfo;
 import com.ssafy.hungry.domain.game.entity.UnitEntity;
@@ -29,7 +30,13 @@ public class GameRedisRepository {
                 .profileImgUrl(user.getProfileImgUrl())
                 .build();
 
-        redisTemplate.opsForHash().put(key, String.valueOf(user.getId()), userInfo);
+        String jsonData = null;
+        try {
+            jsonData = objectMapper.writeValueAsString(userInfo);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        redisTemplate.opsForHash().put(key, String.valueOf(user.getId()), jsonData);
     }
 
     public Map<Object, Object> getCurrentUserInfo(String key){
