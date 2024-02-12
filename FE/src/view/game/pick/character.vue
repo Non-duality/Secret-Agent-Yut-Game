@@ -90,6 +90,8 @@
 </template>
 
 <script>
+import { watch } from "vue";
+
 import spyModal from "@/view/game/pick/spyModal.vue";
 import Loading from "@/components/game/pick/Loading.vue";
 import { useUserStore } from "@/store/userStore";
@@ -197,9 +199,7 @@ export default {
       });
 
       // On every asynchronous exception...
-      this.session.on("exception", ({ exception }) => {
-        console.warn(exception);
-      });
+      this.session.on("exception", ({ exception }) => {});
 
       // --- 4) Connect to the session with a valid user token ---
 
@@ -232,13 +232,7 @@ export default {
             // --- 6) Publish your stream ---
             this.session.publish(this.publisher);
           })
-          .catch((error) => {
-            // console.log(
-            //   "There was an error connecting to the session:",
-            //   error.code,
-            //   error.message
-            // );
-          });
+          .catch((error) => {});
       });
 
       window.addEventListener("beforeunload", this.leaveSession);
@@ -452,10 +446,16 @@ export default {
       });
     },
 
+    async delay2(ms) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+      });
+    },
+
     // '준비완료' 버튼 클릭 시 실행되는 함수
     async prepareComplete() {
       clearTimeout(this.timerInterval);
-      this.cancelTimeout(); // 타이머 취소 및 다음 문장 실행
+      this.cancelTimeout();
     },
 
     // (시작, 대기) 로딩 중 모달
@@ -474,11 +474,21 @@ export default {
 
   /* 캐릭터 픽창 시작 */
   mounted() {
-    // 새로고침 방지 이벤트를 추가한다.
-    window.addEventListener("beforeunload", this.leave);
-
     // 먼저, 서버에게 픽 시작을 알리고 픽 순서와 타임을 입력 받는다.
     pubPick("/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/start");
+
+    const pickStore = usePickStore();
+
+    watch(
+      () => pickStore.finished,
+      (newValue) => {
+        if (!this.isSelected) this.prepareComplete();
+        else this.isSelected = false;
+      }
+    );
+
+    // 새로고침 방지 이벤트를 추가한다.
+    window.addEventListener("beforeunload", this.leave);
 
     // 자신의 이름과 이메일
     this.currentUserNickname = useUserStore().userInfo.nickname;
@@ -511,7 +521,7 @@ export default {
         this.myUserName = useUserStore().userInfo.nickname;
         this.mySessionId = usePickStore().code.replace(/\//g, "");
         this.joinSession();
-      }, 500 * myTurnNumber);
+      }, 250 * myTurnNumber);
 
       // (3) 서버에게 받은 현재 픽 해야하는 이메일과 타임을 가져온다.
       setTimeout(async () => {
@@ -520,8 +530,8 @@ export default {
           // 3~5초 정도 기다리고 그 후부터는 픽 시간에 맞춤.
           // (로딩중이라는 모달창 띄울 필요)
 
-          if (i === 0) await this.delay(7500); // 로딩 시간
-          else await this.delay(1000); // 다음 픽 서버 전송을 위해 1초 기다림
+          if (i === 0) await this.delay(6800); // 로딩 시간
+          else await this.delay2(1000);
 
           this.currentIdx = i;
 
@@ -532,10 +542,13 @@ export default {
           // 여기서는 자신이 픽이라는 것을 red 색상으로 보더 색칠
           this.applyBorderToActiveUser(i);
 
-          if(this.getIsMyTurn) this.isSelected = true;
+          if (this.getIsMyTurn) {
+            this.isSelected = true;
+          }
 
-          // 픽 할 시간을 줌.
-          await this.delay(usePickStore().nowPickPlayerInfo.time * 1000);
+          // 픽 하거나 대기하는 시간
+          // await this.delay(usePickStore().nowPickPlayerInfo.time * 1000);
+          await this.delay(15000);
 
           // 만약 현재 자신의 턴이라면
           if (this.getIsMyTurn) {
@@ -583,15 +596,8 @@ export default {
             );
           }
         }
-      }, 500 * (4 - myTurnNumber));
-    }, 100);
-  },
-
-  watch: {
-    finished(){
-      console.log("Hello 2");
-      if(!this.isSelected) this.prepareComplete();
-    }
+      }, 250 * (4 - myTurnNumber));
+    }, 250);
   },
 
   // mounted에 설정한 새로고침 방지 이벤트 리스너를 삭제한다.
@@ -612,19 +618,13 @@ export default {
 
     // 자신의 차례인지 여부를 반환하는 computed 속성
     getIsMyTurn() {
-      return this.getCurrentEmail === usePickStore().nowPickPlayerInfo.email;
+      return usePickStore().nowPickPlayerInfo.email === this.getCurrentEmail;
     },
 
     // 현재 내 이메일
     getCurrentEmail() {
       return useUserStore().userInfo.email;
     },
-
-    getCheckFinished(){
-      console.log("Hello 1");
-      this.finished = usePickStore().finished;
-      return usePickStore().finished;
-    }
   },
 };
 </script>

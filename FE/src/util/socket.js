@@ -413,24 +413,26 @@ export function initPick(router, from) {
       // "PICK_NEXT"로 다음 순서를 배정받고
       // done한 결과이므로, 다음 플레이어 차례를 알린다.
       else if (usePickStore().receivedMessage.type === "PICK_NEXT") {
-        usePickStore().finished = !usePickStore().finished;
+        // usePickStore().finished = !usePickStore().finished;
 
-        usePickStore().nowPickPlayerInfo.email =
-          usePickStore().receivedMessage.data.email;
-        usePickStore().nowPickPlayerInfo.time =
-          usePickStore().receivedMessage.data.time;
+        setTimeout(() => {
+          usePickStore().nowPickPlayerInfo.email =
+            usePickStore().receivedMessage.data.email;
+          usePickStore().nowPickPlayerInfo.time =
+            usePickStore().receivedMessage.data.time;
 
-        // 로컬 스토리지에 업데이트된 데이터 저장
-        const storedPickData = JSON.parse(localStorage.getItem("pick"));
-        const updatedPickData = {
-          ...storedPickData,
-          nowPickPlayerInfo: {
-            email: usePickStore().nowPickPlayerInfo.email,
-            time: usePickStore().nowPickPlayerInfo.time,
-          },
-        };
+          // 로컬 스토리지에 업데이트된 데이터 저장
+          const storedPickData = JSON.parse(localStorage.getItem("pick"));
+          const updatedPickData = {
+            ...storedPickData,
+            nowPickPlayerInfo: {
+              email: usePickStore().nowPickPlayerInfo.email,
+              time: usePickStore().nowPickPlayerInfo.time,
+            },
+          };
 
-        localStorage.setItem("pick", JSON.stringify(updatedPickData));
+          localStorage.setItem("pick", JSON.stringify(updatedPickData));
+        }, 70);
       }
 
       // 픽을 실시간으로 무엇을 선택하고 있는지 받아오는 것
@@ -450,21 +452,31 @@ export function initPick(router, from) {
 
       // 픽한 결과를 받는 것
       else if (usePickStore().receivedMessage.type === "PICK_SELECT_DONE") {
-        usePickStore().userInfo = usePickStore().receivedMessage.data.userInfo;
-        usePickStore().unitInfo = usePickStore().receivedMessage.data.unitInfo;
+        usePickStore().finished = !usePickStore().finished;
 
-        // 로컬 스토리지에 업데이트된 데이터 저장
-        const storedPickData = JSON.parse(localStorage.getItem("pick"));
-        const updatedPickData = {
-          ...storedPickData,
-          userInfo: {
-            ...usePickStore().userInfo,
-          },
-          unitInfo: {
-            ...usePickStore().unitInfo,
-          },
-        };
-        localStorage.setItem("pick", JSON.stringify(updatedPickData));
+        setTimeout(() => {
+          usePickStore().userInfo =
+            usePickStore().receivedMessage.data.userInfo;
+          usePickStore().unitInfo =
+            usePickStore().receivedMessage.data.unitInfo;
+
+          console.log(usePickStore().unitInfo);
+
+          // 로컬 스토리지에 업데이트된 데이터 저장
+          const storedPickData = JSON.parse(localStorage.getItem("pick"));
+          // console.log(storedPickData);
+
+          const updatedPickData = {
+            ...storedPickData,
+            userInfo: {
+              ...usePickStore().userInfo,
+            },
+            unitInfo: {
+              ...usePickStore().unitInfo,
+            },
+          };
+          localStorage.setItem("pick", JSON.stringify(updatedPickData));
+        }, 20);
       }
 
       // 자신의 팀 픽만 끝났다면, 대기 모달 띄우기...

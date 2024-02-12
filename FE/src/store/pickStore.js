@@ -22,8 +22,6 @@ export const usePickStore = defineStore("pick", {
     finished: false,
   }),
 
-  actions: {},
-
   persist: {
     enabled: true, //storage 저장유무
     strategies: [
