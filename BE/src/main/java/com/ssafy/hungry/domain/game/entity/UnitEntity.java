@@ -27,6 +27,6 @@ public class UnitEntity {
     private String skill;
 
 
-    @OneToMany(mappedBy = "unitId")
-    private List<QuestionEntity> questionList = new ArrayList<>();
+//    @OneToMany(mappedBy = "unitId")
+//    private List<QuestionEntity> questionList = new ArrayList<>();
 }
