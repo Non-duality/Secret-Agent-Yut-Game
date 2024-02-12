@@ -198,6 +198,13 @@ public class StompPickController {
 
         }
 
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         redisSender.sendToRedis(roomTopic, StompDataDto.builder()
                 .type("PICK_SELECT_DONE")
                 .code(targetRoomCode)
