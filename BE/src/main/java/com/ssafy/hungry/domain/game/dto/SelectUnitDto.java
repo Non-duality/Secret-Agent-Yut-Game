@@ -10,4 +10,6 @@ import lombok.ToString;
 public class SelectUnitDto {
     private int actionCategory;
     private int unitIndex;
+    private boolean isGoDiagonal;
+    private boolean isCenterDir;
 }
