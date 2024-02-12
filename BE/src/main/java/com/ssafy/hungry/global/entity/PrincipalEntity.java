@@ -22,4 +22,5 @@ public class PrincipalEntity {
         this.name = name;
         this.email = email;
     }
+
 }

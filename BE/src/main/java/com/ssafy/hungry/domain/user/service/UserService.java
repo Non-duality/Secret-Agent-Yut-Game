@@ -8,6 +8,7 @@ import com.ssafy.hungry.domain.user.repository.TokenRepository;
 import com.ssafy.hungry.domain.user.repository.UserRepository;
 import com.ssafy.hungry.domain.user.dto.JoinDto;
 import com.ssafy.hungry.domain.user.dto.MyInfoDto;
+import com.ssafy.hungry.global.repository.PrincipalRepository;
 import com.ssafy.hungry.global.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +39,7 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
     private long authCodeExpirationMillis;
     private final TokenRepository tokenRepository;
     private final SessionRepository sessionRepository;
+    private final PrincipalRepository principalRepository;
 
     //회원 가입 메소드
     public Boolean join(JoinDto joinDto) {
@@ -226,6 +228,8 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
     //로그아웃
     public void logout(String email, String refreshToken){
         tokenRepository.deleteById(refreshToken);
+        String uuid = sessionRepository.findById(email).get().getStompPrincipal().getName();
         sessionRepository.deleteById(email);
+        principalRepository.deleteById(uuid);
     }
 }

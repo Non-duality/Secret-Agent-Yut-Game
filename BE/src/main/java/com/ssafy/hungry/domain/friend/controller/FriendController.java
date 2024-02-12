@@ -54,6 +54,7 @@ public class FriendController {
         return friendService.mySendRequest(email);
     }
 
+
     //내가 받은 요청 목록
     @GetMapping("/receive")
     public List<ReceiveRequestFriendDto> myReceiveRequest(){

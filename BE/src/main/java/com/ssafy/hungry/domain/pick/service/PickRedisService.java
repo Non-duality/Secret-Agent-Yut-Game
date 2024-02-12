@@ -2,6 +2,7 @@ package com.ssafy.hungry.domain.pick.service;
 
 import com.ssafy.hungry.domain.game.entity.UnitEntity;
 import com.ssafy.hungry.domain.game.repository.GameRepository;
+import com.ssafy.hungry.domain.game.repository.UnitRepository;
 import com.ssafy.hungry.domain.pick.dto.CurrentUnitPickDto;
 import com.ssafy.hungry.domain.pick.dto.CurrentUserPickDto;
 import com.ssafy.hungry.domain.pick.dto.PickInfoDto;
@@ -27,7 +28,7 @@ public class PickRedisService {
 
     private final PickRedisRepository pickRedisRepository;
     private final RoomRedisRepository roomRedisRepository;
-    private final GameRepository gameRepository;
+    private final UnitRepository unitRepository;
     private final UserRepository userRepository;
     private final static String PICK_KEY_PREFIX = "UserPickInfo:";
     private final static String ROOM_KEY_PREFIX = "RoomInfo:";
@@ -74,7 +75,7 @@ public class PickRedisService {
         String redUnitKey = generateKey(RED_KEY_PREFIX, roomCode);
         String blueUnitKey = generateKey(BLUE_KEY_PREFIX, roomCode);
 
-        List<UnitEntity> unitList = gameRepository.findAll();
+        List<UnitEntity> unitList = unitRepository.findAll();
         log.info("유닛 정보 리스트 : " + unitList.toString());
         // 홍팀 유닛 정보 redis에 저장
         for (UnitEntity unit : unitList) {
