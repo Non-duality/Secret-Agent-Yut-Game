@@ -4,6 +4,7 @@ import com.ssafy.hungry.domain.game.dto.GameStartDto;
 import com.ssafy.hungry.domain.game.dto.ReasoningDto;
 import com.ssafy.hungry.domain.game.dto.SelectUnitDto;
 import com.ssafy.hungry.domain.game.dto.ThrowYutDto;
+import com.ssafy.hungry.domain.game.repository.GameRepository;
 import com.ssafy.hungry.domain.game.service.GameService;
 import com.ssafy.hungry.domain.room.entity.RoomEntity;
 import com.ssafy.hungry.domain.room.repository.RoomRedisRepository;
@@ -33,7 +34,7 @@ public class GameStompController {
     private final UserRepository userRepository;
     private final GameService gameService;
     private final SimpMessagingTemplate simpMessagingTemplate;
-
+    private final GameRepository gameRepository;
 
     //게임 시작
     @MessageMapping("/game/{roomCode}/start")
@@ -76,11 +77,6 @@ public class GameStompController {
     public void reasoning(@DestinationVariable String roomCode, ReasoningDto dto) {
         dto.setActionCategory(3);
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
-    }
-
-    @MessageMapping("/game/savetest")
-    public void test() {
-        gameService.gameSaveTest();
     }
 
     @MessageMapping("/game/selecttest")

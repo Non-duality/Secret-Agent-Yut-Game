@@ -13,4 +13,5 @@ public class ThrowYutDto {
     private int actionCategory;
     private int yutRes;
     private Boolean[] throwRes;
+    private String team;
 }
