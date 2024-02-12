@@ -148,6 +148,9 @@ export default {
     // 받아오기.
     handleRecvMessage(receivedMsg) {
       console.log(receivedMsg);
+      if(receivedMsg.actionCategory === 0){
+        this.setInfo(receivedMsg);
+      }
       if (!this.isThrowYut) {
         console.log(receivedMsg.actionCategory);
         if (receivedMsg.actionCategory === 1) {
@@ -157,6 +160,24 @@ export default {
         }
       }
     },
+    // 초기 정보 저장
+    setInfo(receivedMsg){
+      console.log("setInfo");
+      console.log(receivedMsg);
+      const gameStore = useGameStore();
+      for(var i=0;i<5;i++){
+        gameStore.redHorses[i].name = receivedMsg.redTeamUnitList[i].name;
+        gameStore.redHorses[i].age = receivedMsg.redTeamUnitList[i].age;
+        gameStore.redHorses[i].skill = receivedMsg.redTeamUnitList[i].skill;
+        gameStore.blueHorses[i].name = receivedMsg.blueTeamUnitList[i].name;
+        gameStore.blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
+        gameStore.blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
+
+      }
+      gameStore.redUser = receivedMsg.redTeamUserList;
+      gameStore.blueUser = receivedMsg.blueTeamUserList;
+    },
+
     // 윷 결과를 받아 왔을 때.
     receiveYutRes(receivedMsg) {
       const gameStore = useGameStore();

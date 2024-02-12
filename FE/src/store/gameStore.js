@@ -36,6 +36,9 @@ export const useGameStore = defineStore("game", {
       isMission: false,
       // 기존에 있는말 말고 새로가는 말만 이동하기 위해 카운트 변수.
       toCnt: 0,
+      // 유저 정보
+      redUser: [],
+      blueUser: [],
       // 말
       redHorses: [
         {
@@ -46,6 +49,9 @@ export const useGameStore = defineStore("game", {
           img: "horse1",
           check: 0,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 2,
@@ -55,6 +61,9 @@ export const useGameStore = defineStore("game", {
           img: "horse2",
           check: 1,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 3,
@@ -64,6 +73,9 @@ export const useGameStore = defineStore("game", {
           img: "horse3",
           check: 2,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 4,
@@ -73,6 +85,9 @@ export const useGameStore = defineStore("game", {
           img: "horse4",
           check: 3,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 5,
@@ -82,6 +97,9 @@ export const useGameStore = defineStore("game", {
           img: "horse5",
           check: 4,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
       ],
       blueHorses: [
@@ -93,6 +111,9 @@ export const useGameStore = defineStore("game", {
           img: "horse1",
           check: 0,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 2,
@@ -102,6 +123,9 @@ export const useGameStore = defineStore("game", {
           img: "horse2",
           check: 1,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 3,
@@ -111,6 +135,9 @@ export const useGameStore = defineStore("game", {
           img: "horse3",
           check: 2,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 4,
@@ -120,6 +147,9 @@ export const useGameStore = defineStore("game", {
           img: "horse4",
           check: 3,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 5,
@@ -129,6 +159,9 @@ export const useGameStore = defineStore("game", {
           img: "horse5",
           check: 4,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
       ],
       horsesIndex: [
