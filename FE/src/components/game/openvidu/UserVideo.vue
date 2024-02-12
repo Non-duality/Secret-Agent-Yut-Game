@@ -5,9 +5,7 @@
       v-if="streamManager"
       :stream-manager="streamManager"
     /><span id="user-name">{{ nickname }}</span>
-    <!-- <button @click="toggleMic">마이크</button> -->
   </div>
-  <!-- <div><p>{{ clientData }}</p></div> -->
 </template>
 
 <script>
