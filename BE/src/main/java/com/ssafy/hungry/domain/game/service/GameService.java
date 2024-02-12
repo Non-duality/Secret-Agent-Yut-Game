@@ -212,7 +212,7 @@ public class GameService {
     }
 
     public Map<String, Object> startGameDummy() {
-        RoomEntity room = roomRepository.findByRoomCode("720ca5");
+//        RoomEntity room = roomRepository.findByRoomCode("720ca5");
 
         //게임시작 dto 에 담아줄 유저 리스트를 생성
         List<UserInfo> redTeamUserList = new ArrayList<>();
@@ -350,8 +350,8 @@ public class GameService {
         GameStartDto redGameDto = GameStartDto.builder()
                 .actionCategory(0)
                 .missionRegion(this.generateMissionRegion())
-                .gameSpeed(room.getGameSpeed())
-                .gameTheme(room.getTheme())
+                .gameSpeed(0)
+                .gameTheme("설날")
                 .redTeamUserList(redTeamUserList)
                 .blueTeamUserList(blueTeamUserList)
                 .redTeamUnitList(redUnitList)
@@ -362,8 +362,8 @@ public class GameService {
         GameStartDto blueGameDto = GameStartDto.builder()
                 .actionCategory(0)
                 .missionRegion(this.generateMissionRegion())
-                .gameSpeed(room.getGameSpeed())
-                .gameTheme(room.getTheme())
+                .gameSpeed(0)
+                .gameTheme("설날")
                 .redTeamUserList(redTeamUserList)
                 .blueTeamUserList(blueTeamUserList)
                 .redTeamUnitList(redUnitList)
