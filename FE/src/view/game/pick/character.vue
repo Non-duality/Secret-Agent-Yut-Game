@@ -1,5 +1,9 @@
 <template>
   <div class="background">
+    <transition name="fade">
+      <Loading v-if="showStartModal" @close-modal="closeModal" />
+    </transition>
+
     <div class="timer">{{ nowRemainTime }}</div>
     <div class="content">
       <!-- (시작) OpenVidu -->
@@ -87,6 +91,7 @@
 
 <script>
 import spyModal from "@/view/game/pick/spyModal.vue";
+import Loading from "@/components/game/pick/Loading.vue";
 import { useUserStore } from "@/store/userStore";
 import { usePickStore } from "@/store/pickStore";
 import { pubPick, pubPickInfo } from "@/util/socket";
@@ -107,6 +112,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 export default {
   components: {
     spyModal,
+    Loading,
     UserVideo,
   },
 
@@ -139,6 +145,8 @@ export default {
 
       selectedCharacter: null,
       selectedIdx: 0,
+
+      showStartModal: true,
     };
   },
 
@@ -427,6 +435,19 @@ export default {
         return "";
       }
     },
+
+    // (시작, 대기) 로딩 중 모달
+    openModal(value) {
+      if (value === "wait") {
+      }
+    },
+
+    closeModal(value){
+      if (value === "start") {
+        this.showStartModal = false;
+      } else if (value === "wait") {
+      }
+    }
   },
 
   /* 캐릭터 픽창 시작 */
@@ -477,8 +498,10 @@ export default {
       setTimeout(async () => {
         for (let i = 0; i < 3; i++) {
           // 초기 랜더링 작업 때문에,
-          // 3초 정도 기다리고 그 후부터는 픽 시간에 맞춤.
-          await this.delay(3000);
+          // 3~5초 정도 기다리고 그 후부터는 픽 시간에 맞춤.
+          // (로딩중이라는 모달창 띄울 필요)
+
+          await this.delay(7500);
 
           this.currentIdx = i;
 
@@ -502,7 +525,6 @@ export default {
 
             // 캐릭터를 픽 하였다면, idx에 선택한 유닛의 ID 저장
             if (this.selectedCharacter !== null) {
-              console.log("너 픽을 했구나!!")
               selectedCharacterName = this.getCharacterName(
                 this.selectedCharacter
               );
@@ -519,8 +541,6 @@ export default {
 
             // 캐릭터를 픽하지 않을 경우, 살아있는 유닛의 ID 들 중 랜덤으로 하나 저장
             else {
-              console.log("너 픽을 안 했구나!!")
-
               const notSelectedCharacters = [];
 
               for (let j = 0; j < this.getUnitInfo.length; j++) {
@@ -556,13 +576,11 @@ export default {
   computed: {
     // userInfo를 반환
     getUserInfo() {
-      console.log(usePickStore().userInfo);
       return usePickStore().userInfo;
     },
 
     // unitInfo 반환하는 computed 속성
     getUnitInfo() {
-      console.log(usePickStore().unitInfo);
       return usePickStore().unitInfo;
     },
 

@@ -1,3 +1,18 @@
+.background {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(44, 43, 43, 0.8);
+  margin-top: 10px;
+  width: 90vw;
+  max-width: 80vw;
+  height: 95vh;
+  border-radius: 20px;
+  margin-left: 11%;
+
+  z-index: 1;
+}
+
 .timer {
   color: white;
 }
@@ -39,19 +54,6 @@ p {
 
 .character-name > span {
   color: white;
-}
-
-.background {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(44, 43, 43, 0.8);
-  margin-top: 10px;
-  width: 90vw;
-  max-width: 80vw;
-  height: 95vh;
-  border-radius: 20px;
-  margin-left: 11%;
 }
 
 .content {
@@ -135,4 +137,24 @@ p {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
+}
+
+/* 모달창 애니메이션 */
+.fade-enter-from {
+  opacity: 0;
+}
+.fade-enter-active {
+  transition: all 0.5s;
+}
+.fade-enter-to {
+  opacity: 1;
+}
+.fade-leave-from {
+  opacity: 1;
+}
+.fade-leave-active {
+  transition: all 0.5s;
+}
+.fade-leave-to {
+  opacity: 0;
 }
