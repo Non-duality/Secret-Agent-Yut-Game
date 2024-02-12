@@ -346,14 +346,18 @@ export default {
 
     // 캐릭터 이미지를 클릭하면 보더 색상 추가
     selectCharacter(character) {
+      // 자기 차례가 아니면 선택 불가능
       if (!this.getIsMyTurn) return;
+
+      // 선택한 인덱스 번호
+      this.selectedIdx = this.getCharacterIdx(character);
+
+      // 픽한 캐릭터라면 선택 불가능
+      if (this.getUnitInfo[this.selectedIdx - 1].pick) return;
 
       // 보더 색상 추가
       this.applyBorder(character);
       this.selectedCharacter = character;
-
-      // 선택한 인덱스 번호
-      this.selectedIdx = this.getCharacterIdx(character);
 
       if (this.selectedIdx === 0) return;
 
@@ -473,9 +477,11 @@ export default {
   },
 
   /* 캐릭터 픽창 시작 */
-  mounted() {
+  async mounted() {
     // 먼저, 서버에게 픽 시작을 알리고 픽 순서와 타임을 입력 받는다.
     pubPick("/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/start");
+
+    await this.delay2(100);
 
     const pickStore = usePickStore();
 
@@ -596,8 +602,13 @@ export default {
             );
           }
         }
+
+        // 밀정픽?
+        // setTimeout(()=>{
+
+        // },1000);
       }, 250 * (4 - myTurnNumber));
-    }, 250);
+    }, 50);
   },
 
   // mounted에 설정한 새로고침 방지 이벤트 리스너를 삭제한다.
@@ -613,6 +624,7 @@ export default {
 
     // unitInfo 반환하는 computed 속성
     getUnitInfo() {
+      console.log(usePickStore().unitInfo);
       return usePickStore().unitInfo;
     },
 

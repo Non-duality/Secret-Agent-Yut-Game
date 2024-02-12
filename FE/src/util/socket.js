@@ -464,8 +464,6 @@ export function initPick(router, from) {
           usePickStore().unitInfo =
             usePickStore().receivedMessage.data.unitInfo;
 
-          console.log(usePickStore().unitInfo);
-
           // 로컬 스토리지에 업데이트된 데이터 저장
           const storedPickData = JSON.parse(localStorage.getItem("pick"));
           // console.log(storedPickData);
@@ -485,6 +483,7 @@ export function initPick(router, from) {
 
       // 자신의 팀 픽만 끝났다면, 대기 모달 띄우기...
       else if (usePickStore().receivedMessage.type === "PICK_WAIT") {
+        console.log("픽 완료!!")
       }
     }
   );
