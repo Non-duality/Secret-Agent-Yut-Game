@@ -8,21 +8,24 @@ import com.ssafy.hungry.domain.game.service.GameService;
 import com.ssafy.hungry.domain.room.entity.RoomEntity;
 import com.ssafy.hungry.domain.room.repository.RoomRedisRepository;
 import com.ssafy.hungry.domain.room.repository.RoomRepository;
+import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.repository.UserRepository;
 import com.ssafy.hungry.global.repository.PrincipalRepository;
 import com.ssafy.hungry.global.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
+import java.util.Map;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class GameStompController {
-    private final SimpMessagingTemplate messagingTemplate;
     private final SessionRepository sessionRepository;
     private final PrincipalRepository principalRepository;
     private final RoomRepository roomRepository;
@@ -34,57 +37,53 @@ public class GameStompController {
 
     //게임 시작
     @MessageMapping("/game/{roomCode}/start")
-    public void gameStart(@DestinationVariable String roomCode, Principal principal, String payload){
-        System.out.println(payload);
-        System.out.println(principal);
-        //메세지를 보낸사람의 uuid값으로 이메일을 확인
+    public void gameStart(@DestinationVariable String roomCode, Principal principal) {
+
+        // pub가 들어올 때마다 유저 추가하기
         String email = principalRepository.findById(principal.getName()).get().getEmail();
-        //룸코드로 저장된 데이터에 방장의 이메일을 확인
-        RoomEntity room = roomRepository.findByRoomCode(roomCode);
-        String ownerEmail = room.getOwner().getEmail();
-        //메세지를 보낸 사람이 게임의 방장이 맞는지 확인
-        if(email.equals(ownerEmail)){
-            //이미 시작한 게임인지 확인
-//            if (!gameRepository.existsByGameCode(roomCode)) {
-//                return;
-//            }else{
-                //게임이 시작되면 게임 시작 dto 를 생성하고 게임에 참여하는 인원에게 게임방 정보를 반환
-                GameStartDto dto = gameService.startGame(room, roomCode);
-                simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
-//            }
-        }else{
-            return;
+        log.info("gameStart 호출 : " + roomCode + " " + email);
+        UserEntity user = userRepository.findByEmail(email);
+        gameService.updateEnterUserInfo(roomCode, user);
+
+        // 들어온 유저가 6명일 때만 game start
+        if (gameService.getUserEnterCountInfo(roomCode) == 6) {
+            RoomEntity room = roomRepository.findByRoomCode(roomCode);
+//            Map<String, Object> gamePreInfo = gameService.startGame(room);
+            Map<String, Object> gamePreInfo = gameService.startGameDummy();
+            simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode + "/red", gamePreInfo.get("홍팀"));
+            simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode + "/blue", gamePreInfo.get("청팀"));
         }
+
     }
 
     //윳을 던진 결과를 전달
     @MessageMapping("/game/{roomCode}/throw-yut")
-    public void throwYut(@DestinationVariable String roomCode, ThrowYutDto dto){
+    public void throwYut(@DestinationVariable String roomCode, ThrowYutDto dto) {
         dto.setActionCategory(1);
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
     //이동에 선택된 말을 전달
     @MessageMapping("/game/{roomCode}/select-unit")
-    public void selectUnit(@DestinationVariable String roomCode, SelectUnitDto dto){
+    public void selectUnit(@DestinationVariable String roomCode, SelectUnitDto dto) {
         dto.setActionCategory(2);
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
     //밀정 추리 전달
     @MessageMapping("/game/{roomCode}/reasoning")
-    public void reasoning(@DestinationVariable String roomCode, ReasoningDto dto){
+    public void reasoning(@DestinationVariable String roomCode, ReasoningDto dto) {
         dto.setActionCategory(3);
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
     @MessageMapping("/game/savetest")
-    public void test(){
+    public void test() {
         gameService.gameSaveTest();
     }
 
     @MessageMapping("/game/selecttest")
-    public void test2(){
+    public void test2() {
         gameService.gameSelectTest();
     }
 }

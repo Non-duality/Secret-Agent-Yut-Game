@@ -240,8 +240,8 @@ public class StompPickController {
             Map<Object,Object> spyPickInfo = pickRedisService.getSpyInfo(roomCode);
 
             // 각자 선택한 밀정 정보 가져오기 (적에 심어둔 우리팀의 밀정)
-            redTeamAllPickInfo.put("EnemySpyInfo",spyPickInfo.get("청팀"));
-            blueTeamAllPickInfo.put("EnemySpyInfo", spyPickInfo.get("홍팀"));
+            redTeamAllPickInfo.put("MySpyInfo",spyPickInfo.get("청팀"));
+            blueTeamAllPickInfo.put("MySpyInfo", spyPickInfo.get("홍팀"));
 
             // 현재 모든 유저 정보 가져오기
             List<CurrentSeatDto> currentSeatDtoList = roomRedisService.getCurrentRoomInfo(roomCode);

@@ -34,7 +34,7 @@ public class PickRedisService {
     private final static String ROOM_KEY_PREFIX = "RoomInfo:";
     private final static String RED_KEY_PREFIX = "RedUnitInfo:";
     private final static String BLUE_KEY_PREFIX = "BlueUnitInfo:";
-    private final static String SPY_KEY_PREFIX = "SpyInfo";
+    private final static String SPY_KEY_PREFIX = "SpyInfo:";
 
     // redis키 생성하기
     public String generateKey(String prefix, String roomCode) {
