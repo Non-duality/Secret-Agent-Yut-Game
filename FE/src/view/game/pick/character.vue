@@ -3,6 +3,16 @@
     <transition name="fade">
       <Loading v-if="showStartModal" @close-modal="closeModal" />
     </transition>
+    
+    <transition name="fade">
+      <Wait v-if="showWaitModal" @close-modal="closeModal" />
+    </transition>
+    <!-- <transition name="fade"
+      ><spyModal
+        v-if="showSpyModal"
+        @close-modal="closeModal"
+        class="spy-modal"
+    /></transition> -->
 
     <div class="timer">{{ nowRemainTime }}</div>
     <div class="content">
@@ -78,12 +88,6 @@
         <button @click="prepareComplete" class="ready" v-if="getIsMyTurn">
           준비완료
         </button>
-
-        <spyModal
-          v-if="showSpyModal"
-          @close="showSpyModal = false"
-          class="spy-modal"
-        />
       </div>
     </div>
   </div>
@@ -94,10 +98,11 @@ import { watch } from "vue";
 
 import spyModal from "@/view/game/pick/spyModal.vue";
 import Loading from "@/components/game/pick/Loading.vue";
+import Wait from "@/components/game/pick/Wait.vue";
+
 import { useUserStore } from "@/store/userStore";
 import { usePickStore } from "@/store/pickStore";
 import { pubPick, pubPickInfo } from "@/util/socket";
-import { storeToRefs } from "pinia";
 
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
@@ -115,6 +120,7 @@ export default {
   components: {
     spyModal,
     Loading,
+    Wait,
     UserVideo,
   },
 
@@ -155,18 +161,20 @@ export default {
 
       showReadyBtn: false,
       showStartModal: true,
+      showWaitModal: false,
+      showSpyModal: false,
     };
   },
 
   setup() {
     const store = useUserStore();
-    const { showSpyModal } = storeToRefs(store);
+    // const { showSpyModal } = storeToRefs(store);
 
     const characters = [king, spearman, cavalry, peasant, slave];
     const selectedCharacters = [];
 
     return {
-      showSpyModal,
+      // showSpyModal,
       openModal: store.openModal,
       characters,
       selectedCharacters,
@@ -465,6 +473,7 @@ export default {
     // (시작, 대기) 로딩 중 모달
     openModal(value) {
       if (value === "wait") {
+        this.showWaitModal = true;
       }
     },
 
@@ -472,6 +481,7 @@ export default {
       if (value === "start") {
         this.showStartModal = false;
       } else if (value === "wait") {
+        this.showWaitModal = false;
       }
     },
   },
@@ -481,8 +491,6 @@ export default {
     // 먼저, 서버에게 픽 시작을 알리고 픽 순서와 타임을 입력 받는다.
     pubPick("/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/start");
 
-    await this.delay2(100);
-
     const pickStore = usePickStore();
 
     watch(
@@ -490,6 +498,13 @@ export default {
       (newValue) => {
         if (!this.isSelected) this.prepareComplete();
         else this.isSelected = false;
+      }
+    );
+
+    watch(
+      () => pickStore.pickFinished,
+      (newValue) => {
+        this.showWaitModal = true;
       }
     );
 
@@ -603,10 +618,8 @@ export default {
           }
         }
 
-        // 밀정픽?
-        // setTimeout(()=>{
-
-        // },1000);
+        // 1초 뒤 현재 상황 대기
+        // await this.delay2(500);
       }, 250 * (4 - myTurnNumber));
     }, 50);
   },

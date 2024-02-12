@@ -15,7 +15,7 @@ let connected = false;
 let roomCode = null;
 
 /* 게임 소켓 */
-export function connect(team,accessToken, recvCallback) {
+export function connect(team, accessToken, recvCallback) {
   return new Promise((resolve, reject) => {
     let token = accessToken;
     stompClient = new Client({
@@ -331,7 +331,7 @@ export function initRoom(router, from) {
           // 픽창으로 넘어가기.
           setTimeout(() => {
             router.push({ name: "pick" });
-          }, 300);
+          }, 500);
         });
       }
       //
@@ -372,9 +372,12 @@ export function initPick(router, from) {
     "/sub/room/" + useUserStore().currentRoomInfo.roomCode + "/" + from,
     (message) => {
       usePickStore().receivedMessage = JSON.parse(message.body);
+      console.log(usePickStore().receivedMessage);
 
       // 홍팀, 청팀 정보를 받아오는 것
       if (usePickStore().receivedMessage.type === "PICK_GET_PRE_INFO") {
+        console.log("정보 잘 받았음");
+
         usePickStore().code = usePickStore().receivedMessage.code;
         usePickStore().unitInfo = usePickStore().receivedMessage.data.unitInfo;
         usePickStore().userInfo = usePickStore().receivedMessage.data.userInfo;
@@ -483,7 +486,14 @@ export function initPick(router, from) {
 
       // 자신의 팀 픽만 끝났다면, 대기 모달 띄우기...
       else if (usePickStore().receivedMessage.type === "PICK_WAIT") {
-        console.log("픽 완료!!")
+        console.log("한 팀이 아직 픽 대기중");
+
+        setTimeout(() => {
+          usePickStore().pickFinished = !usePickStore().pickFinished;
+
+          // const storedPickData = JSON.parse(localStorage.getItem("pick"));
+          // localStorage.setItem("pick", JSON.stringify(updatedPickData));
+        }, 500);
       }
     }
   );
