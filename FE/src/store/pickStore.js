@@ -17,7 +17,9 @@ export const usePickStore = defineStore("pick", {
     nowPickPlayerInfo: {
       email: "",
       time: "",
-    }
+    },
+
+    finished: false,
   }),
 
   actions: {},

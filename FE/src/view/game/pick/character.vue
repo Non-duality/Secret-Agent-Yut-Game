@@ -75,10 +75,10 @@
           </div>
         </div>
         <!-- (끝) 캐릭터 활성화/비활성화 -->
-
-        <button @type="submit" @click="openModal('spy')" class="ready">
+        <button @click="prepareComplete" class="ready" v-if="getIsMyTurn">
           준비완료
         </button>
+
         <spyModal
           v-if="showSpyModal"
           @close="showSpyModal = false"
@@ -146,6 +146,12 @@ export default {
       selectedCharacter: null,
       selectedIdx: 0,
 
+      cancelTimeout: null,
+
+      isSelected: false,
+      finished: false,
+
+      showReadyBtn: false,
       showStartModal: true,
     };
   },
@@ -297,25 +303,6 @@ export default {
       return response.data; // The token
     },
 
-    startTimer() {
-      // 현재 남은 시간을 나타내는 변수
-      let remainingTime = 15;
-
-      const timer = () => {
-        if (remainingTime > 0) {
-          remainingTime--;
-          this.nowRemainTime = remainingTime;
-          setTimeout(timer, 1000);
-        }
-      };
-
-      timer();
-    },
-
-    async delay(ms) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    },
-
     // 새로고침 방지 이벤트
     leave(event) {
       event.preventDefault();
@@ -436,18 +423,53 @@ export default {
       }
     },
 
+    async startTimer() {
+      // 현재 남은 시간을 나타내는 변수
+      let remainingTime = 15;
+
+      const timer = () => {
+        if (remainingTime > 0) {
+          remainingTime--;
+          this.nowRemainTime = remainingTime;
+          this.timerInterval = setTimeout(timer, 1000);
+        }
+      };
+
+      timer();
+    },
+
+    async delay(ms) {
+      return new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+          resolve();
+        }, ms);
+
+        // 버튼 클릭 시 타이머 취소
+        this.cancelTimeout = () => {
+          clearTimeout(timeout);
+          resolve(); // 버튼 클릭 시 즉시 다음 문장 실행
+        };
+      });
+    },
+
+    // '준비완료' 버튼 클릭 시 실행되는 함수
+    async prepareComplete() {
+      clearTimeout(this.timerInterval);
+      this.cancelTimeout(); // 타이머 취소 및 다음 문장 실행
+    },
+
     // (시작, 대기) 로딩 중 모달
     openModal(value) {
       if (value === "wait") {
       }
     },
 
-    closeModal(value){
+    closeModal(value) {
       if (value === "start") {
         this.showStartModal = false;
       } else if (value === "wait") {
       }
-    }
+    },
   },
 
   /* 캐릭터 픽창 시작 */
@@ -471,9 +493,6 @@ export default {
     // * userInfo : 사용자 픽 순서, 픽 유무 등
     // * unitInfo : 현재 구현한 캐릭터 정보
     setTimeout(() => {
-      // this.userInfo = usePickStore().userInfo;
-      // this.unitInfo = usePickStore().unitInfo;
-
       const str = usePickStore().code;
       this.myTeamName = str.substring(str.lastIndexOf("/") + 1);
 
@@ -501,7 +520,8 @@ export default {
           // 3~5초 정도 기다리고 그 후부터는 픽 시간에 맞춤.
           // (로딩중이라는 모달창 띄울 필요)
 
-          if(i===0) await this.delay(7500);
+          if (i === 0) await this.delay(7500); // 로딩 시간
+          else await this.delay(1000); // 다음 픽 서버 전송을 위해 1초 기다림
 
           this.currentIdx = i;
 
@@ -512,16 +532,15 @@ export default {
           // 여기서는 자신이 픽이라는 것을 red 색상으로 보더 색칠
           this.applyBorderToActiveUser(i);
 
+          if(this.getIsMyTurn) this.isSelected = true;
+
           // 픽 할 시간을 줌.
-          // 단, "선택하기"를 누를 경우 이 this.delay는 종료되어야 함.
           await this.delay(usePickStore().nowPickPlayerInfo.time * 1000);
 
           // 만약 현재 자신의 턴이라면
           if (this.getIsMyTurn) {
             let idx = -1;
             let selectedCharacterName = null;
-
-            console.log(this.selectedCharacter);
 
             // 캐릭터를 픽 하였다면, idx에 선택한 유닛의 ID 저장
             if (this.selectedCharacter !== null) {
@@ -568,6 +587,13 @@ export default {
     }, 100);
   },
 
+  watch: {
+    finished(){
+      console.log("Hello 2");
+      if(!this.isSelected) this.prepareComplete();
+    }
+  },
+
   // mounted에 설정한 새로고침 방지 이벤트 리스너를 삭제한다.
   beforeUnmount() {
     window.removeEventListener("beforeunload", this.confirmExit);
@@ -593,6 +619,12 @@ export default {
     getCurrentEmail() {
       return useUserStore().userInfo.email;
     },
+
+    getCheckFinished(){
+      console.log("Hello 1");
+      this.finished = usePickStore().finished;
+      return usePickStore().finished;
+    }
   },
 };
 </script>
