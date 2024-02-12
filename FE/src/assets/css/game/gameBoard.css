@@ -30,6 +30,21 @@
   font-size: 100px;
 }
 
+.game-board-throw-btn{
+  position: absolute;
+  top: 300px;
+  right: 350px;
+  background-image: linear-gradient(to top, #fa8d2d, white);
+  border-radius: 40%;
+  width: 200px;
+  height: 50px;
+  box-shadow:.8rem .5rem 1.4rem  #BEC5D0, -.3rem -.4rem .8rem #FBFBFB;
+}
+.game-board-throw-btn:active {
+  /* background-color: #e57f25; 색상 변경 예시 */
+  box-shadow: inset -.3rem -.1rem 1.4rem  #FBFBFB, inset .3rem .4rem .8rem #BEC5D0; 
+    cursor: pointer;
+}
 /* @keyframes throwEffect {
   0% {
     transform: rotate(0deg) scaleY(1);

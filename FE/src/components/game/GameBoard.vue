@@ -1,5 +1,6 @@
 <template>
   <div class="game-board">
+    <GameModal />
     <div class="game-board-tile">
       <!-- 윷 던진 결과 -->
       <div class="game-yut-res" v-show="isShowRes">
@@ -45,11 +46,11 @@
     </button>
     <!-- 버튼 임시 -->
     <button
+      class="game-board-throw-btn"
       @click="moveHorse"
-      style="top: 50px; left: 250px; position: absolute"
       :disabled="!isThrowYut"
     >
-      test
+      던지기
     </button>
     <button
       v-if="isShowGoDig"
@@ -69,18 +70,23 @@
 </template>
                                                                         
 <script>
+import { useGameStore } from "@/store/gameStore";
+import { useUserStore } from "@/store/userStore";
 import { connect, socketSend } from "@/util/socket.js";
 import GameBoardTile from "./item/GameBoardTile.vue";
 import GameHorse from "./item/GameHorse.vue";
-import { useGameStore } from "@/store/gameStore";
-import { useUserStore } from "@/store/userStore";
 import GameYut from "./item/GameYut.vue";
+import GameModal from "./item/GameModal.vue";
 
 export default {
   components: {
     GameBoardTile,
     GameHorse,
     GameYut,
+    GameModal,
+  },
+  mounted(){
+    this.connectSocket();
   },
   data() {
     return {
@@ -94,6 +100,8 @@ export default {
       goModalText1: "",
       goModalText2: "",
       recvList: [],
+      time: 20, // 타이머 시간.
+      modalType: null,
     };
   },
   computed: {
@@ -115,17 +123,27 @@ export default {
     // 턴 체크.
     isThrowYut() {
       const gameStore = useGameStore();
+      if(gameStore.isThrowYut){
+        this.timerStart();
+      }
       return gameStore.isThrowYut;
     },
   },
   methods: {
+    // 타이머 시작
+    timerStart(){
+      this.time = 20;
+
+    },
+
     sendStart() {
-      socketSend("/pub/game/80ba0a/start", "");
+      socketSend("/pub/game/720ca5/start", "");
     },
     // 연결
     connectSocket() {
       const userStore = useUserStore();
-      connect(userStore.accessToken, this.handleRecvMessage);
+      connect("red",userStore.accessToken, this.handleRecvMessage);
+      // this.sendStart();
     },
     // 받아오기.
     handleRecvMessage(receivedMsg) {
@@ -203,7 +221,7 @@ export default {
         yutRes: gameStore.yutRes,
         throwRes: gameStore.throwRes,
       };
-      socketSend("/pub/game/80ba0a/throw-yut", msg);
+      // socketSend("/pub/game/80ba0a/throw-yut", msg);
 
       // 텍스트와 윷결과 판을 다른 타이밍에 나타나게 한다.
 
@@ -246,7 +264,7 @@ export default {
             gameStore.moveHorse(this.selectedHorse);
             // 소켓 전송
             msg = { unitIndex: this.selectedHorse.id };
-            socketSend("/pub/game/80ba0a/select-unit", msg);
+            // socketSend("/pub/game/80ba0a/select-unit", msg);
             // boolean값들 초기화.
             this.isSelectedHorse = false;
             this.canSelectHorse = false;
@@ -274,6 +292,8 @@ export default {
             if (gameStore.yutRes === -1) {
               this.isSelectedHorse = true;
             } else {
+              // 선택 모달
+              this.modalType = 1;
               // 텍스트 바꿈.
               this.goModalText1 = "네";
               this.goModalText2 = "아니오";
@@ -293,6 +313,8 @@ export default {
             if (gameStore.yutRes === -1) {
               this.isSelectedHorse = true;
             } else {
+              // 선택 모달
+              this.modalType = 2;
               // 텍스트 바꿈.
               this.goModalText1 = "왼쪽";
               this.goModalText2 = "오른쪽";

@@ -32,7 +32,7 @@ export const useGameStore = defineStore("game", {
       // 가운데 방향 선택
       isCenterDir: false,
       // 미션 장소
-      missionTiles: [4, 21, 8, 13, 18],
+      missionTiles: [],
       isMission: false,
       // 기존에 있는말 말고 새로가는 말만 이동하기 위해 카운트 변수.
       toCnt: 0,
@@ -313,8 +313,8 @@ export const useGameStore = defineStore("game", {
         else {
           this.isHorseEnd = true;
           // 카운트 한다.
-          if (horseInfo.team === 1) horseInfo.endOrder = this.redEnd++;
-          else horseInfo.endOrder = this.blueEnd++;
+          // if (horseInfo.team === 1) horseInfo.endOrder = this.redEnd++;
+          // else horseInfo.endOrder = this.blueEnd++;
         }
       }
 
@@ -326,11 +326,14 @@ export const useGameStore = defineStore("game", {
           target = 30;
         }
       }
-      // 도착지 말 카운트
-      this.toCnt = this.tiles[target].horse.length;
 
       // 다른 말 체크
-      if (!this.isHorseEnd) this.horseCheck(horseInfo, target);
+      if (!this.isHorseEnd) {
+        // 도착지 말 카운트
+        this.toCnt = this.tiles[target].horse.length;
+        this.horseCheck(horseInfo, target);
+      }
+
       // 말 이동
       this.moveTo(horseInfo.index, target);
       // 미션장소 체크
@@ -350,12 +353,12 @@ export const useGameStore = defineStore("game", {
         // 홍팀이였다면,.
         if (!this.teamTurn) {
           this.turn[0]++;
-          if (this.turn[0] > 3) this.turn[0] = 0;
+          if (this.turn[0] > 2) this.turn[0] = 0;
         }
         // 청팀이면.
         else {
           this.turn[1]++;
-          if (this.turn[1] > 3) this.turn[1] = 0;
+          if (this.turn[1] > 2) this.turn[1] = 0;
         }
         // 팀 차례 바꿈.
         this.teamTurn != this.teamTurn;
@@ -412,7 +415,7 @@ export const useGameStore = defineStore("game", {
 
       // 말이 들어왔다면.
       if (this.isHorseEnd) {
-        for (var i = this.toCnt; i < len; i++) {
+        for (var i = 0; i < len; i++) {
           const horseInfo =
             team === 1
               ? this.redHorses.find(
@@ -424,7 +427,7 @@ export const useGameStore = defineStore("game", {
           horseInfo.index = 30;
         }
         setTimeout(() => {
-          for (var i = this.toCnt; i < len; i++) {
+          for (var i = 0; i < len; i++) {
             const horseInfo =
               team === 1
                 ? this.redHorses.find(
@@ -434,6 +437,9 @@ export const useGameStore = defineStore("game", {
                     (horse) => horse.id === this.tiles[from].horse[i].id
                   );
             horseInfo.status = "end";
+            // 카운트 한다.
+            if (horseInfo.team === 1) horseInfo.endOrder = this.redEnd++;
+            else horseInfo.endOrder = this.blueEnd++;
           }
           this.tiles[from].horse = [];
         }, 300);

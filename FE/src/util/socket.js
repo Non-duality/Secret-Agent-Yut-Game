@@ -15,11 +15,11 @@ let connected = false;
 let roomCode = null;
 
 /* 게임 소켓 */
-export function connect(accessToken, recvCallback) {
+export function connect(team,accessToken, recvCallback) {
   return new Promise((resolve, reject) => {
     let token = accessToken;
     stompClient = new Client({
-      brokerURL: "ws://192.168.100.99:8080/api/v1/connect",
+      brokerURL: VITE_WSS_API_URL,
 
       connectHeaders: {
         Authorization: `Bearer ${token}`,
@@ -30,8 +30,12 @@ export function connect(accessToken, recvCallback) {
       onConnect: () => {
         resolve();
         // 여기에서 구독 설정
-        stompClient.subscribe("/sub/game/80ba0a", (message) => {
-          // console.log("메시지 받음:", message.body);
+        stompClient.subscribe(`/sub/game/720ca5/${team}`, (message) => {
+          console.log("메시지 받음:", message.body);
+          recvCallback(JSON.parse(message.body));
+        });
+        stompClient.subscribe("/sub/game/720ca5", (message) => {
+          console.log("메시지 받음:", message.body);
           recvCallback(JSON.parse(message.body));
         });
       },
@@ -60,7 +64,7 @@ export function connect(accessToken, recvCallback) {
         reject(new Error("STOMP error"));
         alert("소켓이 끊어졌습니다.");
       },
-      reconnectDelay: 5000, //자동재연결
+      // reconnectDelay: 5000, //자동재연결
     });
 
     try {

@@ -35,10 +35,10 @@ export default {
       this.renderer.setSize(400, 500);
       this.$refs.threeJsContainer.appendChild(this.renderer.domElement);
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      const ambientLight = new THREE.AmbientLight(0xF4A460, 1);
       this.scene.add(ambientLight);
 
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      const directionalLight = new THREE.DirectionalLight(0xF4A460, 1);
       directionalLight.position.set(0, 1, 1);
       this.scene.add(directionalLight);
 
