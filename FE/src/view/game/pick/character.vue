@@ -501,7 +501,7 @@ export default {
           // 3~5초 정도 기다리고 그 후부터는 픽 시간에 맞춤.
           // (로딩중이라는 모달창 띄울 필요)
 
-          await this.delay(7500);
+          if(i===0) await this.delay(7500);
 
           this.currentIdx = i;
 
