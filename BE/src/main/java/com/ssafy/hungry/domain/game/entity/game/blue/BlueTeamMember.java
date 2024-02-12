@@ -1,25 +1,30 @@
 package com.ssafy.hungry.domain.game.entity.game.blue;
 
 import com.ssafy.hungry.domain.game.entity.game.Game;
-import com.ssafy.hungry.domain.game.entity.game.GameMemberId;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "blue_team_member")
 public class BlueTeamMember {
-    @EmbeddedId
-    private GameMemberId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    @MapsId("gameCode")
     @ManyToOne
-    @JoinColumn(name = "game_code" , referencedColumnName = "gameCode")
+    @ToString.Exclude
+    @JoinColumn(name = "game_code", referencedColumnName = "game_code")
     private Game gameCode;
 
-    @MapsId("userId")
+    private int userIndex;
+
     @ManyToOne
-    @JoinColumn(name = "user_id" , referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userId;
 }

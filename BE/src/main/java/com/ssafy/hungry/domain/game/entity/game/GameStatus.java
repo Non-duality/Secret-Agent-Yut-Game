@@ -1,25 +1,31 @@
 package com.ssafy.hungry.domain.game.entity.game;
 
-import com.ssafy.hungry.domain.game.entity.game.blue.BlueTeamInfo;
-import com.ssafy.hungry.domain.game.entity.game.red.RedTeamInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ssafy.hungry.domain.game.entity.game.blue.BlueTeamStatus;
+import com.ssafy.hungry.domain.game.entity.game.red.RedTeamStatus;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-@Data
+
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "game_status")
 public class GameStatus {
+
     @EmbeddedId
     private GameStatusId id;
 
     @MapsId("gameCode")
     @ManyToOne
-    @JoinColumn(name = "game_code")
+    @ToString.Exclude
+    @JoinColumn(name = "game_code", referencedColumnName = "game_code")
     private Game gameCode;
 
     @OneToOne(mappedBy = "gameStatus")
-    private RedTeamInfo redTeamInfo;
+    private RedTeamStatus redTeamStatus;
 
     @OneToOne(mappedBy = "gameStatus")
-    private BlueTeamInfo blueTeamInfo;
+    private BlueTeamStatus blueTeamStatus;
 }

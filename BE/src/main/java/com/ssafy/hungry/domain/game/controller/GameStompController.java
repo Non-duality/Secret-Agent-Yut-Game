@@ -77,5 +77,15 @@ public class GameStompController {
         dto.setActionCategory(3);
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
+
+    @MessageMapping("/game/savetest")
+    public void test(){
+        gameService.gameSaveTest();
+    }
+
+    @MessageMapping("/game/selecttest")
+    public void test2(){
+        gameService.gameSelectTest();
+    }
 }
 

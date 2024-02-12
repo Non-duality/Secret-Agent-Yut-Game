@@ -2,10 +2,19 @@ package com.ssafy.hungry.domain.game.service;
 
 import com.ssafy.hungry.domain.game.dto.GameStartDto;
 import com.ssafy.hungry.domain.game.dto.UserInfo;
+import com.ssafy.hungry.domain.game.entity.game.*;
+import com.ssafy.hungry.domain.game.entity.game.red.RedTeamMember;
+import com.ssafy.hungry.domain.game.entity.game.red.RedTeamStatus;
+import com.ssafy.hungry.domain.game.entity.game.red.RedTeamUnit;
+import com.ssafy.hungry.domain.game.repository.*;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.entity.RoomEntity;
 import com.ssafy.hungry.domain.room.repository.RoomRedisRepository;
+import com.ssafy.hungry.domain.user.entity.UserEntity;
+import com.ssafy.hungry.domain.user.entity.UserGameHistoryEntity;
+import com.ssafy.hungry.domain.user.repository.UserGameHistoryRepository;
 import com.ssafy.hungry.domain.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +28,13 @@ import java.util.List;
 public class GameService {
     private final RoomRedisRepository roomRedisRepository;
     private final UserRepository userRepository;
+    private final UserGameHistoryRepository userGameHistoryRepository;
+    private final GameRepository gameRepository;
+    private final RedTeamMemberRepository redTeamMemberRepository;
+    private final GameStatusRepository gameStatusRepository;
+    private final RedTeamStatusRepository redTeamStatusRepository;
+    private final RedTeamUnitRepository redTeamUnitRepository;
+
 
     public int[] generateMissionRegion() {
         // 0 5 10 15 22 27 을 제외하고 0~29까지중 랜덤으로 4개를 선택
@@ -63,5 +79,56 @@ public class GameService {
         dto.setRedTeamList(blueTeamList);
         dto.setGameTurn(0);
         return dto;
+    }
+
+
+    public void gameSaveTest(){
+        Game game = new Game();
+        game.setGameCode("test1");
+        game.setGameTheme("theme");
+        game.setGameSpeed(1);
+        game.setMissionRegion(this.generateMissionRegion());
+
+        gameRepository.save(game);
+
+        int[] userlist = new int[] {1, 2, 18, 21, 22, 23};
+
+        for(int i = 0; i < 6; i++){
+            UserEntity user = userRepository.findById(userlist[i]);
+            UserGameHistoryEntity entity = new UserGameHistoryEntity();
+            entity.setUser(user);
+            entity.setGameCode(gameRepository.findByGameCode("test1"));
+
+            userGameHistoryRepository.save(entity);
+        }
+
+        for(int i = 0; i < 3; i++){
+            RedTeamMember redTeamMember = new RedTeamMember();
+            UserEntity user = userRepository.findById(userlist[i]);
+            redTeamMember.setUserId(user);
+            redTeamMember.setGameCode(game);
+            redTeamMember.setUserIndex(i);
+            redTeamMemberRepository.save(redTeamMember);
+        }
+
+        GameStatus gameStatus = new GameStatus();
+        gameStatus.setId(new GameStatusId(game,1,1));
+        gameStatusRepository.save(gameStatus);
+
+        RedTeamStatus redTeamStatus = new RedTeamStatus();
+        redTeamStatus.setId(new TeamStatusId(gameStatus));
+        redTeamStatus.setSuccessReasoning(true);
+        redTeamStatusRepository.save(redTeamStatus);
+
+        RedTeamUnit redTeamUnit = new RedTeamUnit();
+        redTeamUnit.setId(new RedTeamUnitId(redTeamStatus, 1));
+        redTeamUnit.setPosition(1);
+        redTeamUnitRepository.save(redTeamUnit);
+    }
+
+    @Transactional
+    public void gameSelectTest() {
+        System.out.println(gameRepository.findById("test1"));
+//        System.out.println(redTeamUnitRepository.findAll());
     }
 }

@@ -1,9 +1,15 @@
 package com.ssafy.hungry.domain.game.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "question")
 public class QuestionEntity {
@@ -13,7 +19,7 @@ public class QuestionEntity {
     @MapsId("unitId")
     @ManyToOne
     @JoinColumn(name = "unit_id")
-    private UnitEntity unit;
+    private UnitEntity unitId;
 
     private String content;
 }

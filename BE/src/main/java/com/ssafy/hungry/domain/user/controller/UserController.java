@@ -47,7 +47,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         else{
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
         }
     }
 
@@ -61,7 +61,7 @@ public class UserController {
     }
 
     //이메일 중복체크
-    @GetMapping("/email/{userId}")
+    @GetMapping("/email/{email}")
     public ResponseEntity checkId(@PathVariable("email") String email) {
         Boolean isExist = userService.checkId(email);
 
@@ -69,7 +69,7 @@ public class UserController {
 
         if (isExist) {
             result.put("message", "이미 존재하는 사용자 email 입니다.");
-            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(result, HttpStatus.ALREADY_REPORTED);
         } else {
             result.put("message", "사용 가능한 email 입니다.");
             return new ResponseEntity(result, HttpStatus.OK);
@@ -85,7 +85,7 @@ public class UserController {
 
         if (isExist) {
             result.put("message", "이미 존재하는 사용자 닉네임 입니다.");
-            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(result, HttpStatus.ALREADY_REPORTED);
         } else {
             result.put("message", "사용 가능한 닉네임 입니다.");
             return new ResponseEntity(result, HttpStatus.OK);
@@ -152,7 +152,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         else{
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
         }
     }
 
