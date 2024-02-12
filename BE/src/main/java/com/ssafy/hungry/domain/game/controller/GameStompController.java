@@ -46,7 +46,7 @@ public class GameStompController {
         gameService.updateEnterUserInfo(roomCode, user);
 
         // 들어온 유저가 6명일 때만 game start
-        if (gameService.getUserEnterCountInfo(roomCode) == 6) {
+        if (gameService.getUserEnterCountInfo(roomCode) == 6 || true) {
             RoomEntity room = roomRepository.findByRoomCode(roomCode);
 //            Map<String, Object> gamePreInfo = gameService.startGame(room);
             Map<String, Object> gamePreInfo = gameService.startGameDummy();
