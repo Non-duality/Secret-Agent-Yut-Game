@@ -4,7 +4,6 @@ import com.ssafy.hungry.domain.pick.dto.*;
 import com.ssafy.hungry.domain.pick.service.PickRedisService;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
 import com.ssafy.hungry.domain.room.service.RoomRedisService;
-import com.ssafy.hungry.domain.user.service.UserService;
 import com.ssafy.hungry.global.dto.StompDataDto;
 import com.ssafy.hungry.global.service.RedisSender;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ public class StompPickController {
 
     private final PickRedisService pickRedisService;
     private final RoomRedisService roomRedisService;
-    private final UserService userService;
     private final RedisSender redisSender;
     private final ChannelTopic roomTopic;
 
