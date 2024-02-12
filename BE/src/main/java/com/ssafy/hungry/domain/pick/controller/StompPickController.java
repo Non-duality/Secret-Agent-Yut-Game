@@ -141,6 +141,17 @@ public class StompPickController {
             targetRoomCode = roomCode + "/blue";
         }
 
+        redisSender.sendToRedis(roomTopic, StompDataDto.builder()
+                .type("PICK_SELECT_DONE")
+                .code(targetRoomCode)
+                .data(allPickInfo) // Data 보내기
+                .build());
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         // 양팀 픽이 다 끝났는지 확인하기
         // 양팀 픽이 다 끝났다면 밀정 픽 시작
@@ -197,19 +208,6 @@ public class StompPickController {
 
 
         }
-
-
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        redisSender.sendToRedis(roomTopic, StompDataDto.builder()
-                .type("PICK_SELECT_DONE")
-                .code(targetRoomCode)
-                .data(allPickInfo) // Data 보내기
-                .build());
 
     }
 
