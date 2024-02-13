@@ -1,25 +1,32 @@
 <template>
   <div class="game-main">
-    <MessageModal/>
-    <span class="game-red-team-name">홍팀</span>
-    <GameVideo class="game-video-team1" />
+    <MessageModal />
+    <!-- <span class="game-red-team-name">홍팀</span> -->
+    <GameVideo class="game-video-team1"/>
     <GameBoard class="game-board-main" />
-    <span class="game-blue-team-name">청팀</span>
-    <GameVideo class="game-video-team2" />
-    <MiniGame v-show="isMission"/>
-    <GameChat class="game-chat-main"/>
-    <GameEnd v-if="isGameEnd" class="game-end" :winMessage="winMessage" @closeModal="closeModal"/>
+    <!-- <span class="game-blue-team-name">청팀</span> -->
+    <GameVideo class="game-video-team2"/>
+    <MiniGame v-show="isMission" />
+    <GameChat class="game-chat-main" />
+    <GameEnd
+      v-if="isGameEnd"
+      class="game-end"
+      :winMessage="winMessage"
+      @closeModal="closeModal"
+    />
   </div>
 </template>
 
 <script>
 import { useGameStore } from "@/store/gameStore";
+import { useUserStore } from "@/store/userStore";
+
 import GameBoard from "@/components/game/GameBoard.vue";
 import GameVideo from "@/components/game/GameVideo.vue";
 import GameChat from "@/components/game/GameChat.vue";
-import MiniGame from '@/components/game/MiniGame.vue';
+import MiniGame from "@/components/game/MiniGame.vue";
 import MessageModal from "@/components/layout/MessageModal.vue";
-import GameEnd from '@/components/game/GameEnd.vue';
+import GameEnd from "@/components/game/GameEnd.vue";
 
 export default {
   components: {
@@ -30,10 +37,11 @@ export default {
     MessageModal,
     GameEnd,
   },
-  data(){
-    return{
+  data() {
+    return {
       winMessage: null,
-    }
+      myTeamName: "",
+    };
   },
   computed: {
     // 미션 장소 체크.
@@ -42,12 +50,12 @@ export default {
       return gameStore.isMission;
     },
     // 게임 상태 체크
-    isGameEnd(){
-      if(useGameStore().redEnd === 5){
+    isGameEnd() {
+      if (useGameStore().redEnd === 5) {
         this.redWin();
         return true;
       }
-      if(useGameStore().blueEnd === 5){
+      if (useGameStore().blueEnd === 5) {
         this.blueWin();
         return true;
       }
@@ -55,23 +63,23 @@ export default {
     },
   },
 
-  methods:{
-    redWin(){
+  methods: {
+    redWin() {
       this.winMessage = 1;
       this.isShowEnd = true;
     },
-    blueWin(){
+    blueWin() {
       this.winMessage = 2;
       this.isShowEnd = true;
     },
-    closeModal(){
-      this.$router.push({ name: 'home' });
+    closeModal() {
+      this.$router.push({ name: "home" });
     },
   },
 
-  // 여기서 로딩창 + 게임 
-  mounted(){
-
+  // 여기서 로딩창
+  mounted() {
+    // 로딩 7~8초 정도 보여주기.
   },
 };
 </script>

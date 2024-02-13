@@ -288,7 +288,7 @@ export const useGameStore = defineStore("game", {
 
       // 말의 능력.
       if (horseInfo.name === "기병") {
-        if(this.yutRes === -1){
+        if (this.yutRes === -1) {
           // 여기를 고민해보다 뒤로 갈때 하나 더 뒤로 갈까...
         }
         this.yutRes += 1;
@@ -467,16 +467,16 @@ export const useGameStore = defineStore("game", {
       // 팀 차례 바꿈.
       // this.teamTurn != this.teamTurn;
     },
-    
+
     // 타이머 함수
-    startTimer(){
+    startTimer() {
       this.timer = 20;
       const timerId = setInterval(() => {
         this.timer--;
-        if(this.timer <= 0){
+        if (this.timer <= 0) {
           clearInterval(timerId);
         }
-      },1000);
+      }, 1000);
     },
 
     // 이동하는 곳에 다른 말이 있나 체크.
@@ -714,5 +714,15 @@ export const useGameStore = defineStore("game", {
           break;
       }
     },
+  },
+
+  persist: {
+    enabled: true, //storage 저장유무
+    strategies: [
+      {
+        key: "game",
+        storage: localStorage,
+      },
+    ],
   },
 });

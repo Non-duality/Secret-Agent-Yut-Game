@@ -519,8 +519,6 @@ export function initPick(router, from) {
 
       // 자신의 팀 밀정 픽만 끝났다면, 대기 모달 띄우기
       else if (usePickStore().receivedMessage.type === "PICK_SPY_WAIT") {
-        console.log("엇 대기해야 된다니...")
-        
         setTimeout(() => {
           usePickStore().pickSpyWait = !usePickStore().pickSpyWait;
         }, 1000);
@@ -529,7 +527,12 @@ export function initPick(router, from) {
       // 양 팀 모두 밀정 픽 성공했다면, 게임 START을 알림.
       else if (usePickStore().receivedMessage.type === "GAME_START") {
         setTimeout(() => {
-          console.log("두 팀 모두 픽 완료!!")
+          // (1) 소켓 끊고 다음 게임 소켓으로 연결하기??
+
+          // (2) 그리고 나서 현재 방, 픽 창 리셋하기 --> 구독 정보 없애기
+
+          // 게임으로 푸쉬하기.
+          router.push({name: "game"});
         }, 500);
       }
     }
