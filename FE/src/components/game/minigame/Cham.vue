@@ -21,8 +21,8 @@
     </div>
     <!-- 게임 승리 -->
     <div v-if="gameResult" class="game-result">
-      <p v-if="victory">게임 승리!</p>
-      <p v-else>게임 실패!</p>
+      <div v-if="victory">게임 승리!</div>
+      <div v-else>게임 실패</div>
     </div>
   </div>
 </template>
@@ -178,7 +178,6 @@ export default {
       if (webcam.videoWidth > 0 && webcam.videoHeight > 0) {
         try {
           const detections = await this.faceDetector.detectForVideo(webcam, startTimeMs).detections;
-          this.displayVideoDetections(detections);
           this.checkFaceDirection(detections)
         } catch (error) {
           console.error("얼굴 인식 중 오류 발생:", error);
@@ -186,77 +185,6 @@ export default {
       } else {
         console.log("유효하지 않은 비디오 프레임");
       }
-    },
-
-
-    // 화면상 얼굴점 그리기
-    displayVideoDetections(detections) {
-      const webcam = document.getElementById("webcam");
-      this.children.forEach(child => {
-        child.remove();
-      });
-      this.children = [];
-      const mediaContainer = document.getElementById("media-container")
-      // console.log(detections)
-      detections.forEach(detection => {
-        const p = document.createElement("p");
-        p.innerText = `Confidence: ${Math.round(parseFloat(detection.categories[0].score) * 100)}%`;
-        p.style.left = `${mediaContainer.offsetWidth - detection.boundingBox.width - detection.boundingBox.originX}px`;
-        p.style.top = `${detection.boundingBox.originY - 150}px`;
-        p.style.width = `${detection.boundingBox.width - 10}px`;
-        p.style.position = 'absolute';
-        p.style.backgroundColor = '#007f8b';
-        p.style.color = '#fff';
-        p.style.fontSize = '12px';
-        p.style.padding = '5px';
-        p.style.border = '1px dashed rgba(255, 255, 255, 0.7)';
-        p.style.zIndex = '2';
-
-        const highlighter = document.createElement("div");
-        highlighter.setAttribute("class", "highlighter");
-        highlighter.style.left = `${mediaContainer.offsetWidth - detection.boundingBox.width - detection.boundingBox.originX}px`;
-        highlighter.style.top = `${detection.boundingBox.originY - 100}px`;
-        highlighter.style.width = `${detection.boundingBox.width - 10}px`;
-        highlighter.style.height = `${detection.boundingBox.height}px`;
-        highlighter.style.position = 'absolute';
-        highlighter.style.border = '1px dashed #fff';
-        highlighter.style.zIndex = '1';
-        highlighter.style.backgroundColor = 'rgba(0, 255, 0, 0.25)';
-
-        mediaContainer.appendChild(highlighter);
-        mediaContainer.appendChild(p);
-        this.children.push(highlighter, p);
-
-        detection.keypoints.forEach((keypoint, index) => {
-          const keyPointEl = document.createElement("span");
-          keyPointEl.className = "key-point";
-          keyPointEl.style.top = `${keypoint.y * mediaContainer.offsetHeight - 3}px`;
-          keyPointEl.style.left = `${mediaContainer.offsetWidth - keypoint.x * mediaContainer.offsetWidth - 3}px`;
-          keyPointEl.style.position = 'absolute';
-          keyPointEl.style.width = '6px';
-          keyPointEl.style.height = '6px';
-          keyPointEl.style.border = '1px solid #ffffff';
-          if (index == 0) {
-            keyPointEl.style.backgroundColor = 'red';
-          } else if (index == 1) {
-            keyPointEl.style.backgroundColor = 'orange';
-          } else if (index == 2) {
-            keyPointEl.style.backgroundColor = 'yellow';
-          } else if (index == 3) {
-            keyPointEl.style.backgroundColor = 'green';
-          } else if (index == 4) {
-            keyPointEl.style.backgroundColor = 'blue';
-          } else if (index == 5) {
-            keyPointEl.style.backgroundColor = 'purple';
-          } 
-          keyPointEl.style.borderRadius = '50%';
-          keyPointEl.style.display = 'block';
-
-          mediaContainer.appendChild(keyPointEl);
-          this.children.push(keyPointEl);
-
-        });
-      });
     },
 
 
@@ -268,10 +196,7 @@ export default {
       const machineLeft = !machineDirection;
       // 사람 방향
       const keypoints = detections[0].keypoints
-      const rightEyeX = keypoints[0].x
-      const leftEyeX = keypoints[1].x
       const noseX = keypoints[2].x
-      const mouseX = keypoints[3].x
       const rightEarX = keypoints[4].x
       const leftEarX = keypoints[5].x
 
@@ -299,6 +224,7 @@ export default {
         this.victory = true
       }
       this.gameResult = true
+      this.$emit('endMinigame', this.victory)
     }
   },
 

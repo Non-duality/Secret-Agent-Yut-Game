@@ -51,7 +51,7 @@ export default {
         gestureRecognizer: GestureRecognizer,
         webcamRunning: false, // 웹캠 실행 여부
         lastVideoTime: -1, // 비디오의 마지막 시간:
-        countdown: 5,
+        countdown: 3,
         
         // 제스쳐 인식 결과
         results: undefined,
@@ -244,6 +244,7 @@ export default {
           this.gameResult = true
           this.gameResultDp = true
           alert("축하합니다.")
+          this.$emit('endMinigame', this.gameResultDp)
         } 
       }
       if (this.gameTimer < 0) {
@@ -251,6 +252,7 @@ export default {
           this.gameResult = false;
           this.gameResultDp = true;
           alert("게임 실패!")
+          this.$emit('endMinigame', this.gameResultDp)
         } 
       }
       
