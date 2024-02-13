@@ -150,6 +150,7 @@ public class RoomRedisService {
         int emptySeatNumber = -1;
         int currentTeamNumber = 0;
         int changeTeamNumber = 0;
+
         //홍팀이라면 청팀 자리를 확인
         if(currentSeatNumber >= 0 && currentSeatNumber < 3){
             currentTeamNumber = 1;
@@ -168,7 +169,7 @@ public class RoomRedisService {
         else if(currentSeatNumber >= 3 && currentSeatNumber < 6){
             currentTeamNumber = 2;
             changeTeamNumber = 1;
-            for(int i = 0; i < 2; i++){
+            for(int i = 0; i < 3; i++){
                 if(currentSeatDtoList.get(i).getState() == 0){
                     canChange = true;
                     emptySeatNumber = currentSeatDtoList.get(i).getSeatNumber();
