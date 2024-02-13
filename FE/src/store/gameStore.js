@@ -316,7 +316,7 @@ export const useGameStore = defineStore("game", {
         target > 24 &&
         target === horseInfo.index + this.yutRes
       )
-        target -= 10; q
+        target -= 10;
       if (horseInfo.index == 27 && this.isCenterDir && target > 24)
         target -= 10;
 
