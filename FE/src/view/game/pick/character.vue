@@ -97,7 +97,7 @@
 <script>
 import { watch } from "vue";
 
-import spyModal from "@/view/game/pick/spyModal.vue";
+import spyModal from "@/components/game/pick/Spy.vue";
 import Loading from "@/components/game/pick/Loading.vue";
 import Wait from "@/components/game/pick/Wait.vue";
 

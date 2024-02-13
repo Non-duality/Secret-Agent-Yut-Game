@@ -81,10 +81,30 @@ export default {
       } else {
         const parts = message.split(" :"); // ":"를 기준으로 메시지를 분할
 
-        // 이름과 내용이 존재하는 경우
-        return {
-          text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
-        };
+        let idx = 0;
+        
+        for (let i = 1; i <= 6; i++) {
+          if (
+            useUserStore().userInfo.nickname ===
+            useRoomStore().seatInfo[`seatnum${i}`].nickname
+          ) {
+            idx = i;
+            break;
+          }
+        }
+
+        if (useRoomStore().seatInfo[`seatnum${idx}`].team === 1) {
+          // 이름과 내용이 존재하는 경우
+          return {
+            text: `<span style="color: #ff0000; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
+          };
+        } else {
+          if (useRoomStore().seatInfo[`seatnum${idx}`].team === 2)
+            // 이름과 내용이 존재하는 경우
+            return {
+              text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
+            };
+        }
       }
     },
   },
@@ -94,13 +114,3 @@ export default {
 <style scoped>
 @import "../../../assets/css/room/GameWaitChat.css";
 </style>
-
-<!-- 
-  
-  * 채팅 유지보수 *
-
-  1. 입장, 퇴장 메시지에 대한 특정 코드를 서버로부터 전달 받으면, 그 코드로 입장과 퇴장 메시지에 대한 CSS를 붙일 필요가 있음.
-  
-  2. 자신이 방장이거나 준비완료, 준비해제와 같이 직관적인 커스텀이 필요함.
-
--->

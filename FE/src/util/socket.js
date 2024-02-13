@@ -520,7 +520,7 @@ export function initPick(router, from) {
       }
 
       // 양 팀 모두 픽 성공했다면, 스파이 모달창 띄우기
-      else if (usePickStore().receivedMessage.type === "PICK_WAIT") {
+      else if (usePickStore().receivedMessage.type === "PICK_SELECT_SPY") {
         console.log("모두 픽 성공");
 
         setTimeout(() => {

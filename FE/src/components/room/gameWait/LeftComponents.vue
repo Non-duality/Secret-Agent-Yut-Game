@@ -111,13 +111,12 @@ export default {
         }
       }
 
-      console.log(idx);
-
       if(name === "홍팀"){
         if(useRoomStore().seatInfo[`seatnum${idx}`].team === 1) return;
       }else{
         if(useRoomStore().seatInfo[`seatnum${idx}`].team === 2) return;
       }
+
       pubRoom("/pub/room/"+useUserStore().currentRoomInfo.roomCode+"/change",
       useUserStore().userInfo.email);
     },
