@@ -235,6 +235,7 @@ public class StompPickController {
                     .data("모든 픽이 완료될 때까지 기다려주세요.")
                     .build());
         }
+
         // 두 팀 다 들어온 경우
         if (pickRedisService.countSpyInfo(roomCode) == 2){
 
