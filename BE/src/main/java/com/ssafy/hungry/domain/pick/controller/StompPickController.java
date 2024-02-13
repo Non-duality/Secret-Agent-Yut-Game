@@ -237,7 +237,8 @@ public class StompPickController {
         }
 
         // 두 팀 다 들어온 경우
-        if (pickRedisService.countSpyInfo(roomCode) == 2){
+        else if (pickRedisService.countSpyInfo(roomCode) == 2){
+            log.info("두팀 다 완료 : " + spyPickDto.getTeam() + roomCode);
 
             Map<String, Object> redTeamAllPickInfo = new HashMap<>();
             Map<String, Object> blueTeamAllPickInfo = new HashMap<>();
