@@ -202,9 +202,9 @@ export default {
     // 윷 결과를 받아 왔을 때.
     receiveYutRes(receivedMsg) {
       const gameStore = useGameStore();
-      gameStore.setYutText(receivedMsg.yutRes);
       gameStore.yutRes = receivedMsg.yutRes;
       gameStore.throwRes = receivedMsg.throwRes;
+      gameStore.setYutText(receivedMsg.yutRes);
       this.yutText = gameStore.yutText;
 
       // 텍스트와 윷결과 판을 다른 타이밍에 나타나게 한다.
