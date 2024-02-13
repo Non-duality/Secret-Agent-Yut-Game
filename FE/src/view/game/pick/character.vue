@@ -56,7 +56,7 @@
         </div>
 
         <!-- (시작) 캐릭터 활성화/비활성화 -->
-        <div class="character-box">
+        <div class="character-box" v-if="getUnitInfo">
           <div v-for="character in characters" :key="character" class="box">
             <div
               class="character"
@@ -165,6 +165,10 @@ export default {
       showWaitModal: false,
       showSpyModal: false,
     };
+  },
+
+  created(){
+    
   },
 
   setup() {

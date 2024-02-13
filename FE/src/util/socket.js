@@ -282,9 +282,6 @@ export function initRoom(router, from) {
       }
       // 방장이 게임을 시작을 눌렀을 경우
       else if (useRoomStore().receivedMessage.type === "ROOM_START_PICK") {
-        // Room에 대한 구독 취소 생각해보기.
-        console.log("방장이 게임 시작을 눌렀습니다!!");
-
         /* 자신의 자리 번호 */
         // (1~3) red, (4~6) blue
         let myTeamName = null;
@@ -331,7 +328,7 @@ export function initRoom(router, from) {
           // 픽창으로 넘어가기.
           setTimeout(() => {
             router.push({ name: "pick" });
-          }, 500);
+          }, 2000);
         });
       }
 
