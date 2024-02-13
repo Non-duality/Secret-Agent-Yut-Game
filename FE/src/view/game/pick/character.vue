@@ -637,13 +637,14 @@ export default {
 
   computed: {
     // userInfo를 반환
-    getUserInfo() {
+    async getUserInfo() {
+      await this.delay2(50);
       return usePickStore().userInfo;
     },
 
     // unitInfo 반환하는 computed 속성
-    getUnitInfo() {
-      console.log(usePickStore().unitInfo);
+    async getUnitInfo() {
+      await this.delay2(50);
       return usePickStore().unitInfo;
     },
 
