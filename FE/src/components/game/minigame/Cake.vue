@@ -22,7 +22,7 @@
       ></canvas>
     </div>
     <!-- 시작 전 타이머 -->
-    <div v-if="countdown > 0" class="countdown">
+    <div v-if="countdown > 0" class="start-timer">
       {{ countdown }}
     </div>
     <!-- 게임 타이머 -->
@@ -141,7 +141,7 @@ export default {
           this.startCountdown()
         });
       } catch (error) {
-        console.log(error)
+        console.log('에러입니다.', error)
       }
     },
 
@@ -169,6 +169,7 @@ export default {
           clearInterval(gameInterval)
           this.stopWebcam()
           this.gameResult = true
+          this.$emit('endMinigame', this.victory)
         }
       }, 1000)
     },
@@ -224,6 +225,7 @@ export default {
     eatCake(index) {
       this.cakes.splice(index, 1)
       --this.targetCount
+      
       if (this.targetCount <= 0) {
         this.stopWebcam()
         this.victory = true
