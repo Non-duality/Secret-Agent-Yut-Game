@@ -178,10 +178,12 @@ public class GameService {
         String blueSpyHint = "밀정은 " + blueSpyInfo.getTime() + "에 " + blueSpyInfo.getPlace() + "에서 " + blueSpyInfo.getContactor() + "을(를) 만나 " + blueSpyInfo.getStuff() + "을 전달받았습니다." +
                 "그리고 밀정은 " + blueSpyInfo.getScal() + "에 흉터가 있습니다.";;
 
+        int[] missionRegion = this.generateMissionRegion();
+
         //게임시작 dto 에 담아줄 정보 주가
         GameStartDto redGameDto = GameStartDto.builder()
                 .actionCategory(0)
-                .missionRegion(this.generateMissionRegion())
+                .missionRegion(missionRegion)
                 .gameSpeed(room.getGameSpeed())
                 .gameTheme(room.getTheme())
                 .redTeamUserList(redTeamUserList)
@@ -194,7 +196,7 @@ public class GameService {
 
         GameStartDto blueGameDto = GameStartDto.builder()
                 .actionCategory(0)
-                .missionRegion(this.generateMissionRegion())
+                .missionRegion(missionRegion)
                 .gameSpeed(room.getGameSpeed())
                 .gameTheme(room.getTheme())
                 .redTeamUserList(redTeamUserList)
@@ -208,6 +210,8 @@ public class GameService {
         Map<String, Object> result = new HashMap<>();
         result.put("홍팀", redGameDto);
         result.put("청팀", blueGameDto);
+
+        this.initGame(room, missionRegion, redUnitList, blueUnitList, blueSpyHint, redSpyHint);
 
         return result;
     }
@@ -246,7 +250,7 @@ public class GameService {
     }
 
     //게임 시작 시 저장
-    public void initGame(RoomEntity room, int[] missionRegion){
+    public void initGame(RoomEntity room, int[] missionRegion , List<UnitInfo> redUnitList, List<UnitInfo> blueUnitList, String blueSpyHint, String redSpyHint){
         //룸코드를 바탕으로 게임 생성
         //밀정 정보 받아오기
         Map<Object, Object> spy = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + room.getRoomCode());
@@ -258,6 +262,8 @@ public class GameService {
         game.setMissionRegion(missionRegion);
         game.setBlueSpyId((Integer) spy.get("청팀"));
         game.setRedSpyId((Integer) spy.get("홍팀"));
+        game.setBlueSpyHint(blueSpyHint);
+        game.setRedSpyHint(redSpyHint);
         gameRepository.save(game);
 
         //게임코드와 참여자로 게임 전적 생성
@@ -290,26 +296,32 @@ public class GameService {
             blueTeamMemberRepository.save(blueTeamMember);
         }
 
-        //유닛 정보 받아오기
-        List<CurrentUnitPickDto> blueUnitInfo = pickRedisRepository.getCurrentUnitPickInfo("BlueUnitInfo: " + room.getRoomCode());
-        List<CurrentUnitPickDto> redUnitInfo = pickRedisRepository.getCurrentUnitPickInfo("RedUnitInfo: " + room.getRoomCode());
-
         //청팀 유닛 정보 저장
-        for(int i = 0; i < 5; i++){
-            UnitEntity unit = unitRepository.findById(blueUnitInfo.get(i).getUnitId());
+        for(UnitInfo unitInfo : blueUnitList){
+            UnitEntity unit = unitRepository.findById(unitInfo.getUnitId());
             BlueTeamUnit blueTeamUnit = new BlueTeamUnit();
             blueTeamUnit.setGameCode(game);
             blueTeamUnit.setUnitId(unit);
+            blueTeamUnit.setPlace(unitInfo.getPlace());
+            blueTeamUnit.setTime(unitInfo.getTime());
+            blueTeamUnit.setContactor(unitInfo.getContactor());
+            blueTeamUnit.setStuff(unitInfo.getStuff());
+            blueTeamUnit.setScal(unitInfo.getScal());
             blueTeamUnit.setGole(false);
             blueTeamUnitRepository.save(blueTeamUnit);
         }
 
         //홍팀 유닛 정보 저장
-        for(int i = 0; i < 5; i++){
-            UnitEntity unit = unitRepository.findById(redUnitInfo.get(i).getUnitId());
+        for(UnitInfo unitInfo : redUnitList){
+            UnitEntity unit = unitRepository.findById(unitInfo.getUnitId());
             RedTeamUnit redTeamUnit = new RedTeamUnit();
             redTeamUnit.setGameCode(game);
             redTeamUnit.setUnitId(unit);
+            redTeamUnit.setPlace(unitInfo.getPlace());
+            redTeamUnit.setTime(unitInfo.getTime());
+            redTeamUnit.setContactor(unitInfo.getContactor());
+            redTeamUnit.setStuff(unitInfo.getStuff());
+            redTeamUnit.setScal(unitInfo.getScal());
             redTeamUnit.setGole(false);
             redTeamUnitRepository.save(redTeamUnit);
         }

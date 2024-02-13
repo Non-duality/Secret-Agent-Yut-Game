@@ -258,6 +258,8 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
             gameHistoryDto.setBlueTeamReasoningResult(game.isBlueTeamReasoningResult());
             gameHistoryDto.setRedTeamReasoningResult(game.isRedTeamReasoningResult());
             gameHistoryDto.setMissionRegion(game.getMissionRegion());
+            gameHistoryDto.setBlueSpyHint(game.getBlueSpyHint());
+            gameHistoryDto.setRedSpyHint(game.getRedSpyHint());
             UnitEntity unit = unitRepository.findById(game.getBlueSpyId());
             gameHistoryDto.setBlueSpyName(unit.getName());
             unit = unitRepository.findById(game.getRedSpyId());
@@ -283,16 +285,24 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
             for(BlueTeamUnit blueTeamUnit : game.getBlueTeamUnitList()){
                 BlueTeamUnitDto unitDto = new BlueTeamUnitDto();
                 unitDto.setUnitName(blueTeamUnit.getUnitId().getName());
-                unitDto.setAge(blueTeamUnit.getUnitId().getAge());
                 unitDto.setSkill(blueTeamUnit.getUnitId().getSkill());
+                unitDto.setPlace(blueTeamUnit.getPlace());
+                unitDto.setTime(blueTeamUnit.getTime());
+                unitDto.setContactor(blueTeamUnit.getContactor());
+                unitDto.setStuff(blueTeamUnit.getStuff());
+                unitDto.setScal(blueTeamUnit.getScal());
                 gameHistoryDto.getBlueTeamUnitDtoList().add(unitDto);
             }
 
             for(RedTeamUnit redTeamUnit : game.getRedTeamUnitList()){
                 RedTeamUnitDto unitDto = new RedTeamUnitDto();
                 unitDto.setUnitName(redTeamUnit.getUnitId().getName());
-                unitDto.setAge(redTeamUnit.getUnitId().getAge());
                 unitDto.setSkill(redTeamUnit.getUnitId().getSkill());
+                unitDto.setPlace(redTeamUnit.getPlace());
+                unitDto.setTime(redTeamUnit.getTime());
+                unitDto.setContactor(redTeamUnit.getContactor());
+                unitDto.setStuff(redTeamUnit.getStuff());
+                unitDto.setScal(redTeamUnit.getScal());
                 gameHistoryDto.getRedTeamUnitDtoList().add(unitDto);
             }
 

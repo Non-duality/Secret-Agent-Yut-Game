@@ -28,6 +28,8 @@ public class Game {
     private int winner;
     private int blueSpyId;
     private int redSpyId;
+    private String blueSpyHint;
+    private String redSpyHint;
     private boolean redTeamReasoningResult;
     private boolean blueTeamReasoningResult;
 

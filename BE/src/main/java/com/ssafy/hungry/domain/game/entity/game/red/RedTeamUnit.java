@@ -35,6 +35,11 @@ public class RedTeamUnit {
     @ManyToOne
     @JoinColumn(name = "unit_id", referencedColumnName = "unit_id")
     private UnitEntity unitId;
+    private String place;
+    private String time;
+    private String contactor;
+    private String stuff;
+    private String scal;
 
     private boolean isGole;
 }

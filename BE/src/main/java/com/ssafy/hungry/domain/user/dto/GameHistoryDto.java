@@ -14,6 +14,8 @@ public class GameHistoryDto {
     private String winner;
     private String blueSpyName;
     private String redSpyName;
+    private String redSpyHint;
+    private String blueSpyHint;
     private boolean redTeamReasoningResult;
     private boolean blueTeamReasoningResult;
 
