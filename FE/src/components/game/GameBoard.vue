@@ -348,6 +348,10 @@ export default {
             };
             console.log(msg);
             socketSend(`/pub/game/${this.roomCode}/select-unit`, msg);
+            this.isSelectedHorse = false;
+            this.canSelectHorse = false;
+            gameStore.isSelect = false;
+
           }
         });
       }, 2000);
