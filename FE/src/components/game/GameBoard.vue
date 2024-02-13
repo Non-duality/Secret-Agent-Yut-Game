@@ -259,7 +259,7 @@ export default {
       gameStore.isGoDiagonal = receivedMsg.goDiagonal;
       gameStore.isCenterDir = receivedMsg.centerDir;
       // 홍팀
-      if (!gameStore.teamTurn) {
+      if (receivedMsg.team === 1) {
         console.log(
           "받은 말 : " + gameStore.redHorses[receivedMsg.unitIndex - 1].team
         );
@@ -338,6 +338,7 @@ export default {
             // 소켓 전송
             msg = {
               unitIndex: this.selectedHorse.id,
+              team: this.selectedHorse.team,
               goDiagonal: gameStore.isGoDiagonal,
               centerDir: gameStore.isCenterDir,
             };

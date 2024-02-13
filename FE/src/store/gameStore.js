@@ -480,7 +480,7 @@ export const useGameStore = defineStore("game", {
 
       // 말이 들어왔다면.
       if (this.isHorseEnd) {
-        for (var i = 0; i < len; i++) {
+        for (let i = 0; i < len; i++) {
           const horseInfo =
             team === 1
               ? this.redHorses.find(
@@ -492,7 +492,7 @@ export const useGameStore = defineStore("game", {
           horseInfo.index = 30;
         }
         setTimeout(() => {
-          for (var i = 0; i < len; i++) {
+          for (let i = 0; i < len; i++) {
             const horseInfo =
               team === 1
                 ? this.redHorses.find(
@@ -516,7 +516,7 @@ export const useGameStore = defineStore("game", {
         from < 20
       ) {
         // 순간이동을 방지하기 위해 모서리를 찍고 목적지로 이동한다.
-        for (var i = this.toCnt; i < len; i++) {
+        for (let i = this.toCnt; i < len; i++) {
           const horseInfo =
             team === 1
               ? this.redHorses.find(
@@ -529,7 +529,7 @@ export const useGameStore = defineStore("game", {
           console.log(to / 5 + " " + Math.trunc(from / 5));
         }
         setTimeout(() => {
-          for (var i = this.toCnt; i < len; i++) {
+          for (let i = this.toCnt; i < len; i++) {
             const horseInfo =
               team === 1
                 ? this.redHorses.find(
@@ -544,7 +544,7 @@ export const useGameStore = defineStore("game", {
         }, 300);
       } else if (this.yutRes != -1 && from >= 20 && to < 20) {
         // 순간이동을 방지하기 위해 24,15번 찍고 목적지로 이동한다.
-        for (var i = this.toCnt; i < len; i++) {
+        for (let i = this.toCnt; i < len; i++) {
           const horseInfo =
             team === 1
               ? this.redHorses.find(
@@ -556,7 +556,7 @@ export const useGameStore = defineStore("game", {
           horseInfo.index = 15;
         }
         setTimeout(() => {
-          for (var i = this.toCnt; i < len; i++) {
+          for (let i = this.toCnt; i < len; i++) {
             const horseInfo =
               team === 1
                 ? this.redHorses.find(
@@ -574,7 +574,7 @@ export const useGameStore = defineStore("game", {
       // 평범한 이동
       else {
         // 그룹을 다 이동 시킨다.
-        for (var i = this.toCnt; i < len; i++) {
+        for (let i = this.toCnt; i < len; i++) {
           const horseInfo =
             team === 1
               ? this.redHorses.find(
