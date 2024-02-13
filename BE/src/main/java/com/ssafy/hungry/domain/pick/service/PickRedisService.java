@@ -181,8 +181,8 @@ public class PickRedisService {
             List<CurrentUserPickDto> currentUserPickDtoList = pickRedisRepository.getCurrentUserPickInfo(key, 3, 5);
 
             int pickId = 0;
-            log.info("청팀 유저 픽 정보 : " + currentUserPickDtoList.toString());
             for (CurrentUserPickDto userPick : currentUserPickDtoList) {
+                log.info("청팀 유저 픽 정보 : " + userPick.toString());
                 if (!userPick.isPick()) {
                     pickId = userPick.getUserId();
                     break;
@@ -206,7 +206,7 @@ public class PickRedisService {
         String userInfoKey = generateKey(PICK_KEY_PREFIX, roomCode);
         String teamKey = "";
         int count = 0;
-        log.info("updateCurrentPickInfo 들어온 팀 정보 : " + pickInfoDto.getTeam());
+        log.info("updateCurrentPickInfo 들어온 정보 : " + pickInfoDto.toString());
         if (pickInfoDto.getTeam().equals("홍팀")) {
             teamKey = generateKey(RED_KEY_PREFIX, roomCode);
         } else if (pickInfoDto.getTeam().equals("청팀")) {
