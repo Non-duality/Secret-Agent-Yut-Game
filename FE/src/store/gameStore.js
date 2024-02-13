@@ -274,11 +274,13 @@ export const useGameStore = defineStore("game", {
     // 말 이동
     moveHorse(selectedHorse) {
       console.log("윷 기회  : " + this.throwChance);
-
       const horseInfo =
         selectedHorse.team === 1
           ? this.redHorses.find((horse) => horse.id === selectedHorse.unitIndex)
-          : this.blueHorses.find((horse) => horse.id === selectedHorse.unitIndex);
+          : this.blueHorses.find(
+              (horse) => horse.id === selectedHorse.unitIndex
+            );
+      console.log(horseInfo);
 
       // 말의 능력.
       if (horseInfo.name === "기병") {

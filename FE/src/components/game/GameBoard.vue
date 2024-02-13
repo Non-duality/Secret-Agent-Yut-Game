@@ -180,7 +180,11 @@ export default {
       const userStore = useUserStore();
       gameStore.mySpyId = receivedMsg.mySpyUnitId;
 
-      for (var i = 0; i < 5; i++) {
+      for(let i=0;i<=30;i++){
+        gameStore.tiles[i].horse = [];
+      }
+
+      for (let i = 0; i < 5; i++) {
         gameStore.redHorses[i].name = receivedMsg.redTeamUnitList[i].name;
         gameStore.redHorses[i].age = receivedMsg.redTeamUnitList[i].age;
         gameStore.redHorses[i].skill = receivedMsg.redTeamUnitList[i].skill;
@@ -202,7 +206,7 @@ export default {
       }
       gameStore.redUser = receivedMsg.redTeamUserList;
       gameStore.blueUser = receivedMsg.blueTeamUserList;
-      for (var i = 0; i < 3; i++) {
+      for (let i = 0; i < 3; i++) {
         if (
           gameStore.redUser[i].email === userStore.userInfo.email ||
           gameStore.blueUser[i].email === userStore.userInfo.email
