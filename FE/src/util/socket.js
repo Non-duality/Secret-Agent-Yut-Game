@@ -519,6 +519,8 @@ export function initPick(router, from) {
 
       // 자신의 팀 밀정 픽만 끝났다면, 대기 모달 띄우기
       else if (usePickStore().receivedMessage.type === "PICK_SPY_WAIT") {
+        console.log("엇 대기해야 된다니...")
+        
         setTimeout(() => {
           usePickStore().pickSpyWait = !usePickStore().pickSpyWait;
         }, 1000);
