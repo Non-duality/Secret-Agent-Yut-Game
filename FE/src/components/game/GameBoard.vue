@@ -140,12 +140,13 @@ export default {
     // 연결
     connectSocket() {
       const userStore = useUserStore();
+      const gameStore = useGameStore();
       // 테스트
       if (["4", "5", "123"].includes(userStore.userInfo.email)) {
-        useGameStore().myTeam = 2;
+        gameStore.myTeam = 2;
         connect("blue", userStore.accessToken, this.handleRecvMessage);
       } else {
-        useGameStore().myTeam = 1;
+        gameStore.myTeam = 1;
         connect("red", userStore.accessToken, this.handleRecvMessage);
       }
       setTimeout(() => {

@@ -394,7 +394,6 @@ export const useGameStore = defineStore("game", {
       // 현재 차례에 기회가 있는지 체크.
       console.log("기회 : " + this.throwChance);
       if (this.throwChance === 0) {
-        console.log("턴 : " + this.turn);
         // 홍팀이였다면,.
         if (!this.teamTurn) {
           this.turn[0]++;
@@ -416,8 +415,9 @@ export const useGameStore = defineStore("game", {
           if (this.turn[1] === this.myTurn && this.myTeam === 2) {
             this.isThrowYut = true;
           } 
-          console.log("체크 : " + this.isThrowYut)
         }
+        console.log("턴 : " + this.turn);
+        console.log("체크 : " + this.isThrowYut)
         this.throwChance = 1;
       }
     },
