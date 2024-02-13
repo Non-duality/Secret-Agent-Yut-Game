@@ -256,10 +256,15 @@ export default {
     //pub/game/{code}/start
     // 윷 던지기
     moveHorse() {
-      // 내가 던질 차례인가 체크.
-      if (!this.isThrowYut) return;
-      // 윷 던지기 호출
       const gameStore = useGameStore();
+      // 내가 던질 차례인가 체크.
+      if (!this.isThrowYut){
+        console.log("팀턴 : " + gameStore.teamTurn);
+        console.log("턴 : " + gameStore.turn);
+        console.log("체크 : " + gameStore.isThrowYut);
+        return;
+      }
+      // 윷 던지기 호출
       gameStore.yutThrow();
       // 윷 던지기 결과 텍스트.
       this.yutText = gameStore.yutText;
@@ -315,6 +320,7 @@ export default {
               goDiagonal: useGameStore().isGoDiagonal,
               centerDir: useGameStore().isCenterDir,
             };
+            console.log(msg);
             socketSend(`/pub/game/${this.roomCode}/select-unit`, msg);
             // boolean값들 초기화.
             this.isSelectedHorse = false;
