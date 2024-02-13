@@ -204,10 +204,12 @@ public class PickRedisService {
     public List<CurrentUserPickDto> updateCurrentPickInfo(String roomCode, PickInfoDto pickInfoDto){
         String userInfoKey = generateKey(PICK_KEY_PREFIX, roomCode);
         String teamKey = "";
+        int count = 0;
         log.info("updateCurrentPickInfo 들어온 팀 정보 : " + pickInfoDto.getTeam());
         if (pickInfoDto.getTeam().equals("홍팀")) {
             teamKey = generateKey(RED_KEY_PREFIX, roomCode);
         } else if (pickInfoDto.getTeam().equals("청팀")) {
+            count = 3;
             teamKey = generateKey(BLUE_KEY_PREFIX, roomCode);
         } else {
             throw new TeamNotFoundException("존재하지 않은 팀입니다.");
@@ -218,7 +220,6 @@ public class PickRedisService {
         UserEntity user = userRepository.findByEmail(pickInfoDto.getEmail());
 
         // UserPickInfo를 가지고 와서 픽 정보 수정하기
-        int count = 0;
         for (CurrentUserPickDto userPick : currentUserPickDtoList) {
             if (userPick.getUserId() == user.getId()) {
                 userPick.setSelectUnitId(pickInfoDto.getUnitId());
