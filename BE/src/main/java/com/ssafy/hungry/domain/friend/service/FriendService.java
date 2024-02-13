@@ -39,7 +39,7 @@ public class FriendService {
         //현재 요청자의 아이디 가져오기
         int myId = userRepository.findByEmail(email).getId();
 
-        //현재 세션 이용자 기준 내가 보낸 요청과 상대가 받은 요청이 모두 True로 세팅 되어 있는 컬럼을 찾고 중복제거 하여 검색
+        //현재 이용자 기준 내가 보낸 요청과 상대가 받은 요청이 모두 True로 세팅 되어 있는 컬럼을 찾고 중복제거 하여 검색
         String jpql = "select distinct f.toUserId from FriendEntity as f join FriendEntity as sf on f.toUserId = sf.fromUserId" +
                 " where f.fromUserId = : myId and f.weAreFriend = true and sf.weAreFriend = true";
 
@@ -50,7 +50,7 @@ public class FriendService {
         query.setParameter("myId", myId);
         List<Integer> list = query.getResultList();
 
-        //Contruller의 반환형을 맞추기 위한 로직
+        //Controller의 반환형을 맞추기 위한 로직
         List<MyFriendDto> myFriendDtoList = new ArrayList<>();
         //반환 받은 친구의 id 값을 기준으로 유저에서 검색하여 값을 반환
         for(int i = 0; i < list.size(); i++){
@@ -62,6 +62,12 @@ public class FriendService {
             myFriendDtoList.add(dto);
         }
         return myFriendDtoList;
+    }
+
+    //상대와 친구인지 확인하는 메소드
+    public boolean areWeFriend(int myId, int targetId){
+        //상대와 내가 모두 친구 여부에 true로 등록되어있는지 확인
+        return friendRepository.existsByFromUserIdAndToUserIdAndWeAreFriendTrue(myId, targetId) && friendRepository.existsByFromUserIdAndToUserIdAndWeAreFriendTrue(targetId, myId);
     }
 
     //내가 보낸 요청 목록을 위한 서비스

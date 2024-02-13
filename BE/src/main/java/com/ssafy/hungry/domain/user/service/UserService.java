@@ -1,5 +1,6 @@
 package com.ssafy.hungry.domain.user.service;
 
+import com.ssafy.hungry.domain.friend.service.FriendService;
 import com.ssafy.hungry.domain.game.entity.UnitEntity;
 import com.ssafy.hungry.domain.game.entity.game.Game;
 import com.ssafy.hungry.domain.game.entity.game.blue.BlueTeamMember;
@@ -53,6 +54,7 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
     private final GameRepository gameRepository;
     private final UserGameHistoryRepository userGameHistoryRepository;
     private final UnitRepository unitRepository;
+    private final FriendService friendService;
 
     //회원 가입 메소드
     public Boolean join(JoinDto joinDto) {
@@ -309,5 +311,26 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
             dtoList.add(gameHistoryDto);
         }
         return dtoList;
+    }
+
+    //유저검색
+    public List<UserDto> userSearch(String nickname, String email) {
+        //내 아이디 값 가져오기
+        int myId = userRepository.findByEmail(email).getId();
+        //리턴 보낼 리스트 생성
+        List<UserDto> userDtoList = new ArrayList<>();
+        //닉네임으로 유저 검색
+        List<UserEntity> userEntityList = userRepository.findByNicknameContains(nickname);
+        for(UserEntity userEntity : userEntityList){
+            //이미 친구라면 리스트에 포함하지 않음
+            if(friendService.areWeFriend(myId, userEntity.getId())){
+                continue;
+            }else {
+                UserDto dto = new UserDto();
+                dto.setNickname(userEntity.getNickname());
+                userDtoList.add(dto);
+            }
+        }
+        return userDtoList;
     }
 }
