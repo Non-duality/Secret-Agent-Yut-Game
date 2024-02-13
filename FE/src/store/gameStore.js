@@ -279,6 +279,7 @@ export const useGameStore = defineStore("game", {
           ? this.redHorses.find((horse) => horse.id === selectedHorse.unitIndex)
           : this.blueHorses.find((horse) => horse.id === selectedHorse.unitIndex);
           console.log(selectedHorse);
+          console.log(horseInfo);
 
       // 말의 능력.
       if (horseInfo.name === "기병") {
