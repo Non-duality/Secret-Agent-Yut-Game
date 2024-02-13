@@ -409,11 +409,11 @@ export const useGameStore = defineStore("game", {
         this.teamTurn != this.teamTurn;
         this.isThrowYut = false;
         if (this.teamTurn) {
-          if (this.turn[0] === this.myTurn) {
+          if (this.turn[0] === this.myTurn && this.myTeam === 2) {
             this.isThrowYut = true;
           } 
         } else {
-          if (this.turn[1] === this.myTurn) {
+          if (this.turn[1] === this.myTurn && this.myTeam === 1) {
             this.isThrowYut = true;
           } 
           console.log("체크 : " + this.isThrowYut)
