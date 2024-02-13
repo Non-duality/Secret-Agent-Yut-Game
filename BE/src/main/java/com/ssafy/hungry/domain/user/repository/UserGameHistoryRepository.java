@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface UserGameHistoryRepository extends JpaRepository<UserGameHistoryEntity, Integer> {
-    List<Game> findByUserId(UserEntity user);
+    List<UserGameHistoryEntity> findByUserId(int user);
 }

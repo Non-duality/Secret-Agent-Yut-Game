@@ -13,6 +13,7 @@ import com.ssafy.hungry.domain.user.detail.CustomUserDetails;
 import com.ssafy.hungry.domain.user.dto.*;
 import com.ssafy.hungry.domain.user.entity.EmailEntity;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
+import com.ssafy.hungry.domain.user.entity.UserGameHistoryEntity;
 import com.ssafy.hungry.domain.user.repository.EmailRepository;
 import com.ssafy.hungry.domain.user.repository.TokenRepository;
 import com.ssafy.hungry.domain.user.repository.UserGameHistoryRepository;
@@ -252,8 +253,9 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
     public List<GameHistoryDto> myGameHistory(String email){
         UserEntity user = userRepository.findByEmail(email);
         List<GameHistoryDto> dtoList = new ArrayList<>();
-        List<Game> gameList = userGameHistoryRepository.findByUserId(user);
-        for(Game game : gameList){
+        List<UserGameHistoryEntity> gameList = userGameHistoryRepository.findByUserId(user.getId());
+        for(UserGameHistoryEntity gameHistoryEntity : gameList){
+            Game game = gameHistoryEntity.getGameCode();
             GameHistoryDto gameHistoryDto = new GameHistoryDto();
             gameHistoryDto.setGameTheme(game.getGameTheme());
             gameHistoryDto.setGameSpeed(game.getGameSpeed());

@@ -171,8 +171,8 @@ public class GameService {
 
         Map<Object,Object> spyPickInfo = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + roomCode);
 
-        UnitInfo redSpyInfo = redUnitList.get((int)spyPickInfo.get("홍팀"));
-        UnitInfo blueSpyInfo = blueUnitList.get((int)spyPickInfo.get("청팀"));
+        UnitInfo redSpyInfo = redUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀"))));
+        UnitInfo blueSpyInfo = blueUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("청팀"))));
         String redSpyHint = "밀정은 " + redSpyInfo.getTime() + "에 " + redSpyInfo.getPlace() + "에서 " + redSpyInfo.getContactor() + "을(를) 만나 " + redSpyInfo.getStuff() + "을 전달받았습니다. " +
                 "그리고 밀정은 " + redSpyInfo.getScal() + "에 흉터가 있습니다.";
         String blueSpyHint = "밀정은 " + blueSpyInfo.getTime() + "에 " + blueSpyInfo.getPlace() + "에서 " + blueSpyInfo.getContactor() + "을(를) 만나 " + blueSpyInfo.getStuff() + "을 전달받았습니다." +
@@ -190,7 +190,7 @@ public class GameService {
                 .blueTeamUserList(blueTeamUserList)
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
-                .mySpyUnitId((int)spyPickInfo.get("청팀"))
+                .mySpyUnitId(Integer.parseInt( String.valueOf(spyPickInfo.get("청팀"))))
                 .mySpyHint(redSpyHint)
                 .build();
 
@@ -203,7 +203,7 @@ public class GameService {
                 .blueTeamUserList(blueTeamUserList)
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
-                .mySpyUnitId((int)spyPickInfo.get("홍팀"))
+                .mySpyUnitId(Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀"))))
                 .mySpyHint(blueSpyHint)
                 .build();
 
@@ -260,14 +260,15 @@ public class GameService {
         game.setGameSpeed(room.getGameSpeed());
         game.setGameTheme(room.getTheme());
         game.setMissionRegion(missionRegion);
-        game.setBlueSpyId((Integer) spy.get("청팀"));
-        game.setRedSpyId((Integer) spy.get("홍팀"));
+        game.setBlueSpyId(Integer.parseInt( String.valueOf(spy.get("청팀"))));
+        game.setRedSpyId(Integer.parseInt( String.valueOf(spy.get("홍팀"))));
         game.setBlueSpyHint(blueSpyHint);
         game.setRedSpyHint(redSpyHint);
         gameRepository.save(game);
 
         //게임코드와 참여자로 게임 전적 생성
-        List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo("RoomInfo : " + room.getRoomCode());
+        List<CurrentSeatDto> currentSeatDtoList = roomRedisRepository.getCurrentRoomInfo("RoomInfo: " + room.getRoomCode());
+        System.out.println(currentSeatDtoList.size());
         for(int i = 0; i < 6; i++){
             UserEntity user = userRepository.findById(currentSeatDtoList.get(i).getUserId());
             UserGameHistoryEntity entity = new UserGameHistoryEntity();
