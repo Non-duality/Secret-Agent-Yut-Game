@@ -2,18 +2,20 @@
   display: flex;
   color: white;
   margin-top: 45px;
-  margin-left: 50px;
   font-size: 15px;
 }
 
 .left-section {
   flex: 1; /* 왼쪽 섹션이 남은 공간을 모두 차지하도록 설정 */
+  align-self: flex-start;
 }
 
 .right-section {
   flex: 1; /* 오른쪽 섹션이 남은 공간을 모두 차지하도록 설정 */
   text-align: left; /* 오른쪽 정렬을 위해 설정 */
-  margin-top: 20px;
+  margin-top: 4%;
+  align-self: flex-start;
+  margin-right: 7%;
 }
 
 .profile-picture {
@@ -26,7 +28,7 @@
 }
 
 .memberout-btn {
-  margin-left: 180px;
+  margin-left: 60%;
   background-color: red;
   border-radius: 5px;
   font-weight: bold;
