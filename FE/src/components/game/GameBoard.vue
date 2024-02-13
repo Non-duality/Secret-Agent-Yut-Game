@@ -28,14 +28,10 @@
       :horse="horse"
       @selectHorse="selectHorse"
     />
+
+    <!-- :disabled="!isThrowYut" -->
     <!-- 버튼 임시 -->
-    <button
-      class="game-board-throw-btn"
-      @click="moveHorse"
-      :disabled="!isThrowYut"
-    >
-      던지기
-    </button>
+    <button class="game-board-throw-btn" @click="moveHorse">던지기</button>
     <button
       v-if="isShowGoDig"
       @click="goDigYes"
@@ -166,6 +162,17 @@ export default {
         } else if (receivedMsg.actionCategory === 2) {
           this.receiveSelectHorse(receivedMsg);
         }
+      } else {
+        if (receivedMsg.actionCategory === 2) {
+          const gameStore = useGameStore();
+          // 말 이동.
+          gameStore.moveHorse(this.selectedHorse);
+
+          // boolean값들 초기화.
+          this.isSelectedHorse = false;
+          this.canSelectHorse = false;
+          gameStore.isSelect = false;
+        }
       }
     },
     // 초기 정보 저장
@@ -192,6 +199,7 @@ export default {
           gameStore.blueUser[i].email === userStore.userInfo.email
         ) {
           gameStore.myTurn = i;
+          console.log("내턴 : " + gameStore.myTurn);
           if (i === 0 && gameStore.myTeam === 1) {
             gameStore.isThrowYut = true;
           }
@@ -206,6 +214,11 @@ export default {
       gameStore.yutRes = receivedMsg.yutRes;
       gameStore.throwRes = receivedMsg.throwRes;
       gameStore.setYutText(receivedMsg.yutRes);
+
+      if (gameStore.yutRes >= 4) {
+        gameStore.throwChance += 1;
+      }
+
       this.yutText = gameStore.yutText;
 
       // 텍스트와 윷결과 판을 다른 타이밍에 나타나게 한다.
@@ -244,24 +257,28 @@ export default {
       gameStore.isCenterDir = receivedMsg.centerDir;
       // 홍팀
       if (!gameStore.teamTurn) {
-        console.log("받은 말 : " + gameStore.redHorses[receivedMsg.unitIndex-1])
-        gameStore.moveHorse(gameStore.redHorses[receivedMsg.unitIndex-1]);
+        console.log(
+          "받은 말 : " + gameStore.redHorses[receivedMsg.unitIndex - 1]
+        );
+        gameStore.moveHorse(gameStore.redHorses[receivedMsg.unitIndex - 1]);
       }
       // 청팀
       else {
-        console.log("받은 말 : " + gameStore.blueHorses[receivedMsg.unitIndex-1])
-        gameStore.moveHorse(gameStore.blueHorses[receivedMsg.unitIndex-1]);
+        console.log(
+          "받은 말 : " + gameStore.blueHorses[receivedMsg.unitIndex - 1]
+        );
+        gameStore.moveHorse(gameStore.blueHorses[receivedMsg.unitIndex - 1]);
       }
     },
     //pub/game/{code}/start
     // 윷 던지기
     moveHorse() {
       const gameStore = useGameStore();
+      console.log("팀턴 : " + gameStore.teamTurn);
+      console.log("턴 : " + gameStore.turn);
+      console.log("체크 : " + gameStore.isThrowYut);
       // 내가 던질 차례인가 체크.
-      if (!this.isThrowYut){
-        console.log("팀턴 : " + gameStore.teamTurn);
-        console.log("턴 : " + gameStore.turn);
-        console.log("체크 : " + gameStore.isThrowYut);
+      if (!this.isThrowYut) {
         return;
       }
       // 윷 던지기 호출
@@ -295,14 +312,18 @@ export default {
           gameStore.myTeam == 1 &&
           gameStore.redHorses[4].check == 5 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
-        )
+        ){
+          gameStore.throwChance++;
           return;
+        }
         else if (
           gameStore.myTeam == 2 &&
           gameStore.blueHorses[4].check == 5 - gameStore.blueHorses &&
           gameStore.redHorses[4].index === 0
-        )
+        ){
+          gameStore.throwChance++;
           return;
+        }
       }
       // 윷 결과가 나오고 나서 부터 선택가능하다.
       setTimeout(() => {
@@ -312,20 +333,14 @@ export default {
         this.$watch("isSelectedHorse", () => {
           // 선택을 하였다면.
           if (this.isSelectedHorse) {
-            // 말 이동.
-            gameStore.moveHorse(this.selectedHorse);
             // 소켓 전송
             msg = {
               unitIndex: this.selectedHorse.id,
-              goDiagonal: useGameStore().isGoDiagonal,
-              centerDir: useGameStore().isCenterDir,
+              goDiagonal: gameStore.isGoDiagonal,
+              centerDir: gameStore.isCenterDir,
             };
             console.log(msg);
             socketSend(`/pub/game/${this.roomCode}/select-unit`, msg);
-            // boolean값들 초기화.
-            this.isSelectedHorse = false;
-            this.canSelectHorse = false;
-            gameStore.isSelect = false;
           }
         });
       }, 2000);

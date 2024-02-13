@@ -273,7 +273,8 @@ export const useGameStore = defineStore("game", {
   actions: {
     // 말 이동
     moveHorse(selectedHorse) {
-      if (this.yutRes >= 4) this.throwChance++;
+
+      console.log("윷 기회  : " + this.throwChance)
 
       const horseInfo =
         selectedHorse.team === 1
@@ -398,14 +399,16 @@ export const useGameStore = defineStore("game", {
         if (!this.teamTurn) {
           this.turn[0]++;
           if (this.turn[0] > 2) this.turn[0] = 0;
+          this.teamTurn = true;
         }
         // 청팀이면.
         else {
           this.turn[1]++;
           if (this.turn[1] > 2) this.turn[1] = 0;
+          this.teamTurn = false;
         }
         // 팀 차례 바꿈.
-        this.teamTurn != this.teamTurn;
+        // this.teamTurn != this.teamTurn;
         this.isThrowYut = false;
         if (!this.teamTurn) {
           if (this.turn[0] === this.myTurn && this.myTeam === 1) {
@@ -627,6 +630,10 @@ export const useGameStore = defineStore("game", {
         default:
           break;
       }
+      
+      if(this.yutRes >= 4){
+        this.throwChance += 1;
+      }
       console.log("res = " + this.yutRes);
     },
     setYutText(res) {
@@ -649,9 +656,6 @@ export const useGameStore = defineStore("game", {
           break;
         case 4:
           this.yutText = "윷";
-          break;
-        case 5:
-          this.yutText = "모";
           break;
       }
     },
