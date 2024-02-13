@@ -277,10 +277,8 @@ export const useGameStore = defineStore("game", {
       const horseInfo =
         selectedHorse.team === 1
           ? this.redHorses.find((horse) => horse.id === selectedHorse.unitIndex)
-          : this.blueHorses.find(
-              (horse) => horse.id === selectedHorse.unitIndex
-            );
-      console.log(horseInfo);
+          : this.blueHorses.find((horse) => horse.id === selectedHorse.unitIndex);
+          console.log(selectedHorse);
 
       // 말의 능력.
       if (horseInfo.name === "기병") {
@@ -449,7 +447,7 @@ export const useGameStore = defineStore("game", {
         this.tiles[horseInfo.index].horse[0].team !=
           this.tiles[target].horse[0].team
       ) {
-        for (var i = this.toCnt; i < this.tiles[target].horse.length; i++) {
+        for (var i = 0; i < this.tiles[target].horse.length; i++) {
           const horsedel =
             this.tiles[target].horse[i].team === 1
               ? this.redHorses.find(
@@ -466,6 +464,7 @@ export const useGameStore = defineStore("game", {
             else this.blueHorses[j].check += 1;
           }
         }
+        this.toCnt = 0;
         // 말을 잡았으니 기회 한번더.
         this.throwChance += 1;
         this.tiles[target].horse = [];
