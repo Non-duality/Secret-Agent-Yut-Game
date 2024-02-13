@@ -377,6 +377,7 @@ export const useGameStore = defineStore("game", {
         this.horseCheck(horseInfo, target);
       }
 
+      console.log(horseInfo.index, target);
       // 말 이동
       this.moveTo(horseInfo.index, target);
       // 미션장소 체크
