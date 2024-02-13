@@ -279,6 +279,7 @@ export const useGameStore = defineStore("game", {
           ? this.redHorses.find((horse) => horse.id === selectedHorse.unitIndex)
           : this.blueHorses.find((horse) => horse.id === selectedHorse.unitIndex);
           console.log(selectedHorse);
+          console.log(horseInfo);
 
       // 말의 능력.
       if (horseInfo.name === "기병") {
@@ -377,6 +378,7 @@ export const useGameStore = defineStore("game", {
         this.horseCheck(horseInfo, target);
       }
 
+      console.log(horseInfo.index, target);
       // 말 이동
       this.moveTo(horseInfo.index, target);
       // 미션장소 체크
