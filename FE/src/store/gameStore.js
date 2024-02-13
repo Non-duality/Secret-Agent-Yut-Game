@@ -5,7 +5,9 @@ export const useGameStore = defineStore("game", {
   // 반응형 상태 (data)
   state: () => {
     return {
-      // 내 팀 정보.
+      // 타이머
+      timer: 20,
+      // 내 팀 정보. 1 == 홍 2 == 청
       myTeam: 1,
       // 턴. idx 0 = 홍팅, 1 = 청팀
       turn: [0, 0],
@@ -36,6 +38,11 @@ export const useGameStore = defineStore("game", {
       isMission: false,
       // 기존에 있는말 말고 새로가는 말만 이동하기 위해 카운트 변수.
       toCnt: 0,
+      // 유저 정보
+      redUser: [],
+      blueUser: [],
+      // 스파이 말
+      mySpyId: 0,
       // 말
       redHorses: [
         {
@@ -46,6 +53,9 @@ export const useGameStore = defineStore("game", {
           img: "horse1",
           check: 0,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 2,
@@ -55,6 +65,9 @@ export const useGameStore = defineStore("game", {
           img: "horse2",
           check: 1,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 3,
@@ -64,6 +77,9 @@ export const useGameStore = defineStore("game", {
           img: "horse3",
           check: 2,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 4,
@@ -73,6 +89,9 @@ export const useGameStore = defineStore("game", {
           img: "horse4",
           check: 3,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 5,
@@ -82,6 +101,9 @@ export const useGameStore = defineStore("game", {
           img: "horse5",
           check: 4,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
       ],
       blueHorses: [
@@ -93,6 +115,9 @@ export const useGameStore = defineStore("game", {
           img: "horse1",
           check: 0,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 2,
@@ -102,6 +127,9 @@ export const useGameStore = defineStore("game", {
           img: "horse2",
           check: 1,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 3,
@@ -111,6 +139,9 @@ export const useGameStore = defineStore("game", {
           img: "horse3",
           check: 2,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 4,
@@ -120,6 +151,9 @@ export const useGameStore = defineStore("game", {
           img: "horse4",
           check: 3,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
         {
           id: 5,
@@ -129,6 +163,9 @@ export const useGameStore = defineStore("game", {
           img: "horse5",
           check: 4,
           endOrder: 0,
+          name: "",
+          age: 1,
+          skill: "",
         },
       ],
       horsesIndex: [
@@ -243,6 +280,12 @@ export const useGameStore = defineStore("game", {
           ? this.redHorses.find((horse) => horse.id === selectedHorse.id)
           : this.blueHorses.find((horse) => horse.id === selectedHorse.id);
 
+      // 말의 능력.
+      if (horseInfo.name === "기병") {
+        this.yutRes += 1;
+      }else if(horseInfo.name === "노비"){
+        this.yutRes -= 1;
+      }
       // 목적지 설정.
       let target = horseInfo.index + this.yutRes;
 
@@ -362,6 +405,19 @@ export const useGameStore = defineStore("game", {
         }
         // 팀 차례 바꿈.
         this.teamTurn != this.teamTurn;
+        if (this.teamTurn) {
+          if (this.turn[0] === this.myTurn) {
+            this.isThrowYut = true;
+          } else {
+            this.isThrowYut = false;
+          }
+        } else {
+          if (this.turn[1] === this.myTurn) {
+            this.isThrowYut = true;
+          } else {
+            this.isThrowYut = false;
+          }
+        }
         this.throwChance = 1;
       }
     },

@@ -1,6 +1,6 @@
 <template>
   <div :style="tileStyle">
-    {{ tile.id }}
+    <!-- {{ tile.id }} -->
   </div>
 </template>
   
@@ -40,7 +40,7 @@ export default {
         styles.backgroundSize = "cover"; // This will ensure that your image covers the entire tile
         styles.backgroundPosition = "center";
       } else {
-        styles.backgroundColor = "#DCDCDC"; // 기본 색
+        styles.backgroundColor = "#D2691E"; // 기본 색
       }
 
       // 오른쪽 0~5

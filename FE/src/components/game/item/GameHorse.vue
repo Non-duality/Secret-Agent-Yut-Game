@@ -32,6 +32,14 @@ export default {
       isMouseOver: false, // 마우스 오버
     };
   },
+  // watch:{
+  //   'horse':{
+  //     deep: true,
+  //     handler(){
+  //       this.loadImage();
+  //     }
+  //   }
+  // },
   computed: {
     // 말 스타일
     horseStyle() {
@@ -159,12 +167,12 @@ export default {
       // 말이 들어 왔다면.
       else {
         // 홍팀이면
-        if(this.horse.team === 1){
+        if (this.horse.team === 1) {
           styles.bottom = horsesIndex[2][this.horse.endOrder].bottom;
           styles.left = horsesIndex[2][this.horse.endOrder].left;
         }
         // 청팀이면
-        else{
+        else {
           styles.bottom = horsesIndex[3][this.horse.endOrder].bottom;
           styles.right = horsesIndex[3][this.horse.endOrder].right;
         }
@@ -233,71 +241,9 @@ export default {
 
   // 이미지를 동적으로 가져오기.
   async mounted() {
-    try {
-      switch (this.horse.img) {
-        case "horse1":
-          if (this.horse.team === 1) {
-            this.imgSrc = (
-              await import("@/assets/img/game/horse/red_king.png")
-            ).default;
-          } else {
-            this.imgSrc = (
-              await import("@/assets/img/game/horse/blue_king.png")
-            ).default;
-          }
-          break;
-        case "horse2":
-          if (this.horse.team === 1) {
-            this.imgSrc = (
-              await import("@/assets/img/game/horse/red_cavalry.png")
-            ).default;
-          } else {
-            this.imgSrc = (
-              await import("@/assets/img/game/horse/blue_cavalry.png")
-            ).default;
-          }
-          break;
-        case "horse3":
-          if (this.horse.team === 1) {
-            this.imgSrc = (
-              await import("@/assets/img/game/horse/red_spearman.png")
-            ).default;
-          } else {
-            this.imgSrc = (
-              await import("@/assets/img/game/horse/blue_spearman.png")
-            ).default;
-          }
-          break;
-        case "horse4":
-          if (this.horse.team === 1) {
-            this.imgSrc = (
-              await import("@/assets/img/game/horse/red_peasant.png")
-            ).default;
-          } else {
-            this.imgSrc = (
-              await import("@/assets/img/game/horse/blue_peasant.png")
-            ).default;
-          }
-          break;
-        case "horse5":
-          if (this.horse.team === 1) {
-            this.imgSrc = (
-              await import("@/assets/img/game/horse/red_slave.png")
-            ).default;
-          } else {
-            this.imgSrc = (
-              await import("@/assets/img/game/horse/blue_slave.png")
-            ).default;
-          }
-          break;
-        default:
-          this.imgSrc = "/path/to/default-image.png"; // 기본 이미지 경로
-          break;
-      }
-    } catch (error) {
-      console.error("Error loading image:", error);
-      this.imgSrc = "/path/to/default-image.png"; // 오류 발생 시 기본 이미지 경로
-    }
+    setTimeout(() => {
+      this.loadImage();
+    }, 4000);
   },
   methods: {
     MouseOver() {
@@ -308,6 +254,140 @@ export default {
     },
     selectHorse() {
       this.$emit("selectHorse", this.horse);
+    },
+    async loadImage() {
+      try {
+        const gameStore = useGameStore();
+        console.log("이미지");
+        switch (this.horse.name) {
+          case "대왕":
+            if (
+              gameStore.myTeam != this.horse.team &&
+              gameStore.mySpyId === 0
+            ) {
+              if (this.horse.team === 1) {
+                this.imgSrc = (
+                  await import("@/assets/img/game/horse/red_king_spy.png")
+                ).default;
+              } else {
+                this.imgSrc = (
+                  await import("@/assets/img/game/horse/blue_king_spy.png")
+                ).default;
+              }
+            } else if (this.horse.team === 1) {
+              this.imgSrc = (
+                await import("@/assets/img/game/horse/red_king.png")
+              ).default;
+            } else {
+              this.imgSrc = (
+                await import("@/assets/img/game/horse/blue_king.png")
+              ).default;
+            }
+            break;
+          case "기병":
+            if (
+              gameStore.myTeam != this.horse.team &&
+              gameStore.mySpyId === 1
+            ) {
+              if (this.horse.team === 1) {
+                this.imgSrc = (
+                  await import("@/assets/img/game/horse/red_cavalry_spy.png")
+                ).default;
+              } else {
+                this.imgSrc = (
+                  await import("@/assets/img/game/horse/blue_cavalry_spy.png")
+                ).default;
+              }
+            } else if (this.horse.team === 1) {
+              this.imgSrc = (
+                await import("@/assets/img/game/horse/red_cavalry.png")
+              ).default;
+            } else {
+              this.imgSrc = (
+                await import("@/assets/img/game/horse/blue_cavalry.png")
+              ).default;
+            }
+            break;
+          case "창병":
+            if (
+              gameStore.myTeam != this.horse.team &&
+              gameStore.mySpyId === 2
+            ) {
+              if (this.horse.team === 1) {
+                this.imgSrc = (
+                  await import("@/assets/img/game/horse/red_spearman_spy.png")
+                ).default;
+              } else {
+                this.imgSrc = (
+                  await import("@/assets/img/game/horse/blue_spearman_spy.png")
+                ).default;
+              }
+            } else if (this.horse.team === 1) {
+              this.imgSrc = (
+                await import("@/assets/img/game/horse/red_spearman.png")
+              ).default;
+            } else {
+              this.imgSrc = (
+                await import("@/assets/img/game/horse/blue_spearman.png")
+              ).default;
+            }
+            break;
+          case "농민":
+            if (
+              gameStore.myTeam != this.horse.team &&
+              gameStore.mySpyId === 3
+            ) {
+              if (this.horse.team === 1) {
+                this.imgSrc = (
+                  await import("@/assets/img/game/horse/red_peasant_spy.png")
+                ).default;
+              } else {
+                this.imgSrc = (
+                  await import("@/assets/img/game/horse/blue_peasant_spy.png")
+                ).default;
+              }
+            } else if (this.horse.team === 1) {
+              this.imgSrc = (
+                await import("@/assets/img/game/horse/red_peasant.png")
+              ).default;
+            } else {
+              this.imgSrc = (
+                await import("@/assets/img/game/horse/blue_peasant.png")
+              ).default;
+            }
+            break;
+          case "노비":
+            if (
+              gameStore.myTeam != this.horse.team &&
+              gameStore.mySpyId === 4
+            ) {
+              if (this.horse.team === 1) {
+                this.imgSrc = (
+                  await import("@/assets/img/game/horse/red_slave_spy.png")
+                ).default;
+              } else {
+                this.imgSrc = (
+                  await import("@/assets/img/game/horse/blue_slave_spy.png")
+                ).default;
+              }
+            } else if (this.horse.team === 1) {
+              this.imgSrc = (
+                await import("@/assets/img/game/horse/red_slave.png")
+              ).default;
+            } else {
+              this.imgSrc = (
+                await import("@/assets/img/game/horse/blue_slave.png")
+              ).default;
+            }
+            break;
+          default:
+            this.imgSrc = "/path/to/default-image.png"; // 기본 이미지 경로
+            break;
+        }
+      } catch (error) {
+        console.error("Error loading image:", error);
+        this.imgSrc = "/path/to/default-image.png"; // 오류 발생 시 기본 이미지 경로
+      }
     },
   },
 };
