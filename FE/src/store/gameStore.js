@@ -407,18 +407,15 @@ export const useGameStore = defineStore("game", {
         }
         // 팀 차례 바꿈.
         this.teamTurn != this.teamTurn;
+        this.isThrowYut = false;
         if (this.teamTurn) {
           if (this.turn[0] === this.myTurn) {
             this.isThrowYut = true;
-          } else {
-            this.isThrowYut = false;
-          }
+          } 
         } else {
           if (this.turn[1] === this.myTurn) {
             this.isThrowYut = true;
-          } else {
-            this.isThrowYut = false;
-          }
+          } 
           console.log("체크 : " + this.isThrowYut)
         }
         this.throwChance = 1;
