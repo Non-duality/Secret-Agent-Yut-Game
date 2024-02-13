@@ -10,6 +10,8 @@ public interface FriendRepository extends JpaRepository<FriendEntity, Integer> {
 
     Boolean existsByFromUserIdAndToUserId(int fromUserId, int toUserId);
 
+    Boolean existsByFromUserIdAndToUserIdAndWeAreFriendTrue(int fromUserId, int toUserId);
+
     FriendEntity findByFromUserIdAndToUserId(int fromUserId, int toUserId);
 
     List<FriendEntity> findByFromUserIdAndWeAreFriendFalse(int FromUserId);

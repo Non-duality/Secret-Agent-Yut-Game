@@ -1,9 +1,6 @@
 package com.ssafy.hungry.domain.user.controller;
 
-import com.ssafy.hungry.domain.user.dto.GameHistoryDto;
-import com.ssafy.hungry.domain.user.dto.JoinDto;
-import com.ssafy.hungry.domain.user.dto.MyInfoDto;
-import com.ssafy.hungry.domain.user.dto.PasswordDto;
+import com.ssafy.hungry.domain.user.dto.*;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -172,5 +169,12 @@ public class UserController {
     public List<GameHistoryDto> myGameHistory(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userService.myGameHistory(email);
+    }
+
+    //유저 검색
+    @GetMapping("/search/{nickname}")
+    public List<UserDto> userSearch(@PathVariable String nickname){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userService.userSearch(nickname, email);
     }
 }
