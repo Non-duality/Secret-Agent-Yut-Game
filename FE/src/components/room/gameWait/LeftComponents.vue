@@ -11,7 +11,7 @@
       }"
     >
       <!-- 팀 이름을 나타낸다. -->
-      <div class="team-name">{{ team.name }}</div>
+      <div class="team-name" @click="changeBtn(team.name)">{{ team.name }}</div>
 
       <!-- 유저의 정보를 나타낸다 -->
       <div
@@ -25,9 +25,7 @@
           </div>
           <div class="text-container">
           </div>
-
-          <div class="ready-div">
-          </div>
+          <div class="ready-div"></div>
         </div>
         <div v-else class="per">
           <div class="img-div">
@@ -39,7 +37,9 @@
 
           <div class="ready-div">
             <span v-if="team.users[seatKey].ready">준비완료</span>
-            <span v-else-if="team.users[seatKey].state===2" id="owner">방장</span>
+            <span v-else-if="team.users[seatKey].state === 2" id="owner"
+              >방장</span
+            >
             <span v-else>레디하지 않음</span>
           </div>
         </div>
@@ -51,6 +51,7 @@
 
 <script>
 import { useRoomStore } from "@/store/roomStore";
+import { pubRoom } from "@/util/socket"
 
 // 아이콘
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -59,6 +60,7 @@ library.add(faUserPlus);
 
 // 자식 컴포넌트
 import GameWaitChatVue from "./GameWaitChat.vue";
+import { useUserStore } from '@/store/userStore';
 
 export default {
   components: {
@@ -85,7 +87,7 @@ export default {
 
   created() {
     // seatInfo 데이터를 가져와서 팀에 할당
-    let currentSeatInfo = useRoomStore().seatInfo;
+    let currentSeatInfo = this.getSeatInfo;
 
     // 홍팀에 1부터 3까지의 seatInfo 할당
     for (let i = 1; i <= 3; i++) {
@@ -96,6 +98,35 @@ export default {
     for (let i = 4; i <= 6; i++) {
       this.teams[1].users[`seatnum${i}`] = currentSeatInfo[`seatnum${i}`];
     }
+  },
+
+  methods: {
+    changeBtn(name) {
+      let idx = 0;
+
+      for(let i=1; i<=6; i++){
+        if(useUserStore().userInfo.nickname === useRoomStore().seatInfo[`seatnum${i}`].nickname){
+          idx = i;
+          break;
+        }
+      }
+
+      console.log(idx);
+
+      if(name === "홍팀"){
+        if(useRoomStore().seatInfo[`seatnum${idx}`].team === 1) return;
+      }else{
+        if(useRoomStore().seatInfo[`seatnum${idx}`].team === 2) return;
+      }
+      pubRoom("/pub/room/"+useUserStore().currentRoomInfo.roomCode+"/change",
+      useUserStore().userInfo.email);
+    },
+  },
+
+  computed: {
+    getSeatInfo() {
+      return useRoomStore().seatInfo;
+    },
   },
 };
 </script>

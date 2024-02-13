@@ -2,13 +2,13 @@
 .wait-div{
     display: flex;
     margin-left: 150px;
-    margin-top: 50px;
+    margin-top: 20px;
 }
 .wait-left{
     background-color: rgba(0, 0, 0, 0.474);
     border-radius: 10px;
     max-width: 32vw;
-    height: 75vh;
+    height: 80vh;
 }
 .wait-right{
     margin-left: 50px;

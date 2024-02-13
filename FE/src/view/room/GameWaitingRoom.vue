@@ -94,10 +94,6 @@ export default {
         "/pub/room/" + useUserStore().currentRoomInfo.roomCode + "/start",
         useUserStore().userInfo.email
       );
-
-      // 게임 픽창 시작 차이점
-      // 나: /pub/room으로 바로 start를 하고 바로 팀 이름을 알고 구독 신청
-      // 준희형: start를 하면 "ROOM_START_PICK" 타입 메시지가 오고 거기서 구독 신청
     },
 
     // 준비완료

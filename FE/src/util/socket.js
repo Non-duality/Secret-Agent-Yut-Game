@@ -334,7 +334,8 @@ export function initRoom(router, from) {
           }, 500);
         });
       }
-      //
+
+      // 채팅
       else if (useRoomStore().receivedMessage.type === "ROOM_CHAT") {
         useRoomStore().roomChatMessages.push(
           useRoomStore().receivedMessage.data.nickname +
@@ -348,6 +349,31 @@ export function initRoom(router, from) {
           ...storedRoomData,
           roomChatMessages: {
             ...useRoomStore().roomChatMessages,
+          },
+        };
+
+        // 로컬 스토리지에 업데이트된 데이터 저장
+        localStorage.setItem("room", JSON.stringify(updatedRoomData));
+      }
+
+      // 자리 변경
+      else if (useRoomStore().receivedMessage.type === "ROOM_CHANGE_TEAM") {
+        useRoomStore().receivedMessage.data.forEach((seat, index) => {
+          const seatKey = `seatnum${index + 1}`;
+          if (useRoomStore().seatInfo[seatKey]) {
+            useRoomStore().seatInfo[seatKey].nickname = seat.nickname;
+            useRoomStore().seatInfo[seatKey].ready = seat.ready;
+            useRoomStore().seatInfo[seatKey].state = seat.state;
+            useRoomStore().seatInfo[seatKey].team = seat.team;
+          }
+        });
+
+        const storedRoomData = JSON.parse(localStorage.getItem("room"));
+
+        const updatedRoomData = {
+          ...storedRoomData,
+          seatInfo: {
+            ...useRoomStore().seatInfo,
           },
         };
 
@@ -368,7 +394,7 @@ export function initRoom(router, from) {
  */
 export function initPick(router, from) {
   console.log(from);
-  
+
   // 먼저, create된 roomCode를 가져와서 방 구독
   usePickStore().subscription.pick = stompClient.subscribe(
     "/sub/room/" + useUserStore().currentRoomInfo.roomCode + "/" + from,
@@ -490,8 +516,8 @@ export function initPick(router, from) {
         setTimeout(() => {
           usePickStore().pickFinished = !usePickStore().pickFinished;
         }, 500);
-      } 
-      
+      }
+
       // 양 팀 모두 픽 성공했다면, 스파이 모달창 띄우기
       else if (usePickStore().receivedMessage.type === "PICK_WAIT") {
         console.log("모두 픽 성공");
