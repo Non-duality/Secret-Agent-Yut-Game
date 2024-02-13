@@ -243,13 +243,13 @@ export default {
       gameStore.isCenterDir = receivedMsg.centerDir;
       // 홍팀
       if (!gameStore.teamTurn) {
-        gameStore.moveHorse(gameStore.redHorses[receivedMsg.unitIndex]);
         console.log("받은 말 : " + gameStore.redHorses[receivedMsg.unitIndex])
+        gameStore.moveHorse(gameStore.redHorses[receivedMsg.unitIndex]);
       }
       // 청팀
       else {
-        gameStore.moveHorse(gameStore.blueHorses[receivedMsg.unitIndex]);
         console.log("받은 말 : " + gameStore.blueHorses[receivedMsg.unitIndex])
+        gameStore.moveHorse(gameStore.blueHorses[receivedMsg.unitIndex]);
       }
     },
     //pub/game/{code}/start
