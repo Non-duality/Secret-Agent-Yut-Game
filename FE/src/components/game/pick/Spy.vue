@@ -79,6 +79,10 @@ export default {
         unitId: this.selectedCharacter.unitId,
       };
 
+      console.log("보냅니다.")
+      console.log(content);
+      console.log("/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/spy");
+
       pubPickInfo(
         "/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/spy",
         content
