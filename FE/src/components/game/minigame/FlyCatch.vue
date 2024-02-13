@@ -128,6 +128,7 @@
             numHands: 2
           });
         const videoElement = this.$refs.webcam;
+        this.toggleWebcam()
         videoElement.addEventListener('loadedmetadata', () => {
           // 로드되면 비디오 사이즈에 맞추어 캔버스 사이즈 맞추기
           this.adjustCanvasSizeToVideo()
@@ -148,9 +149,10 @@
 
 
       // 게임시작
-      startGameTimer() {
-        this.toggleWebcam()
-        const gameInterval = setInterval(() => {
+      async startGameTimer() {
+        await this.initializeFlies();
+        await this.predictWebcam()
+        const gameInterval = await setInterval(() => {
           this.gameTimer -= 1
           if (this.gameTimer === 0) {
             clearInterval(gameInterval)
@@ -177,8 +179,6 @@
           const stream = await navigator.mediaDevices.getUserMedia(this.constraints)
           const videoElement = this.$refs.webcam;
           videoElement.srcObject = stream
-          videoElement.addEventListener("loadeddata", this.predictWebcam)
-          this.initializeFlies();
         } catch (error) {
           alert("웹 캠에 접근할 수가 없습니다.")
           console.log(error)
@@ -217,6 +217,7 @@
             this.clearFlyCanvas()
             this.victory = true
             this.gameResult = true
+            this.$emit('endMinigame', this.victory)
         }
         // 인식된 손 정보
         if (this.results.gestures.length == 1) {
