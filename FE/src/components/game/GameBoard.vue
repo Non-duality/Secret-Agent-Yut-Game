@@ -241,14 +241,16 @@ export default {
           gameStore.redHorses[4].check == 5 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
         ) {
-          gameStore.throwChance++;
+          console.log("백도 끝")
+          gameStore.turnChange();
           return;
         } else if (
           gameStore.myTeam == 2 &&
           gameStore.blueHorses[4].check == 5 - gameStore.blueHorses &&
           gameStore.redHorses[4].index === 0
         ) {
-          gameStore.throwChance++;
+          console.log("백도 끝")
+          gameStore.turnChange();
           return;
         }
       }
@@ -316,14 +318,16 @@ export default {
           gameStore.redHorses[4].check == 5 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
         ) {
-          gameStore.throwChance++;
+          console.log("백도 끝")
+          gameStore.turnChange();
           return;
         } else if (
           gameStore.myTeam == 2 &&
           gameStore.blueHorses[4].check == 5 - gameStore.blueHorses &&
           gameStore.redHorses[4].index === 0
         ) {
-          gameStore.throwChance++;
+          console.log("백도 끝")
+          gameStore.turnChange();
           return;
         }
       }

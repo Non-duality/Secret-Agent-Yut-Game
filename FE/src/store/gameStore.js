@@ -273,8 +273,7 @@ export const useGameStore = defineStore("game", {
   actions: {
     // 말 이동
     moveHorse(selectedHorse) {
-
-      console.log("윷 기회  : " + this.throwChance)
+      console.log("윷 기회  : " + this.throwChance);
 
       const horseInfo =
         selectedHorse.team === 1
@@ -284,7 +283,7 @@ export const useGameStore = defineStore("game", {
       // 말의 능력.
       if (horseInfo.name === "기병") {
         this.yutRes += 1;
-      }else if(horseInfo.name === "노비"){
+      } else if (horseInfo.name === "노비") {
         this.yutRes -= 1;
       }
       // 목적지 설정.
@@ -393,42 +392,50 @@ export const useGameStore = defineStore("game", {
       this.isCenterDir = false;
 
       // 현재 차례에 기회가 있는지 체크.
-      console.log(!this.teamTurn?this.redUser[this.turn[0]]:this.blueUser[this.turn[1]]);
+      console.log(
+        !this.teamTurn
+          ? this.redUser[this.turn[0]]
+          : this.blueUser[this.turn[1]]
+      );
       console.log("기회 : " + this.throwChance);
       if (this.throwChance === 0) {
-        // 홍팀이였다면,.
-        if (!this.teamTurn) {
-          this.turn[0]++;
-          if (this.turn[0] > 2) this.turn[0] = 0;
-          this.teamTurn = true;
-        }
-        // 청팀이면.
-        else {
-          this.turn[1]++;
-          if (this.turn[1] > 2) this.turn[1] = 0;
-          this.teamTurn = false;
-        }
-        // 팀 차례 바꿈.
-        // this.teamTurn != this.teamTurn;
-        this.isThrowYut = false;
-        if (!this.teamTurn) {
-          if (this.turn[0] === this.myTurn && this.myTeam === 1) {
-            this.isThrowYut = true;
-          } 
-        } else {
-          if (this.turn[1] === this.myTurn && this.myTeam === 2) {
-            this.isThrowYut = true;
-          } 
-        }
-        this.throwChance = 1;
+        this.turnChange();
       }
       console.log(this.tiles);
       console.log(this.redHorses);
       console.log(this.blueHorses);
       console.log("팀 턴 : " + this.teamTurn);
       console.log("턴 : " + this.turn);
-      console.log("체크 : " + this.isThrowYut)
-      
+      console.log("체크 : " + this.isThrowYut);
+    },
+
+    // 턴 바꿈.
+    turnChange() {
+      // 홍팀이였다면,.
+      if (!this.teamTurn) {
+        this.turn[0]++;
+        if (this.turn[0] > 2) this.turn[0] = 0;
+        this.teamTurn = true;
+      }
+      // 청팀이면.
+      else {
+        this.turn[1]++;
+        if (this.turn[1] > 2) this.turn[1] = 0;
+        this.teamTurn = false;
+      }
+      // 팀 차례 바꿈.
+      // this.teamTurn != this.teamTurn;
+      this.isThrowYut = false;
+      if (!this.teamTurn) {
+        if (this.turn[0] === this.myTurn && this.myTeam === 1) {
+          this.isThrowYut = true;
+        }
+      } else {
+        if (this.turn[1] === this.myTurn && this.myTeam === 2) {
+          this.isThrowYut = true;
+        }
+      }
+      this.throwChance = 1;
     },
 
     // 이동하는 곳에 다른 말이 있나 체크.
@@ -458,7 +465,7 @@ export const useGameStore = defineStore("game", {
           }
         }
         // 말을 잡았으니 기회 한번더.
-        this.throwChance+=1;
+        this.throwChance += 1;
         this.tiles[target].horse = [];
       }
 
@@ -636,8 +643,8 @@ export const useGameStore = defineStore("game", {
         default:
           break;
       }
-      
-      if(this.yutRes >= 4){
+
+      if (this.yutRes >= 4) {
         this.throwChance += 1;
       }
       console.log("res = " + this.yutRes);
