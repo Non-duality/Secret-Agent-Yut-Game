@@ -72,16 +72,13 @@ export default {
     },
 
     selectComplete() {
-      const teamName = usePickStore().code === red ? "홍팀" : "청팀";
+      const teamName = usePickStore().code.includes("red") ? "홍팀" : "청팀";
 
       const content = {
         team: teamName,
         unitId: this.selectedCharacter.unitId,
       };
 
-      console.log("스파이 픽 보냅니다.");
-      console.log("/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/spy");
-      console.log(content);
       pubPickInfo(
         "/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/spy",
         content
