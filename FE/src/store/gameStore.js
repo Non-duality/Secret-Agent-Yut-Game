@@ -21,7 +21,7 @@ export const useGameStore = defineStore("game", {
       isThrowYut: false,
       // 들어온 말의 개수.
       redEnd: 0,
-      blueEnd: 0,
+      blueEnd: 34,
       isHorseEnd: false,
       // 윷 던진 결과
       throwRes: [false, false, false, false],
@@ -43,6 +43,9 @@ export const useGameStore = defineStore("game", {
       blueUser: [],
       // 스파이 말
       mySpyId: 0,
+      // 다음 차례 메시지.
+      turnMessage: "",
+      isShowTurnMessage: false,
       // 말
       redHorses: [
         {
@@ -277,12 +280,17 @@ export const useGameStore = defineStore("game", {
       const horseInfo =
         selectedHorse.team === 1
           ? this.redHorses.find((horse) => horse.id === selectedHorse.unitIndex)
-          : this.blueHorses.find((horse) => horse.id === selectedHorse.unitIndex);
-          console.log(selectedHorse);
-          console.log(horseInfo);
+          : this.blueHorses.find(
+              (horse) => horse.id === selectedHorse.unitIndex
+            );
+      console.log(selectedHorse);
+      console.log(horseInfo);
 
       // 말의 능력.
       if (horseInfo.name === "기병") {
+        if(this.yutRes === -1){
+          // 여기를 고민해보다 뒤로 갈때 하나 더 뒤로 갈까...
+        }
         this.yutRes += 1;
       } else if (horseInfo.name === "노비") {
         this.yutRes -= 1;
@@ -403,6 +411,7 @@ export const useGameStore = defineStore("game", {
       if (this.throwChance === 0) {
         this.turnChange();
       }
+
       console.log(this.tiles);
       console.log(this.redHorses);
       console.log(this.blueHorses);
@@ -425,19 +434,49 @@ export const useGameStore = defineStore("game", {
         if (this.turn[1] > 2) this.turn[1] = 0;
         this.teamTurn = false;
       }
+
+      // 메시지 저장
+      this.turnMessage =
+        (!this.teamTurn
+          ? this.redUser[this.turn[0]].nickname
+          : this.blueUser[this.turn[1]].nickname) + "님 차례입니다.";
+
+      // 약간의 여유를 준다.
+      setTimeout(() => {
+        // 메시지 보이기
+        this.isShowTurnMessage = true;
+      }, 2000);
+
+      // 2초 후 메시지 숨기고 활성화.
+      setTimeout(() => {
+        this.isShowTurnMessage = false;
+        // 내 차례인지 확인한다.
+        this.isThrowYut = false;
+        if (!this.teamTurn) {
+          if (this.turn[0] === this.myTurn && this.myTeam === 1) {
+            this.isThrowYut = true;
+          }
+        } else {
+          if (this.turn[1] === this.myTurn && this.myTeam === 2) {
+            this.isThrowYut = true;
+          }
+        }
+        this.throwChance = 1;
+        this.startTimer();
+      }, 5000);
       // 팀 차례 바꿈.
       // this.teamTurn != this.teamTurn;
-      this.isThrowYut = false;
-      if (!this.teamTurn) {
-        if (this.turn[0] === this.myTurn && this.myTeam === 1) {
-          this.isThrowYut = true;
+    },
+    
+    // 타이머 함수
+    startTimer(){
+      this.timer = 20;
+      const timerId = setInterval(() => {
+        this.timer--;
+        if(this.timer <= 0){
+          clearInterval(timerId);
         }
-      } else {
-        if (this.turn[1] === this.myTurn && this.myTeam === 2) {
-          this.isThrowYut = true;
-        }
-      }
-      this.throwChance = 1;
+      },1000);
     },
 
     // 이동하는 곳에 다른 말이 있나 체크.

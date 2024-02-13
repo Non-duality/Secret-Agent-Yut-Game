@@ -45,6 +45,29 @@
   box-shadow: inset -.3rem -.1rem 1.4rem  #FBFBFB, inset .3rem .4rem .8rem #BEC5D0; 
     cursor: pointer;
 }
+
+/* 메시지 */
+.game-board-turn-message{
+  position: absolute;
+  z-index: 1003;
+  color: white;
+  font-size: 50px;
+  top: 150px;
+  left: 500px;
+}
+
+.game-board-timer{
+  position: absolute;
+  color: black;
+  font-size: 100px;
+  font-weight: 900;
+  top: 30px;
+  right: 410px;
+}
+
+.game-board-timer-five{
+  color: red;
+}
 /* @keyframes throwEffect {
   0% {
     transform: rotate(0deg) scaleY(1);

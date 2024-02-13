@@ -1,6 +1,17 @@
 <template>
   <div class="game-board">
+    <!-- 방향 전환 시 모달로 선택 -->
     <GameModal />
+    <!-- 차례 메시지  -->
+    <span v-if="isShowTurnMessage" class="game-board-turn-message">{{
+      turnMessage
+    }}</span>
+    <!-- 타이머 -->
+    <span
+      class="game-board-timer"
+      :class="{ 'game-board-timer-five': timerCheck <= 5 }"
+      >{{ timerCheck }}</span
+    >
     <div class="game-board-tile">
       <!-- 윷 던진 결과 -->
       <div class="game-yut-res" v-show="isShowRes">
@@ -112,16 +123,35 @@ export default {
       const gameStore = useGameStore();
       return gameStore.isThrowYut && gameStore.throwChance > 0 ? true : false;
     },
+    // 타이머 체크
     timerCheck() {
       const gameStore = useGameStore();
       if (gameStore.timer === 0 && gameStore.isThrowYut) {
-        this.moveHorse();
+        // 말 선택
+        if (this.canSelectHorse) {
+          this.randomHorse();
+        }
+        // 윷 던지기
+        else {
+          this.moveHorse();
+        }
       }
       return gameStore.timer;
     },
+    // 방 코드
     roomCode() {
       const userStore = useUserStore();
       return "720ca5";
+    },
+    // 차례 메시지
+    turnMessage() {
+      const gameStore = useGameStore();
+      return gameStore.turnMessage;
+    },
+    // 차례 메시지 Flag
+    isShowTurnMessage() {
+      const gameStore = useGameStore();
+      return gameStore.isShowTurnMessage;
     },
   },
   methods: {
@@ -219,6 +249,7 @@ export default {
           break;
         }
       }
+      gameStore.startTimer();
     },
 
     // 윷 결과를 받아 왔을 때.
@@ -246,7 +277,6 @@ export default {
         this.isShowRes = false;
         this.isShowResText = false;
       }, 3500);
-      console.log("받은 윷 결과 : " + gameStore.yutRes);
       // 만약 아무 말도 안나갔는데 백도가 나오면 그냥 넘어간다.
       if (gameStore.yutRes == -1) {
         if (
@@ -254,17 +284,19 @@ export default {
           gameStore.redHorses[4].check == 4 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
         ) {
-          console.log("백도 끝");
-          gameStore.turnChange();
-          return;
+          setTimeout(() => {
+            gameStore.turnChange();
+            return;
+          }, 3500);
         } else if (
           receivedMsg.team == 2 &&
           gameStore.blueHorses[4].check == 4 - gameStore.blueEnd &&
           gameStore.redHorses[4].index === 0
         ) {
-          console.log("백도 끝");
-          gameStore.turnChange();
-          return;
+          setTimeout(() => {
+            gameStore.turnChange();
+            return;
+          }, 3500);
         }
       }
     },
@@ -316,28 +348,32 @@ export default {
           gameStore.redHorses[4].check == 4 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
         ) {
-          console.log("백도 끝");
-          gameStore.turnChange();
-          return;
+          setTimeout(() => {
+            gameStore.turnChange();
+            return;
+          }, 3500);
         } else if (
           gameStore.myTeam == 2 &&
           gameStore.blueHorses[4].check == 4 - gameStore.blueEnd &&
           gameStore.redHorses[4].index === 0
         ) {
-          console.log("백도 끝");
-          gameStore.turnChange();
-          return;
+          setTimeout(() => {
+            gameStore.turnChange();
+            return;
+          }, 3500);
         }
       }
       // 윷 결과가 나오고 나서 부터 선택가능하다.
       setTimeout(() => {
         gameStore.isSelect = true;
         this.canSelectHorse = true;
+        // 타이머 다시 시작.
+        gameStore.startTimer();
         // 윷 먼저 던지고 선택할때까지 기다린다.
         this.$watch("isSelectedHorse", () => {
           // 선택을 하였다면.
           if (this.isSelectedHorse) {
-            console.log("소켓 보내기 전")
+            console.log("소켓 보내기 전");
             console.log(this.selectedHorse);
             // 소켓 전송
             msg = {
@@ -351,11 +387,55 @@ export default {
             this.isSelectedHorse = false;
             this.canSelectHorse = false;
             gameStore.isSelect = false;
-
           }
         });
-      }, 2000);
+      }, 3500);
       // 말이 이동하고 미션장소인지 아닌지 체크 후 타이머 시작.
+    },
+    // 제한시간동안 말 선택이 없으면 랜덤으로 선택
+    randomHorse() {
+      const gameStore = useGameStore();
+      while (true) {
+        let random = Math.floor(Math.random() * 5);
+        // 홍팀 차례면.
+        if (!gameStore.teamTurn) {
+          if (gameStore.redHorses[random] !== "end") {
+            if (
+              gameStore.redHorses[random] === "wait" &&
+              gameStore.yutRes === -1
+            ) {
+              continue;
+            }
+            if ([5, 10].includes(gameStore.redHorses[random].index)) {
+              gameStore.isGoDiagonal = true;
+            } else if ([22, 27].includes(gameStore.redHorses[random].index)) {
+              gameStore.isCenterDir = true;
+            }
+          }
+          this.selectedHorse = gameStore.redHorses[random];
+          this.isSelectedHorse = true;
+          break;
+        }
+        // 청팀
+        else {
+          if (gameStore.blueHorses[random] !== "end") {
+            if (
+              gameStore.blueHorses[random] === "wait" &&
+              gameStore.yutRes === -1
+            ) {
+              continue;
+            }
+            if ([5, 10].includes(gameStore.blueHorses[random].index)) {
+              gameStore.isGoDiagonal = true;
+            } else if ([22, 27].includes(gameStore.blueHorses[random].index)) {
+              gameStore.isCenterDir = true;
+            }
+          }
+          this.selectedHorse = gameStore.blueHorses[random];
+          this.isSelectedHorse = true;
+          break;
+        }
+      }
     },
     // 말 선택시 이벤트 받기
     selectHorse(horse) {
