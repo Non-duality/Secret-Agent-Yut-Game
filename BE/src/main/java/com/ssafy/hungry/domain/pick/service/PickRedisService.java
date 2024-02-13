@@ -181,6 +181,7 @@ public class PickRedisService {
             List<CurrentUserPickDto> currentUserPickDtoList = pickRedisRepository.getCurrentUserPickInfo(key, 3, 5);
 
             int pickId = 0;
+            log.info("청팀 유저 픽 정보 : " + currentUserPickDtoList.toString());
             for (CurrentUserPickDto userPick : currentUserPickDtoList) {
                 if (!userPick.isPick()) {
                     pickId = userPick.getUserId();
