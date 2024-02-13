@@ -54,6 +54,7 @@ export default {
       return false;
     },
   },
+
   methods:{
     redWin(){
       this.winMessage = 1;
@@ -66,6 +67,11 @@ export default {
     closeModal(){
       this.$router.push({ name: 'home' });
     },
+  },
+
+  // 여기서 로딩창 + 게임 
+  mounted(){
+
   },
 };
 </script>

@@ -529,7 +529,7 @@ export function initPick(router, from) {
       // 양 팀 모두 밀정 픽 성공했다면, 게임 START을 알림.
       else if (usePickStore().receivedMessage.type === "GAME_START") {
         setTimeout(() => {
-          alert("게임 스타트!!")
+          console.log("두 팀 모두 픽 완료!!")
         }, 500);
       }
     }

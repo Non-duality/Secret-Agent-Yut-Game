@@ -121,7 +121,6 @@ import cavalry from "@/assets/img/game/pick/cavalry.png";
 import peasant from "@/assets/img/game/pick/peasant.png";
 import slave from "@/assets/img/game/pick/slave.png";
 import spearman from "@/assets/img/game/pick/spearman.png";
-import WaitSpyPickVue from "@/components/game/pick/WaitSpyPick.vue";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
