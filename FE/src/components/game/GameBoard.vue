@@ -160,19 +160,16 @@ export default {
       const gameStore = useGameStore();
       if (receivedMsg.actionCategory === 0) {
         this.setInfo(receivedMsg);
-      }
-      else if(receivedMsg.actionCategory === 1 && !gameStore.isThrowYut){
-          this.receiveYutRes(receivedMsg);
-      }
-      else if(receivedMsg.actionCategory === 2){
-          // 말 이동.
-          this.receiveSelectHorse(receivedMsg);
+      } else if (receivedMsg.actionCategory === 1 && !gameStore.isThrowYut) {
+        this.receiveYutRes(receivedMsg);
+      } else if (receivedMsg.actionCategory === 2) {
+        // 말 이동.
+        this.receiveSelectHorse(receivedMsg);
 
-          // boolean값들 초기화.
-          this.isSelectedHorse = false;
-          this.canSelectHorse = false;
-          gameStore.isSelect = false;
-
+        // boolean값들 초기화.
+        this.isSelectedHorse = false;
+        this.canSelectHorse = false;
+        gameStore.isSelect = false;
       }
     },
     // 초기 정보 저장
@@ -187,9 +184,21 @@ export default {
         gameStore.redHorses[i].name = receivedMsg.redTeamUnitList[i].name;
         gameStore.redHorses[i].age = receivedMsg.redTeamUnitList[i].age;
         gameStore.redHorses[i].skill = receivedMsg.redTeamUnitList[i].skill;
+        gameStore.redHorses[i].id = i+1;
+        gameStore.redHorses[i].index = 0;
+        gameStore.redHorses[i].team = 1;
+        gameStore.redHorses[i].status = "wait";
+        gameStore.redHorses[i].check = i;
+        gameStore.redHorses[i].endOrder = 0;
         gameStore.blueHorses[i].name = receivedMsg.blueTeamUnitList[i].name;
         gameStore.blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
         gameStore.blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
+        gameStore.blueHorses[i].id = i+1;
+        gameStore.blueHorses[i].index = 0;
+        gameStore.blueHorses[i].team = 1;
+        gameStore.blueHorses[i].status = "wait";
+        gameStore.blueHorses[i].check = i;
+        gameStore.blueHorses[i].endOrder = 0;
       }
       gameStore.redUser = receivedMsg.redTeamUserList;
       gameStore.blueUser = receivedMsg.blueTeamUserList;
@@ -241,7 +250,7 @@ export default {
           gameStore.redHorses[4].check == 4 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
         ) {
-          console.log("백도 끝")
+          console.log("백도 끝");
           gameStore.turnChange();
           return;
         } else if (
@@ -249,7 +258,7 @@ export default {
           gameStore.blueHorses[4].check == 4 - gameStore.blueEnd &&
           gameStore.redHorses[4].index === 0
         ) {
-          console.log("백도 끝")
+          console.log("백도 끝");
           gameStore.turnChange();
           return;
         }
@@ -260,20 +269,7 @@ export default {
       const gameStore = useGameStore();
       gameStore.isGoDiagonal = receivedMsg.goDiagonal;
       gameStore.isCenterDir = receivedMsg.centerDir;
-      // 홍팀
-      if (receivedMsg.team === 1) {
-        console.log(
-          "받은 말 : " + gameStore.redHorses[receivedMsg.unitIndex - 1].team
-        );
-        gameStore.moveHorse(gameStore.redHorses[receivedMsg.unitIndex - 1]);
-      }
-      // 청팀
-      else {
-        console.log(
-          "받은 말 : " + gameStore.blueHorses[receivedMsg.unitIndex - 1].team
-        );
-        gameStore.moveHorse(gameStore.blueHorses[receivedMsg.unitIndex - 1]);
-      }
+      gameStore.moveHorse(receivedMsg);
     },
     //pub/game/{code}/start
     // 윷 던지기
@@ -319,7 +315,7 @@ export default {
           gameStore.redHorses[4].check == 4 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
         ) {
-          console.log("백도 끝")
+          console.log("백도 끝");
           gameStore.turnChange();
           return;
         } else if (
@@ -327,7 +323,7 @@ export default {
           gameStore.blueHorses[4].check == 4 - gameStore.blueEnd &&
           gameStore.redHorses[4].index === 0
         ) {
-          console.log("백도 끝")
+          console.log("백도 끝");
           gameStore.turnChange();
           return;
         }

@@ -277,8 +277,8 @@ export const useGameStore = defineStore("game", {
 
       const horseInfo =
         selectedHorse.team === 1
-          ? this.redHorses.find((horse) => horse.id === selectedHorse.id)
-          : this.blueHorses.find((horse) => horse.id === selectedHorse.id);
+          ? this.redHorses.find((horse) => horse.id === selectedHorse.unitIndex)
+          : this.blueHorses.find((horse) => horse.id === selectedHorse.unitIndex);
 
       // 말의 능력.
       if (horseInfo.name === "기병") {
@@ -316,7 +316,7 @@ export const useGameStore = defineStore("game", {
         target > 24 &&
         target === horseInfo.index + this.yutRes
       )
-        target -= 10;
+        target -= 10; q
       if (horseInfo.index == 27 && this.isCenterDir && target > 24)
         target -= 10;
 
@@ -655,7 +655,7 @@ export const useGameStore = defineStore("game", {
         case -1:
           this.yutText = "백도";
           break;
-        case 0:
+        case 5:
           this.yutText = "모";
           break;
         case 1:
