@@ -23,7 +23,6 @@ public class UnitEntity {
     private int id;
 
     private String name;
-    private int age;
     private String skill;
 
 

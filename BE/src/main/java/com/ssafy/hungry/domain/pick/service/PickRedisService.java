@@ -83,7 +83,6 @@ public class PickRedisService {
             CurrentUnitPickDto unitPickDto = CurrentUnitPickDto.builder()
                     .unitId(unit.getId())
                     .name(unit.getName())
-                    .age(unit.getAge())
                     .skill(unit.getSkill())
                     .isPick(false)
                     .build();
@@ -101,7 +100,6 @@ public class PickRedisService {
             CurrentUnitPickDto unitPickDto = CurrentUnitPickDto.builder()
                     .unitId(unit.getId())
                     .name(unit.getName())
-                    .age(unit.getAge())
                     .skill(unit.getSkill())
                     .isPick(false)
                     .build();

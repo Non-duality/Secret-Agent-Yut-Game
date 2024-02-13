@@ -21,7 +21,6 @@ public class EventController {
     private final SimpMessagingTemplate messagingTemplate;
     private final SessionRepository sessionRepository;
     private final PrincipalRepository principalRepository;
-    private final UserRepository userRepository;
     private final FriendService friendService;
 
     @MessageMapping("/event")
@@ -36,8 +35,10 @@ public class EventController {
     public void login(Principal uuid, EventDto dto){
         //principal 정보로 redis에서 이메일 정보 가져오기
         String email = principalRepository.findById(uuid.getName()).get().getEmail();
+
         //이메일 정보로 친구목록 불러오기
         List<MyFriendDto> myFriendDtoList = friendService.myFriend(email);
+
         //친구 목록에 있는 유저에게 로그인 이벤트 전송
         for(MyFriendDto myFriendDto : myFriendDtoList){
             StompPrincipal principal = new StompPrincipal(sessionRepository.findById(myFriendDto.getEmail()).get().getStompPrincipal().getName());
@@ -49,14 +50,14 @@ public class EventController {
     public void logout(Principal uuid, EventDto dto){
         //principal 정보로 redis에서 이메일 정보 가져오기
         String email = principalRepository.findById(uuid.getName()).get().getEmail();
+
         //이메일 정보로 친구목록 불러오기
         List<MyFriendDto> myFriendDtoList = friendService.myFriend(email);
+
         //친구 목록에 있는 유저에게 로그인 이벤트 전송
         for(MyFriendDto myFriendDto : myFriendDtoList){
             StompPrincipal principal = new StompPrincipal(sessionRepository.findById(myFriendDto.getEmail()).get().getStompPrincipal().getName());
             messagingTemplate.convertAndSendToUser(principal.getName(), "sub/event", dto);
         }
     }
-
-
 }
