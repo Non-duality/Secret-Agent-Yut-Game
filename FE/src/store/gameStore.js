@@ -6,6 +6,7 @@ export const useGameStore = defineStore("game", {
   state: () => {
     return {
       // 타이머
+      timerId: null,
       timer: 20,
       // 내 팀 정보. 1 == 홍 2 == 청
       myTeam: 1,
@@ -21,7 +22,7 @@ export const useGameStore = defineStore("game", {
       isThrowYut: false,
       // 들어온 말의 개수.
       redEnd: 0,
-      blueEnd: 34,
+      blueEnd: 0,
       isHorseEnd: false,
       // 윷 던진 결과
       throwRes: [false, false, false, false],
@@ -45,7 +46,16 @@ export const useGameStore = defineStore("game", {
       mySpyId: 0,
       // 다음 차례 메시지.
       turnMessage: "",
+      redTurnName: "",
+      blueTurnName: "",
       isShowTurnMessage: false,
+      // 추리권
+      isShowReasoning: false,
+      reasoningChoose: null,
+      ticket: 0,
+      ticketTemp: 0,
+      // 몇라운드마다 티켓을 얻을 지
+      gameSpeed: 0,
       // 말
       redHorses: [
         {
@@ -288,7 +298,7 @@ export const useGameStore = defineStore("game", {
 
       // 말의 능력.
       if (horseInfo.name === "기병") {
-        if(this.yutRes === -1){
+        if (this.yutRes === -1) {
           // 여기를 고민해보다 뒤로 갈때 하나 더 뒤로 갈까...
         }
         this.yutRes += 1;
@@ -424,12 +434,26 @@ export const useGameStore = defineStore("game", {
     turnChange() {
       // 홍팀이였다면,.
       if (!this.teamTurn) {
+        if (this.myTeam === 1) {
+          this.ticketTemp++;
+          if (this.ticketTemp === this.gameSpeed) {
+            this.ticketTemp = 0;
+            this.ticket++;
+          }
+        }
         this.turn[0]++;
         if (this.turn[0] > 2) this.turn[0] = 0;
         this.teamTurn = true;
       }
       // 청팀이면.
       else {
+        if (this.myTeam === 2) {
+          this.ticketTemp++;
+          if (this.ticketTemp === this.gameSpeed) {
+            this.ticketTemp = 0;
+            this.ticket++;
+          }
+        }
         this.turn[1]++;
         if (this.turn[1] > 2) this.turn[1] = 0;
         this.teamTurn = false;
@@ -440,6 +464,10 @@ export const useGameStore = defineStore("game", {
         (!this.teamTurn
           ? this.redUser[this.turn[0]].nickname
           : this.blueUser[this.turn[1]].nickname) + "님 차례입니다.";
+
+      // 팀당 다음 차례 닉네임.
+      this.redTurnName = this.redUser[this.turn[0]].nickname;
+      this.blueTurnName = this.blueUser[this.turn[0]].nickname;
 
       // 약간의 여유를 준다.
       setTimeout(() => {
@@ -462,21 +490,31 @@ export const useGameStore = defineStore("game", {
           }
         }
         this.throwChance = 1;
-        this.startTimer();
+
+        // 여기서 추리를 할건지 윷을 던질건지 선택한다.
+        // 티켓이 하나 이상은 있어야 한다.
+        if (this.ticket > 0) {
+          this.isShowReasoning = true;
+          // 여기에 추리 모달 결과 작성.
+        }else{
+          this.startTimer();
+        }
+        
       }, 5000);
       // 팀 차례 바꿈.
       // this.teamTurn != this.teamTurn;
     },
-    
+
     // 타이머 함수
-    startTimer(){
+    startTimer() {
       this.timer = 20;
-      const timerId = setInterval(() => {
+      this.timerId = setInterval(() => {
         this.timer--;
-        if(this.timer <= 0){
-          clearInterval(timerId);
+        if (this.timer <= 0) {
+          clearInterval(this.timerId);
+          this.timerId = null;
         }
-      },1000);
+      }, 1000);
     },
 
     // 이동하는 곳에 다른 말이 있나 체크.
@@ -640,6 +678,8 @@ export const useGameStore = defineStore("game", {
     // 윷 던지기
     yutThrow() {
       // 던지기 1회 차감.
+      clearInterval(this.timerId);
+      this.timerId = null;
       this.throwChance--;
       // 총 4번의 랜덤을 발생
       // false가 뒤집어 진거
@@ -692,6 +732,8 @@ export const useGameStore = defineStore("game", {
       console.log("res = " + this.yutRes);
     },
     setYutText(res) {
+      clearInterval(this.timerId);
+      this.timerId = null;
       this.throwChance--;
       switch (res) {
         case -1:

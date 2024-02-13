@@ -1,7 +1,11 @@
 <template>
   <div class="game-board">
     <!-- 방향 전환 시 모달로 선택 -->
-    <GameModal />
+    <GameModal
+      class="game-board-modal"
+      v-if="isShowReasoning || isShowGoDig"
+      :modalType="modalType"
+    />
     <!-- 차례 메시지  -->
     <span v-if="isShowTurnMessage" class="game-board-turn-message">{{
       turnMessage
@@ -12,6 +16,12 @@
       :class="{ 'game-board-timer-five': timerCheck <= 5 }"
       >{{ timerCheck }}</span
     >
+    <!-- 팀당 다음차례 -->
+    <div class="game-board-team-turn">
+      <span class="game-board-team-turn-title">다음 차례</span>
+      <span class="game-board-team-turn-red">홍팀 : {{ redTurnName }}</span>
+      <span class="game-board-team-turn-blue">청팀 : {{ blueTurnName }}</span>
+    </div>
     <div class="game-board-tile">
       <!-- 윷 던진 결과 -->
       <div class="game-yut-res" v-show="isShowRes">
@@ -99,6 +109,7 @@ export default {
       goModalText1: "",
       goModalText2: "",
       recvList: [],
+      // 모달 타입 1=> 대각선 2=> 가운데 방향 3=> 추리.
       modalType: null,
     };
   },
@@ -153,6 +164,24 @@ export default {
       const gameStore = useGameStore();
       return gameStore.isShowTurnMessage;
     },
+    // 홍팀 차례
+    redTurnName() {
+      const gameStore = useGameStore();
+      return gameStore.redTurnName;
+    },
+    // 청팀 차례
+    blueTurnName() {
+      const gameStore = useGameStore();
+      return gameStore.blueTurnName;
+    },
+    // 추리 선택 모달 Flag
+    isShowReasoning() {
+      const gameStore = useGameStore();
+      if (gameStore.isShowReasoning) {
+        this.modalType = 3;
+      }
+      return gameStore.isShowReasoning;
+    },
   },
   methods: {
     leave(event) {
@@ -181,7 +210,7 @@ export default {
         connect("red", userStore.accessToken, this.handleRecvMessage);
       }
       setTimeout(() => {
-        this.sendStart();
+        if (gameStore.redUser.length === 0) this.sendStart();
       }, 2000);
     },
     // 받아오기.
@@ -208,6 +237,7 @@ export default {
       console.log(receivedMsg);
       const gameStore = useGameStore();
       const userStore = useUserStore();
+      // 우리팀의 스파이
       gameStore.mySpyId = receivedMsg.mySpyUnitId;
 
       for (let i = 0; i <= 30; i++) {
@@ -249,12 +279,21 @@ export default {
           break;
         }
       }
+      // 차례 닉네임
+      gameStore.redTurnName = receivedMsg.redTeamUserList[0].nickname;
+      gameStore.blueTurnName = receivedMsg.blueTeamUserList[0].nickname;
+      gameStore.ticket = 0;
+      // 라운드
+      gameStore.gameSpeed = receivedMsg.gameSpeed;
+      // 미션 타일
+      // gameStore.missionTiles = receivedMsg.missionRegion;
       gameStore.startTimer();
     },
 
     // 윷 결과를 받아 왔을 때.
     receiveYutRes(receivedMsg) {
       const gameStore = useGameStore();
+      clearInterval(gameStore.timerId);
       gameStore.yutRes = receivedMsg.yutRes;
       gameStore.throwRes = receivedMsg.throwRes;
       gameStore.setYutText(receivedMsg.yutRes);
@@ -303,6 +342,7 @@ export default {
     // 말 선택 결과를 받아 왔을 때.
     receiveSelectHorse(receivedMsg) {
       const gameStore = useGameStore();
+      clearInterval(gameStore.timerId);
       gameStore.isGoDiagonal = receivedMsg.goDiagonal;
       gameStore.isCenterDir = receivedMsg.centerDir;
       gameStore.moveHorse(receivedMsg);
@@ -373,6 +413,7 @@ export default {
         this.$watch("isSelectedHorse", () => {
           // 선택을 하였다면.
           if (this.isSelectedHorse) {
+            clearInterval(gameStore.timerId);
             console.log("소켓 보내기 전");
             console.log(this.selectedHorse);
             // 소켓 전송
