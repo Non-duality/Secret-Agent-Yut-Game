@@ -528,7 +528,7 @@ export default {
       (newValue) => {
         this.showWaitModal = false;
 
-        if (usePickStore().isLeader) this.showSpyModal = true;
+        if (this.isLeader) this.showSpyModal = true;
         else this.showWaitSpyPickModal = true;
       }
     );
@@ -536,7 +536,7 @@ export default {
     watch(
       () => pickStore.pickSpyWait,
       (newValue) => {
-        if (usePickStore().isLeader) this.showSpyModal = false;
+        if (this.isLeader) this.showSpyModal = false;
         else this.showWaitSpyPickModal = false;
 
         this.showWaitSpyOppModal = true;
