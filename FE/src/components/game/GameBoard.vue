@@ -180,7 +180,7 @@ export default {
       const userStore = useUserStore();
       gameStore.mySpyId = receivedMsg.mySpyUnitId;
 
-      for(let i=0;i<=30;i++){
+      for (let i = 0; i <= 30; i++) {
         gameStore.tiles[i].horse = [];
       }
 
@@ -188,7 +188,7 @@ export default {
         gameStore.redHorses[i].name = receivedMsg.redTeamUnitList[i].name;
         gameStore.redHorses[i].age = receivedMsg.redTeamUnitList[i].age;
         gameStore.redHorses[i].skill = receivedMsg.redTeamUnitList[i].skill;
-        gameStore.redHorses[i].id = i+1;
+        gameStore.redHorses[i].id = i + 1;
         gameStore.redHorses[i].index = 0;
         gameStore.redHorses[i].team = 1;
         gameStore.redHorses[i].status = "wait";
@@ -197,7 +197,7 @@ export default {
         gameStore.blueHorses[i].name = receivedMsg.blueTeamUnitList[i].name;
         gameStore.blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
         gameStore.blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
-        gameStore.blueHorses[i].id = i+1;
+        gameStore.blueHorses[i].id = i + 1;
         gameStore.blueHorses[i].index = 0;
         gameStore.blueHorses[i].team = 2;
         gameStore.blueHorses[i].status = "wait";
@@ -279,9 +279,6 @@ export default {
     // 윷 던지기
     moveHorse() {
       const gameStore = useGameStore();
-      // console.log("팀턴 : " + gameStore.teamTurn);
-      // console.log("턴 : " + gameStore.turn);
-      // console.log("체크 : " + gameStore.isThrowYut);
       // 내가 던질 차례인가 체크.
       if (!this.isThrowYut) {
         return;
@@ -340,6 +337,8 @@ export default {
         this.$watch("isSelectedHorse", () => {
           // 선택을 하였다면.
           if (this.isSelectedHorse) {
+            console.log("소켓 보내기 전")
+            console.log(this.selectedHorse);
             // 소켓 전송
             msg = {
               unitIndex: this.selectedHorse.id,
