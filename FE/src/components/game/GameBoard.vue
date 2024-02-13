@@ -195,7 +195,7 @@ export default {
         gameStore.blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
         gameStore.blueHorses[i].id = i+1;
         gameStore.blueHorses[i].index = 0;
-        gameStore.blueHorses[i].team = 1;
+        gameStore.blueHorses[i].team = 2;
         gameStore.blueHorses[i].status = "wait";
         gameStore.blueHorses[i].check = i;
         gameStore.blueHorses[i].endOrder = 0;
