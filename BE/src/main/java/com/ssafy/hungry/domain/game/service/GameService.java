@@ -278,43 +278,43 @@ public class GameService {
         List<UserInfo> blueTeamUserList = new ArrayList<>();
 
         UserInfo userInfo1 = UserInfo.builder()
-                .email("non_duality@naver.com")
-                .nickname("주니")
+                .email("1")
+                .nickname("테스트1")
                 .profileImgUrl("")
                 .build();
         redTeamUserList.add(userInfo1);
 
         UserInfo userInfo2 = UserInfo.builder()
-                .email("123")
-                .nickname("이희웅")
+                .email("2")
+                .nickname("테스트2")
                 .profileImgUrl("")
                 .build();
         redTeamUserList.add(userInfo2);
 
         UserInfo userInfo3 = UserInfo.builder()
-                .email("user1")
-                .nickname("테스트1")
+                .email("3")
+                .nickname("테스트3")
                 .profileImgUrl("")
                 .build();
         redTeamUserList.add(userInfo3);
 
         UserInfo userInfo4 = UserInfo.builder()
-                .email("user2")
-                .nickname("테스트2")
+                .email("4")
+                .nickname("테스트5")
                 .profileImgUrl("")
                 .build();
         blueTeamUserList.add(userInfo4);
 
         UserInfo userInfo5 = UserInfo.builder()
-                .email("user3")
-                .nickname("테스트3")
+                .email("5")
+                .nickname("테스트5")
                 .profileImgUrl("")
                 .build();
         blueTeamUserList.add(userInfo5);
 
         UserInfo userInfo6 = UserInfo.builder()
-                .email("user4")
-                .nickname("테스트4")
+                .email("123")
+                .nickname("이희웅")
                 .profileImgUrl("")
                 .build();
         blueTeamUserList.add(userInfo6);
