@@ -140,7 +140,12 @@ export default {
     // 연결
     connectSocket() {
       const userStore = useUserStore();
-      connect("red", userStore.accessToken, this.handleRecvMessage);
+      // 테스트
+      if (["4", "5", "123"].includes(userStore.userInfo.email)) {
+        connect("blue", userStore.accessToken, this.handleRecvMessage);
+      } else {
+        connect("red", userStore.accessToken, this.handleRecvMessage);
+      }
       setTimeout(() => {
         this.sendStart();
       }, 2000);
@@ -212,7 +217,7 @@ export default {
         this.isShowRes = false;
         this.isShowResText = false;
       }, 3500);
-
+      console.log("받은 윷 결과 : " + gameStore.yutRes);
       // 만약 아무 말도 안나갔는데 백도가 나오면 그냥 넘어간다.
       if (gameStore.yutRes == -1) {
         if (
@@ -237,10 +242,12 @@ export default {
       // 홍팀
       if (!gameStore.teamTurn) {
         gameStore.moveHorse(gameStore.redHorses[receivedMsg.unitIndex]);
+        console.log("받은 말 : " + gameStore.redHorses[receivedMsg.unitIndex])
       }
       // 청팀
       else {
         gameStore.moveHorse(gameStore.blueHorses[receivedMsg.unitIndex]);
+        console.log("받은 말 : " + gameStore.blueHorses[receivedMsg.unitIndex])
       }
     },
     //pub/game/{code}/start

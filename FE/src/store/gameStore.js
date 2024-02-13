@@ -18,7 +18,7 @@ export const useGameStore = defineStore("game", {
       // 내 차례
       myTurn: 0,
       // 윷을 던질 수 있는가. 내 턴인가.
-      isThrowYut: true,
+      isThrowYut: false,
       // 들어온 말의 개수.
       redEnd: 0,
       blueEnd: 0,
