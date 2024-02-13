@@ -631,6 +631,9 @@ export const useGameStore = defineStore("game", {
     },
     setYutText(res) {
       switch (res) {
+        case -1:
+          this.yutText = "백도";
+          break;
         case 0:
           this.yutText = "모";
           break;
