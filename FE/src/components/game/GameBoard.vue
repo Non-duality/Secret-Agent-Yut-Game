@@ -29,9 +29,14 @@
       @selectHorse="selectHorse"
     />
 
-    <!-- :disabled="!isThrowYut" -->
     <!-- 버튼 임시 -->
-    <button class="game-board-throw-btn" @click="moveHorse">던지기</button>
+    <button
+      class="game-board-throw-btn"
+      @click="moveHorse"
+      :disabled="!isThrowYut"
+    >
+      던지기
+    </button>
     <button
       v-if="isShowGoDig"
       @click="goDigYes"
@@ -105,7 +110,7 @@ export default {
     // 턴 체크.
     isThrowYut() {
       const gameStore = useGameStore();
-      return gameStore.isThrowYut;
+      return gameStore.throwChance > 0 ? true : false;
     },
     timerCheck() {
       const gameStore = useGameStore();
@@ -152,10 +157,11 @@ export default {
     // 받아오기.
     handleRecvMessage(receivedMsg) {
       console.log(receivedMsg);
+      const gameStore = useGameStore();
       if (receivedMsg.actionCategory === 0) {
         this.setInfo(receivedMsg);
       }
-      if (!this.isThrowYut) {
+      if (!gameStore.isThrowYut) {
         console.log(receivedMsg.actionCategory);
         if (receivedMsg.actionCategory === 1) {
           this.receiveYutRes(receivedMsg);
@@ -164,7 +170,6 @@ export default {
         }
       } else {
         if (receivedMsg.actionCategory === 2) {
-          const gameStore = useGameStore();
           // 말 이동.
           gameStore.moveHorse(this.selectedHorse);
 
