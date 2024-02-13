@@ -505,8 +505,6 @@ export function initPick(router, from) {
 
       // 자신의 팀 픽만 끝났다면, 대기 모달 띄우기
       else if (usePickStore().receivedMessage.type === "PICK_WAIT") {
-        console.log("한 팀이 아직 픽 대기중");
-
         setTimeout(() => {
           usePickStore().pickFinished = !usePickStore().pickFinished;
         }, 500);
@@ -514,10 +512,22 @@ export function initPick(router, from) {
 
       // 양 팀 모두 픽 성공했다면, 스파이 모달창 띄우기
       else if (usePickStore().receivedMessage.type === "PICK_SELECT_SPY") {
-        console.log("모두 픽 성공");
-
         setTimeout(() => {
           usePickStore().pickRealFinished = !usePickStore().pickRealFinished;
+        }, 1000);
+      }
+
+      // 자신의 팀 밀정 픽만 끝났다면, 대기 모달 띄우기
+      else if (usePickStore().receivedMessage.type === "PICK_SPY_WAIT") {
+        setTimeout(() => {
+          usePickStore().pickSpyWait = !usePickStore().pickSpyWait;
+        }, 1000);
+      }
+
+      // 양 팀 모두 밀정 픽 성공했다면, 게임 START을 알림.
+      else if (usePickStore().receivedMessage.type === "GAME_START") {
+        setTimeout(() => {
+          alert("게임 스타트!!")
         }, 500);
       }
     }

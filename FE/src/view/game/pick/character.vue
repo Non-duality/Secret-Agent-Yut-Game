@@ -9,10 +9,15 @@
     </transition>
 
     <transition name="fade"
-      ><spyModal
-        v-if="showSpyModal"
-        @close-modal="closeModal"
-        class="spy-modal"
+      ><spyModal v-if="showSpyModal" @close-modal="closeModal"
+    /></transition>
+
+    <transition name="fade"
+      ><WaitSpyOpp v-if="showWaitSpyOppModal" @close-modal="closeModal"
+    /></transition>
+
+    <transition name="fade"
+      ><WaitSpyPick v-if="showWaitSpyPickModal" @close-modal="closeModal"
     /></transition>
 
     <div class="timer">{{ nowRemainTime }}</div>
@@ -100,6 +105,8 @@ import { watch } from "vue";
 import spyModal from "@/components/game/pick/Spy.vue";
 import Loading from "@/components/game/pick/Loading.vue";
 import Wait from "@/components/game/pick/Wait.vue";
+import WaitSpyPick from "@/components/game/pick/WaitSpyPick.vue";
+import WaitSpyOpp from "@/components/game/pick/WaitSpyOpp.vue";
 
 import { useUserStore } from "@/store/userStore";
 import { usePickStore } from "@/store/pickStore";
@@ -114,6 +121,7 @@ import cavalry from "@/assets/img/game/pick/cavalry.png";
 import peasant from "@/assets/img/game/pick/peasant.png";
 import slave from "@/assets/img/game/pick/slave.png";
 import spearman from "@/assets/img/game/pick/spearman.png";
+import WaitSpyPickVue from "@/components/game/pick/WaitSpyPick.vue";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -122,6 +130,8 @@ export default {
     spyModal,
     Loading,
     Wait,
+    WaitSpyPick,
+    WaitSpyOpp,
     UserVideo,
   },
 
@@ -162,14 +172,16 @@ export default {
 
       showReadyBtn: false,
       showStartModal: true,
-      showWaitModal: false,
       showSpyModal: false,
+      showWaitModal: false,
+      showWaitSpyPickModal: false,
+      showWaitSpyOppModal: false,
+
+      isLeader: false,
     };
   },
 
-  created(){
-    
-  },
+  created() {},
 
   setup() {
     const store = useUserStore();
@@ -515,7 +527,19 @@ export default {
       () => pickStore.pickRealFinished,
       (newValue) => {
         this.showWaitModal = false;
-        this.showSpyModal = true;
+
+        if (usePickStore().isLeader) this.showSpyModal = true;
+        else this.showWaitSpyPickModal = true;
+      }
+    );
+
+    watch(
+      () => pickStore.pickSpyWait,
+      (newValue) => {
+        if (usePickStore().isLeader) this.showSpyModal = false;
+        else this.showWaitSpyPickModal = false;
+
+        this.showWaitSpyOppModal = true;
       }
     );
 
@@ -583,6 +607,10 @@ export default {
 
           // 만약 현재 자신의 턴이라면
           if (this.getIsMyTurn) {
+            if (i === 0) this.isLeader = true;
+
+            console.log(this.isLeader);
+
             let idx = -1;
             let selectedCharacterName = null;
 
@@ -629,7 +657,6 @@ export default {
         }
 
         // 1초 뒤 현재 상황 대기
-        // await this.delay2(500);
       }, 1000 * (4 - myTurnNumber));
     }, 50);
   },
