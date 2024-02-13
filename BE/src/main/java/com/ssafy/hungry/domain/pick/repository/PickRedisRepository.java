@@ -56,7 +56,7 @@ public class PickRedisRepository {
 
     // redis에 우리팀이 픽한 상대팀의 밀정 유닛 아이디를 저장
     public void saveSpyPickToRedis(String key, String team, int unitId){
-        redisTemplate.opsForHash().put(key, team, unitId);
+        redisTemplate.opsForHash().put(key, team, String.valueOf(unitId));
     }
 
     // userPick을 redis에 지우고 다시 저장하기
