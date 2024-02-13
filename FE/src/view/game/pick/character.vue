@@ -1,17 +1,34 @@
 <template>
   <div class="background">
-    <div class="timer">{{ remainingTime }}</div>
+    <transition name="fade">
+      <Loading v-if="showStartModal" @close-modal="closeModal" />
+    </transition>
+
+    <transition name="fade">
+      <Wait v-if="showWaitModal" @close-modal="closeModal" />
+    </transition>
+
+    <transition name="fade"
+      ><spyModal
+        v-if="showSpyModal"
+        @close-modal="closeModal"
+        class="spy-modal"
+    /></transition>
+
+    <div class="timer">{{ nowRemainTime }}</div>
     <div class="content">
       <!-- (시작) OpenVidu -->
       <div id="main-container" class="container">
         <div id="session" v-if="session">
-          <!-- 카메라 영역 -->
+          <!-- (시작) 카메라 영역 -->
           <div class="rtc-container">
             <div id="video-container">
               <user-video
                 :stream-manager="publisher"
                 @click="updateMainVideoStreamManager(publisher)"
+                :nickname="currentUserNickname"
               />
+
               <user-video
                 v-for="sub in subscribers"
                 :key="sub.stream.connection.connectionId"
@@ -20,68 +37,73 @@
               />
             </div>
           </div>
+          <!-- (끝) 카메라 영역 -->
         </div>
       </div>
       <!-- (끝) OpenVidu -->
 
       <div class="characters-wrapper">
         <div class="character-container">
-          <div
-            v-for="user in users"
-            :key="user"
-            @click="toggleCharacterSelection(user)"
-          >
+          <div v-for="user in getUserInfo" :key="user.userId">
             <div class="character-item">
               <img
-                src="@/assets/img/sample.png"
-                alt="sample-img"
                 class="sample-img"
+                :src="getCharacterImage(user.selectUnitId)"
               />
-              <p class="select">
-                {{ isCharacterSelected(user) ? "선택완료" : "선택중..." }}
-              </p>
+              <p>{{ user.nickname }}</p>
             </div>
           </div>
         </div>
-        <div class="character-box">
+
+        <!-- (시작) 캐릭터 활성화/비활성화 -->
+        <div class="character-box" v-if="getUnitInfo">
           <div v-for="character in characters" :key="character" class="box">
-            <div class="character">
-              <img
-                :src="character"
-                class="select-img"
-                @click="selectCharacter(character)"
-                :style="{
-                  filter: isCharacterSelected(character)
-                    ? 'grayscale(100%)'
-                    : 'none',
-                }"
-              />
+            <div
+              class="character"
+              :class="{
+                disabled: getUnitInfo.find(
+                  (info) => info.name === getCharacterName(character)
+                )?.pick,
+              }"
+              :style="{
+                opacity: getUnitInfo.find(
+                  (info) => info.name === getCharacterName(character)
+                )?.pick
+                  ? '0.2'
+                  : '1',
+              }"
+              @click="selectCharacter(character)"
+            >
+              <img :src="character" class="select-img" />
             </div>
-            <span v-if="character.includes('king')">왕</span>
-            <span v-if="character.includes('spearman')">창병</span>
-            <span v-if="character.includes('cavalry')">기병</span>
-            <span v-if="character.includes('peasant')">농민</span>
-            <span v-if="character.includes('slave')">노비</span>
+            <div class="character-name">
+              <span v-if="character.includes('king')">대왕</span>
+              <span v-else-if="character.includes('spearman')">창병</span>
+              <span v-else-if="character.includes('cavalry')">기병</span>
+              <span v-else-if="character.includes('peasant')">농민</span>
+              <span v-else-if="character.includes('slave')">노비</span>
+            </div>
           </div>
         </div>
-        <button @type="submit" @click="openModal('spy')" class="ready">
+        <!-- (끝) 캐릭터 활성화/비활성화 -->
+        <button @click="prepareComplete" class="ready" v-if="getIsMyTurn">
           준비완료
         </button>
-        <spyModal
-          v-if="showSpyModal"
-          @close="showSpyModal = false"
-          class="spy-modal"
-        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { watch } from "vue";
+
 import spyModal from "@/view/game/pick/spyModal.vue";
+import Loading from "@/components/game/pick/Loading.vue";
+import Wait from "@/components/game/pick/Wait.vue";
+
 import { useUserStore } from "@/store/userStore";
 import { usePickStore } from "@/store/pickStore";
-import { storeToRefs } from "pinia";
+import { pubPick, pubPickInfo } from "@/util/socket";
 
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
@@ -98,6 +120,8 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 export default {
   components: {
     spyModal,
+    Loading,
+    Wait,
     UserVideo,
   },
 
@@ -115,21 +139,42 @@ export default {
 
       mySessionId: "",
       myUserName: "",
+
+      userInfo: null,
+      unitInfo: null,
+
+      myTeamName: "",
+      isMyturn: false,
+
+      currentUserNickname: "",
+      currentIdx: "",
+
+      nowDoPickPlayerEmail: "",
+      nowRemainTime: null,
+
+      selectedCharacter: null,
+      selectedIdx: 0,
+
+      cancelTimeout: null,
+
+      isSelected: false,
+      finished: false,
+
+      showReadyBtn: false,
+      showStartModal: true,
+      showWaitModal: false,
+      showSpyModal: false,
     };
   },
 
   setup() {
     const store = useUserStore();
-    const { showSpyModal } = storeToRefs(store);
 
-    const users = ["준희", "지훈", "성규", "수빈", "희웅"];
     const characters = [king, spearman, cavalry, peasant, slave];
     const selectedCharacters = [];
 
     return {
-      showSpyModal,
       openModal: store.openModal,
-      users,
       characters,
       selectedCharacters,
       borderColor: "initialBorderColor",
@@ -161,9 +206,7 @@ export default {
       });
 
       // On every asynchronous exception...
-      this.session.on("exception", ({ exception }) => {
-        console.warn(exception);
-      });
+      this.session.on("exception", ({ exception }) => {});
 
       // --- 4) Connect to the session with a valid user token ---
 
@@ -196,13 +239,7 @@ export default {
             // --- 6) Publish your stream ---
             this.session.publish(this.publisher);
           })
-          .catch((error) => {
-            // console.log(
-            //   "There was an error connecting to the session:",
-            //   error.code,
-            //   error.message
-            // );
-          });
+          .catch((error) => {});
       });
 
       window.addEventListener("beforeunload", this.leaveSession);
@@ -250,7 +287,7 @@ export default {
           headers: { "Content-Type": "application/json" },
         }
       );
-      return response.data; // The sessionId
+      return response.data;
     },
 
     async createToken(sessionId) {
@@ -267,96 +304,361 @@ export default {
       return response.data; // The token
     },
 
-    // 캐릭터를 선택했는지 확인하는 로직
-    isCharacterSelected(user) {
-      return this.selectedCharacters.some(
-        (entry) => entry.user === user && entry.character !== null
-      );
+    // 새로고침 방지 이벤트
+    leave(event) {
+      event.preventDefault();
+      event.returnValue = "홈으로...";
+
+      // 홈으로 이동
+      this.leaveSession();
+      useUserStore().initData();
+      alert("홈으로!!");
+      window.location.href = "/";
+      return event.returnValue;
     },
 
-    // 캐릭터를 선택 후 다시 해제 할 수 있는 로직
-    toggleCharacterSelection(user, character) {
-      const existingIndex = this.selectedCharacters.findIndex(
-        (entry) => entry.user === user
+    // 픽 차례가 자신에게 왔을때 빨간색 보더 추가
+    applyBorderToActiveUser(idx) {
+      const userElements = document.querySelectorAll(".character-item");
+      let i = 0;
+
+      userElements.forEach((element) => {
+        const userEmail = element.getElementsByClassName("sample-img")[0];
+        if (idx === i) userEmail.style.border = "5px solid red";
+        else userEmail.style.border = "";
+        i++;
+      });
+    },
+
+    // 캐릭터를 선택하면 "4px solid red" 적용
+    applyBorder(character) {
+      const selectedCharacterInfo = this.getUnitInfo.find(
+        (info) => info.name === this.getCharacterName(character)
       );
+      const select = document.querySelector(`[src='${character}']`);
 
-      if (existingIndex !== -1) {
-        // 이미 선택한 캐릭터면 선택 해제
-        this.selectedCharacters.splice(existingIndex, 1);
-      } else {
-        // 아직 캐릭터 선택 안했으면 선택
-        const userHasSelectedCharacter = this.selectedCharacters.some(
-          (entry) => entry.user === user && entry.character !== null
-        );
+      // 모든 캐릭터에 설정된 보더를 초기화
+      const allCharacters = document.querySelectorAll(".character img");
+      allCharacters.forEach((img) => {
+        img.style.border = "none";
+        img.classList.add("empty-image");
+      });
 
-        if (!userHasSelectedCharacter) {
-          this.selectedCharacters.push({ user, character: null });
-        }
+      // 선택된 캐릭터에 보더를 적용 (비활성화된 경우 보더를 적용하지 않음)
+      if (!selectedCharacterInfo.pick) {
+        select.style.border = "4px solid red";
+        select.classList.remove("empty-image");
       }
     },
 
-    // 캐릭터 선택하는 로직 >> 캐릭터 하나만 선택할 수 있도록 하면 됨 !
+    // 캐릭터 이미지를 클릭하면 보더 색상 추가
     selectCharacter(character) {
-      const user = "현재 사용자"; // 사용자 정보 가져오는 곳
-      const existingIndex = this.selectedCharacters.findIndex(
-        (entry) => entry.user === user
+      // 자기 차례가 아니면 선택 불가능
+      if (!this.getIsMyTurn) return;
+
+      // 선택한 인덱스 번호
+      this.selectedIdx = this.getCharacterIdx(character);
+
+      // 픽한 캐릭터라면 선택 불가능
+      if (this.getUnitInfo[this.selectedIdx - 1].pick) return;
+
+      // 보더 색상 추가
+      this.applyBorder(character);
+      this.selectedCharacter = character;
+
+      if (this.selectedIdx === 0) return;
+
+      // 실시간으로 값을 전달
+      const sendData = {
+        team: this.myTeamName,
+        email: useUserStore().userInfo.email,
+        unitId: this.selectedIdx,
+      };
+
+      // 서버로부터 픽을 보내고 현재 무엇을 선택하고 있는지 정보를 pub한다.
+      pubPickInfo(
+        "/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/select",
+        sendData
       );
+    },
 
-      // 이미 선택한 캐릭터면 선택 해제
-      if (existingIndex !== -1) {
-        this.selectedCharacters[existingIndex].character = character;
+    // 선택한 캐릭터 이름 가져오기.
+    getCharacterName(str) {
+      if (str.includes("king")) {
+        return "대왕";
+      } else if (str.includes("spearman")) {
+        return "창병";
+      } else if (str.includes("cavalry")) {
+        return "기병";
+      } else if (str.includes("peasant")) {
+        return "농민";
       } else {
-        // 아직 캐릭터 선택 안했으면 선택
-        const userHasSelectedCharacter = this.selectedCharacters.some(
-          (entry) => entry.user === user && entry.character !== null
-        );
-
-        if (!userHasSelectedCharacter) {
-          // console.log(`User ${user} selected character ${character}`);
-          this.selectedCharacters.push({ user, character });
-        }
+        return "노비";
       }
     },
-    changeBorderColor() {
-      this.borderColor = "red";
+
+    // 선택한 캐릭터 이름 가져오기.
+    getCharacterIdx(str) {
+      if (str.includes("king")) {
+        return 1;
+      } else if (str.includes("spearman")) {
+        return 2;
+      } else if (str.includes("cavalry")) {
+        return 3;
+      } else {
+        return 0;
+      }
     },
 
-    startTimer() {
-      // 1초마다 남은 시간을 감소시키는 타이머 설정
-      this.timerInterval = setInterval(() => {
-        if (this.remainingTime > 0) {
-          this.remainingTime--;
-        } else {
-          // 시간이 다 되었을 때 타이머를 멈춤
-          clearInterval(this.timerInterval);
+    // 랜덤 인덱스 접근하여 가져오기.
+    getRandomPick(arr) {
+      return Math.floor(Math.random() * arr.length);
+    },
+
+    // 선택한 유닛 아이디 확인
+    getCharacterImage(selectedUnitId) {
+      if (selectedUnitId === 1) {
+        return king;
+      } else if (selectedUnitId === 2) {
+        return spearman;
+      } else if (selectedUnitId === 3) {
+        return cavalry;
+      } else {
+        return "";
+      }
+    },
+
+    async startTimer() {
+      // 현재 남은 시간을 나타내는 변수
+      let remainingTime = 15;
+
+      const timer = () => {
+        if (remainingTime > 0) {
+          remainingTime--;
+          this.nowRemainTime = remainingTime;
+          this.timerInterval = setTimeout(timer, 1000);
         }
-      }, 1000);
+      };
+
+      timer();
+    },
+
+    async delay(ms) {
+      return new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+          resolve();
+        }, ms);
+
+        // 버튼 클릭 시 타이머 취소
+        this.cancelTimeout = () => {
+          clearTimeout(timeout);
+          resolve(); // 버튼 클릭 시 즉시 다음 문장 실행
+        };
+      });
+    },
+
+    async delay2(ms) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+      });
+    },
+
+    // '준비완료' 버튼 클릭 시 실행되는 함수
+    async prepareComplete() {
+      clearTimeout(this.timerInterval);
+      this.cancelTimeout();
+    },
+
+    // (시작, 대기) 로딩 중 모달
+    openModal(value) {
+      if (value === "wait") {
+        this.showWaitModal = true;
+      }
+    },
+
+    closeModal(value) {
+      if (value === "start") {
+        this.showStartModal = false;
+      } else if (value === "wait") {
+        this.showWaitModal = false;
+      }
     },
   },
 
-  mounted() {
-    useUserStore().showSpyModal = false;
+  /* 캐릭터 픽창 시작 */
+  async mounted() {
+    // 먼저, 서버에게 픽 시작을 알리고 픽 순서와 타임을 입력 받는다.
+    pubPick("/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/start");
+
+    const pickStore = usePickStore();
+
+    watch(
+      () => pickStore.finished,
+      (newValue) => {
+        if (!this.isSelected) this.prepareComplete();
+        else this.isSelected = false;
+      }
+    );
+
+    watch(
+      () => pickStore.pickFinished,
+      (newValue) => {
+        this.showWaitModal = true;
+      }
+    );
+
+    watch(
+      () => pickStore.pickRealFinished,
+      (newValue) => {
+        this.showWaitModal = false;
+        this.showSpyModal = true;
+      }
+    );
+
+    // 새로고침 방지 이벤트를 추가한다.
+    window.addEventListener("beforeunload", this.leave);
+
+    // 자신의 이름과 이메일
+    this.currentUserNickname = useUserStore().userInfo.nickname;
+
+    // 게임 진행에 방해되는 요소는 잠시 false
     useUserStore().showModalSide = false;
 
-    // mounted 되면 바로 세션 접속
-    this.myUserName = "A"; // userInfo.nickname
-    this.mySessionId = "SessionA"; // {임의코드}/red 또는 {임의코드}/blue
+    let myTurnNumber = -1;
 
-    this.joinSession();
+    // (1) 픽창으로부터 홍팀 또는 청팀의 정보를 받아온다.
+    // * userInfo : 사용자 픽 순서, 픽 유무 등
+    // * unitInfo : 현재 구현한 캐릭터 정보
+    setTimeout(() => {
+      const str = usePickStore().code;
+      this.myTeamName = str.substring(str.lastIndexOf("/") + 1);
 
-    // 서버로부터 픽 시작은 받으면, 타이머 시작
-    this.startTimer();
+      if (this.myTeamName === "red") this.myTeamName = "홍팀";
+      else this.myTeamName = "청팀";
+
+      for (let i = 0; i < this.getUserInfo.length; i++) {
+        if (this.getUserInfo[i].nickname === useUserStore().userInfo.nickname) {
+          myTurnNumber = i + 1;
+          break;
+        }
+      }
+
+      // (2) 자신의 픽 순서를 보고 자신의 팀 OpenVidu에 접속한다.
+      setTimeout(() => {
+        this.myUserName = useUserStore().userInfo.nickname;
+        this.mySessionId = usePickStore().code.replace(/\//g, "");
+        this.joinSession();
+      }, 250 * myTurnNumber);
+
+      // (3) 서버에게 받은 현재 픽 해야하는 이메일과 타임을 가져온다.
+      setTimeout(async () => {
+        for (let i = 0; i < 3; i++) {
+          // 초기 랜더링 작업 때문에,
+          // 3~5초 정도 기다리고 그 후부터는 픽 시간에 맞춤.
+          // (로딩중이라는 모달창 띄울 필요)
+
+          if (i === 0) await this.delay(6800); // 로딩 시간
+          else await this.delay2(1000);
+
+          this.currentIdx = i;
+
+          // 시간은 누구에게나 다 보여줘야 함.
+          this.nowRemainTime = usePickStore().nowPickPlayerInfo.time;
+          this.startTimer();
+
+          // 여기서는 자신이 픽이라는 것을 red 색상으로 보더 색칠
+          this.applyBorderToActiveUser(i);
+
+          if (this.getIsMyTurn) {
+            this.isSelected = true;
+          }
+
+          // 픽 하거나 대기하는 시간
+          // await this.delay(usePickStore().nowPickPlayerInfo.time * 1000);
+          await this.delay(15000);
+
+          // 만약 현재 자신의 턴이라면
+          if (this.getIsMyTurn) {
+            let idx = -1;
+            let selectedCharacterName = null;
+
+            // 캐릭터를 픽 하였다면, idx에 선택한 유닛의 ID 저장
+            if (this.selectedCharacter !== null) {
+              selectedCharacterName = this.getCharacterName(
+                this.selectedCharacter
+              );
+
+              for (let j = 0; j < this.getUnitInfo.length; j++) {
+                if (this.getUnitInfo[j].pick) continue;
+
+                if (this.getUnitInfo[j].name === selectedCharacterName) {
+                  idx = j;
+                  break;
+                }
+              }
+            }
+
+            // 캐릭터를 픽하지 않을 경우, 살아있는 유닛의 ID 들 중 랜덤으로 하나 저장
+            else {
+              const notSelectedCharacters = [];
+
+              for (let j = 0; j < this.getUnitInfo.length; j++) {
+                if (this.getUnitInfo[j].pick) continue;
+                notSelectedCharacters.push(j);
+              }
+              idx = this.getRandomPick(notSelectedCharacters);
+            }
+
+            // 여기서는 자신이 픽한 것을 pub로 서버에게 알리는 로직
+            const sendData = {
+              team: this.myTeamName,
+              email: this.getCurrentEmail,
+              unitId: idx + 1,
+            };
+
+            // 서버로부터 픽을 보내고 다음 픽을 받도록 준비한다.
+            pubPickInfo(
+              "/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/done",
+              sendData
+            );
+          }
+        }
+
+        // 1초 뒤 현재 상황 대기
+        // await this.delay2(500);
+      }, 250 * (4 - myTurnNumber));
+    }, 50);
   },
 
-  unmounted() {
-    this.leaveSession();
-    useUserStore().initData();
-    alert("홈으로!!");
-    this.$router.push({ name: "/" });
+  // mounted에 설정한 새로고침 방지 이벤트 리스너를 삭제한다.
+  beforeUnmount() {
+    window.removeEventListener("beforeunload", this.confirmExit);
+  },
+
+  computed: {
+    // userInfo를 반환
+    getUserInfo() {
+      return usePickStore().userInfo;
+    },
+
+    // unitInfo 반환하는 computed 속성
+    getUnitInfo() {
+      console.log(usePickStore().unitInfo);
+      return usePickStore().unitInfo;
+    },
+
+    // 자신의 차례인지 여부를 반환하는 computed 속성
+    getIsMyTurn() {
+      return usePickStore().nowPickPlayerInfo.email === this.getCurrentEmail;
+    },
+
+    // 현재 내 이메일
+    getCurrentEmail() {
+      return useUserStore().userInfo.email;
+    },
   },
 };
 </script>
-
 
 <style scoped>
 @import url("../../../assets/css/game/character.css");

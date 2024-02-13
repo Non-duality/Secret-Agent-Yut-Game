@@ -28,8 +28,8 @@
 
 .game-chat-main{
     position: absolute;
-    bottom: 10px;
-    left: 10px;
+    bottom: 30px;
+    right: 300px;
 }
 
 .game-red-team-name{
@@ -46,4 +46,9 @@
     top: 20px;
     right: 100px;
     font-size: xx-large;
+}
+
+.game-end{
+    position: absolute;
+    z-index: 1003;
 }

@@ -1,3 +1,18 @@
+.background {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(44, 43, 43, 0.8);
+  margin-top: 10px;
+  width: 90vw;
+  max-width: 80vw;
+  height: 95vh;
+  border-radius: 20px;
+  margin-left: 11%;
+
+  z-index: 1;
+}
+
 .timer {
   color: white;
 }
@@ -15,6 +30,14 @@
   display: flex;
 }
 
+.nickname-container {
+  display: flex;
+}
+
+p {
+  color: white;
+}
+
 .select-img {
   width: 6vw;
   height: 12vh;
@@ -25,21 +48,12 @@
   border: 4px solid red;
 }
 
-.character-box > .character img {
-  transition: filter 0.3s ease-in-out; /* 흑백으로 변환하는 애니메이션 효과 */
+.character.disabled .select-img:hover {
+  border: none;
 }
 
-.background {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(44, 43, 43, 0.8);
-  margin-top: 10px;
-  width: 90vw;
-  max-width: 80vw;
-  height: 95vh;
-  border-radius: 20px;
-  margin-left: 11%;
+.character-name > span {
+  color: white;
 }
 
 .content {
@@ -63,6 +77,7 @@
   display: flex;
   justify-content: space-evenly;
   flex-direction: row;
+  gap: 50px;
 }
 
 .character-item {
@@ -70,11 +85,15 @@
   margin: 15px;
 }
 
-.sample-img {
+.character-item > img {
   width: 60px;
   height: 60px;
-  border: 2px solid white;
   border-radius: 50px;
+  background-size: cover;
+}
+
+.empty-image {
+  background-image: none;
 }
 
 .select {
@@ -84,15 +103,15 @@
 
 .character-box {
   display: flex;
-  gap: 50px;
   justify-content: center;
   align-items: center;
-  margin: 20px 0px;
+  margin: 30px auto; /* 수평 마진을 auto로 설정하여 가운데 정렬 */
   background-color: rgba(158, 152, 152, 0.8);
   width: 50vw;
   height: 19vh;
   padding: 5px;
   border-radius: 20px;
+  gap: 50px;
 }
 
 .character-box > .character {
@@ -100,10 +119,9 @@
   justify-content: start;
   align-items: start;
   font-size: 10px;
-  margin-top: 20px;
 }
 
-.character-box > .box{
+.character-box > .box {
   width: 6vw;
 }
 
@@ -119,4 +137,24 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
+}
+
+/* 모달창 애니메이션 */
+.fade-enter-from {
+  opacity: 0;
+}
+.fade-enter-active {
+  transition: all 0.5s;
+}
+.fade-enter-to {
+  opacity: 1;
+}
+.fade-leave-from {
+  opacity: 1;
+}
+.fade-leave-active {
+  transition: all 0.5s;
+}
+.fade-leave-to {
+  opacity: 0;
 }

@@ -7,7 +7,8 @@
     <span class="game-blue-team-name">청팀</span>
     <GameVideo class="game-video-team2" />
     <MiniGame v-show="isMission"/>
-    <!-- <GameChat class="game-chat-main"/> -->
+    <GameChat class="game-chat-main"/>
+    <GameEnd v-if="isGameEnd" class="game-end" :winMessage="winMessage" @closeModal="closeModal"/>
   </div>
 </template>
 
@@ -18,6 +19,7 @@ import GameVideo from "@/components/game/GameVideo.vue";
 import GameChat from "@/components/game/GameChat.vue";
 import MiniGame from '@/components/game/MiniGame.vue';
 import MessageModal from "@/components/layout/MessageModal.vue";
+import GameEnd from '@/components/game/GameEnd.vue';
 
 export default {
   components: {
@@ -26,17 +28,48 @@ export default {
     GameChat,
     MiniGame,
     MessageModal,
+    GameEnd,
+  },
+  data(){
+    return{
+      winMessage: null,
+    }
   },
   computed: {
-    // 턴 체크.
+    // 미션 장소 체크.
     isMission() {
       const gameStore = useGameStore();
       return gameStore.isMission;
+    },
+    // 게임 상태 체크
+    isGameEnd(){
+      if(useGameStore().redEnd === 5){
+        this.redWin();
+        return true;
+      }
+      if(useGameStore().blueEnd === 5){
+        this.blueWin();
+        return true;
+      }
+      return false;
+    },
+  },
+  methods:{
+    redWin(){
+      this.winMessage = 1;
+      this.isShowEnd = true;
+    },
+    blueWin(){
+      this.winMessage = 2;
+      this.isShowEnd = true;
+    },
+    closeModal(){
+      this.$router.push({ name: 'home' });
     },
   },
 };
 </script>
 
 <style scoped>
-@import "../../assets/css/game/gameView.css";
+@import "@/assets/css/game/gameView.css";
 </style>

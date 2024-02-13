@@ -15,11 +15,11 @@ let connected = false;
 let roomCode = null;
 
 /* 게임 소켓 */
-export function connect(accessToken, recvCallback) {
+export function connect(team, accessToken, recvCallback) {
   return new Promise((resolve, reject) => {
     let token = accessToken;
     stompClient = new Client({
-      brokerURL: "ws://192.168.100.99:8080/api/v1/connect",
+      brokerURL: VITE_WSS_API_URL,
 
       connectHeaders: {
         Authorization: `Bearer ${token}`,
@@ -30,8 +30,12 @@ export function connect(accessToken, recvCallback) {
       onConnect: () => {
         resolve();
         // 여기에서 구독 설정
-        stompClient.subscribe("/sub/game/80ba0a", (message) => {
-          // console.log("메시지 받음:", message.body);
+        stompClient.subscribe(`/sub/game/720ca5/${team}`, (message) => {
+          console.log("메시지 받음:", message.body);
+          recvCallback(JSON.parse(message.body));
+        });
+        stompClient.subscribe("/sub/game/720ca5", (message) => {
+          console.log("메시지 받음:", message.body);
           recvCallback(JSON.parse(message.body));
         });
       },
@@ -60,7 +64,7 @@ export function connect(accessToken, recvCallback) {
         reject(new Error("STOMP error"));
         alert("소켓이 끊어졌습니다.");
       },
-      reconnectDelay: 5000, //자동재연결
+      // reconnectDelay: 5000, //자동재연결
     });
 
     try {
@@ -83,7 +87,6 @@ export function connect(accessToken, recvCallback) {
 export function connectRoom(type, router, from) {
   return new Promise((resolve, reject) => {
     let token = useUserStore().accessToken;
-    console.log(router);
 
     stompClient = new Client({
       brokerURL: VITE_WSS_API_URL,
@@ -187,7 +190,7 @@ export function initRoom(router, from) {
 
     // 구독 메시지 이벤트 처리
     (message) => {
-      console.log(message.body);
+      // console.log(message.body);
       useRoomStore().receivedMessage = JSON.parse(message.body);
 
       // (경우1) 입장 정보 타입
@@ -328,7 +331,7 @@ export function initRoom(router, from) {
           // 픽창으로 넘어가기.
           setTimeout(() => {
             router.push({ name: "pick" });
-          }, 300);
+          }, 500);
         });
       }
       //
@@ -364,35 +367,141 @@ export function initRoom(router, from) {
  * from : 자신의 팀 이름 변수
  */
 export function initPick(router, from) {
+  console.log(from);
+  
   // 먼저, create된 roomCode를 가져와서 방 구독
   usePickStore().subscription.pick = stompClient.subscribe(
     "/sub/room/" + useUserStore().currentRoomInfo.roomCode + "/" + from,
     (message) => {
-      console.log(message.body);
       usePickStore().receivedMessage = JSON.parse(message.body);
 
-      /* 홍팀, 청팀 정보를 받아오는 것 */
+      // 홍팀, 청팀 정보를 받아오는 것
       if (usePickStore().receivedMessage.type === "PICK_GET_PRE_INFO") {
+        usePickStore().code = usePickStore().receivedMessage.code;
         usePickStore().unitInfo = usePickStore().receivedMessage.data.unitInfo;
         usePickStore().userInfo = usePickStore().receivedMessage.data.userInfo;
+
+        // 로컬 스토리지에 업데이트된 데이터 저장
+        const storedPickData = JSON.parse(localStorage.getItem("pick"));
+        const updatedPickData = {
+          ...storedPickData,
+          code: usePickStore().code,
+          unitInfo: {
+            ...usePickStore().unitInfo,
+          },
+          userInfo: {
+            ...usePickStore().userInfo,
+          },
+        };
+        localStorage.setItem("pick", JSON.stringify(updatedPickData));
+      }
+
+      // 처음에 "PICK_ORDER"로 첫 번째 순서를 배정받고,
+      else if (usePickStore().receivedMessage.type === "PICK_ORDER") {
+        usePickStore().nowPickPlayerInfo.email =
+          usePickStore().receivedMessage.data.email;
+        usePickStore().nowPickPlayerInfo.time =
+          usePickStore().receivedMessage.data.time;
+
+        // 로컬 스토리지에 업데이트된 데이터 저장
+        const storedPickData = JSON.parse(localStorage.getItem("pick"));
+        const updatedPickData = {
+          ...storedPickData,
+          nowPickPlayerInfo: {
+            email: usePickStore().nowPickPlayerInfo.email,
+            time: usePickStore().nowPickPlayerInfo.time,
+          },
+        };
+
+        localStorage.setItem("pick", JSON.stringify(updatedPickData));
+      }
+
+      // "PICK_NEXT"로 다음 순서를 배정받고
+      // done한 결과이므로, 다음 플레이어 차례를 알린다.
+      else if (usePickStore().receivedMessage.type === "PICK_NEXT") {
+        // usePickStore().finished = !usePickStore().finished;
+
+        setTimeout(() => {
+          usePickStore().nowPickPlayerInfo.email =
+            usePickStore().receivedMessage.data.email;
+          usePickStore().nowPickPlayerInfo.time =
+            usePickStore().receivedMessage.data.time;
+
+          // 로컬 스토리지에 업데이트된 데이터 저장
+          const storedPickData = JSON.parse(localStorage.getItem("pick"));
+          const updatedPickData = {
+            ...storedPickData,
+            nowPickPlayerInfo: {
+              email: usePickStore().nowPickPlayerInfo.email,
+              time: usePickStore().nowPickPlayerInfo.time,
+            },
+          };
+
+          localStorage.setItem("pick", JSON.stringify(updatedPickData));
+        }, 70);
+      }
+
+      // 픽을 실시간으로 무엇을 선택하고 있는지 받아오는 것
+      else if (usePickStore().receivedMessage.type === "PICK_SELECT") {
+        usePickStore().userInfo = usePickStore().receivedMessage.data.userInfo;
+
+        // 로컬 스토리지에 업데이트된 데이터 저장
+        const storedPickData = JSON.parse(localStorage.getItem("pick"));
+        const updatedPickData = {
+          ...storedPickData,
+          userInfo: {
+            ...usePickStore().userInfo,
+          },
+        };
+        localStorage.setItem("pick", JSON.stringify(updatedPickData));
+      }
+
+      // 픽한 결과를 받는 것
+      else if (usePickStore().receivedMessage.type === "PICK_SELECT_DONE") {
+        usePickStore().finished = !usePickStore().finished;
+
+        setTimeout(() => {
+          usePickStore().userInfo =
+            usePickStore().receivedMessage.data.userInfo;
+          usePickStore().unitInfo =
+            usePickStore().receivedMessage.data.unitInfo;
+
+          // 로컬 스토리지에 업데이트된 데이터 저장
+          const storedPickData = JSON.parse(localStorage.getItem("pick"));
+          // console.log(storedPickData);
+
+          const updatedPickData = {
+            ...storedPickData,
+            userInfo: {
+              ...usePickStore().userInfo,
+            },
+            unitInfo: {
+              ...usePickStore().unitInfo,
+            },
+          };
+          localStorage.setItem("pick", JSON.stringify(updatedPickData));
+        }, 20);
+      }
+
+      // 자신의 팀 픽만 끝났다면, 대기 모달 띄우기
+      else if (usePickStore().receivedMessage.type === "PICK_WAIT") {
+        console.log("한 팀이 아직 픽 대기중");
+
+        setTimeout(() => {
+          usePickStore().pickFinished = !usePickStore().pickFinished;
+        }, 500);
+      } 
+      
+      // 양 팀 모두 픽 성공했다면, 스파이 모달창 띄우기
+      else if (usePickStore().receivedMessage.type === "PICK_WAIT") {
+        console.log("모두 픽 성공");
+
+        setTimeout(() => {
+          usePickStore().pickRealFinished = !usePickStore().pickRealFinished;
+        }, 500);
       }
     }
   );
-}
-
-/*
- * 치명적 오류
- *
- * 여기서는 소켓을 모두 초기화하고 사용자 LocalStoage를 초기화 후
- * 초기 화면으로 이동하게 된다.
- */
-function fatalError(error, msg) {
-  stompClient = null;
-  connected = false;
-  useUserStore().initData();
-  useRoomStore().stompClient.deactivate();
-  console.log("[socket.fatalError] : " + error);
-  console.log("상세 에러 : " + msg);
 }
 
 // 구독한 방에 알리기.
@@ -410,6 +519,14 @@ export function pubPick(destination) {
   });
 }
 
+// 캐릭터 픽 정보 알리기.
+export function pubPickInfo(destination, content) {
+  stompClient.publish({
+    destination: destination,
+    body: JSON.stringify(content),
+  });
+}
+
 // 서버로 보내기.
 export function socketSend(destination, msg) {
   console.log(destination);
@@ -417,4 +534,19 @@ export function socketSend(destination, msg) {
     destination: destination,
     body: JSON.stringify(msg),
   });
+}
+
+/*
+ * 치명적 오류
+ *
+ * 여기서는 소켓을 모두 초기화하고 사용자 LocalStoage를 초기화 후
+ * 초기 화면으로 이동하게 된다.
+ */
+function fatalError(error, msg) {
+  stompClient = null;
+  connected = false;
+  useUserStore().initData();
+  useRoomStore().stompClient.deactivate();
+  console.log("[socket.fatalError] : " + error);
+  console.log("상세 에러 : " + msg);
 }

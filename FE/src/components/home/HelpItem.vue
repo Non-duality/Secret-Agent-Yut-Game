@@ -10,6 +10,7 @@
         <div class="work-npc-name">도움말</div>
         <img src="@/assets/img/help/cancel.png" alt="cancel-button" class="cancel-button" @click="closeModal('help')">
         <div class="work-npc-content" v-html="npcMessage"></div>
+        
         <button @click="showNextIntroMessage" v-if="step === 0" class="modal-yes-btn">응, 알려줘</button>
         <div class="set-content">
           <!-- <img src="@/assets/img/help/mininextvector.png" alt="next-vector" class="next-vector"> -->
@@ -45,6 +46,7 @@ export default {
       isClikedSpy: false,
       isClikedMisson: false,
       isClikedCam: false,
+      img : '@/assets/img/help/vector.gif',
     
 
       // 시작
@@ -57,19 +59,19 @@ export default {
       //전적 조회
       checkScoreMessages: [
         "",
-        "마이페이지의 전적 조회를 누르면<br> 너의 최근 10개의 전적을 확인할 수 있어. 👉",
-        "전적을 클릭하면<br> 승패 여부, 미션 성공률, 말을 잡은 수 등<br> 상세 정보도 확인할 수 있어. 👉",
-        "다른 정보가 궁금하다면 다른 태그를 눌러보고,<br> 궁금한게 없다면 다음에 궁금할 때 또 와. 👉"
+        '마이페이지의 전적 조회를 누르면<br> 너의 최근 10개의 전적을 확인할 수 있어. 👉',
+        '전적을 클릭하면<br> 승패 여부, 미션 성공률, 말을 잡은 수 등<br> 상세 정보도 확인할 수 있어. 👉' ,
+        '다른 정보가 궁금하다면 다른 태그를 눌러보고,<br> 궁금한게 없다면 다음에 궁금할 때 또 와.'
       ],
       currentCheckScoreIndex: 0,
 
       // 게임방 생성
       createGameroomMessages: [
         "",
-        "게임방 생성은 방장만이 할 수 있어.<br> 방장이 게임을 시작하면<br> 다른 플레이어들이 참여할 수 있어. 👉",
-        "그리고 게임방은<br> 공개와 비공개 방으로 만들 수 있어. 👉",
-        "만약 게임을 하던 도중 나가더라도<br> 재참여가 가능해. 👉",
-        "다른 정보가 궁금하다면 다른 태그를 눌러보고,<br> 궁금한게 없다면 다음에 궁금할 때 또 와. 👉"
+        '게임방 생성은 방장만이 할 수 있어.<br> 방장이 게임을 시작하면<br> 다른 플레이어들이 참여할 수 있어. 👉',
+        '그리고 게임방은<br> 공개와 비공개 방으로 만들 수 있어. 👉',
+        '만약 게임을 하던 도중 나가더라도<br> 재참여가 가능해. 👉',
+        '다른 정보가 궁금하다면 다른 태그를 눌러보고,<br> 궁금한게 없다면 다음에 궁금할 때 또 와. '
       ],
       currentCreateGameroomIndex: 0,
 
@@ -140,7 +142,21 @@ export default {
       const delay = messages.length >= 20 ? 30 : 45;
       
       const processNextMessage = () => {
+        
         if (i < messages.length && !this.messageFinised) {
+          if (i+4 < messages.length) {
+            const word = messages.slice(i, i + 4)
+            if (word == "<img") {
+              this.showNextMessage()
+              return
+            }
+          }
+          // const isImageTag = messages[i].includes("<img");
+
+          // if (isImageTag) {
+          //   this.showNextMessage()
+          //   return
+          // }
           this.npcMessage += messages[i];
           i++;
           setTimeout(processNextMessage, delay);
@@ -190,6 +206,8 @@ export default {
         this.closeModal('help');
       }
     },
+
+
     
     // 각각 상황별 처리
 
@@ -333,7 +351,7 @@ export default {
   height: 25px;
   position: absolute;
   top: 40%;
-  right: 10px;
+  right: 0px;
   transform: translateY(-50%);
   margin-right: 25%;
 }

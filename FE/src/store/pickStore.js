@@ -13,9 +13,16 @@ export const usePickStore = defineStore("pick", {
     receivedMessage: {},
 
     publisher: {},
-  }),
 
-  actions: {},
+    nowPickPlayerInfo: {
+      email: "",
+      time: "",
+    },
+
+    finished: false,
+    pickFinished: false,
+    pickRealFinished: false,
+  }),
 
   persist: {
     enabled: true, //storage 저장유무

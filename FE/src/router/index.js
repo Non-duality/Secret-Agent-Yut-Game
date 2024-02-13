@@ -14,9 +14,31 @@ import CharacterVue from "@/view/game/pick/character.vue";
 import GameViewVue from "@/view/game/GameView.vue";
 import MineralVue from "@/components/game/minigame/Mineral.vue"
 
+// 테스트용 라우터
+import FlyCatch from "@/components/game/minigame/FlyCatch.vue";
+import Cham from "@/components/game/minigame/Cham.vue"
+import Cake from "@/components/game/minigame/Cake.vue"
+
 const router = createRouter({
   history: createWebHistory("/"),
   routes: [
+    // 테스트용 라우터
+    {
+      path: "/flycatch",
+      name: "mission1",
+      component: FlyCatch,
+    },
+    {
+      path: "/cham",
+      name: "mission2",
+      component: Cham,
+    },
+    {
+      path: "/cake",
+      name: "mission3",
+      component: Cake,
+    },
+
     // 로그인 전 초기 화면
     {
       path: "/",
