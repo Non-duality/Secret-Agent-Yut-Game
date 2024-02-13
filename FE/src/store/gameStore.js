@@ -392,6 +392,7 @@ export const useGameStore = defineStore("game", {
       this.isCenterDir = false;
 
       // 현재 차례에 기회가 있는지 체크.
+      console.log("기회 : " + this.throwChance);
       if (this.throwChance === 0) {
         console.log("턴 : " + this.turn);
         // 홍팀이였다면,.
