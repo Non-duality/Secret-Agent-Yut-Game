@@ -1,9 +1,6 @@
 package com.ssafy.hungry.domain.game.controller;
 
-import com.ssafy.hungry.domain.game.dto.GameStartDto;
-import com.ssafy.hungry.domain.game.dto.ReasoningDto;
-import com.ssafy.hungry.domain.game.dto.SelectUnitDto;
-import com.ssafy.hungry.domain.game.dto.ThrowYutDto;
+import com.ssafy.hungry.domain.game.dto.*;
 import com.ssafy.hungry.domain.game.repository.GameRepository;
 import com.ssafy.hungry.domain.game.service.GameService;
 import com.ssafy.hungry.domain.room.entity.RoomEntity;
@@ -79,9 +76,25 @@ public class GameStompController {
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
+    @MessageMapping("/game/{roomCode}/chat")
+    public void gameChat(@DestinationVariable String roomCode, GameChatDto gameChatDto){
+
+        log.info("게임 채팅 호출 : " + roomCode + " " + gameChatDto.getMessage());
+
+        if(gameChatDto.getTeam().equals("홍팀")){
+            simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode + "/red", gameChatDto);
+
+        }else if(gameChatDto.getTeam().equals("청팀")){
+            simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode + "/blue", gameChatDto);
+        }
+
+    }
+
     @MessageMapping("/game/selecttest")
     public void test2() {
         gameService.gameSelectTest();
     }
+
+
 }
 

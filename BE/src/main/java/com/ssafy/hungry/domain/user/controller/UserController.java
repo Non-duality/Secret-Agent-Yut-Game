@@ -123,6 +123,7 @@ public class UserController {
     @PostMapping("change-nickname")
     public ResponseEntity<String> changeNickname(@RequestBody String nickname){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        nickname = nickname.replaceAll("\"\"","");
         userService.changeNickname(email, nickname);
         return ResponseEntity.ok().body("변경완료");
     }
