@@ -13,7 +13,7 @@
       </audio>
     </div>
     <div class="setting-value">
-      <p>소리 크기</p>
+      <p class="volume-sound">소리 크기</p>
       <input class="volume" type="range" v-model="volumeValue" min="0" max="100">
       <p>{{ volumeValue }}%</p>
     </div>

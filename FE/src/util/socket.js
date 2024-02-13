@@ -315,20 +315,16 @@ export function initRoom(router, from) {
         connectRoom("Pick", router, myTeamName).then(() => {
           // 여기서는 유닛 정보, 사용자 픽 정보를 초기화로 받는다.
           // (방장만 하면 됨.)
-          if (isOwner) {
-            console.log("방장이 게임 정보를 뿌렸습니다.");
-
-            pubPick(
-              "/pub/pick/" +
-                useUserStore().currentRoomInfo.roomCode +
-                "/get-pre-info"
-            );
-          }
+          pubPick(
+            "/pub/pick/" +
+              useUserStore().currentRoomInfo.roomCode +
+              "/get-pre-info"
+          );
 
           // 픽창으로 넘어가기.
           setTimeout(() => {
             router.push({ name: "pick" });
-          }, 2000);
+          }, 3000);
         });
       }
 

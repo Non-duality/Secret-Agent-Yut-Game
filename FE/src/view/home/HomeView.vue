@@ -4,12 +4,12 @@
     <div class="banner-container">
       <div class="event-container">
         <Carousel :autoplay="5000" :wrap-around="true">
-          <Slide v-for="slide in 3" :key="slide">
+          <Slide v-for="(slide, index) in i18n" :key="index">
             <div class="carousel__item">
-              <img id="gallery" :src="i18n[slide].name" />
-            </div>
+              <img id="gallery" :src="slide.name" @click="openModal('event', index)"/>
+            </div>1
           </Slide>
-
+          
           <template #addons>
             <!-- <Pagination /> -->
             <!-- <Navigation /> -->
@@ -17,6 +17,19 @@
         </Carousel>
       </div>
     </div>
+    <!-- SNS 이벤트 모달창 -->
+    <div class="event-detail-modal" v-if="showEventModal && clickedImageIndex === 0">
+      <EventFirst :src="i18n[clickedImageIndex].detail" @click="closeModal('event')"/>
+    </div>
+    <!-- 광부 말 모달창 -->
+    <div class="event-detail-modal" v-if="showEventModal && clickedImageIndex === 1">
+      <EventSecond :src="i18n[clickedImageIndex].detail" @click="closeModal('event')"/>
+    </div>
+    <!-- 설 이벤트 모달창 -->
+    <div class="event-detail-modal" v-if="showEventModal && clickedImageIndex === 2">
+      <EventThird :src="i18n[clickedImageIndex].detail" @click="closeModal('event')"/>
+    </div>
+    
 
     <!-- (하단) 패치노트 및 도움말 -->
     <div class="article-container">
@@ -78,11 +91,17 @@ import "vue3-carousel/dist/carousel.css";
 // Item vue
 import PatchNoteItem from "@/components/home/PatchItem.vue";
 import HelpItem from "@/components/home/HelpItem.vue";
+import EventFirst from "@/view/home/EventFirst.vue";
+import EventSecond from "@/view/home/EventSecond.vue";
+import EventThird from "@/view/home/EventThird.vue";
 
 // 이미지
 import event01 from "@/assets/img/home/carousel1.png";
 import event02 from "@/assets/img/home/carousel2.png";
 import event03 from "@/assets/img/home/carousel3.png";
+import SnsEvent from "@/assets/img/home/snsevent.png";
+import MalEvent from "@/assets/img/home/malevent.png";
+import SulEvent from "@/assets/img/home/sulevent.png";
 
 export default defineComponent({
   name: "Autoplay",
@@ -92,14 +111,20 @@ export default defineComponent({
     Navigation,
     PatchNoteItem,
     HelpItem,
+    EventFirst,
+    EventSecond,
+    EventThird,
   },
 
   methods: {
-    openModal(value) {
+    openModal(value, index) {
       if (value === "patch") {
         this.showPatchItemModal = true;
       } else if (value === "help") {
         this.showHelpItemModal = true;
+      } else if (value === "event") {
+        this.showEventModal = true;
+        this.clickedImageIndex = index;       // 클릭한 이미지의 인덱스 저장
       }
     },
 
@@ -108,6 +133,8 @@ export default defineComponent({
         this.showPatchItemModal = false;
       } else if (value === "help") {
         this.showHelpItemModal = false;
+      } else if (value === "event") {
+        this.showEventModal = false;
       }
     },
 
@@ -122,10 +149,12 @@ export default defineComponent({
 
   data() {
     return {
-      i18n: [{}, { name: event01 }, { name: event02 }, { name: event03 }],
+      i18n: [{ name: event01, detail: SnsEvent }, { name: event02, detail: MalEvent }, { name: event03, detail: SulEvent }],
       showPatchItemModal: false,
       showHelpItemModal: false,
       showMessage: false,
+      showEventModal: false,
+      clickedImageIndex: null,    // 클릭한 이미지의 인덱스를 저장할 변수
     };
   },
 
