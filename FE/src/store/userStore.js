@@ -16,6 +16,8 @@ import {
 } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
+import { connectWebSocket } from '@/store/socket.js';
+
 export const useUserStore = defineStore("user", {
   id: "myStore",
 
@@ -101,7 +103,7 @@ export const useUserStore = defineStore("user", {
       return new Promise((resolve, reject) => {
         userConfirm(
           loginUser,
-          (response) => {
+          async (response) => {
             if (response.status === 200) {
               let { data } = response;
               let accessToken = data["access-token"];
@@ -114,7 +116,16 @@ export const useUserStore = defineStore("user", {
               useUserStore().showLoginModal = false;
 
               useFriendStore().getFriend();
-              resolve(); // 작업 완료 후 resolve 호출
+              
+              // 웹 소켓 연결
+              try {
+                await connectWebSocket(accessToken)
+                console.log("웹소켓 연결 성공")
+                resolve(); // 작업 완료 후 resolve 호출
+              } catch (error ) {
+                console.error("웹 소켓 연결 실패:", error)
+                resolve()
+              }
             } else {
               useUserStore().isLogin = false;
               reject(new Error("로그인 실패")); // 실패 시 reject 호출
