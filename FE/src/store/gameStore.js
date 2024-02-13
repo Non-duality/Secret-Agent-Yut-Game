@@ -496,10 +496,9 @@ export const useGameStore = defineStore("game", {
         if (this.ticket > 0) {
           this.isShowReasoning = true;
           // 여기에 추리 모달 결과 작성.
-        }else{
+        } else {
           this.startTimer();
         }
-        
       }, 5000);
       // 팀 차례 바꿈.
       // this.teamTurn != this.teamTurn;

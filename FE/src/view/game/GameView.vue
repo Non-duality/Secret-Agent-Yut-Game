@@ -19,7 +19,6 @@
 
 <script>
 import { useGameStore } from "@/store/gameStore";
-import { useUserStore } from "@/store/userStore";
 
 import GameBoard from "@/components/game/GameBoard.vue";
 import GameVideo from "@/components/game/GameVideo.vue";
