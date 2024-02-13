@@ -30,22 +30,6 @@
     />
     <!-- 버튼 임시 -->
     <button
-      @click="connectSocket"
-      style="top: 0px; left: 250px; position: absolute"
-      :disabled="!isThrowYut"
-    >
-      연결
-    </button>
-    <!-- 버튼 임시 -->
-    <button
-      @click="sendStart"
-      style="top: 0px; left: 300px; position: absolute"
-      :disabled="!isThrowYut"
-    >
-      시작
-    </button>
-    <!-- 버튼 임시 -->
-    <button
       class="game-board-throw-btn"
       @click="moveHorse"
       :disabled="!isThrowYut"
@@ -85,8 +69,11 @@ export default {
     GameYut,
     GameModal,
   },
-  mounted(){
+  mounted() {
+    // 새로고침 방지 이벤트를 추가한다.
+    window.addEventListener("beforeunload", this.leave);
     this.connectSocket();
+    useUserStore().showModalSide = false;
   },
   data() {
     return {
@@ -100,7 +87,6 @@ export default {
       goModalText1: "",
       goModalText2: "",
       recvList: [],
-      time: 20, // 타이머 시간.
       modalType: null,
     };
   },
@@ -123,59 +109,87 @@ export default {
     // 턴 체크.
     isThrowYut() {
       const gameStore = useGameStore();
-      if(gameStore.isThrowYut){
-        this.timerStart();
-      }
       return gameStore.isThrowYut;
+    },
+    timerCheck() {
+      const gameStore = useGameStore();
+      if (gameStore.timer === 0 && gameStore.isThrowYut) {
+        this.moveHorse();
+      }
+      return gameStore.timer;
+    },
+    roomCode() {
+      const userStore = useUserStore();
+      return "720ca5";
     },
   },
   methods: {
-    // 타이머 시작
-    timerStart(){
-      this.time = 20;
+    leave(event) {
+      event.preventDefault();
+      event.returnValue = "홈으로...";
 
+      // 홈으로 이동
+      useUserStore().initData();
+      alert("홈으로!!");
+      window.location.href = "/";
+      return event.returnValue;
     },
-
     sendStart() {
-      socketSend("/pub/game/720ca5/start", "");
+      socketSend(`/pub/game/${this.roomCode}/start`, "");
     },
     // 연결
     connectSocket() {
       const userStore = useUserStore();
-      connect("red",userStore.accessToken, this.handleRecvMessage);
-      // this.sendStart();
+      connect("red", userStore.accessToken, this.handleRecvMessage);
+      setTimeout(() => {
+        this.sendStart();
+      }, 2000);
     },
     // 받아오기.
     handleRecvMessage(receivedMsg) {
       console.log(receivedMsg);
-      if(receivedMsg.actionCategory === 0){
+      if (receivedMsg.actionCategory === 0) {
         this.setInfo(receivedMsg);
       }
       if (!this.isThrowYut) {
         console.log(receivedMsg.actionCategory);
         if (receivedMsg.actionCategory === 1) {
-          receiveYutRes(receivedMsg);
+          this.receiveYutRes(receivedMsg);
         } else if (receivedMsg.actionCategory === 2) {
-          receiveSelectHorse(receivedMsg);
+          this.receiveSelectHorse(receivedMsg);
         }
       }
     },
     // 초기 정보 저장
-    setInfo(receivedMsg){
+    setInfo(receivedMsg) {
       console.log("setInfo");
       console.log(receivedMsg);
       const gameStore = useGameStore();
-      for(var i=0;i<5;i++){
+      const userStore = useUserStore();
+      gameStore.mySpyId = receivedMsg.mySpyUnitId;
+
+      for (var i = 0; i < 5; i++) {
         gameStore.redHorses[i].name = receivedMsg.redTeamUnitList[i].name;
         gameStore.redHorses[i].age = receivedMsg.redTeamUnitList[i].age;
         gameStore.redHorses[i].skill = receivedMsg.redTeamUnitList[i].skill;
         gameStore.blueHorses[i].name = receivedMsg.blueTeamUnitList[i].name;
         gameStore.blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
         gameStore.blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
-
       }
       gameStore.redUser = receivedMsg.redTeamUserList;
       gameStore.blueUser = receivedMsg.blueTeamUserList;
+      for (var i = 0; i < 3; i++) {
+        if (
+          gameStore.redUser[i].email === userStore.userInfo.email ||
+          gameStore.blueUser[i].email === userStore.userInfo.email
+        ) {
+          gameStore.myTurn = i;
+          if (i === 0 && gameStore.myTeam === 1) {
+            gameStore.isThrowYut = true;
+          }
+          break;
+        }
+      }
     },
 
     // 윷 결과를 받아 왔을 때.
@@ -218,6 +232,8 @@ export default {
     // 말 선택 결과를 받아 왔을 때.
     receiveSelectHorse(receivedMsg) {
       const gameStore = useGameStore();
+      gameStore.isGoDiagonal = receivedMsg.goDiagonal;
+      gameStore.isCenterDir = receivedMsg.centerDir;
       // 홍팀
       if (!gameStore.teamTurn) {
         gameStore.moveHorse(gameStore.redHorses[receivedMsg.unitIndex]);
@@ -242,7 +258,7 @@ export default {
         yutRes: gameStore.yutRes,
         throwRes: gameStore.throwRes,
       };
-      // socketSend("/pub/game/80ba0a/throw-yut", msg);
+      socketSend(`/pub/game/${this.roomCode}/throw-yut`, msg);
 
       // 텍스트와 윷결과 판을 다른 타이밍에 나타나게 한다.
 
@@ -284,8 +300,12 @@ export default {
             // 말 이동.
             gameStore.moveHorse(this.selectedHorse);
             // 소켓 전송
-            msg = { unitIndex: this.selectedHorse.id };
-            // socketSend("/pub/game/80ba0a/select-unit", msg);
+            msg = {
+              unitIndex: this.selectedHorse.id,
+              goDiagonal: useGameStore().isGoDiagonal,
+              centerDir: useGameStore().isCenterDir,
+            };
+            socketSend(`/pub/game/${this.roomCode}/select-unit`, msg);
             // boolean값들 초기화.
             this.isSelectedHorse = false;
             this.canSelectHorse = false;
@@ -293,6 +313,7 @@ export default {
           }
         });
       }, 2000);
+      // 말이 이동하고 미션장소인지 아닌지 체크 후 타이머 시작.
     },
     // 말 선택시 이벤트 받기
     selectHorse(horse) {

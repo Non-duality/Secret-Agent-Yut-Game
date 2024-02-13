@@ -75,7 +75,7 @@ button {
 }
 
 .game {
-  background: url("@/assets/img/game/back.png");
+  background: url("@/assets/img/game/back_3.png");
   background-size: cover;
   background-position: center;
 }

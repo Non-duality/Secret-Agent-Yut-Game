@@ -5,7 +5,9 @@ export const useGameStore = defineStore("game", {
   // 반응형 상태 (data)
   state: () => {
     return {
-      // 내 팀 정보.
+      // 타이머
+      timer: 20,
+      // 내 팀 정보. 1 == 홍 2 == 청
       myTeam: 1,
       // 턴. idx 0 = 홍팅, 1 = 청팀
       turn: [0, 0],
@@ -39,6 +41,8 @@ export const useGameStore = defineStore("game", {
       // 유저 정보
       redUser: [],
       blueUser: [],
+      // 스파이 말
+      mySpyId: 0,
       // 말
       redHorses: [
         {
@@ -276,6 +280,12 @@ export const useGameStore = defineStore("game", {
           ? this.redHorses.find((horse) => horse.id === selectedHorse.id)
           : this.blueHorses.find((horse) => horse.id === selectedHorse.id);
 
+      // 말의 능력.
+      if (horseInfo.name === "기병") {
+        this.yutRes += 1;
+      }else if(horseInfo.name === "노비"){
+        this.yutRes -= 1;
+      }
       // 목적지 설정.
       let target = horseInfo.index + this.yutRes;
 
@@ -395,6 +405,19 @@ export const useGameStore = defineStore("game", {
         }
         // 팀 차례 바꿈.
         this.teamTurn != this.teamTurn;
+        if (this.teamTurn) {
+          if (this.turn[0] === this.myTurn) {
+            this.isThrowYut = true;
+          } else {
+            this.isThrowYut = false;
+          }
+        } else {
+          if (this.turn[1] === this.myTurn) {
+            this.isThrowYut = true;
+          } else {
+            this.isThrowYut = false;
+          }
+        }
         this.throwChance = 1;
       }
     },
