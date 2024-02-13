@@ -190,8 +190,8 @@ export function initRoom(router, from) {
 
     // 구독 메시지 이벤트 처리
     (message) => {
-      // console.log(message.body);
       useRoomStore().receivedMessage = JSON.parse(message.body);
+      console.log(useRoomStore().receivedMessage);
 
       // (경우1) 입장 정보 타입
       if (useRoomStore().receivedMessage.type === "ROOM_ENTER_INFO") {
@@ -400,6 +400,7 @@ export function initPick(router, from) {
     "/sub/room/" + useUserStore().currentRoomInfo.roomCode + "/" + from,
     (message) => {
       usePickStore().receivedMessage = JSON.parse(message.body);
+      console.log(usePickStore().receivedMessage);
 
       // 홍팀, 청팀 정보를 받아오는 것
       if (usePickStore().receivedMessage.type === "PICK_GET_PRE_INFO") {
