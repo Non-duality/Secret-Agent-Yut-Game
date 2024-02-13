@@ -237,16 +237,16 @@ export default {
       // 만약 아무 말도 안나갔는데 백도가 나오면 그냥 넘어간다.
       if (gameStore.yutRes == -1) {
         if (
-          gameStore.myTeam == 1 &&
-          gameStore.redHorses[4].check == 5 - gameStore.redEnd &&
+          receivedMsg.team == 1 &&
+          gameStore.redHorses[4].check == 4 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
         ) {
           console.log("백도 끝")
           gameStore.turnChange();
           return;
         } else if (
-          gameStore.myTeam == 2 &&
-          gameStore.blueHorses[4].check == 5 - gameStore.blueHorses &&
+          receivedMsg.team == 2 &&
+          gameStore.blueHorses[4].check == 4 - gameStore.blueEnd &&
           gameStore.redHorses[4].index === 0
         ) {
           console.log("백도 끝")
@@ -294,6 +294,7 @@ export default {
       let msg = {
         yutRes: gameStore.yutRes,
         throwRes: gameStore.throwRes,
+        team: gameStore.myTeam,
       };
       socketSend(`/pub/game/${this.roomCode}/throw-yut`, msg);
 
@@ -315,7 +316,7 @@ export default {
       if (gameStore.yutRes == -1) {
         if (
           gameStore.myTeam == 1 &&
-          gameStore.redHorses[4].check == 5 - gameStore.redEnd &&
+          gameStore.redHorses[4].check == 4 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
         ) {
           console.log("백도 끝")
@@ -323,7 +324,7 @@ export default {
           return;
         } else if (
           gameStore.myTeam == 2 &&
-          gameStore.blueHorses[4].check == 5 - gameStore.blueHorses &&
+          gameStore.blueHorses[4].check == 4 - gameStore.blueEnd &&
           gameStore.redHorses[4].index === 0
         ) {
           console.log("백도 끝")
