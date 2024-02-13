@@ -56,7 +56,7 @@
         </div>
 
         <!-- (시작) 캐릭터 활성화/비활성화 -->
-        <div class="character-box" v-if="getUnitInfo">
+        <div class="character-box">
           <div v-for="character in characters" :key="character" class="box">
             <div
               class="character"
@@ -637,14 +637,12 @@ export default {
 
   computed: {
     // userInfo를 반환
-    async getUserInfo() {
-      await this.delay2(50);
+    getUserInfo() {
       return usePickStore().userInfo;
     },
 
     // unitInfo 반환하는 computed 속성
-    async getUnitInfo() {
-      await this.delay2(50);
+    getUnitInfo() {
       return usePickStore().unitInfo;
     },
 
