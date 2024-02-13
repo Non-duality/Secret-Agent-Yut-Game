@@ -1,13 +1,21 @@
 package com.ssafy.hungry.domain.user.service;
 
+import com.ssafy.hungry.domain.game.entity.UnitEntity;
+import com.ssafy.hungry.domain.game.entity.game.Game;
+import com.ssafy.hungry.domain.game.entity.game.blue.BlueTeamMember;
+import com.ssafy.hungry.domain.game.entity.game.blue.BlueTeamUnit;
+import com.ssafy.hungry.domain.game.entity.game.red.RedTeamMember;
+import com.ssafy.hungry.domain.game.entity.game.red.RedTeamUnit;
+import com.ssafy.hungry.domain.game.repository.GameRepository;
+import com.ssafy.hungry.domain.game.repository.UnitRepository;
 import com.ssafy.hungry.domain.user.detail.CustomUserDetails;
+import com.ssafy.hungry.domain.user.dto.*;
 import com.ssafy.hungry.domain.user.entity.EmailEntity;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.repository.EmailRepository;
 import com.ssafy.hungry.domain.user.repository.TokenRepository;
+import com.ssafy.hungry.domain.user.repository.UserGameHistoryRepository;
 import com.ssafy.hungry.domain.user.repository.UserRepository;
-import com.ssafy.hungry.domain.user.dto.JoinDto;
-import com.ssafy.hungry.domain.user.dto.MyInfoDto;
 import com.ssafy.hungry.global.repository.PrincipalRepository;
 import com.ssafy.hungry.global.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +30,9 @@ import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -40,6 +50,9 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
     private final TokenRepository tokenRepository;
     private final SessionRepository sessionRepository;
     private final PrincipalRepository principalRepository;
+    private final GameRepository gameRepository;
+    private final UserGameHistoryRepository userGameHistoryRepository;
+    private final UnitRepository unitRepository;
 
     //회원 가입 메소드
     public Boolean join(JoinDto joinDto) {
@@ -231,5 +244,60 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
         String uuid = sessionRepository.findById(email).get().getStompPrincipal().getName();
         sessionRepository.deleteById(email);
         principalRepository.deleteById(uuid);
+    }
+
+    //전적검색
+    public List<GameHistoryDto> myGameHistory(String email){
+        UserEntity user = userRepository.findByEmail(email);
+        List<GameHistoryDto> dtoList = new ArrayList<>();
+        List<Game> gameList = userGameHistoryRepository.findByUserId(user);
+        for(Game game : gameList){
+            GameHistoryDto gameHistoryDto = new GameHistoryDto();
+            gameHistoryDto.setGameTheme(game.getGameTheme());
+            gameHistoryDto.setGameSpeed(game.getGameSpeed());
+            gameHistoryDto.setBlueTeamReasoningResult(game.isBlueTeamReasoningResult());
+            gameHistoryDto.setRedTeamReasoningResult(game.isRedTeamReasoningResult());
+            gameHistoryDto.setMissionRegion(game.getMissionRegion());
+            UnitEntity unit = unitRepository.findById(game.getBlueSpyId());
+            gameHistoryDto.setBlueSpyName(unit.getName());
+            unit = unitRepository.findById(game.getRedSpyId());
+            gameHistoryDto.setRedSpyName(unit.getName());
+            if(game.getWinner() == 1){
+                gameHistoryDto.setWinner("청팀");
+            }else{
+                gameHistoryDto.setWinner("홍팀");
+            }
+
+            for(BlueTeamMember blueTeamMember : game.getBlueTeamMemberList()){
+                BlueTeamMemberDto memberDto = new BlueTeamMemberDto();
+                memberDto.setNickname(blueTeamMember.getUserId().getNickname());
+                gameHistoryDto.getBlueTeamMemberDtoList().add(memberDto);
+            }
+
+            for(RedTeamMember redTeamMember : game.getRedteamMemberList()){
+                RedTeamMemberDto memberDto = new RedTeamMemberDto();
+                memberDto.setNickname(redTeamMember.getUserId().getNickname());
+                gameHistoryDto.getRedTeamMemberDtoList().add(memberDto);
+            }
+
+            for(BlueTeamUnit blueTeamUnit : game.getBlueTeamUnitList()){
+                BlueTeamUnitDto unitDto = new BlueTeamUnitDto();
+                unitDto.setUnitName(blueTeamUnit.getUnitId().getName());
+                unitDto.setAge(blueTeamUnit.getUnitId().getAge());
+                unitDto.setSkill(blueTeamUnit.getUnitId().getSkill());
+                gameHistoryDto.getBlueTeamUnitDtoList().add(unitDto);
+            }
+
+            for(RedTeamUnit redTeamUnit : game.getRedTeamUnitList()){
+                RedTeamUnitDto unitDto = new RedTeamUnitDto();
+                unitDto.setUnitName(redTeamUnit.getUnitId().getName());
+                unitDto.setAge(redTeamUnit.getUnitId().getAge());
+                unitDto.setSkill(redTeamUnit.getUnitId().getSkill());
+                gameHistoryDto.getRedTeamUnitDtoList().add(unitDto);
+            }
+
+            dtoList.add(gameHistoryDto);
+        }
+        return dtoList;
     }
 }

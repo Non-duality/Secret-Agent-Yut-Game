@@ -1,9 +1,10 @@
 spring:
+  #메일 인증을 위한 설정
   mail:
-    host: smtp.gmail.com
+    host: smtp.gmail.com #gmail 서비스 사용
     port: 587
-    username: wlgns3479@gmail.com
-    password: qwms amze lzax ajmt
+    username: wlgns3479@gmail.com #gmail 계정
+    password: qwms amze lzax ajmt #메일 api 인증 코드
     properties:
       mail:
         smtp:
@@ -15,57 +16,57 @@ spring:
           timeout: 5000
           writetimeout: 5000
     auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30분
+
+  #레디스 설정 정보
   redis:
-    host: i10d205.p.ssafy.io
-    port: 6379
+    host: i10d205.p.ssafy.io #서버주소
+    port: 6379 #레디스 컨테이너 포트
 
-  jackson:
-    time-zone: Asia/Seoul
-
+  #하이버네이트 설정
   h2:
     console:
       enabled: true
 
+  #Mysql 설정
   datasource:
-    url: jdbc:mysql://i10d205.p.ssafy.io:3306/yut_db?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://i10d205.p.ssafy.io:3306/yut_db?serverTimezone=UTC&characterEncoding=UTF-8 #AWS서버 컨테이너 포트맵핑
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ssafy
 
-  # ???? spring.io?? doc?? ??? ??????.
-  # jpa??
+  #jpa 설정
   jpa:
-    hibernate: # hibernate ?? ??
-      # ?????? ?? ??? ???? ? ???, ?? ?? entity ??? ?? ?? ??? ?? ??
-      # if exists drop table ??? ?? ?????? ?? ??.
+    hibernate:
       ddl-auto: update
-    properties: # property ?? ??
-      hibernate: # hibernate property ??
+    properties:
+      hibernate:
         format_sql: true
 
+  #jwt 설정
   jwt:
     secret: ssafyD205rlatnqlsdlwnaldlgmldnddidtjdrbqkrwlgnsdlwnsgmlghkdlxlddkwkdkwk
 
+#swagger 로그인 엔드포인트 생성
 springdoc:
   show-login-endpoint: true
 
-
+#openvidu 설정
 OPENVIDU_URL: https://i10d205.p.ssafy.io:8443
 OPENVIDU_SECRET: ssafyD205
+
 
 server:
   ssl:
     enabled: false
 
+  #서버 앤드포인트 설정
   servlet:
     context-path: /api/v1
 
   port: 8080
 
-# ?? ?? ??
+#jpa 쿼리 로그 설정
 logging:
   level:
-    # hibernate ? ??? ?? ??? debug??? ??
-    # jpa hibernate? ???? sql? ??? ??? ???? ?? ??
     org.hibernate.SQL: debug
-    org.hibernate.type: trace # ?? ???? ????? ???? ??
+    org.hibernate.type: trace

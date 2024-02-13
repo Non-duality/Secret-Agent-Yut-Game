@@ -1,5 +1,6 @@
 package com.ssafy.hungry.domain.user.controller;
 
+import com.ssafy.hungry.domain.user.dto.GameHistoryDto;
 import com.ssafy.hungry.domain.user.dto.JoinDto;
 import com.ssafy.hungry.domain.user.dto.MyInfoDto;
 import com.ssafy.hungry.domain.user.dto.PasswordDto;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -162,5 +164,12 @@ public class UserController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         userService.logout(email, refreshToken);
         return ResponseEntity.ok().body("로그아웃");
+    }
+
+    //전적 검색
+    @GetMapping("/stat")
+    public List<GameHistoryDto> myGameHistory(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userService.myGameHistory(email);
     }
 }
