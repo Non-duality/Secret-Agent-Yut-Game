@@ -1,7 +1,7 @@
 <template>
   <div class="background">
     <transition name="fade">
-      <Loading v-if="showStartModal" @close-modal="closeModal" />
+      <Loading v-if="false" @close-modal="closeModal" />
     </transition>
 
     <transition name="fade">
@@ -9,7 +9,7 @@
     </transition>
 
     <transition name="fade"
-      ><spyModal v-if="showSpyModal" @close-modal="closeModal"
+      ><spyModal v-if="true" @close-modal="closeModal"
     /></transition>
 
     <transition name="fade"
