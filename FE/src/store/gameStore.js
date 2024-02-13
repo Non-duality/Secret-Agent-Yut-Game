@@ -630,6 +630,7 @@ export const useGameStore = defineStore("game", {
       console.log("res = " + this.yutRes);
     },
     setYutText(res) {
+      this.throwChance--;
       switch (res) {
         case -1:
           this.yutText = "백도";
