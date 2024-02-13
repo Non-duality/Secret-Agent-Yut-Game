@@ -110,7 +110,7 @@ export default {
     // 턴 체크.
     isThrowYut() {
       const gameStore = useGameStore();
-      return gameStore.throwChance > 0 ? true : false;
+      return gameStore.isThrowYut && gameStore.throwChance > 0 ? true : false;
     },
     timerCheck() {
       const gameStore = useGameStore();
@@ -161,23 +161,18 @@ export default {
       if (receivedMsg.actionCategory === 0) {
         this.setInfo(receivedMsg);
       }
-      if (!gameStore.isThrowYut) {
-        console.log(receivedMsg.actionCategory);
-        if (receivedMsg.actionCategory === 1) {
+      else if(receivedMsg.actionCategory === 1 && !gameStore.isThrowYut){
           this.receiveYutRes(receivedMsg);
-        } else if (receivedMsg.actionCategory === 2) {
-          this.receiveSelectHorse(receivedMsg);
-        }
-      } else {
-        if (receivedMsg.actionCategory === 2) {
+      }
+      else if(receivedMsg.actionCategory === 2){
           // 말 이동.
-          gameStore.moveHorse(this.selectedHorse);
+          this.receiveSelectHorse(receivedMsg);
 
           // boolean값들 초기화.
           this.isSelectedHorse = false;
           this.canSelectHorse = false;
           gameStore.isSelect = false;
-        }
+
       }
     },
     // 초기 정보 저장
@@ -266,14 +261,14 @@ export default {
       // 홍팀
       if (!gameStore.teamTurn) {
         console.log(
-          "받은 말 : " + gameStore.redHorses[receivedMsg.unitIndex - 1]
+          "받은 말 : " + gameStore.redHorses[receivedMsg.unitIndex - 1].team
         );
         gameStore.moveHorse(gameStore.redHorses[receivedMsg.unitIndex - 1]);
       }
       // 청팀
       else {
         console.log(
-          "받은 말 : " + gameStore.blueHorses[receivedMsg.unitIndex - 1]
+          "받은 말 : " + gameStore.blueHorses[receivedMsg.unitIndex - 1].team
         );
         gameStore.moveHorse(gameStore.blueHorses[receivedMsg.unitIndex - 1]);
       }
@@ -282,9 +277,9 @@ export default {
     // 윷 던지기
     moveHorse() {
       const gameStore = useGameStore();
-      console.log("팀턴 : " + gameStore.teamTurn);
-      console.log("턴 : " + gameStore.turn);
-      console.log("체크 : " + gameStore.isThrowYut);
+      // console.log("팀턴 : " + gameStore.teamTurn);
+      // console.log("턴 : " + gameStore.turn);
+      // console.log("체크 : " + gameStore.isThrowYut);
       // 내가 던질 차례인가 체크.
       if (!this.isThrowYut) {
         return;

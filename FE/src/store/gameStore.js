@@ -393,6 +393,7 @@ export const useGameStore = defineStore("game", {
       this.isCenterDir = false;
 
       // 현재 차례에 기회가 있는지 체크.
+      console.log(!this.teamTurn?this.redUser[this.turn[0]]:this.blueUser[this.turn[1]]);
       console.log("기회 : " + this.throwChance);
       if (this.throwChance === 0) {
         // 홍팀이였다면,.
@@ -419,10 +420,15 @@ export const useGameStore = defineStore("game", {
             this.isThrowYut = true;
           } 
         }
-        console.log("턴 : " + this.turn);
-        console.log("체크 : " + this.isThrowYut)
         this.throwChance = 1;
       }
+      console.log(this.tiles);
+      console.log(this.redHorses);
+      console.log(this.blueHorses);
+      console.log("팀 턴 : " + this.teamTurn);
+      console.log("턴 : " + this.turn);
+      console.log("체크 : " + this.isThrowYut)
+      
     },
 
     // 이동하는 곳에 다른 말이 있나 체크.
@@ -452,7 +458,7 @@ export const useGameStore = defineStore("game", {
           }
         }
         // 말을 잡았으니 기회 한번더.
-        this.throwChance++;
+        this.throwChance+=1;
         this.tiles[target].horse = [];
       }
 
