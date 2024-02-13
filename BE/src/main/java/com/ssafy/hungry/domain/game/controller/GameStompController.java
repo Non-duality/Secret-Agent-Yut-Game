@@ -75,6 +75,11 @@ public class GameStompController {
         dto.setActionCategory(3);
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
+
+    @MessageMapping("/game/{roomCode}/mission")
+    public void mission(@DestinationVariable String roomCode){
+
+    }
     
     //게임 결과 (승리팀)
 

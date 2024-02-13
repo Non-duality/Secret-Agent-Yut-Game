@@ -70,7 +70,34 @@ public class GameService {
         return userEnterInfo.size();
     }
 
+    public int[] randomPermutation(){
+        SecureRandom sr = new SecureRandom();
+        sr.setSeed(new Date().getTime());
+
+        boolean[] v = new boolean[5];
+        int[] result = new int[5];
+
+        for(int i = 0; i < 5; i++){
+            int temp = sr.nextInt(5);
+            if(!v[temp]){
+                v[temp] = true;
+                result[i] = temp;
+            }else{
+                i--;
+                continue;
+            }
+        }
+        return result;
+    }
+
     public Map<String, Object> startGame(RoomEntity room) {
+        SecureRandom sr = new SecureRandom();
+        sr.setSeed(new Date().getTime());
+        String[] placeList = new String[]{"경복국", "덕수궁"};
+        String[] timeList = new String[]{"축시", "인시"};
+        String[] contactorList = new String[] {"경비병", "궁녀"};
+        String[] stuffList = new String[]{"쪽지", "지도"};
+        String[] scalList = new String[]{"오른쪽 가슴", "왼쪽 허벅지", "손목", "등", "종아리"};
         String roomCode = room.getRoomCode();
 
         //레디스에서 참여자 목록을 받아옴
@@ -103,32 +130,53 @@ public class GameService {
         }
 
         // 홍팀 유저들의 유닛 선택창 정보
+        int[] randomPer = this.randomPermutation();
         List<CurrentUnitPickDto> redTeamUnitPickInfo = pickRedisRepository.getCurrentUnitPickInfo("RedUnitInfo: " + roomCode);
         List<UnitInfo> redUnitList = new ArrayList<>();
+        int i = 0;
         for(CurrentUnitPickDto unit : redTeamUnitPickInfo){
             UnitInfo unitInfo = UnitInfo.builder()
                     .unitId(unit.getUnitId())
                     .name(unit.getName())
-                    .age(unit.getAge())
+                    .place(placeList[sr.nextInt(2)])
+                    .time(timeList[sr.nextInt(2)])
+                    .contactor(contactorList[sr.nextInt(2)])
+                    .stuff(stuffList[sr.nextInt(2)])
+                    .scal(scalList[randomPer[i]])
                     .skill(unit.getSkill())
                     .build();
             redUnitList.add(unitInfo);
+            i++;
         }
 
         // 청팀 유저들의 유닛 선택창 정보
+        randomPer = this.randomPermutation();
         List<CurrentUnitPickDto> blueTeamUnitPickInfo = pickRedisRepository.getCurrentUnitPickInfo("BlueUnitInfo: " + roomCode);
         List<UnitInfo> blueUnitList = new ArrayList<>();
+        i = 0;
         for(CurrentUnitPickDto unit : blueTeamUnitPickInfo){
             UnitInfo unitInfo = UnitInfo.builder()
                     .unitId(unit.getUnitId())
                     .name(unit.getName())
-                    .age(unit.getAge())
+                    .place(placeList[sr.nextInt(2)])
+                    .time(timeList[sr.nextInt(2)])
+                    .contactor(contactorList[sr.nextInt(2)])
+                    .stuff(stuffList[sr.nextInt(2)])
+                    .scal(scalList[randomPer[i]])
                     .skill(unit.getSkill())
                     .build();
             blueUnitList.add(unitInfo);
+            i++;
         }
 
         Map<Object,Object> spyPickInfo = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + roomCode);
+
+        UnitInfo redSpyInfo = redUnitList.get((int)spyPickInfo.get("홍팀"));
+        UnitInfo blueSpyInfo = blueUnitList.get((int)spyPickInfo.get("청팀"));
+        String redSpyHint = "밀정은 " + redSpyInfo.getTime() + "에 " + redSpyInfo.getPlace() + "에서 " + redSpyInfo.getContactor() + "을(를) 만나 " + redSpyInfo.getStuff() + "을 전달받았습니다. " +
+                "그리고 밀정은 " + redSpyInfo.getScal() + "에 흉터가 있습니다.";
+        String blueSpyHint = "밀정은 " + blueSpyInfo.getTime() + "에 " + blueSpyInfo.getPlace() + "에서 " + blueSpyInfo.getContactor() + "을(를) 만나 " + blueSpyInfo.getStuff() + "을 전달받았습니다." +
+                "그리고 밀정은 " + blueSpyInfo.getScal() + "에 흉터가 있습니다.";;
 
         //게임시작 dto 에 담아줄 정보 주가
         GameStartDto redGameDto = GameStartDto.builder()
@@ -141,6 +189,7 @@ public class GameService {
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
                 .mySpyUnitId((int)spyPickInfo.get("청팀"))
+                .mySpyHint(redSpyHint)
                 .build();
 
         GameStartDto blueGameDto = GameStartDto.builder()
@@ -153,6 +202,7 @@ public class GameService {
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
                 .mySpyUnitId((int)spyPickInfo.get("홍팀"))
+                .mySpyHint(blueSpyHint)
                 .build();
 
         Map<String, Object> result = new HashMap<>();
@@ -272,7 +322,13 @@ public class GameService {
 
     public Map<String, Object> startGameDummy() {
 //        RoomEntity room = roomRepository.findByRoomCode("720ca5");
-
+        SecureRandom sr = new SecureRandom();
+        sr.setSeed(new Date().getTime());
+        String[] placeList = new String[]{"경복국", "덕수궁"};
+        String[] timeList = new String[]{"축시", "인시"};
+        String[] contactorList = new String[] {"경비병", "궁녀"};
+        String[] stuffList = new String[]{"쪽지", "지도"};
+        String[] scalList = new String[]{"오른쪽 가슴", "왼쪽 허벅지", "손목", "등", "종아리"};
         //게임시작 dto 에 담아줄 유저 리스트를 생성
         List<UserInfo> redTeamUserList = new ArrayList<>();
         List<UserInfo> blueTeamUserList = new ArrayList<>();
@@ -319,13 +375,17 @@ public class GameService {
                 .build();
         blueTeamUserList.add(userInfo6);
 
-
+        int[] randomPer = this.randomPermutation();
         // 홍팀 유저들의 유닛 선택창 정보
         List<UnitInfo> redUnitList = new ArrayList<>();
         UnitInfo unitInfo1 = UnitInfo.builder()
                 .unitId(1)
                 .name("대왕")
-                .age(67)
+                .place(placeList[sr.nextInt(2)])
+                .time(timeList[sr.nextInt(2)])
+                .contactor(contactorList[sr.nextInt(2)])
+                .stuff(stuffList[sr.nextInt(2)])
+                .scal(scalList[randomPer[0]])
                 .skill("밀정 선택 불가")
                 .build();
         redUnitList.add(unitInfo1);
@@ -333,7 +393,11 @@ public class GameService {
         UnitInfo unitInfo2 = UnitInfo.builder()
                 .unitId(2)
                 .name("창병")
-                .age(32)
+                .place(placeList[sr.nextInt(2)])
+                .time(timeList[sr.nextInt(2)])
+                .contactor(contactorList[sr.nextInt(2)])
+                .stuff(stuffList[sr.nextInt(2)])
+                .scal(scalList[randomPer[1]])
                 .skill("앞 뒤 상대말 1턴간 이동 불가")
                 .build();
         redUnitList.add(unitInfo2);
@@ -341,7 +405,11 @@ public class GameService {
         UnitInfo unitInfo3 = UnitInfo.builder()
                 .unitId(3)
                 .name("기병")
-                .age(46)
+                .place(placeList[sr.nextInt(2)])
+                .time(timeList[sr.nextInt(2)])
+                .contactor(contactorList[sr.nextInt(2)])
+                .stuff(stuffList[sr.nextInt(2)])
+                .scal(scalList[randomPer[2]])
                 .skill("이동 수 +1")
                 .build();
         redUnitList.add(unitInfo3);
@@ -349,7 +417,11 @@ public class GameService {
         UnitInfo unitInfo4 = UnitInfo.builder()
                 .unitId(4)
                 .name("농민")
-                .age(24)
+                .place(placeList[sr.nextInt(2)])
+                .time(timeList[sr.nextInt(2)])
+                .contactor(contactorList[sr.nextInt(2)])
+                .stuff(stuffList[sr.nextInt(2)])
+                .scal(scalList[randomPer[3]])
                 .skill("아무런 능력이 없음")
                 .build();
         redUnitList.add(unitInfo4);
@@ -357,18 +429,27 @@ public class GameService {
         UnitInfo unitInfo5 = UnitInfo.builder()
                 .unitId(5)
                 .name("노비")
-                .age(29)
+                .place(placeList[sr.nextInt(2)])
+                .time(timeList[sr.nextInt(2)])
+                .contactor(contactorList[sr.nextInt(2)])
+                .stuff(stuffList[sr.nextInt(2)])
+                .scal(scalList[randomPer[4]])
                 .skill("이동 수 -1")
                 .build();
         redUnitList.add(unitInfo5);
 
         // 청팀 유저들의 유닛 선택창 정보
+        randomPer = this.randomPermutation();
         List<UnitInfo> blueUnitList = new ArrayList<>();
 
         UnitInfo unitInfo6 = UnitInfo.builder()
                 .unitId(1)
                 .name("대왕")
-                .age(67)
+                .place(placeList[sr.nextInt(2)])
+                .time(timeList[sr.nextInt(2)])
+                .contactor(contactorList[sr.nextInt(2)])
+                .stuff(stuffList[sr.nextInt(2)])
+                .scal(scalList[randomPer[0]])
                 .skill("밀정 선택 불가")
                 .build();
         blueUnitList.add(unitInfo6);
@@ -376,7 +457,11 @@ public class GameService {
         UnitInfo unitInfo7 = UnitInfo.builder()
                 .unitId(2)
                 .name("창병")
-                .age(32)
+                .place(placeList[sr.nextInt(2)])
+                .time(timeList[sr.nextInt(2)])
+                .contactor(contactorList[sr.nextInt(2)])
+                .stuff(stuffList[sr.nextInt(2)])
+                .scal(scalList[randomPer[1]])
                 .skill("앞 뒤 상대말 1턴간 이동 불가")
                 .build();
         blueUnitList.add(unitInfo7);
@@ -384,7 +469,11 @@ public class GameService {
         UnitInfo unitInfo8 = UnitInfo.builder()
                 .unitId(3)
                 .name("기병")
-                .age(46)
+                .place(placeList[sr.nextInt(2)])
+                .time(timeList[sr.nextInt(2)])
+                .contactor(contactorList[sr.nextInt(2)])
+                .stuff(stuffList[sr.nextInt(2)])
+                .scal(scalList[randomPer[2]])
                 .skill("이동 수 +1")
                 .build();
         blueUnitList.add(unitInfo8);
@@ -392,7 +481,11 @@ public class GameService {
         UnitInfo unitInfo9 = UnitInfo.builder()
                 .unitId(4)
                 .name("농민")
-                .age(24)
+                .place(placeList[sr.nextInt(2)])
+                .time(timeList[sr.nextInt(2)])
+                .contactor(contactorList[sr.nextInt(2)])
+                .stuff(stuffList[sr.nextInt(2)])
+                .scal(scalList[randomPer[3]])
                 .skill("아무런 능력이 없음")
                 .build();
         blueUnitList.add(unitInfo9);
@@ -400,10 +493,21 @@ public class GameService {
         UnitInfo unitInfo10 = UnitInfo.builder()
                 .unitId(5)
                 .name("노비")
-                .age(29)
+                .place(placeList[sr.nextInt(2)])
+                .time(timeList[sr.nextInt(2)])
+                .contactor(contactorList[sr.nextInt(2)])
+                .stuff(stuffList[sr.nextInt(2)])
+                .scal(scalList[randomPer[4]])
                 .skill("이동 수 -1")
                 .build();
         blueUnitList.add(unitInfo10);
+
+        UnitInfo redSpyInfo = unitInfo2;
+        UnitInfo blueSpyInfo = unitInfo7;
+        String redSpyHint = "밀정은 " + redSpyInfo.getTime() + "에 " + redSpyInfo.getPlace() + "에서 " + redSpyInfo.getContactor() + "을(를) 만나 " + redSpyInfo.getStuff() + "을 전달받았습니다. " +
+                "그리고 밀정은 " + redSpyInfo.getScal() + "에 흉터가 있습니다.";
+        String blueSpyHint = "밀정은 " + blueSpyInfo.getTime() + "에 " + blueSpyInfo.getPlace() + "에서 " + blueSpyInfo.getContactor() + "을(를) 만나 " + blueSpyInfo.getStuff() + "을 전달받았습니다." +
+                "그리고 밀정은 " + blueSpyInfo.getScal() + "에 흉터가 있습니다.";;
 
         //게임시작 dto 에 담아줄 정보 주가
         GameStartDto redGameDto = GameStartDto.builder()
@@ -416,6 +520,7 @@ public class GameService {
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
                 .mySpyUnitId(2)
+                .mySpyHint(redSpyHint)
                 .build();
 
         GameStartDto blueGameDto = GameStartDto.builder()
@@ -428,6 +533,7 @@ public class GameService {
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
                 .mySpyUnitId(2)
+                .mySpyHint(blueSpyHint)
                 .build();
 
         Map<String, Object> result = new HashMap<>();

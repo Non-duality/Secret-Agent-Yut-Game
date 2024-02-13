@@ -22,5 +22,6 @@ public class GameStartDto {
     private List<UnitInfo> redTeamUnitList;
     private List<UnitInfo> blueTeamUnitList;
     private int mySpyUnitId;
+    private String mySpyHint;
 
 }
