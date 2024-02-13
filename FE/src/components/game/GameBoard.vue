@@ -240,14 +240,17 @@ export default {
           gameStore.myTeam == 1 &&
           gameStore.redHorses[4].check == 5 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
-        )
+        ) {
+          gameStore.throwChance++;
           return;
-        else if (
+        } else if (
           gameStore.myTeam == 2 &&
           gameStore.blueHorses[4].check == 5 - gameStore.blueHorses &&
           gameStore.redHorses[4].index === 0
-        )
+        ) {
+          gameStore.throwChance++;
           return;
+        }
       }
     },
     // 말 선택 결과를 받아 왔을 때.
@@ -312,15 +315,14 @@ export default {
           gameStore.myTeam == 1 &&
           gameStore.redHorses[4].check == 5 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
-        ){
+        ) {
           gameStore.throwChance++;
           return;
-        }
-        else if (
+        } else if (
           gameStore.myTeam == 2 &&
           gameStore.blueHorses[4].check == 5 - gameStore.blueHorses &&
           gameStore.redHorses[4].index === 0
-        ){
+        ) {
           gameStore.throwChance++;
           return;
         }
