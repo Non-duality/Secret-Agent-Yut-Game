@@ -60,12 +60,22 @@ export default {
     filteredSubscribers() {
       // 레드 팀에 해당하는 구독자들을 필터링하여 반환
       if (this.myTeamName === "red") {
-        return this.subscribers;
+        return this.subscribers.filter((sub) => {
+          // 구독자의 닉네임이 레드 팀에 속하는지 확인
+          return useGameStore().redUser.some(
+            (user) => user.nickname === sub.nickname
+          );
+        });
       }
 
       // 블루 팀에 해당하는 구독자들을 필터링하여 반환
       else if (this.myTeamName === "blue") {
-        return this.subscribers;
+        return this.subscribers.filter((sub) => {
+          // 구독자의 닉네임이 블루 팀에 속하는지 확인
+          return useGameStore().blueUser.some(
+            (user) => user.nickname === sub.nickname
+          );
+        });
       }
 
       // 팀에 속하지 않은 경우 빈 배열을 반환
