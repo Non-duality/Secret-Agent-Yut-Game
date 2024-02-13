@@ -6,14 +6,14 @@
       :stream-manager="streamManager"
     /><span id="user-name">{{ nickname }}</span>
     <!-- <button @click="toggleMic">마이크</button> -->
-    <button @click="toggleMission">미션</button>
+    <!-- <button @click="toggleMission">미션</button> -->
 
-    <div class="mission-modal">
+    <!-- <div class="mission-modal">
       <jewelModal v-if="showMissionModal[0]"/>
       <cakeModal v-if="showMissionModal[1]"/>
       <chamModal v-if="showMissionModal[2]"/>
       <flyCatchModal v-if="showMissionModal[3]"/>
-    </div>
+    </div> -->
 
   </div>
 </template>

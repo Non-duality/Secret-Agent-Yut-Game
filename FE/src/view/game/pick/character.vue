@@ -529,21 +529,17 @@ export default {
         this.showWaitModal = false;
 
         if (usePickStore().isLeader) this.showSpyModal = true;
-        else this.showWaitSpyPickModal=true;
+        else this.showWaitSpyPickModal = true;
       }
     );
 
     watch(
       () => pickStore.pickSpyWait,
       (newValue) => {
-        // 만약 리더라면, 밀정 골라야 됨.
-        if (usePickStore().isLeader) {
-          this.showWaitModal = false;
-          this.showSpyModal = true;
-        }
-        // 만약 팀원이라면, 밀정 픽을 대기하고 있다는 것을 알려줘야 함.
-        else {
-        }
+        if (usePickStore().isLeader) this.showSpyModal = false;
+        else this.showWaitSpyPickModal = false;
+
+        this.showWaitSpyOppModal = true;
       }
     );
 
