@@ -1,6 +1,7 @@
 <template>
   <div class="game-board">
     <!-- 여기에 추리 말 선택 모달이 나와야한다. -->
+    <GameSpySelect v-if="reasoningChoose" />
     <!-- 방향 전환 시 모달로 선택 -->
     <GameModal
       v-if="isShowReasoning || isShowGoDig"
@@ -91,6 +92,7 @@ import GameBoardTile from "./item/GameBoardTile.vue";
 import GameHorse from "./item/GameHorse.vue";
 import GameYut from "./item/GameYut.vue";
 import GameModal from "./item/GameModal.vue";
+import GameSpySelect from "./item/GameSpySelect.vue";
 
 export default {
   components: {
@@ -98,6 +100,7 @@ export default {
     GameHorse,
     GameYut,
     GameModal,
+    GameSpySelect,
   },
   mounted() {
     // 새로고침 방지 이벤트를 추가한다.
@@ -222,6 +225,10 @@ export default {
       }
       return gameStore.isShowReasoning;
     },
+    reasoningChoose() {
+      const gameStore = useGameStore();
+      return gameStore.reasoningChoose;
+    },
   },
   methods: {
     // 로딩 완료 후 게임 시작.
@@ -282,6 +289,9 @@ export default {
         this.canSelectHorse = false;
         gameStore.isSelect = false;
       } else if (receivedMsg.actionCategory === 3) {
+        console.log(receivedMsg);
+        gameStore.reasoningChoose = false;
+        gameStore.turnChange();
       } else if (receivedMsg.actionCategory === 4) {
         gameStore.isShowReasoning = false;
         if (receivedMsg.reasoningChoose) {

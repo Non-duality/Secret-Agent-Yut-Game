@@ -216,7 +216,7 @@ export default {
         // 청팀이면
         else {
           styles.bottom = horsesIndex[3][this.horse.endOrder].bottom;
-          styles.right = horsesIndex[3][this.horse.endOrder].right;
+          styles.left = horsesIndex[3][this.horse.endOrder].left;
         }
       }
       // console.log(styles);
