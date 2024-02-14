@@ -37,6 +37,7 @@
   
   <script>
 import { useGameStore } from "@/store/gameStore";
+import { useUserStore } from "@/store/userStore";
 import { socketSend } from "@/util/socket.js";
 
 export default {
@@ -64,6 +65,7 @@ export default {
     // 방 코드
     roomCode() {
       const userStore = useUserStore();
+    //   return userStore.currentRoomInfo.roomCode;
       return "720ca5";
     },
   },
@@ -87,7 +89,7 @@ export default {
         team : gameStore.myTeam,
         selectedUnit : this.selectedHorseId
       }
-      socketSend(`/pub/game/${this.roomCode}/reason-ticket-use`, msg);
+      socketSend(`/pub/game/${this.roomCode}/reasoning`, msg);
     },
     selectHorse(horse) {
       this.selectedHorse = horse;

@@ -49,7 +49,7 @@
     </div>
     <div class="game-board-tile">
       <!-- 윷 던진 결과 -->
-      <div class="game-yut-text-div" v-show="isShowResText || true">
+      <div class="game-yut-text-div" v-show="isShowResText">
         <span class="game-yut-res-text">{{ yutText }}</span>
       </div>
       <div class="game-yut-res" v-show="isShowRes">
@@ -163,6 +163,7 @@ export default {
     // 방 코드
     roomCode() {
       const userStore = useUserStore();
+    //   return userStore.currentRoomInfo.roomCode;
       return "720ca5";
     },
     // 차례 메시지
@@ -240,6 +241,7 @@ export default {
       }, 1000);
       setTimeout(() => {
         gameStore.isShowTurnMessage = false;
+        // gameStore.isShowReasoning = true;
         gameStore.startTimer();
       }, 3000);
     },
@@ -337,6 +339,7 @@ export default {
         gameStore.redHorses[i].status = "wait";
         gameStore.redHorses[i].check = i;
         gameStore.redHorses[i].endOrder = 0;
+        gameStore.redHorses[i].stun = 0;
         gameStore.blueHorses[i].name = receivedMsg.blueTeamUnitList[i].name;
         gameStore.blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
         gameStore.blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
@@ -358,6 +361,7 @@ export default {
         gameStore.blueHorses[i].status = "wait";
         gameStore.blueHorses[i].check = i;
         gameStore.blueHorses[i].endOrder = 0;
+        gameStore.blueHorses[i].stun = 0;
       }
       gameStore.redUser = receivedMsg.redTeamUserList;
       gameStore.blueUser = receivedMsg.blueTeamUserList;
@@ -386,7 +390,7 @@ export default {
       // 라운드
       gameStore.gameSpeed = 3;
       // 미션 타일
-      // gameStore.missionTiles = receivedMsg.missionRegion;
+      gameStore.missionTiles = receivedMsg.missionRegion;
       // gameStore.startTimer();
       setTimeout(() => {
         this.gameStart();
@@ -524,7 +528,6 @@ export default {
         this.$watch("isSelectedHorse", () => {
           // 선택을 하였다면.
           if (this.isSelectedHorse) {
-            this.isShowResText = false;
             // clearInterval(gameStore.timerId);
             // gameStore.timerId = null;
             console.log("소켓 보내기 전");
