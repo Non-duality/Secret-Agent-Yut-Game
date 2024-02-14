@@ -127,11 +127,9 @@ export const useUserStore = defineStore("user", {
               // 웹 소켓 연결
               try {
                 await connectWebSocket(accessToken)
-                console.log("웹소켓 연결 성공")
                 resolve(); // 작업 완료 후 resolve 호출
-              } catch (error ) {
-                console.error("웹 소켓 연결 실패:", error)
-                resolve()
+              } catch (error) {
+                resolve() 
               }
             } else {
               useUserStore().isLogin = false;
@@ -285,9 +283,7 @@ export const useUserStore = defineStore("user", {
         findByToken(
           (response) => {
             if (response.status === httpStatusCode.OK) {
-              console.log('로그인 확인완')
               useUserStore().userInfo = response.data.userInfo;
-              console.log(useUserStore().userInfo.email)
               resolve()
             }
           },
