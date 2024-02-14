@@ -1,5 +1,9 @@
 package com.ssafy.hungry.global.handler;
 
+import com.ssafy.hungry.domain.event.dto.EventDto;
+import com.ssafy.hungry.domain.friend.dto.MyFriendDto;
+import com.ssafy.hungry.domain.friend.service.FriendService;
+import com.ssafy.hungry.domain.user.service.UserService;
 import com.ssafy.hungry.global.entity.PrincipalEntity;
 import com.ssafy.hungry.global.entity.SessionEntity;
 import com.ssafy.hungry.global.entity.StompPrincipal;
@@ -12,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageDeliveryException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -20,6 +25,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import javax.naming.AuthenticationException;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -28,6 +34,7 @@ public class StompInterceptor implements ChannelInterceptor {
     private final JWTUtil jwtUtil;
     private final SessionRepository sessionRepository;
     private final PrincipalRepository principalRepository;
+    private final FriendService friendService;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -71,6 +78,10 @@ public class StompInterceptor implements ChannelInterceptor {
             log.info("UNSUBSCRIBE 감지");
         } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
             log.info("DISCONNECT 감지");
+            //여기서 끊어지면 로그아웃 하는거처럼 하고 싶은데..
+            String email = principalRepository.findById(accessor.getUser().getName()).get().getEmail();
+            sessionRepository.deleteById(email);
+            principalRepository.deleteById(accessor.getUser().getName());
         } else if (StompCommand.SEND.equals(accessor.getCommand())) {
             log.info("SEND 감지");
         }

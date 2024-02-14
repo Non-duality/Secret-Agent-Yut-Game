@@ -80,6 +80,12 @@ public class GameStompController {
     public void mission(@DestinationVariable String roomCode){
 
     }
+
+    @MessageMapping("/game/{roomCode}/reason-ticket-use")
+    public void reasonTicketUse(@DestinationVariable String roomCode, ReasonTicketDto dto){
+        dto.setActionCategory(5);
+        simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
+    }
     
     //게임 결과 (승리팀)
 

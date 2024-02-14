@@ -7,25 +7,25 @@ import com.ssafy.hungry.domain.friend.entity.FriendEntity;
 import com.ssafy.hungry.domain.friend.repository.FriendRepository;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.repository.UserRepository;
+import com.ssafy.hungry.global.entity.StompPrincipal;
+import com.ssafy.hungry.global.repository.SessionRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class FriendService {
 
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final EntityManager em;
+    private final SessionRepository sessionRepository;
 
-    public FriendService(FriendRepository friendRepository, UserRepository userRepository, EntityManager em){
-        this.friendRepository = friendRepository;
-        this.userRepository = userRepository;
-        this.em = em;
-    }
 
     //친구 목록은 { fromUserId, toUserId, weAreFriend } 세개의 속성으로 구성되어 있음
     //요청을 보낼 때 { 나의Id, 상대방Id, true } 와 { 상대방Id, 나의Id, false } 값으로 저장
@@ -60,6 +60,18 @@ public class FriendService {
             dto.setEmail(entity.getEmail());
             dto.setNickname(entity.getNickname());
             myFriendDtoList.add(dto);
+        }
+        myFriendDtoList = this.isOnline(myFriendDtoList);
+        return myFriendDtoList;
+    }
+
+    //친구 목록에서 친구 온라인인지 추가 판별
+    public List<MyFriendDto> isOnline(List<MyFriendDto> myFriendDtoList){
+        for(MyFriendDto myFriendDto : myFriendDtoList){
+            myFriendDto.getEmail();
+            if(sessionRepository.existsById(myFriendDto.getEmail())){
+                myFriendDto.setOnline(true);
+            }
         }
         return myFriendDtoList;
     }

@@ -12,4 +12,5 @@ import lombok.ToString;
 public class MyFriendDto {
     private String email;
     private String nickname;
+    private boolean isOnline;
 }
