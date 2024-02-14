@@ -49,7 +49,7 @@
     </div>
     <div class="game-board-tile">
       <!-- 윷 던진 결과 -->
-      <div class="game-yut-text-div" v-show="isShowResText || true">
+      <div class="game-yut-text-div" v-show="isShowResText">
         <span class="game-yut-res-text">{{ yutText }}</span>
       </div>
       <div class="game-yut-res" v-show="isShowRes">
@@ -105,7 +105,8 @@ export default {
   mounted() {
     // 새로고침 방지 이벤트를 추가한다.
     window.addEventListener("beforeunload", this.leave);
-    this.connectSocket();
+    // this.connectSocket();
+    this.gameStart();
     useUserStore().showModalSide = false;
   },
   data() {
@@ -125,6 +126,34 @@ export default {
     };
   },
   computed: {
+    receivedMsg() {
+      const gameStore = useGameStore();
+      switch (gameStore.receivedMsg.actionCategory) {
+        case 1:
+          if (!gameStore.isThrowYut) {
+            this.receiveYutRes();
+          }
+          break;
+        case 2: // 말 이동.
+          this.receiveSelectHorse();
+
+          // boolean값들 초기화.
+          this.isSelectedHorse = false;
+          this.canSelectHorse = false;
+          gameStore.isSelect = false;
+          break;
+        case 3:
+          gameStore.reasoningChoose = false;
+          gameStore.turnChange();
+          break;
+        case 4:
+          gameStore.isShowReasoning = false;
+          break;
+        case 5:
+          break;
+      }
+      return gameStore.receivedMsg;
+    },
     // 홍팀 말
     redHorses() {
       const gameStore = useGameStore();
@@ -163,6 +192,7 @@ export default {
     // 방 코드
     roomCode() {
       const userStore = useUserStore();
+      //   return userStore.currentRoomInfo.roomCode;
       return "720ca5";
     },
     // 차례 메시지
@@ -240,8 +270,13 @@ export default {
       }, 1000);
       setTimeout(() => {
         gameStore.isShowTurnMessage = false;
+        // 턴 시작.
+        if (gameStore.myTurn === 0 && gameStore.myTeam === 1) {
+          gameStore.isThrowYut = true;
+        }
+        // gameStore.isShowReasoning = true;
         gameStore.startTimer();
-      }, 3000);
+      }, 4000);
     },
     leave(event) {
       event.preventDefault();
@@ -253,155 +288,16 @@ export default {
       window.location.href = "/";
       return event.returnValue;
     },
-    sendStart() {
-      socketSend(`/pub/game/${this.roomCode}/start`, "");
-    },
-    // 연결
-    connectSocket() {
-      const userStore = useUserStore();
-      const gameStore = useGameStore();
-      // 테스트
-      if (["4", "5", "123"].includes(userStore.userInfo.email)) {
-        gameStore.myTeam = 2;
-        connect("blue", userStore.accessToken, this.handleRecvMessage);
-      } else {
-        gameStore.myTeam = 1;
-        connect("red", userStore.accessToken, this.handleRecvMessage);
-      }
-      setTimeout(() => {
-        if (gameStore.redUser.length === 0) this.sendStart();
-      }, 3000);
-    },
-    // 받아오기.
-    handleRecvMessage(receivedMsg) {
-      const gameStore = useGameStore();
-      if (receivedMsg.actionCategory === 0 && gameStore.redUser.length === 0) {
-        this.setInfo(receivedMsg);
-      } else if (receivedMsg.actionCategory === 1 && !gameStore.isThrowYut) {
-        this.receiveYutRes(receivedMsg);
-      } else if (receivedMsg.actionCategory === 2) {
-        // 말 이동.
-        this.receiveSelectHorse(receivedMsg);
-
-        // boolean값들 초기화.
-        this.isSelectedHorse = false;
-        this.canSelectHorse = false;
-        gameStore.isSelect = false;
-      } else if (receivedMsg.actionCategory === 3) {
-        console.log(receivedMsg);
-        gameStore.reasoningChoose = false;
-        gameStore.turnChange();
-      } else if (receivedMsg.actionCategory === 4) {
-        gameStore.isShowReasoning = false;
-        if (receivedMsg.reasoningChoose) {
-          // 추리권 사용.
-          gameStore.reasoningChoose = true;
-        } else {
-          gameStore.startTimer();
-        }
-      }
-    },
-    // 초기 정보 저장
-    setInfo(receivedMsg) {
-      console.log("setInfo");
-      console.log(receivedMsg);
-      const gameStore = useGameStore();
-      const userStore = useUserStore();
-      // 우리팀의 스파이
-      gameStore.mySpyId = receivedMsg.mySpyUnitId;
-
-      for (let i = 0; i <= 30; i++) {
-        gameStore.tiles[i].horse = [];
-      }
-
-      for (let i = 0; i < 5; i++) {
-        gameStore.redHorses[i].name = receivedMsg.redTeamUnitList[i].name;
-        gameStore.redHorses[i].age = receivedMsg.redTeamUnitList[i].age;
-        gameStore.redHorses[i].skill = receivedMsg.redTeamUnitList[i].skill;
-        gameStore.redHorses[i].contactor =
-          gameStore.myTeam === 1
-            ? "???"
-            : receivedMsg.redTeamUnitList[i].contactor;
-        gameStore.redHorses[i].place =
-          gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].place;
-        gameStore.redHorses[i].scal =
-          gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].scal;
-        gameStore.redHorses[i].stuff =
-          gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
-        gameStore.redHorses[i].time =
-          gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].time;
-        gameStore.redHorses[i].id = i + 1;
-        gameStore.redHorses[i].index = 0;
-        gameStore.redHorses[i].team = 1;
-        gameStore.redHorses[i].status = "wait";
-        gameStore.redHorses[i].check = i;
-        gameStore.redHorses[i].endOrder = 0;
-        gameStore.blueHorses[i].name = receivedMsg.blueTeamUnitList[i].name;
-        gameStore.blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
-        gameStore.blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
-        gameStore.blueHorses[i].contactor =
-          gameStore.myTeam === 2
-            ? "???"
-            : receivedMsg.redTeamUnitList[i].contactor;
-        gameStore.blueHorses[i].place =
-          gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].place;
-        gameStore.blueHorses[i].scal =
-          gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].scal;
-        gameStore.blueHorses[i].stuff =
-          gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
-        gameStore.blueHorses[i].time =
-          gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].time;
-        gameStore.blueHorses[i].id = i + 1;
-        gameStore.blueHorses[i].index = 0;
-        gameStore.blueHorses[i].team = 2;
-        gameStore.blueHorses[i].status = "wait";
-        gameStore.blueHorses[i].check = i;
-        gameStore.blueHorses[i].endOrder = 0;
-      }
-      gameStore.redUser = receivedMsg.redTeamUserList;
-      gameStore.blueUser = receivedMsg.blueTeamUserList;
-      for (let i = 0; i < 3; i++) {
-        if (
-          gameStore.redUser[i].email === userStore.userInfo.email ||
-          gameStore.blueUser[i].email === userStore.userInfo.email
-        ) {
-          gameStore.myTurn = i;
-          console.log("내턴 : " + gameStore.myTurn);
-          if (i === 0 && gameStore.myTeam === 1) {
-            setTimeout(() => {
-              gameStore.isThrowYut = true;
-            }, 10000);
-          }
-          break;
-        }
-      }
-      // 차례 닉네임
-      gameStore.redTurnName = receivedMsg.redTeamUserList[0].nickname;
-      gameStore.blueTurnName = receivedMsg.blueTeamUserList[0].nickname;
-      gameStore.ticket = 0;
-      gameStore.enemyTicket = 0;
-      gameStore.ticketTemp = 0;
-      gameStore.enemyTicketTemp = 0;
-      // 라운드
-      gameStore.gameSpeed = 3;
-      // 미션 타일
-      // gameStore.missionTiles = receivedMsg.missionRegion;
-      // gameStore.startTimer();
-      setTimeout(() => {
-        this.gameStart();
-      }, 10000);
-    },
-
     // 윷 결과를 받아 왔을 때.
-    receiveYutRes(receivedMsg) {
+    receiveYutRes() {
       const gameStore = useGameStore();
       if (gameStore.timerId !== null) {
         clearInterval(gameStore.timerId);
         gameStore.timerId = null;
       }
-      gameStore.yutRes = receivedMsg.yutRes;
-      gameStore.throwRes = receivedMsg.throwRes;
-      gameStore.setYutText(receivedMsg.yutRes);
+      gameStore.yutRes = this.receivedMsg.yutRes;
+      gameStore.throwRes = this.receivedMsg.throwRes;
+      gameStore.setYutText(this.receivedMsg.yutRes);
 
       if (gameStore.yutRes >= 4) {
         gameStore.throwChance += 1;
@@ -423,7 +319,7 @@ export default {
       // 만약 아무 말도 안나갔는데 백도가 나오면 그냥 넘어간다.
       if (gameStore.yutRes == -1) {
         if (
-          receivedMsg.team == 1 &&
+          this.receivedMsg.team == 1 &&
           gameStore.redHorses[4].check == 4 - gameStore.redEnd &&
           gameStore.redHorses[4].index === 0
         ) {
@@ -432,7 +328,7 @@ export default {
             return;
           }, 3500);
         } else if (
-          receivedMsg.team == 2 &&
+          this.receivedMsg.team == 2 &&
           gameStore.blueHorses[4].check == 4 - gameStore.blueEnd &&
           gameStore.redHorses[4].index === 0
         ) {
@@ -447,16 +343,16 @@ export default {
       }, 3500);
     },
     // 말 선택 결과를 받아 왔을 때.
-    receiveSelectHorse(receivedMsg) {
+    receiveSelectHorse() {
       const gameStore = useGameStore();
       this.isShowResText = false;
       if (gameStore.timerId !== null) {
         clearInterval(gameStore.timerId);
         gameStore.timerId = null;
       }
-      gameStore.isGoDiagonal = receivedMsg.goDiagonal;
-      gameStore.isCenterDir = receivedMsg.centerDir;
-      gameStore.moveHorse(receivedMsg);
+      gameStore.isGoDiagonal = this.receivedMsg.goDiagonal;
+      gameStore.isCenterDir = this.receivedMsg.centerDir;
+      gameStore.moveHorse(this.receivedMsg);
     },
     //pub/game/{code}/start
     // 윷 던지기
@@ -523,7 +419,6 @@ export default {
         this.$watch("isSelectedHorse", () => {
           // 선택을 하였다면.
           if (this.isSelectedHorse) {
-            this.isShowResText = false;
             // clearInterval(gameStore.timerId);
             // gameStore.timerId = null;
             console.log("소켓 보내기 전");

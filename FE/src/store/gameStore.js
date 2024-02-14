@@ -5,6 +5,8 @@ export const useGameStore = defineStore("game", {
   // 반응형 상태 (data)
   state: () => {
     return {
+      // 소켓 메시지
+      receivedMsg: null,
       // 타이머
       timerId: null,
       timer: 20,
@@ -77,6 +79,7 @@ export const useGameStore = defineStore("game", {
           scal: "",
           stuff: "",
           time: "",
+          stun: 0,
         },
         {
           id: 2,
@@ -94,6 +97,7 @@ export const useGameStore = defineStore("game", {
           scal: "",
           stuff: "",
           time: "",
+          stun: 0,
         },
         {
           id: 3,
@@ -111,6 +115,7 @@ export const useGameStore = defineStore("game", {
           scal: "",
           stuff: "",
           time: "",
+          stun: 0,
         },
         {
           id: 4,
@@ -128,6 +133,7 @@ export const useGameStore = defineStore("game", {
           scal: "",
           stuff: "",
           time: "",
+          stun: 0,
         },
         {
           id: 5,
@@ -145,6 +151,7 @@ export const useGameStore = defineStore("game", {
           scal: "",
           stuff: "",
           time: "",
+          stun: 0,
         },
       ],
       blueHorses: [
@@ -164,6 +171,7 @@ export const useGameStore = defineStore("game", {
           scal: "",
           stuff: "",
           time: "",
+          stun: 0,
         },
         {
           id: 2,
@@ -181,6 +189,7 @@ export const useGameStore = defineStore("game", {
           scal: "",
           stuff: "",
           time: "",
+          stun: 0,
         },
         {
           id: 3,
@@ -198,6 +207,7 @@ export const useGameStore = defineStore("game", {
           scal: "",
           stuff: "",
           time: "",
+          stun: 0,
         },
         {
           id: 4,
@@ -215,6 +225,7 @@ export const useGameStore = defineStore("game", {
           scal: "",
           stuff: "",
           time: "",
+          stun: 0,
         },
         {
           id: 5,
@@ -232,6 +243,7 @@ export const useGameStore = defineStore("game", {
           scal: "",
           stuff: "",
           time: "",
+          stun: 0,
         },
       ],
       horsesIndex: [
@@ -567,7 +579,14 @@ export const useGameStore = defineStore("game", {
 
         // 여기서 추리를 할건지 윷을 던질건지 선택한다.
         // 티켓이 하나 이상은 있어야 한다.
-        if (this.ticket > 0 || this.enemyTicket > 0) {
+        if (
+          (((!this.teamTurn && this.myTeam === 1) ||
+            (this.teamTurn && this.myTeam === 2)) &&
+            this.ticket > 0) ||
+            (((!this.teamTurn && this.myTeam === 2) ||
+            (this.teamTurn && this.myTeam === 1)) &&
+          this.enemyTicket > 0)
+        ) {
           this.isShowReasoning = true;
           // 여기에 추리 모달 결과 작성.
         } else {
