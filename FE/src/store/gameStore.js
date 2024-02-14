@@ -5,6 +5,8 @@ export const useGameStore = defineStore("game", {
   // 반응형 상태 (data)
   state: () => {
     return {
+      // 소켓 메시지
+      receivedMsg: null,
       // 타이머
       timerId: null,
       timer: 20,

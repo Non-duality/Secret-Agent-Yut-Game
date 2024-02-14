@@ -1,13 +1,13 @@
 /* 라이브러리 사용 */
 import { Client } from "@stomp/stompjs";
 
-import GameBoardVue from "@/components/game/GameBoard.vue";
 
 /* LocalStorage 사용 */
 import { useUserStore } from "@/store/userStore";
 import { useRoomStore } from "@/store/roomStore";
 import { usePickStore } from "@/store/pickStore";
 import { useFriendStore } from "@/store/friendStore";
+import { useGameStore } from "@/store/gameStore";
 
 /* .env 저장 주소 사용 */
 const { VITE_WSS_API_URL } = import.meta.env;
@@ -27,7 +27,7 @@ export function connectWebSocket(accessToken) {
       },
 
       onConnect: () => {
-        resolve()
+        resolve();
 
         stompClient.subscribe("/sub/event", handleWebSocketMessage);
         stompClient.subscribe("/user/sub/event", handleWebSocketMessage);
@@ -35,68 +35,68 @@ export function connectWebSocket(accessToken) {
 
       // 정상적인 연결 해제 (초기화)
       onDisconnect: () => {
-        stompClient = null
-        connected = false
-        console.log('[socket.onDisconnect] : 연결이 끊어졌습니다.')
+        stompClient = null;
+        connected = false;
+        console.log("[socket.onDisconnect] : 연결이 끊어졌습니다.");
       },
 
       // WebSocket이 닫힐 때 (초기회)
       onWebSocketClose: (closeEvent) => {
-        connected = false
-        console.log('[socket.onWebSocketClose] : 연결이 끊어졌습니다.')
-        console.log('상세 에러 : ' + closeEvent)
+        connected = false;
+        console.log("[socket.onWebSocketClose] : 연결이 끊어졌습니다.");
+        console.log("상세 에러 : " + closeEvent);
       },
 
       // STOMP ERROR
       onStompError: (error) => {
-        console.log('[socket.onStompError] : ' + error.headers['message'])
-        console.log('STOMP 상세 에러 : ' + error.body)
-        reject(new Error("STOMP ERROR"))
-        alert('소켓 연결이 끊어졌습니다.')
+        console.log("[socket.onStompError] : " + error.headers["message"]);
+        console.log("STOMP 상세 에러 : " + error.body);
+        reject(new Error("STOMP ERROR"));
+        alert("소켓 연결이 끊어졌습니다.");
       },
 
       // WebSocket ERROR
       onWebSocketError: (error) => {
-        console.log('[socket.onWebSocketError] : ' + error.headers['message'])
-        console.log('WebSocket 상세 에러 : ' + error.body)
+        console.log("[socket.onWebSocketError] : " + error.headers["message"]);
+        console.log("WebSocket 상세 에러 : " + error.body);
         reject(new Error("WebSocket error"));
-        alert('소켓 연결이 끊어졌습니다.');
+        alert("소켓 연결이 끊어졌습니다.");
       },
 
       reconnectDelay: 3000, //자동재연결
-    })
+    });
 
     try {
       stompClient.activate();
       connected = true;
-      console.log('소켓 연결 성공');
+      console.log("소켓 연결 성공");
     } catch (error) {
       connected = false;
       console.log("소켓 에러 발생 : " + error);
     }
-  }) 
+  });
 }
 
 // 로그인 이벤트 메시지 보내기
 export function sendLoginEvent(event) {
-  console.log('로그인 소켓 이벤트 메시지 발송')
+  console.log("로그인 소켓 이벤트 메시지 발송");
   stompClient.publish({
     destination: "/pub/login",
-    body: JSON.stringify(event)
-  })
+    body: JSON.stringify(event),
+  });
 }
 // 로그아웃 이벤트 메시지 보내고 연결 끊기
 export function sendLogoutEvent(event) {
   if (stompClient) {
     stompClient.publish({
       destination: "/pub/logout",
-      body: JSON.stringify(event)
-    })
-    console.log('로그아웃 소켓 이벤트 메시지 발송')
-    stompClient.deactivate()
-    stompClient = null
-    connected = false
-    console.log('소켓 연결이 끊어졌습니다.');
+      body: JSON.stringify(event),
+    });
+    console.log("로그아웃 소켓 이벤트 메시지 발송");
+    stompClient.deactivate();
+    stompClient = null;
+    connected = false;
+    console.log("소켓 연결이 끊어졌습니다.");
   }
 }
 
@@ -104,34 +104,39 @@ export function sendLogoutEvent(event) {
 export function sendEvent(event) {
   stompClient.publish({
     destination: "/pub/event",
-    body: JSON.stringify(event)
-  })
+    body: JSON.stringify(event),
+  });
 }
 
 // 웹소켓으로 받은 메시지 처리
 function handleWebSocketMessage(message) {
   const event = JSON.parse(message.body);
-  const friendStore = useFriendStore()
-  console.log(event.eventCategory)
-  switch(event.eventCategory) {
+  const friendStore = useFriendStore();
+  console.log(event.eventCategory);
+  switch (event.eventCategory) {
     case "1":
-      friendStore.receiveChatMessage({ friendID: event.fromUserEmail, message: event.message })
-      break
+      friendStore.receiveChatMessage({
+        friendID: event.fromUserEmail,
+        message: event.message,
+      });
+      break;
     case "2":
-      friendStore.receiveFriendRequest(event.fromUserEmail)
-      break
+      friendStore.receiveFriendRequest(event.fromUserEmail);
+      break;
     case "3":
-      friendStore.receiveGameInvitation({ fromUserEmail: event.fromUserEmail, message: event.message })
-      break
+      friendStore.receiveGameInvitation({
+        fromUserEmail: event.fromUserEmail,
+        message: event.message,
+      });
+      break;
     case "4":
-      friendStore.updateOnlineFriends(event.fromUserEmail)
-      break
+      friendStore.updateOnlineFriends(event.fromUserEmail);
+      break;
     case "5":
-      friendStore.updateOfflineFriends(event.fromUserEmail)
-      break
-  } 
+      friendStore.updateOfflineFriends(event.fromUserEmail);
+      break;
+  }
 }
-
 
 /* 게임 소켓 */
 export function connect(team, accessToken, recvCallback) {
@@ -149,11 +154,11 @@ export function connect(team, accessToken, recvCallback) {
       onConnect: () => {
         resolve();
         // 여기에서 구독 설정
-        stompClient.subscribe(`/sub/game/720ca5/${team}`, (message) => {
+        stompClient.subscribe(`/sub/game/${roomCode}/${team}`, (message) => {
           console.log("메시지 받음:", message.body);
           recvCallback(JSON.parse(message.body));
         });
-        stompClient.subscribe("/sub/game/720ca5", (message) => {
+        stompClient.subscribe(`/sub/game/${roomCode}`, (message) => {
           console.log("메시지 받음:", message.body);
           recvCallback(JSON.parse(message.body));
         });
@@ -196,6 +201,92 @@ export function connect(team, accessToken, recvCallback) {
       console.log("소켓 에러: " + error);
     }
   });
+}
+// 게임 소켓 핸들
+function gameHandleRecvMessage(receivedMsg) {
+  const gameStore = useGameStore();
+  if (receivedMsg.actionCategory === 0 && gameStore.redUser.length === 0) {
+    setInfo(receivedMsg);
+  } else {
+    gameStore.receivedMsg = receivedMsg;
+  }
+}
+// 게임 시작 전 유저, 말 저장.
+// 초기 정보 저장
+function setInfo(receivedMsg) {
+  const gameStore = useGameStore();
+  const userStore = useUserStore();
+  // 우리팀의 스파이
+  gameStore.mySpyId = receivedMsg.mySpyUnitId;
+
+  for (let i = 0; i <= 30; i++) {
+    gameStore.tiles[i].horse = [];
+  }
+
+  for (let i = 0; i < 5; i++) {
+    gameStore.redHorses[i].name = receivedMsg.redTeamUnitList[i].name;
+    gameStore.redHorses[i].age = receivedMsg.redTeamUnitList[i].age;
+    gameStore.redHorses[i].skill = receivedMsg.redTeamUnitList[i].skill;
+    gameStore.redHorses[i].contactor =
+      gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].contactor;
+    gameStore.redHorses[i].place =
+      gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].place;
+    gameStore.redHorses[i].scal =
+      gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].scal;
+    gameStore.redHorses[i].stuff =
+      gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
+    gameStore.redHorses[i].time =
+      gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].time;
+    gameStore.redHorses[i].id = i + 1;
+    gameStore.redHorses[i].index = 0;
+    gameStore.redHorses[i].team = 1;
+    gameStore.redHorses[i].status = "wait";
+    gameStore.redHorses[i].check = i;
+    gameStore.redHorses[i].endOrder = 0;
+    gameStore.redHorses[i].stun = 0;
+    gameStore.blueHorses[i].name = receivedMsg.blueTeamUnitList[i].name;
+    gameStore.blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
+    gameStore.blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
+    gameStore.blueHorses[i].contactor =
+      gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].contactor;
+    gameStore.blueHorses[i].place =
+      gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].place;
+    gameStore.blueHorses[i].scal =
+      gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].scal;
+    gameStore.blueHorses[i].stuff =
+      gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
+    gameStore.blueHorses[i].time =
+      gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].time;
+    gameStore.blueHorses[i].id = i + 1;
+    gameStore.blueHorses[i].index = 0;
+    gameStore.blueHorses[i].team = 2;
+    gameStore.blueHorses[i].status = "wait";
+    gameStore.blueHorses[i].check = i;
+    gameStore.blueHorses[i].endOrder = 0;
+    gameStore.blueHorses[i].stun = 0;
+  }
+  gameStore.redUser = receivedMsg.redTeamUserList;
+  gameStore.blueUser = receivedMsg.blueTeamUserList;
+  for (let i = 0; i < 3; i++) {
+    if (
+      gameStore.redUser[i].email === userStore.userInfo.email ||
+      gameStore.blueUser[i].email === userStore.userInfo.email
+    ) {
+      gameStore.myTurn = i;
+      break;
+    }
+  }
+  // 차례 닉네임
+  gameStore.redTurnName = receivedMsg.redTeamUserList[0].nickname;
+  gameStore.blueTurnName = receivedMsg.blueTeamUserList[0].nickname;
+  gameStore.ticket = 0;
+  gameStore.enemyTicket = 0;
+  gameStore.ticketTemp = 0;
+  gameStore.enemyTicketTemp = 0;
+  // 라운드
+  gameStore.gameSpeed = 3;
+  // 미션 타일
+  gameStore.missionTiles = receivedMsg.missionRegion;
 }
 
 /*
@@ -641,17 +732,34 @@ export function initPick(router, from) {
       else if (usePickStore().receivedMessage.type === "GAME_START") {
         setTimeout(() => {
           // (1) 소켓 끊고 다음 게임 소켓으로 연결하기??
-          const gameBoard = new GameBoardVue;
-          gameBoard.connectSocket();
-
+          // const gameBoard = new GameBoardVue();
+          // gameBoard.connectSocket();
+          gameConnect();
           // (2) 그리고 나서 현재 방, 픽 창 리셋하기 --> 구독 정보 없애기
 
           // 게임으로 푸쉬하기.
-          router.push({name: "game"});
+          router.push({ name: "game" });
         }, 5000);
       }
     }
   );
+}
+// 게임 연결.
+function gameConnect() {
+  const userStore = useUserStore();
+  const gameStore = useGameStore();
+  // 테스트
+  if (["4", "5", "123"].includes(userStore.userInfo.email)) {
+    gameStore.myTeam = 2;
+    connect("blue", userStore.accessToken, gameHandleRecvMessage);
+  } else {
+    gameStore.myTeam = 1;
+    connect("red", userStore.accessToken, gameHandleRecvMessage);
+  }
+  // 아직 받은 데이터가 없을때는 서버에서 받아온다.
+  if (gameStore.redUser.length === 0) {
+    socketSend(`/pub/game/${roomCode}/start`, "");
+  }
 }
 
 // 구독한 방에 알리기.
