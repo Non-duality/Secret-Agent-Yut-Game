@@ -7,9 +7,8 @@
     <MessageModal />
     <!-- <span class="game-red-team-name">홍팀</span> -->
     <div class="game-video-team1">
-      <div v-if="myTeamIdx === 1" class="video-display">
+      <!-- <div v-if="myTeamIdx === 1" class="video-display">
         <div id="session" v-if="session">
-          <!-- (시작) 카메라 영역 -->
           <div class="rtc-container">
             <div id="video-container">
               <user-video
@@ -24,13 +23,11 @@
               />
             </div>
           </div>
-          <!-- (끝) 카메라 영역 -->
         </div>
       </div>
 
       <div v-else-if="myTeamIdx === 2" class="video-display">
         <div id="session" v-if="session">
-          <!-- (시작) 카메라 영역 -->
           <div class="rtc-container">
             <div id="video-container">
               <user-video
@@ -40,18 +37,16 @@
               />
             </div>
           </div>
-          <!-- (끝) 카메라 영역 -->
         </div>
-      </div>
+      </div> -->
     </div>
 
     <GameBoard class="game-board-main" />
 
     <!-- <span class="game-blue-team-name">청팀</span> -->
     <div class="game-video-team2">
-      <div v-if="myTeamIdx === 1" class="video-display">
+      <!-- <div v-if="myTeamIdx === 1" class="video-display">
         <div id="session" v-if="session">
-          <!-- (시작) 카메라 영역 -->
           <div class="rtc-container">
             <div id="video-container">
               <user-video
@@ -61,13 +56,11 @@
               />
             </div>
           </div>
-          <!-- (끝) 카메라 영역 -->
         </div>
       </div>
 
       <div v-else-if="myTeamIdx === 2" class="video-display">
         <div id="session" v-if="session">
-          <!-- (시작) 카메라 영역 -->
           <div class="rtc-container">
             <div id="video-container">
               <user-video
@@ -82,9 +75,8 @@
               />
             </div>
           </div>
-          <!-- (끝) 카메라 영역 -->
         </div>
-      </div>
+      </div> -->
     </div>
 
     <MiniGame v-show="isMission" />
