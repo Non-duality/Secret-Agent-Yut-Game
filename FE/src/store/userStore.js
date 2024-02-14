@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { useRoomStore } from "./roomStore";
 import { usePickStore } from "./pickStore";
 import { useGameStore } from "./gameStore";
-
+import { useFriendStore } from "./friendStore";
 import {
   userConfirm,
   userDoJoin,
@@ -17,6 +17,8 @@ import {
   changeNick,
 } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
+
+import { connectWebSocket } from '@/util/socket.js';
 
 export const useUserStore = defineStore("user", {
   id: "myStore",
@@ -39,6 +41,7 @@ export const useUserStore = defineStore("user", {
       roomId: null,
       roomCode: null,
       currentRoomInfo: null,
+      myTeamIdx: null,
 
       // 닉네임, 이메일 중복체크
       isEmailCheck: false,
@@ -107,10 +110,9 @@ export const useUserStore = defineStore("user", {
       return new Promise((resolve, reject) => {
         userConfirm(
           loginUser,
-          (response) => {
+          async (response) => {
             if (response.status === 200) {
               let { data } = response;
-              console.log("로그인 성공");
               let accessToken = data["access-token"];
               let refreshToken = data["refresh-token"];
 
@@ -119,9 +121,19 @@ export const useUserStore = defineStore("user", {
 
               useUserStore().isLogin = true;
               useUserStore().showLoginModal = false;
-              resolve(); // 작업 완료 후 resolve 호출
+
+              useFriendStore().getFriend();
+              
+              // 웹 소켓 연결
+              try {
+                await connectWebSocket(accessToken)
+                console.log("웹소켓 연결 성공")
+                resolve(); // 작업 완료 후 resolve 호출
+              } catch (error ) {
+                console.error("웹 소켓 연결 실패:", error)
+                resolve()
+              }
             } else {
-              console.log("로그인 실패");
               useUserStore().isLogin = false;
               reject(new Error("로그인 실패")); // 실패 시 reject 호출
             }
@@ -269,22 +281,28 @@ export const useUserStore = defineStore("user", {
       )
     },
     getUserInfo: () => {
-      findByToken(
-        (response) => {
-          if (response.status === httpStatusCode.OK) {
-            useUserStore().userInfo = response.data.userInfo;
+      return new Promise((resolve, reject) => {
+        findByToken(
+          (response) => {
+            if (response.status === httpStatusCode.OK) {
+              console.log('로그인 확인완')
+              useUserStore().userInfo = response.data.userInfo;
+              console.log(useUserStore().userInfo.email)
+              resolve()
+            }
+          },
+  
+          async (error) => {
+            console.error(
+              "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ",
+              error.response.status
+            );
+  
+            await tokenRegenerate();
+            reject(error)
           }
-        },
-
-        async (error) => {
-          console.error(
-            "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ",
-            error.response.status
-          );
-
-          await tokenRegenerate();
-        }
-      );
+        );
+      })
     },
 
     tokenRegenerate: async () => {

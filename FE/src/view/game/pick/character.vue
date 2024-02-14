@@ -210,6 +210,7 @@ export default {
       this.session.on("streamCreated", ({ stream }) => {
         const subscriber = this.session.subscribe(stream);
         this.subscribers.push(subscriber);
+        console.log(this.subscribers);
       });
 
       // On every Stream destroyed...
@@ -607,8 +608,6 @@ export default {
           // 만약 현재 자신의 턴이라면
           if (this.getIsMyTurn) {
             if (i === 0) this.isLeader = true;
-
-            console.log(this.isLeader);
 
             let idx = -1;
             let selectedCharacterName = null;

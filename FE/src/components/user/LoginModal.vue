@@ -26,6 +26,7 @@
   
 <script>
 import { useUserStore } from "@/store/userStore";
+import { sendLoginEvent } from '@/util/socket.js';
 
 export default {
   name: "LoginComponent",
@@ -43,8 +44,43 @@ export default {
       await userStore.userLogin(this.loginUser);
       if (userStore.isLogin) {
         userStore.getUserInfo();
+        setTimeout(() => {
+          switch (useUserStore().userInfo.email) {
+            case "123":
+              useUserStore().myTeamIdx = 2;
+              break;
+            case "4":
+              useUserStore().myTeamIdx = 2;
+              break;
+            case "5":
+              useUserStore().myTeamIdx = 2;
+              break;
+            case "1":
+              useUserStore().myTeamIdx = 1;
+              break;
+            case "2":
+              useUserStore().myTeamIdx = 1;
+              break;
+            case "3":
+              useUserStore().myTeamIdx = 1;
+              break;
+          }
+          this.closeModal();
+          userStore.showModalSide = true;
+          this.$router.push("/home");
+        }, 200);
+        await userStore.getUserInfo();
         this.closeModal();
         userStore.showModalSide = true;
+        // 로그인 메시지 서버에 전달
+        console.log(typeof userStore.userInfo.email)
+        const event = {
+        fromUserEmail: userStore.userInfo.email,
+        eventCategory: '4',
+        eventAction: 'LOGIN',
+        message: `${userStore.userInfo.nickname}님이 로그인했습니다.`
+        }
+        sendLoginEvent(event)
         this.$router.push("/home");
       } else {
         userStore.isLogin = false;
@@ -56,7 +92,7 @@ export default {
       this.closeModal();
       useUserStore().openModal("join");
     },
-    find(){
+    find() {
       this.closeModal();
       useUserStore().openModal("find");
     },

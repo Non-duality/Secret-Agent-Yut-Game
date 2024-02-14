@@ -4,6 +4,7 @@
       <div class="side-title">
         <span class="side-text" v-if="showMessageFlag">알림</span>
         <span class="side-text" v-if="showFriendFlag">친구목록</span>
+        <span class="side-text" v-if="showUserSearchFlag">사용자 검색</span>
         <button class="btn" @click="closeSidebar">
           <img class="side-close" src="@/assets/icon/close.png" />
         </button>
@@ -15,17 +16,23 @@
       <transition name="fade" mode="out-in">
         <FriendComponents v-if="showFriendFlag"
       /></transition>
+      <transition name="fade" mode="out-in">
+        <UserSearchComponents v-if="showUserSearchFlag"
+      /></transition>
     </div>
     <SettingComponents
       v-if="showSettingFlag"
       @close-setting="closeSettingModal"
     />
     <div class="side-btn">
+      <button class="btn" @click="showMessage">
+        <img class="btn-img" src="@/assets/icon/notification.png" />
+      </button>
       <button class="btn" @click="showFriend">
         <img class="btn-img" src="@/assets/icon/friend.png" />
       </button>
-      <button class="btn" @click="showMessage">
-        <img class="btn-img" src="@/assets/icon/notification.png" />
+      <button class="btn" @click="showFriendSearch">
+        <img class="btn-img" src="@/assets/icon/friendAdd.png" />
       </button>
       <button class="btn" @click="showSetting">
         <img class="btn-img" src="@/assets/icon/setting.png" />
@@ -39,6 +46,7 @@
 import MessageComponents from "./MessageComponents.vue";
 import FriendComponents from "./FriendComponents.vue";
 import SettingComponents from "./SettingComponents.vue";
+import UserSearchComponents from './UserSearchComponents.vue';
 
 export default {
   // 컴포넌트
@@ -46,12 +54,14 @@ export default {
     MessageComponents,
     FriendComponents,
     SettingComponents,
+    UserSearchComponents,
   },
   data() {
     return {
       showFlag: true,
       showMessageFlag: false,
       showFriendFlag: true,
+      showUserSearchFlag: false,
       showSettingFlag: false,
     };
   },
@@ -61,14 +71,22 @@ export default {
       this.showFlag = true;
       this.showFriendFlag = false;
       this.showMessageFlag = true;
+      this.showUserSearchFlag = false;
     },
     // 친구 목록
     showFriend() {
       this.showFlag = true;
       this.showMessageFlag = false;
       this.showFriendFlag = true;
+      this.showUserSearchFlag = false;
     },
-
+    // 유저 검색
+    showFriendSearch() {
+      this.showFlag = true;
+      this.showMessageFlag = false;
+      this.showFriendFlag = false;
+      this.showUserSearchFlag = true;
+    },
     // 설정 모달 열기
     showSetting() {
       this.showSettingFlag = true;

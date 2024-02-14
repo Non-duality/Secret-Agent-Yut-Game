@@ -276,7 +276,6 @@ export default {
     },
     // 받아오기.
     handleRecvMessage(receivedMsg) {
-      console.log(receivedMsg);
       const gameStore = useGameStore();
       if (receivedMsg.actionCategory === 0 && gameStore.redUser.length === 0) {
         this.setInfo(receivedMsg);
