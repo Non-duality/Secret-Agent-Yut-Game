@@ -87,7 +87,7 @@
 <script>
 import { useGameStore } from "@/store/gameStore";
 import { useUserStore } from "@/store/userStore";
-import { gameConnect, socketSend } from "@/util/socket.js";
+import { socketSend } from "@/util/socket.js";
 import GameBoardTile from "./item/GameBoardTile.vue";
 import GameHorse from "./item/GameHorse.vue";
 import GameYut from "./item/GameYut.vue";

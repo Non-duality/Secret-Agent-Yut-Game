@@ -28,12 +28,12 @@
       <div id="session" v-if="session">
         <div class="rtc-container">
           <div id="video-container">
-            <!-- <user-video
+            <user-video
               v-for="user in blueUsers"
               :key="user.stream.connection.connectionId"
               :stream-manager="user"
               :nickname="currentUserNickname"
-            /> -->
+            />
           </div>
         </div>
       </div>
@@ -160,11 +160,9 @@ export default {
         const subscriber = this.session.subscribe(stream);
         this.subscribers.push(subscriber);
 
-        this.redUsers.push(subscriber);
-
-        const data = JSON.parse(stream.connection.data); 
-        const jsonData = JSON.parse(data.data); 
-        const teamValue = jsonData.team; 
+        const data = JSON.parse(stream.connection.data);
+        const jsonData = JSON.parse(data.data);
+        const teamValue = jsonData.team;
 
         if (teamValue === 1) {
           this.redUsers.push(subscriber);
@@ -181,6 +179,7 @@ export default {
       });
 
       const userData = {
+        // team: useGameStore().myTeam,
         team: useUserStore().myTeamIdx,
       };
 
@@ -203,15 +202,11 @@ export default {
             });
 
             this.mainStreamManager = publisher;
-            // this.publisher = publisher;
-            this.redUsers.push(publisher);
-            // console.log(publisher);
+
+            if (useUserStore().myTeamIdx === 1) this.redUsers.push(publisher);
+            else this.blueUsers.push(publisher);
 
             this.session.publish(publisher);
-
-            // for(let i=0; i<this.redUsers.length; i++){
-            //   this.session.publish(this.redUser[i]);
-            // }
           })
           .catch((error) => {});
       });
@@ -220,16 +215,6 @@ export default {
     },
 
     leaveSession() {
-      // if (this.session) this.session.disconnect();
-
-      // this.session = undefined;
-      // this.mainStreamManager = undefined;
-      // this.publisher = undefined;
-      // this.subscribers = [];
-      // this.OV = undefined;
-
-      // 세션에서 퇴장하는 코드...
-
       // 스트림 매니저 삭제
       this.subscribers.forEach((subscriber, index) => {
         subscriber.stream.disposeVideoElement();
@@ -273,12 +258,42 @@ export default {
       );
       return response.data;
     },
+
+    async delay2(ms) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+      });
+    },
   },
 
-  mounted() {
+  async mounted() {
     this.myUserName = useUserStore().userInfo.nickname;
-    this.mySessionId = "A";
-    // this.joinSession();
+    this.mySessionId = useUserStore().currentRoomInfo.roomCode;
+    // this.mySessionId = "A";
+
+    // 여기서 순서 생각하기.
+    const red = useGameStore().redUser;
+    const blue = useGameStore().blueUser;
+
+    if (useGameStore().myTeam === 1) {
+      for (let i = 1; i <= 3; i++) {
+        if (this.myUserName === red[i - 1].nickname) {
+          this.joinSession();
+          break;
+        }
+        await delay2(150 * i);
+      }
+    } else {
+      for (let i = 1; i <= 3; i++) {
+        if (this.myUserName === blue[i - 1].nickname) {
+          this.joinSession();
+          break;
+        }
+        await delay2(150 * i);
+      }
+    }
+
+    this.joinSession();
 
     // 로딩창 7.5초동안 데이터 받는 시간 확보
     setTimeout(() => {}, 5800);
