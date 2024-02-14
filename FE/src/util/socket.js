@@ -419,8 +419,6 @@ export function initRoom(router, from) {
               useRoomStore().seatInfo[seatKey].team = seat.team;
             }
           }
-
-          // useRoomStore().receivedMessage.data.roomDetailDto.currentUserCount;
         );
 
         const storedRoomData = JSON.parse(localStorage.getItem("room"));
@@ -747,12 +745,12 @@ export function initPick(router, from) {
 function gameConnect() {
   const userStore = useUserStore();
   const gameStore = useGameStore();
-  // 테스트
-  if (["4", "5", "123"].includes(userStore.userInfo.email)) {
-    gameStore.myTeam = 2;
+
+  gameStore.myTeam = userStore.myTeamIdx;
+
+  if (gameStore.myTeam === 2) {
     connect("blue", userStore.accessToken, gameHandleRecvMessage);
   } else {
-    gameStore.myTeam = 1;
     connect("red", userStore.accessToken, gameHandleRecvMessage);
   }
   // 아직 받은 데이터가 없을때는 서버에서 받아온다.
