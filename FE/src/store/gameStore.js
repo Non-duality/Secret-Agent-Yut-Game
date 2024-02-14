@@ -514,6 +514,11 @@ export const useGameStore = defineStore("game", {
             this.ticketTemp = 0;
             this.ticket++;
           }
+          // 같은 팀 이동 시 스턴 감소
+          for(let i = 0;i<5;i++){
+            if(this.redHorses[i].stun > 0) 
+              this.redHorses[i].stun--;
+          }
         } else {
           this.enemyTicketTemp++;
           if (this.enemyTicketTemp === this.gameSpeed) {
@@ -532,6 +537,11 @@ export const useGameStore = defineStore("game", {
           if (this.ticketTemp === this.gameSpeed) {
             this.ticketTemp = 0;
             this.ticket++;
+          }
+          // 같은 팀 이동 시 스턴 감소
+          for(let i = 0;i<5;i++){
+            if(this.blueHorses[i].stun > 0) 
+              this.blueHorses[i].stun--;
           }
         } else {
           this.enemyTicketTemp++;

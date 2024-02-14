@@ -15,6 +15,14 @@
     <div v-if="isShowTurnMessage" class="game-board-turn-message-container">
       <span class="game-board-turn-message">{{ turnMessage }}</span>
     </div>
+    <!-- 경고 메시지  -->
+    <div
+      v-if="isShowWarningMessage || true"
+      class="game-board-warning-message-container"
+    >
+      <span>{{ warningMessage }}</span>
+      <span class="game-board-warning-message">{{ warningMessageSecond }}</span>
+    </div>
 
     <!-- 타이머 -->
     <div class="game-board-timer-container">
@@ -87,7 +95,7 @@
 <script>
 import { useGameStore } from "@/store/gameStore";
 import { useUserStore } from "@/store/userStore";
-import { gameConnect, socketSend } from "@/util/socket.js";
+import { socketSend } from "@/util/socket.js";
 import GameBoardTile from "./item/GameBoardTile.vue";
 import GameHorse from "./item/GameHorse.vue";
 import GameYut from "./item/GameYut.vue";
@@ -125,6 +133,11 @@ export default {
       recvList: [],
       // 모달 타입 1=> 대각선 2=> 가운데 방향 3=> 추리.
       modalType: 2,
+      // 경고 메시지
+      isShowWarningMessage: false,
+      warningMessage: "홍팀이 밀정잡이에 실패하였습니다.",
+      warningMessageSecond:
+        "해당말은 이제 같은 팀입니다. 윷을 한번 더 던지세요!!",
     };
   },
   computed: {
@@ -150,7 +163,11 @@ export default {
     // 턴 체크.
     isThrowYut() {
       const gameStore = useGameStore();
-      return gameStore.isThrowYut && gameStore.throwChance > 0 ? true : false;
+      return !this.isShowReasoning &&
+        gameStore.isThrowYut &&
+        gameStore.throwChance > 0
+        ? true
+        : false;
     },
     // 타이머 체크
     timerCheck() {
@@ -170,8 +187,8 @@ export default {
     // 방 코드
     roomCode() {
       const userStore = useUserStore();
-      console.log(userStore.currentRoomInfo.roomCode)
-        return userStore.currentRoomInfo.roomCode;
+      console.log(userStore.currentRoomInfo.roomCode);
+      return userStore.currentRoomInfo.roomCode;
       // return "720ca5";
     },
     // 차례 메시지
@@ -239,8 +256,8 @@ export default {
       return gameStore.reasoningChoose;
     },
   },
-  watch:{
-    receivedMsg(newVal){
+  watch: {
+    receivedMsg(newVal) {
       const gameStore = useGameStore();
       console.log(newVal);
       switch (newVal.actionCategory) {
@@ -258,10 +275,61 @@ export default {
           break;
         case 3:
           gameStore.reasoningChoose = false;
-          gameStore.turnChange();
+
+          // 성공
+          if (newVal.isSpy) {
+            this.warningMessage = gameStore.teamTurn ? "청팀" : "홍팀";
+            this.warningMessage =
+              this.warningMessage + "이 밀정잡이에 성공하였습니다.";
+
+            // 해당 말이 밀정이면
+            if (newVal.team === 1) {
+              this.warningMessageSecond =
+                gameStore.redHorses[newVal.selectedUnit].name;
+            } else {
+              this.warningMessageSecond =
+                gameStore.blueHorses[newVal.selectedUnit].name;
+            }
+
+            this.warningMessageSecond =
+              this.warningMessageSecond +
+              "말은 이제 같은 팀입니다. 윷을 한번 더 던지세요!!";
+            this.isShowWarningMessage = true;
+          }
+          // 실패
+          else {
+            this.warningMessage = gameStore.teamTurn ? "청팀" : "홍팀";
+            this.warningMessage =
+              this.warningMessage + "이 밀정잡이에 실패하였습니다.";
+            // 밀정이 아니면. 3턴 이동 금지
+            if (newVal.team === 1) {
+              gameStore.redHorses[newVal.selectedUnit].stun += 3;
+              this.warningMessageSecond =
+                gameStore.redHorses[newVal.selectedUnit].name;
+            } else {
+              gameStore.blueHorses[newVal.selectedUnit].stun += 3;
+              this.warningMessageSecond =
+                gameStore.blueHorses[newVal.selectedUnit].name;
+            }
+
+            this.warningMessageSecond =
+              this.warningMessageSecond + "말은 3턴간 이동이 불가합니다...";
+            this.isShowWarningMessage = true;
+
+            // 여유.
+            setTimeout(() => {
+              this.isShowWarningMessage = false;
+              gameStore.turnChange();
+            }, 2000);
+          }
           break;
         case 4:
           gameStore.isShowReasoning = false;
+          if (newVal.reasoningChoose) {
+            gameStore.reasoningChoose = true;
+          } else {
+            gameStore.startTimer();
+          }
           break;
         case 5:
           break;
@@ -365,7 +433,7 @@ export default {
     //pub/game/{code}/start
     // 윷 던지기
     moveHorse() {
-      console.log("윷 던지기")
+      console.log("윷 던지기");
       const gameStore = useGameStore();
       // 내가 던질 차례인가 체크.
       if (!this.isThrowYut) {
@@ -502,9 +570,30 @@ export default {
         const gameStore = useGameStore();
         const myTeam = gameStore.myTeam;
 
+        // 경고 메시지 없애기.
+        if (this.isShowWarningMessage) this.isShowWarningMessage = false;
+
+        // 이동 금지 말 체크.
+        if (horse.stun > 0) {
+          // 메시지 출력
+          this.warningMessage = horse.name + "말은 " + horse.stun + "턴간 이동 금지입니다.";
+          this.warningMessageSecond = "";
+          this.isShowWarningMessage = true;
+
+          setTimeout(() => {
+            this.isShowWarningMessage = false;
+          }, 2000);
+        }
         // 백도인데 대기중인 말을 선택하면 다시.
-        if (horse.index == 0 && gameStore.yutRes == -1) {
-          console.log("다시");
+        else if (horse.index == 0 && gameStore.yutRes == -1) {
+          // 메시지 출력
+          this.warningMessage = "백도는 대기중인 말을 선택할 수 없습니다...";
+          this.warningMessageSecond = "";
+          this.isShowWarningMessage = true;
+
+          setTimeout(() => {
+            this.isShowWarningMessage = false;
+          }, 2000);
         } else if (horse.team == myTeam) {
           // 말 정보를 먼저 담는다.
           this.selectedHorse = horse;
@@ -547,7 +636,14 @@ export default {
             this.isSelectedHorse = true;
           }
         } else {
-          console.log("같은 팀을 선택해 주세요.");
+          // 메시지 출력
+          this.warningMessage = "같은 팀을 선택해 주세요...!!";
+          this.warningMessageSecond = "";
+          this.isShowWarningMessage = true;
+
+          setTimeout(() => {
+            this.isShowWarningMessage = false;
+          }, 2000);
         }
       }
     },
