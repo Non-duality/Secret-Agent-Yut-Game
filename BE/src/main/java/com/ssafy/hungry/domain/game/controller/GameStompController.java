@@ -45,10 +45,10 @@ public class GameStompController {
         gameService.updateEnterUserInfo(roomCode, user);
 
         // 들어온 유저가 6명일 때만 game start
-        if (gameService.getUserEnterCountInfo(roomCode) == 6 || true) {
+        if (gameService.getUserEnterCountInfo(roomCode) == 6) {
             RoomEntity room = roomRepository.findByRoomCode(roomCode);
-//            Map<String, Object> gamePreInfo = gameService.startGame(room);
-            Map<String, Object> gamePreInfo = gameService.startGameDummy();
+            Map<String, Object> gamePreInfo = gameService.startGame(room);
+//            Map<String, Object> gamePreInfo = gameService.startGameDummy();
             simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode + "/red", gamePreInfo.get("홍팀"));
             simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode + "/blue", gamePreInfo.get("청팀"));
         }
