@@ -5,7 +5,7 @@
       <!-- <h2 ref="titleElement" class="title">
         우리 팀 리더가 스파이 픽을 하고 있습니다...
       </h2> -->
-      <h2>
+      <h2 class="title">
         우리 팀 리더가 스파이 픽을 하고 있습니다...
       </h2>
     </div>
@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faX } from "@fortawesome/free-solid-svg-icons";
-library.add(faX);
+// import { library } from "@fortawesome/fontawesome-svg-core";
+// import { faX } from "@fortawesome/free-solid-svg-icons";
+// library.add(faX);
 
 export default {
   data() {

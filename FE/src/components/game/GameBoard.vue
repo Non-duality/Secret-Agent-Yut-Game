@@ -194,6 +194,7 @@ export default {
     // 방 코드
     roomCode() {
       const userStore = useUserStore();
+      console.log(userStore.currentRoomInfo.roomCode)
         return userStore.currentRoomInfo.roomCode;
       // return "720ca5";
     },
@@ -359,6 +360,7 @@ export default {
     //pub/game/{code}/start
     // 윷 던지기
     moveHorse() {
+      console.log("윷 던지기")
       const gameStore = useGameStore();
       // 내가 던질 차례인가 체크.
       if (!this.isThrowYut) {
@@ -374,6 +376,7 @@ export default {
         throwRes: gameStore.throwRes,
         team: gameStore.myTeam,
       };
+      console.log(this.roomCode);
       socketSend(`/pub/game/${this.roomCode}/throw-yut`, msg);
 
       // 텍스트와 윷결과 판을 다른 타이밍에 나타나게 한다.

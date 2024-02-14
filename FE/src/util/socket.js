@@ -289,6 +289,11 @@ function setInfo(receivedMsg) {
       useGameStore().blueUser[i].email === useUserStore().userInfo.email
     ) {
       useGameStore().myTurn = i;
+      if (i === 0 && useGameStore().myTeam === 1) {
+        setTimeout(() => {
+          useGameStore().isThrowYut = true;
+        }, 2000);
+      }
       break;
     }
   }

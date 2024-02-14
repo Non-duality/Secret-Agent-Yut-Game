@@ -5,7 +5,7 @@
       <!-- <h2 ref="titleElement" class="title">
         상대 팀 픽을 기다리고 있습니다...
       </h2> -->
-      <h2>
+      <h2 class="title">
         상대 팀 픽을 기다리고 있습니다.
       </h2>
     </div>
@@ -13,10 +13,10 @@
 </template>
 
 <script>
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faX } from "@fortawesome/free-solid-svg-icons";
+// import { library } from "@fortawesome/fontawesome-svg-core";
+// import { faX } from "@fortawesome/free-solid-svg-icons";
 import { useGameStore } from "@/store/gameStore";
-library.add(faX);
+// library.add(faX);
 
 export default {
   data() {
