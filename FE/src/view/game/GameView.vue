@@ -1,8 +1,8 @@
 <template>
   <div class="game-main">
-    <transition name="fade">
+    <!-- <transition name="fade">
       <Loading v-if="showStartModal" @close-start-modal="closeStartModal" />
-    </transition>
+    </transition> -->
 
     <MessageModal />
     <!-- <span class="game-red-team-name">홍팀</span> -->
