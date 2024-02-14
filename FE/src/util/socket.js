@@ -114,10 +114,12 @@ function handleWebSocketMessage(message) {
   console.log(event.eventCategory);
   switch (event.eventCategory) {
     case "1":
-      friendStore.receiveChatMessage({
+      console.log('하이 보내지냐고')
+      const chatInfo = {
         friendID: event.fromUserEmail,
         message: event.message,
-      });
+      }
+      friendStore.receiveChatMessage(chatInfo);
       break;
     case "2":
       friendStore.receiveFriendRequest(event.fromUserEmail);

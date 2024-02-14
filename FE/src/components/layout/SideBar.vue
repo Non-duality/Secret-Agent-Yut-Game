@@ -3,6 +3,7 @@
     <div class="side-bar" v-if="showFlag">
       <div class="side-title">
         <span class="side-text" v-if="showMessageFlag">알림</span>
+        <span class="side-text" v-if="showChatFlag">채팅방</span>
         <span class="side-text" v-if="showFriendFlag">친구목록</span>
         <span class="side-text" v-if="showUserSearchFlag">사용자 검색</span>
         <button class="btn" @click="closeSidebar">
@@ -14,7 +15,12 @@
         <MessageComponents v-if="showMessageFlag"
       /></transition>
       <transition name="fade" mode="out-in">
+        <ChatComponents v-if="showChatFlag"
+        :friendInfo="chatFriend"
+      /></transition>
+      <transition name="fade" mode="out-in">
         <FriendComponents v-if="showFriendFlag"
+        @open-chat-room="handleOpenChatRoom"
       /></transition>
       <transition name="fade" mode="out-in">
         <UserSearchComponents v-if="showUserSearchFlag"
@@ -27,6 +33,9 @@
     <div class="side-btn">
       <button class="btn" @click="showMessage">
         <img class="btn-img" src="@/assets/icon/notification.png" />
+      </button>
+      <button class="btn" @click="showChat">
+        <img class="btn-img" src="@/assets/icon/message.png" />
       </button>
       <button class="btn" @click="showFriend">
         <img class="btn-img" src="@/assets/icon/friend.png" />
@@ -47,6 +56,7 @@ import MessageComponents from "./MessageComponents.vue";
 import FriendComponents from "./FriendComponents.vue";
 import SettingComponents from "./SettingComponents.vue";
 import UserSearchComponents from './UserSearchComponents.vue';
+import ChatComponents from "./ChatComponents.vue";
 
 export default {
   // 컴포넌트
@@ -54,6 +64,7 @@ export default {
     MessageComponents,
     FriendComponents,
     SettingComponents,
+    ChatComponents,
     UserSearchComponents,
   },
   data() {
@@ -62,15 +73,19 @@ export default {
       showMessageFlag: false,
       showFriendFlag: true,
       showUserSearchFlag: false,
+      showChatFlag: false,
       showSettingFlag: false,
+      chatFriend: null,
     };
   },
   methods: {
+
     // 알림 메시지
     showMessage() {
       this.showFlag = true;
       this.showFriendFlag = false;
       this.showMessageFlag = true;
+      this.showChatFlag = false,
       this.showUserSearchFlag = false;
     },
     // 친구 목록
@@ -78,6 +93,7 @@ export default {
       this.showFlag = true;
       this.showMessageFlag = false;
       this.showFriendFlag = true;
+      this.showChatFlag = false,
       this.showUserSearchFlag = false;
     },
     // 유저 검색
@@ -85,8 +101,18 @@ export default {
       this.showFlag = true;
       this.showMessageFlag = false;
       this.showFriendFlag = false;
+      this.showChatFlag = false,
       this.showUserSearchFlag = true;
     },
+    // 유저 채팅
+    showChat() {
+      this.showFlag = true;
+      this.showMessageFlag = false;
+      this.showFriendFlag = false;
+      this.showChatFlag = true,
+      this.showUserSearchFlag = false;
+    },
+
     // 설정 모달 열기
     showSetting() {
       this.showSettingFlag = true;
@@ -101,8 +127,16 @@ export default {
     closeSidebar() {
       this.showMessageFlag = false;
       this.showFriendFlag = false;
+      this.showChatFlag = false;
       this.showFlag = false;
     },
+
+    // 유저 채팅 접근
+    handleOpenChatRoom(friend) {
+      console.log('채팅 접근 확인완')
+      this.chatFriend = friend
+      this.showChat()
+    }
   },
 };
 </script>

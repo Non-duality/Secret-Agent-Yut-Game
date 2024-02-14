@@ -36,18 +36,20 @@ export const useFriendStore = defineStore("friend", {
       try {
         await getMyFriendRequest((response) => {
           this.friendRequests = response.data
-          console.log('친구 요청 왔습니다.', response)
         })
       } catch (error) {
-        console.log('친구 요청 오다가 말았습니다.', error)
+        console.log('친구 요청 업데이트 에러', error)
       }
     },
     // 친구 채팅
-    receiveChatMessage({ friendID, message }) {
+    receiveChatMessage(chatInfo) {
+      console.log('메시지 보냅니다.')
+      const { friendID, message } = chatInfo
       if (!this.chatMessages[friendID]) {
-        this.chatMessages[friendID] = []
+        this.chatMessages[friendID] = [message]
       }
       this.chatMessages[friendID].push(message)
+      console.log(this.chatMessages[friendID])
     },
     // 게임 초대
     receiveGameInvitation(invitation) {
