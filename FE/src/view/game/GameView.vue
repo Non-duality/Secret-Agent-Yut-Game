@@ -293,8 +293,6 @@ export default {
       }
     }
 
-    this.joinSession();
-
     // 로딩창 7.5초동안 데이터 받는 시간 확보
     setTimeout(() => {}, 5800);
   },
