@@ -76,7 +76,7 @@ export default {
     falseText() {
       switch (this.modalType) {
         case 1:
-          return "네";
+          return "아니오";
         case 2:
           return "오른쪽";
         case 3:
@@ -89,7 +89,7 @@ export default {
   methods: {
     trueMethod() {
       if ([1, 2].includes(this.modalType)) {
-        this.$emit("tureMethod");
+        this.$emit("trueMethod");
       } else {
         this.$emit("useTicket");
       }

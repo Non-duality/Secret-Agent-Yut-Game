@@ -284,11 +284,18 @@ export default {
         gameStore.redHorses[i].name = receivedMsg.redTeamUnitList[i].name;
         gameStore.redHorses[i].age = receivedMsg.redTeamUnitList[i].age;
         gameStore.redHorses[i].skill = receivedMsg.redTeamUnitList[i].skill;
-        gameStore.redHorses[i].contactor = gameStore.myTeam === 1 ? "???" :receivedMsg.redTeamUnitList[i].contactor;
-        gameStore.redHorses[i].place = gameStore.myTeam === 1 ? "???" :receivedMsg.redTeamUnitList[i].place;
-        gameStore.redHorses[i].scal = gameStore.myTeam === 1 ? "???" :receivedMsg.redTeamUnitList[i].scal;
-        gameStore.redHorses[i].stuff = gameStore.myTeam === 1 ? "???" :receivedMsg.redTeamUnitList[i].stuff;
-        gameStore.redHorses[i].time = gameStore.myTeam === 1 ? "???" :receivedMsg.redTeamUnitList[i].time;
+        gameStore.redHorses[i].contactor =
+          gameStore.myTeam === 1
+            ? "???"
+            : receivedMsg.redTeamUnitList[i].contactor;
+        gameStore.redHorses[i].place =
+          gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].place;
+        gameStore.redHorses[i].scal =
+          gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].scal;
+        gameStore.redHorses[i].stuff =
+          gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
+        gameStore.redHorses[i].time =
+          gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].time;
         gameStore.redHorses[i].id = i + 1;
         gameStore.redHorses[i].index = 0;
         gameStore.redHorses[i].team = 1;
@@ -298,11 +305,18 @@ export default {
         gameStore.blueHorses[i].name = receivedMsg.blueTeamUnitList[i].name;
         gameStore.blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
         gameStore.blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
-        gameStore.blueHorses[i].contactor = gameStore.myTeam === 2 ? "???" :receivedMsg.redTeamUnitList[i].contactor;
-        gameStore.blueHorses[i].place = gameStore.myTeam === 2 ? "???" :receivedMsg.redTeamUnitList[i].place;
-        gameStore.blueHorses[i].scal = gameStore.myTeam === 2 ? "???" :receivedMsg.redTeamUnitList[i].scal;
-        gameStore.blueHorses[i].stuff = gameStore.myTeam === 2 ? "???" :receivedMsg.redTeamUnitList[i].stuff;
-        gameStore.blueHorses[i].time = gameStore.myTeam === 2 ? "???" :receivedMsg.redTeamUnitList[i].time;
+        gameStore.blueHorses[i].contactor =
+          gameStore.myTeam === 2
+            ? "???"
+            : receivedMsg.redTeamUnitList[i].contactor;
+        gameStore.blueHorses[i].place =
+          gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].place;
+        gameStore.blueHorses[i].scal =
+          gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].scal;
+        gameStore.blueHorses[i].stuff =
+          gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
+        gameStore.blueHorses[i].time =
+          gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].time;
         gameStore.blueHorses[i].id = i + 1;
         gameStore.blueHorses[i].index = 0;
         gameStore.blueHorses[i].team = 2;
@@ -320,7 +334,9 @@ export default {
           gameStore.myTurn = i;
           console.log("내턴 : " + gameStore.myTurn);
           if (i === 0 && gameStore.myTeam === 1) {
-            gameStore.isThrowYut = true;
+            setTimeout(() => {
+              gameStore.isThrowYut = true;
+            },5000);
           }
           break;
         }
@@ -329,14 +345,17 @@ export default {
       gameStore.redTurnName = receivedMsg.redTeamUserList[0].nickname;
       gameStore.blueTurnName = receivedMsg.blueTeamUserList[0].nickname;
       gameStore.ticket = 0;
+      gameStore.enemyTicket = 0;
+      gameStore.ticketTemp = 0;
+      gameStore.enemyTicketTemp = 0;
       // 라운드
-      gameStore.gameSpeed = receivedMsg.gameSpeed;
+      gameStore.gameSpeed = 3;
       // 미션 타일
       // gameStore.missionTiles = receivedMsg.missionRegion;
       // gameStore.startTimer();
       setTimeout(() => {
         this.gameStart();
-      },5000)
+      }, 5000);
     },
 
     // 윷 결과를 받아 왔을 때.
@@ -388,6 +407,9 @@ export default {
           }, 3500);
         }
       }
+      setTimeout(() => {
+        gameStore.startTimer();
+      }, 3500);
     },
     // 말 선택 결과를 받아 왔을 때.
     receiveSelectHorse(receivedMsg) {
@@ -464,7 +486,8 @@ export default {
         this.$watch("isSelectedHorse", () => {
           // 선택을 하였다면.
           if (this.isSelectedHorse) {
-            clearInterval(gameStore.timerId);
+            // clearInterval(gameStore.timerId);
+            // gameStore.timerId = null;
             console.log("소켓 보내기 전");
             console.log(this.selectedHorse);
             // 소켓 전송

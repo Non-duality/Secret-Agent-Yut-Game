@@ -72,11 +72,11 @@ export const useGameStore = defineStore("game", {
           name: "",
           age: 1,
           skill: "",
-          contactor:"",
-          place:"",
-          scal:"",
-          stuff:"",
-          time:"",
+          contactor: "",
+          place: "",
+          scal: "",
+          stuff: "",
+          time: "",
         },
         {
           id: 2,
@@ -89,11 +89,11 @@ export const useGameStore = defineStore("game", {
           name: "",
           age: 1,
           skill: "",
-          contactor:"",
-          place:"",
-          scal:"",
-          stuff:"",
-          time:"",
+          contactor: "",
+          place: "",
+          scal: "",
+          stuff: "",
+          time: "",
         },
         {
           id: 3,
@@ -106,11 +106,11 @@ export const useGameStore = defineStore("game", {
           name: "",
           age: 1,
           skill: "",
-          contactor:"",
-          place:"",
-          scal:"",
-          stuff:"",
-          time:"",
+          contactor: "",
+          place: "",
+          scal: "",
+          stuff: "",
+          time: "",
         },
         {
           id: 4,
@@ -123,11 +123,11 @@ export const useGameStore = defineStore("game", {
           name: "",
           age: 1,
           skill: "",
-          contactor:"",
-          place:"",
-          scal:"",
-          stuff:"",
-          time:"",
+          contactor: "",
+          place: "",
+          scal: "",
+          stuff: "",
+          time: "",
         },
         {
           id: 5,
@@ -140,11 +140,11 @@ export const useGameStore = defineStore("game", {
           name: "",
           age: 1,
           skill: "",
-          contactor:"",
-          place:"",
-          scal:"",
-          stuff:"",
-          time:"",
+          contactor: "",
+          place: "",
+          scal: "",
+          stuff: "",
+          time: "",
         },
       ],
       blueHorses: [
@@ -159,11 +159,11 @@ export const useGameStore = defineStore("game", {
           name: "",
           age: 1,
           skill: "",
-          contactor:"",
-          place:"",
-          scal:"",
-          stuff:"",
-          time:"",
+          contactor: "",
+          place: "",
+          scal: "",
+          stuff: "",
+          time: "",
         },
         {
           id: 2,
@@ -176,11 +176,11 @@ export const useGameStore = defineStore("game", {
           name: "",
           age: 1,
           skill: "",
-          contactor:"",
-          place:"",
-          scal:"",
-          stuff:"",
-          time:"",
+          contactor: "",
+          place: "",
+          scal: "",
+          stuff: "",
+          time: "",
         },
         {
           id: 3,
@@ -193,11 +193,11 @@ export const useGameStore = defineStore("game", {
           name: "",
           age: 1,
           skill: "",
-          contactor:"",
-          place:"",
-          scal:"",
-          stuff:"",
-          time:"",
+          contactor: "",
+          place: "",
+          scal: "",
+          stuff: "",
+          time: "",
         },
         {
           id: 4,
@@ -210,11 +210,11 @@ export const useGameStore = defineStore("game", {
           name: "",
           age: 1,
           skill: "",
-          contactor:"",
-          place:"",
-          scal:"",
-          stuff:"",
-          time:"",
+          contactor: "",
+          place: "",
+          scal: "",
+          stuff: "",
+          time: "",
         },
         {
           id: 5,
@@ -227,11 +227,11 @@ export const useGameStore = defineStore("game", {
           name: "",
           age: 1,
           skill: "",
-          contactor:"",
-          place:"",
-          scal:"",
-          stuff:"",
-          time:"",
+          contactor: "",
+          place: "",
+          scal: "",
+          stuff: "",
+          time: "",
         },
       ],
       horsesIndex: [
@@ -257,11 +257,11 @@ export const useGameStore = defineStore("game", {
           { bottom: "10px", left: "580px" },
         ],
         [
-          { bottom: "10px", rigth: "620px" },
-          { bottom: "10px", rigth: "670px" },
-          { bottom: "10px", rigth: "720px" },
-          { bottom: "10px", rigth: "770px" },
-          { bottom: "10px", rigth: "820px" },
+          { bottom: "10px", left: "820px" },
+          { bottom: "10px", left: "770px" },
+          { bottom: "10px", left: "720px" },
+          { bottom: "10px", left: "670px" },
+          { bottom: "10px", left: "620px" },
         ],
       ],
       // 말이 이동할 위치
@@ -339,119 +339,131 @@ export const useGameStore = defineStore("game", {
   actions: {
     // 말 이동
     moveHorse(selectedHorse) {
-      console.log("윷 기회  : " + this.throwChance);
       const horseInfo =
         selectedHorse.team === 1
           ? this.redHorses.find((horse) => horse.id === selectedHorse.unitIndex)
           : this.blueHorses.find(
               (horse) => horse.id === selectedHorse.unitIndex
             );
-      console.log(selectedHorse);
-      console.log(horseInfo);
 
       // 말의 능력.
       if (horseInfo.name === "기병") {
         if (this.yutRes === -1) {
-          // 여기를 고민해보다 뒤로 갈때 하나 더 뒤로 갈까...
-        }
-        this.yutRes += 1;
+          this.yutRes -= 1;
+        } else this.yutRes += 1;
       } else if (horseInfo.name === "노비") {
-        this.yutRes -= 1;
+        if (this.yutRes === -1) {
+          this.yutRes += 1;
+        } else this.yutRes -= 1;
       }
       // 목적지 설정.
       let target = horseInfo.index + this.yutRes;
 
-      // 처음 출발할때는 상태를 바꿔야한다.
-      if (horseInfo.status === "wait") {
-        // 처음 출발한 말을 0번에 넣어 시작한다.
-        this.tiles[0].horse.push(horseInfo);
+      // 노비의 능력으로 0값이면.
+      if (this.yutRes != 0) {
+        // 처음 출발할때는 상태를 바꿔야한다.
+        if (horseInfo.status === "wait") {
+          // 처음 출발한 말을 0번에 넣어 시작한다.
+          this.tiles[0].horse.push(horseInfo);
 
-        // 대기 중인 말이 빠지면 대기 말 재배열.
-        for (var i = horseInfo.id; i < 5; i++) {
-          if (selectedHorse.team === 1) this.redHorses[i].check -= 1;
-          else this.blueHorses[i].check -= 1;
+          // 대기 중인 말이 빠지면 대기 말 재배열.
+          for (var i = horseInfo.id; i < 5; i++) {
+            if (selectedHorse.team === 1) this.redHorses[i].check -= 1;
+            else this.blueHorses[i].check -= 1;
+          }
+
+          // 출발한 말의 상태를 바꾼다.
+          horseInfo.status = "ing";
         }
 
-        // 출발한 말의 상태를 바꾼다.
-        horseInfo.status = "ing";
-      }
+        // 5, 10 모서리 출발
+        if (this.isGoDiagonal) target += 14;
 
-      // 5, 10 모서리 출발
-      if (this.isGoDiagonal) target += 14;
+        // 가운데 방향 설정.
+        if (horseInfo.index == 22 && !this.isCenterDir) target += 5;
+        if (horseInfo.index == 27 && this.isCenterDir) target -= 5;
 
-      // 가운데 방향 설정.
-      if (horseInfo.index == 22 && !this.isCenterDir) target += 5;
-      if (horseInfo.index == 27 && this.isCenterDir) target -= 5;
+        if (
+          horseInfo.index <= 24 &&
+          target > 24 &&
+          target === horseInfo.index + this.yutRes
+        )
+          target -= 10;
+        if (horseInfo.index == 27 && this.isCenterDir && target > 24)
+          target -= 10;
 
-      if (
-        horseInfo.index <= 24 &&
-        target > 24 &&
-        target === horseInfo.index + this.yutRes
-      )
-        target -= 10;
-      if (horseInfo.index == 27 && this.isCenterDir && target > 24)
-        target -= 10;
-
-      // 말이 들어왔을 때
-      // 마지막 위치에서 출발할 때는 그냥 끝.
-      if (horseInfo.index === 30) {
-        for (var i = 0; i < this.tiles[horseInfo.index].horse.length; i++) {
-          const horseTemp =
-            horseInfo.team === 1
-              ? this.redHorses.find(
-                  (horse) =>
-                    horse.id === this.tiles[horseInfo.index].horse[i].id
-                )
-              : this.blueHorses.find(
-                  (horse) =>
-                    horse.id === this.tiles[horseInfo.index].horse[i].id
-                );
-          // 말 상태를 바꾼다.
-          horseTemp.status = "end";
-          // 카운트 한다.
-          if (horseTemp.team === 1) horseTemp.endOrder = this.redEnd++;
-          else horseTemp.endOrder = this.blueEnd++;
+        // 말이 들어왔을 때
+        // 마지막 위치에서 출발할 때는 그냥 끝.
+        if (horseInfo.index === 30) {
+          for (var i = 0; i < this.tiles[horseInfo.index].horse.length; i++) {
+            const horseTemp =
+              horseInfo.team === 1
+                ? this.redHorses.find(
+                    (horse) =>
+                      horse.id === this.tiles[horseInfo.index].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) =>
+                      horse.id === this.tiles[horseInfo.index].horse[i].id
+                  );
+            // 말 상태를 바꾼다.
+            horseTemp.status = "end";
+            // 카운트 한다.
+            if (horseTemp.team === 1) horseTemp.endOrder = this.redEnd++;
+            else horseTemp.endOrder = this.blueEnd++;
+          }
+          // 비워준다.
+          this.tiles[horseInfo.index].horse = [];
+          // 그냥 끝낸다.
+          return;
         }
-        // 비워준다.
-        this.tiles[horseInfo.index].horse = [];
-        // 그냥 끝낸다.
-        return;
-      }
-      // 15번 부터 마지막 타일 또는 들어왔다면
-      if (
-        (horseInfo.index >= 15 && target > 19 && horseInfo.index < 20) ||
-        ((horseInfo.index === 22 || horseInfo.index >= 25) && target > 29)
-      ) {
-        // 마지막 타일
-        if (target === 20 || target === 30) target = 30;
-        // 그냥 들어와서 끝나면.
-        else {
-          this.isHorseEnd = true;
-          // 카운트 한다.
-          // if (horseInfo.team === 1) horseInfo.endOrder = this.redEnd++;
-          // else horseInfo.endOrder = this.blueEnd++;
+        // 15번 부터 마지막 타일 또는 들어왔다면
+        if (
+          (horseInfo.index >= 15 && target > 19 && horseInfo.index < 20) ||
+          ((horseInfo.index === 22 || horseInfo.index >= 25) && target > 29)
+        ) {
+          // 마지막 타일
+          if (target === 20 || target === 30) target = 30;
+          // 그냥 들어와서 끝나면.
+          else {
+            this.isHorseEnd = true;
+            // 카운트 한다.
+            // if (horseInfo.team === 1) horseInfo.endOrder = this.redEnd++;
+            // else horseInfo.endOrder = this.blueEnd++;
+          }
         }
-      }
 
-      // 만약 백도가 나왔을 때.
-      if (this.yutRes === -1) {
-        if (horseInfo.index === 20 || horseInfo.index === 25) {
-          target -= 14;
-        } else if (horseInfo.index == 1) {
-          target = 30;
+        // 만약 백도가 나왔을 때.
+        if (this.yutRes === -1) {
+          if (horseInfo.index === 20 || horseInfo.index === 25) {
+            target -= 14;
+          } else if (horseInfo.index == 1) {
+            target = 30;
+          }
         }
+
+        // 만약 기병 백도가 나왔을 때.
+        if (this.yutRes === -2) {
+          if (horseInfo.index === 20 || horseInfo.index === 25) {
+            target -= 14;
+          } else if (horseInfo.index == 1) {
+            target = 29;
+          } else if (horseInfo.index == 2) {
+            target = 30;
+          }
+        }
+
+        // 다른 말 체크
+        if (!this.isHorseEnd) {
+          // 도착지 말 카운트
+          this.toCnt = this.tiles[target].horse.length;
+          this.horseCheck(horseInfo, target);
+        }
+
+        // 말 이동
+        this.moveTo(horseInfo.index, target);
       }
 
-      // 다른 말 체크
-      if (!this.isHorseEnd) {
-        // 도착지 말 카운트
-        this.toCnt = this.tiles[target].horse.length;
-        this.horseCheck(horseInfo, target);
-      }
-
-      console.log(horseInfo.index, target);
-      // 말 이동
-      this.moveTo(horseInfo.index, target);
       // 미션장소 체크
       if (this.missionTiles.includes(target)) {
         const MsgModalStore = useMsgModalStore();
@@ -460,27 +472,15 @@ export const useGameStore = defineStore("game", {
           this.isMission = true;
         }, 2000);
       }
+      // 초기화.
       this.isHorseEnd = false;
       this.isGoDiagonal = false;
       this.isCenterDir = false;
 
-      // 현재 차례에 기회가 있는지 체크.
-      console.log(
-        !this.teamTurn
-          ? this.redUser[this.turn[0]]
-          : this.blueUser[this.turn[1]]
-      );
-      console.log("기회 : " + this.throwChance);
+      // 턴 바꿈.
       if (this.throwChance === 0) {
         this.turnChange();
       }
-
-      console.log(this.tiles);
-      console.log(this.redHorses);
-      console.log(this.blueHorses);
-      console.log("팀 턴 : " + this.teamTurn);
-      console.log("턴 : " + this.turn);
-      console.log("체크 : " + this.isThrowYut);
     },
 
     // 턴 바꿈.
@@ -495,8 +495,8 @@ export const useGameStore = defineStore("game", {
           }
         } else {
           this.enemyTicketTemp++;
-          if (this.enemyTicket === this.gameSpeed) {
-            this.enemyTicket = 0;
+          if (this.enemyTicketTemp === this.gameSpeed) {
+            this.enemyTicketTemp = 0;
             this.enemyTicket++;
           }
         }
@@ -514,8 +514,8 @@ export const useGameStore = defineStore("game", {
           }
         } else {
           this.enemyTicketTemp++;
-          if (this.enemyTicket === this.gameSpeed) {
-            this.enemyTicket = 0;
+          if (this.enemyTicketTemp === this.gameSpeed) {
+            this.enemyTicketTemp = 0;
             this.enemyTicket++;
           }
         }
@@ -662,7 +662,7 @@ export const useGameStore = defineStore("game", {
       }
       // 모서리를 통과할때.
       else if (
-        this.yutRes != -1 &&
+        this.yutRes > 0 &&
         Math.trunc(from / 5) != Math.trunc(to / 5) &&
         from < 20
       ) {
@@ -693,7 +693,7 @@ export const useGameStore = defineStore("game", {
             horseInfo.index = to;
           }
         }, 300);
-      } else if (this.yutRes != -1 && from >= 20 && to < 20) {
+      } else if (this.yutRes > 0 && from >= 20 && to < 20) {
         // 순간이동을 방지하기 위해 24,15번 찍고 목적지로 이동한다.
         for (let i = this.toCnt; i < len; i++) {
           const horseInfo =
@@ -721,10 +721,39 @@ export const useGameStore = defineStore("game", {
           }
         }, 300);
       }
+      // 기병 백도 -2
+      else if (this.yutRes === -2 && from === 1) {
+        // 순간이동을 방지하기 위해 30번 찍고 목적지로 이동한다.
+        for (let i = this.toCnt; i < len; i++) {
+          const horseInfo =
+            team === 1
+              ? this.redHorses.find(
+                  (horse) => horse.id === this.tiles[to].horse[i].id
+                )
+              : this.blueHorses.find(
+                  (horse) => horse.id === this.tiles[to].horse[i].id
+                );
+          horseInfo.index = 30;
+        }
+        setTimeout(() => {
+          for (let i = this.toCnt; i < len; i++) {
+            const horseInfo =
+              team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[to].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[to].horse[i].id
+                  );
+
+            horseInfo.index = to;
+          }
+        }, 300);
+      }
 
       // 평범한 이동
       else {
-        // 그룹을 다 이동 시킨다.
+        // 그룹을 다 이동 시킨다.0
         for (let i = this.toCnt; i < len; i++) {
           const horseInfo =
             team === 1
@@ -742,8 +771,8 @@ export const useGameStore = defineStore("game", {
     // 윷 던지기
     yutThrow() {
       // 던지기 1회 차감.
-      clearInterval(this.timerId);
-      this.timerId = null;
+      // clearInterval(this.timerId);
+      // this.timerId = null;
       this.throwChance--;
       // 총 4번의 랜덤을 발생
       // false가 뒤집어 진거
