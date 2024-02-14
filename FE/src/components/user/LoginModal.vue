@@ -26,6 +26,7 @@
   
 <script>
 import { useUserStore } from "@/store/userStore";
+import { sendLoginEvent } from '@/util/socket.js';
 
 export default {
   name: "LoginComponent",
@@ -68,6 +69,19 @@ export default {
           userStore.showModalSide = true;
           this.$router.push("/home");
         }, 200);
+        await userStore.getUserInfo();
+        this.closeModal();
+        userStore.showModalSide = true;
+        // 로그인 메시지 서버에 전달
+        console.log(typeof userStore.userInfo.email)
+        const event = {
+        fromUserEmail: userStore.userInfo.email,
+        eventCategory: '4',
+        eventAction: 'LOGIN',
+        message: `${userStore.userInfo.nickname}님이 로그인했습니다.`
+        }
+        sendLoginEvent(event)
+        this.$router.push("/home");
       } else {
         userStore.isLogin = false;
         userStore.initData();

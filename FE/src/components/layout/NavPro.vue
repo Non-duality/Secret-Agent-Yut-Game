@@ -21,6 +21,7 @@
 
 <script>
 import { useUserStore } from "@/store/userStore";
+import { sendLogoutEvent } from '@/util/socket.js';
 
 export default {
   data() {
@@ -29,11 +30,24 @@ export default {
 
   methods: {
     // 로그아웃하기.
-    initializeData() {
+    async initializeData() {
       const confirmMessage = "정말 로그아웃 하시겠습니까?";
-
+      
       if (confirm(confirmMessage)) {
+        const userStore = useUserStore();
+        // 로그아웃 메시지 서버에 전달 및 소켓 연결 끊기
+        const event = {
+          fromUserEmail: userStore.userInfo.email,
+          eventCategory: '5',
+          eventAction: 'LOGOUT',
+          message: `${userStore.userInfo.nickname}님이 로그아웃했습니다.`
+        }
+        
+        sendLogoutEvent(event)
+
+        // 유저 정보 초기화
         useUserStore().initData();
+
         this.$router.push("/");
       }
     },

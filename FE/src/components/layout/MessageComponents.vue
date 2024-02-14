@@ -1,15 +1,15 @@
 <template>
   <div class="notification-container">
-    <div v-for="friend in invitingFriends" :key="friend" class="friend-invite">
+    <div v-for="friend in friendRequests" :key="friend.toUserEmail" class="friend-invite">
       <div class="frined-invite">
         <h4 class="title">친구 초대가 왔습니다.</h4>
-        <p class="content">{{ friend }}님으로부터 친구 신청이 왔습니다.</p>
-        <button class="accept" @click="acceptFriend(friend)">수락</button>
-        <button class="refuse" @click="refureFriend(friend)">거절</button>
+        <p class="content">{{ friend.fromUserNickname }}님으로부터 친구 신청이 왔습니다.</p>
+        <button class="accept" @click="acceptFriendRequest(friend)">수락</button>
+        <button class="refuse" @click="rejectFriendRequest(friend)">거절</button>
       </div>
     </div>
   
-    <div v-for="chat in chatings" :key="chat" class="chat-notification">
+    <div v-for="chat in chatMessages" :key="chat" class="chat-notification">
       <div class="chating" @click="goChat(chat)">
         <h4 class="title">채팅이 왔습니다</h4>
         <p class="content">{{ chat }}님으로부터 채팅이 왔습니다. 확인해보세요!</p>
@@ -19,40 +19,47 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { acceptFriend, rejectFriend } from "@/api/friend";
+import { useFriendStore } from '@/store/friendStore';
 
 export default {
   data() {
-    // 더미데이터
-    const invitingFriends = ["chan", "jun"]
-    const chatings = ["jumi", "subin", "jihun", "junhee", "heeyoong", "seonggyu"]
     return {
-      invitingFriends,
-      chatings,
     };
+  },
+
+  computed: {
+    friendRequests() {
+      return useFriendStore().friendRequests
+    },
+
+    chatMessages() {
+      return useFriendStore().chatMessages
+    },
   },
 
   methods: {
 
-    async acceptFriend(user) {
-      // 수락하는 로직
-      // try {
-      //   const { res } = await axios.post('url', user)
-      //   console.log(res)
-      // } catch (error) {
-      //   console.log(error)
-      // }
+    async acceptFriendRequest(user) {
+      try {
+        const response = await acceptFriend(user);
+        console.log("친구 요청 수락", response)
+        alert('친구 요청을 수락했습니다.')
+      } catch (error) {
+        console.log("친구 요청 수락 중 에러 발생", error)
+      }
     },
 
-    async refureFriend(user) {
-      // 거절하는 로직
-      // try {
-      //   const { res } = await axios.delete('url', user)
-      //   console.log(res)
-      // } catch (error) {
-      //   console.log(error)
-      // }
+    async rejectFriendRequest(user) {
+      try {
+        const response = await rejectFriend(user);
+        console.log("친구 요청 거절", response)
+        alert('친구 요청을 거절했습니다.')
+      } catch (error) {
+        console.log("친구 요청 수락 중 에러 발생", error)
+      }
     },
+
     // 채팅
     async goChat(user) { 
       // 채팅 온 사람과 채팅하러 가는 로직
@@ -63,6 +70,10 @@ export default {
       //   console.log(error)
       // }
     },
+  },
+
+  mounted() {
+    useFriendStore().receiveFriendRequest()
   }
 }
 </script>

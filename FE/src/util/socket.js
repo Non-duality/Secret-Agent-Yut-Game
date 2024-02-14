@@ -5,6 +5,8 @@ import { Client } from "@stomp/stompjs";
 import { useUserStore } from "@/store/userStore";
 import { useRoomStore } from "@/store/roomStore";
 import { usePickStore } from "@/store/pickStore";
+import { useFriendStore } from "@/store/friendStore";
+
 
 /* .env 저장 주소 사용 */
 const { VITE_WSS_API_URL } = import.meta.env;
@@ -13,6 +15,123 @@ const { VITE_WSS_API_URL } = import.meta.env;
 let stompClient = null;
 let connected = false;
 let roomCode = null;
+
+
+/* 접속 소켓 */
+export function connectWebSocket(accessToken) {
+  return new Promise((resolve, reject) => {
+    stompClient = new Client({
+      brokerURL: VITE_WSS_API_URL,
+      connectHeaders: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+
+      onConnect: () => {
+        resolve()
+
+        stompClient.subscribe("/sub/event", handleWebSocketMessage);
+        stompClient.subscribe("/user/sub/event", handleWebSocketMessage);
+      },
+
+      // 정상적인 연결 해제 (초기화)
+      onDisconnect: () => {
+        stompClient = null
+        connected = false
+        console.log('[socket.onDisconnect] : 연결이 끊어졌습니다.')
+      },
+
+      // WebSocket이 닫힐 때 (초기회)
+      onWebSocketClose: (closeEvent) => {
+        connected = false
+        console.log('[socket.onWebSocketClose] : 연결이 끊어졌습니다.')
+        console.log('상세 에러 : ' + closeEvent)
+      },
+
+      // STOMP ERROR
+      onStompError: (error) => {
+        console.log('[socket.onStompError] : ' + error.headers['message'])
+        console.log('STOMP 상세 에러 : ' + error.body)
+        reject(new Error("STOMP ERROR"))
+        alert('소켓 연결이 끊어졌습니다.')
+      },
+
+      // WebSocket ERROR
+      onWebSocketError: (error) => {
+        console.log('[socket.onWebSocketError] : ' + error.headers['message'])
+        console.log('WebSocket 상세 에러 : ' + error.body)
+        reject(new Error("WebSocket error"));
+        alert('소켓 연결이 끊어졌습니다.');
+      },
+
+      reconnectDelay: 3000, //자동재연결
+    })
+
+    try {
+      stompClient.activate();
+      connected = true;
+      console.log('소켓 연결 성공');
+    } catch (error) {
+      connected = false;
+      console.log("소켓 에러 발생 : " + error);
+    }
+  }) 
+}
+
+// 로그인 이벤트 메시지 보내기
+export function sendLoginEvent(event) {
+  console.log('로그인 소켓 이벤트 메시지 발송')
+  stompClient.publish({
+    destination: "/pub/login",
+    body: JSON.stringify(event)
+  })
+}
+// 로그아웃 이벤트 메시지 보내고 연결 끊기
+export function sendLogoutEvent(event) {
+  if (stompClient) {
+    stompClient.publish({
+      destination: "/pub/logout",
+      body: JSON.stringify(event)
+    })
+    console.log('로그아웃 소켓 이벤트 메시지 발송')
+    stompClient.deactivate()
+    stompClient = null
+    connected = false
+    console.log('소켓 연결이 끊어졌습니다.');
+  }
+}
+
+// 일반 이벤트 메시지 보내기
+export function sendEvent(event) {
+  stompClient.publish({
+    destination: "/pub/event",
+    body: JSON.stringify(event)
+  })
+}
+
+// 웹소켓으로 받은 메시지 처리
+function handleWebSocketMessage(message) {
+  const event = JSON.parse(message.body);
+  const friendStore = useFriendStore()
+  console.log(event.eventCategory)
+  switch(event.eventCategory) {
+    case "1":
+      friendStore.receiveChatMessage({ friendID: event.fromUserEmail, message: event.message })
+      break
+    case "2":
+      friendStore.receiveFriendRequest(event.fromUserEmail)
+      break
+    case "3":
+      friendStore.receiveGameInvitation({ fromUserEmail: event.fromUserEmail, message: event.message })
+      break
+    case "4":
+      friendStore.updateOnlineFriends(event.fromUserEmail)
+      break
+    case "5":
+      friendStore.updateOfflineFriends(event.fromUserEmail)
+      break
+  } 
+}
+
 
 /* 게임 소켓 */
 export function connect(team, accessToken, recvCallback) {
@@ -45,18 +164,18 @@ export function connect(team, accessToken, recvCallback) {
         stompClient = null;
         connected = false;
       },
-
+      /* 연결이 끊어지면 값 초기화 */
       onWebSocketClose: (closeEvent) => {
         connected = false;
         console.log("WebSocket closed", closeEvent);
       },
-
+      /* 연결이 끊어지면 값 초기화 */
       onWebSocketError: (error) => {
         connected = false;
         console.log("WebSocket error: ", error);
         reject(error);
       },
-
+      /* 연결이 끊어지면 값 초기화 */
       // STOMP 수준의 오류 처리
       onStompError: (frame) => {
         connected = false;
