@@ -343,6 +343,7 @@ export default {
     receiveYutRes(receivedMsg) {
       const gameStore = useGameStore();
       clearInterval(gameStore.timerId);
+      gameStore.timerId = null;
       gameStore.yutRes = receivedMsg.yutRes;
       gameStore.throwRes = receivedMsg.throwRes;
       gameStore.setYutText(receivedMsg.yutRes);
@@ -392,6 +393,7 @@ export default {
     receiveSelectHorse(receivedMsg) {
       const gameStore = useGameStore();
       clearInterval(gameStore.timerId);
+      gameStore.timerId = null;
       gameStore.isGoDiagonal = receivedMsg.goDiagonal;
       gameStore.isCenterDir = receivedMsg.centerDir;
       gameStore.moveHorse(receivedMsg);
