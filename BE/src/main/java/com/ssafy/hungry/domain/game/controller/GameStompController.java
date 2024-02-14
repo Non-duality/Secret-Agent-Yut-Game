@@ -80,10 +80,10 @@ public class GameStompController {
     public void mission(@DestinationVariable String roomCode){
 
     }
-
+    //추리권 사용여부
     @MessageMapping("/game/{roomCode}/reason-ticket-use")
     public void reasonTicketUse(@DestinationVariable String roomCode, ReasonTicketDto dto){
-        dto.setActionCategory(5);
+        dto.setActionCategory(4);
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
     
@@ -91,7 +91,7 @@ public class GameStompController {
 
     @MessageMapping("/game/{roomCode}/chat")
     public void gameChat(@DestinationVariable String roomCode, GameChatDto gameChatDto){
-
+        gameChatDto.setActionCategory(6);
         log.info("게임 채팅 호출 : " + roomCode + " " + gameChatDto.getMessage());
 
         if(gameChatDto.getTeam().equals("홍팀")){
