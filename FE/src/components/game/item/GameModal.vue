@@ -38,13 +38,13 @@ export default {
         case 1:
           return "모서리시군요.";
         case 2:
-          return "가운데이시네요.";
+          return "가운데시군요.";
         case 3:
           return `추리권 ${this.ticket}개`;
         case 4:
-          return `같은 팀이 추리권 선택중입니다...`;
+          return `추리권 사용 선택중입니다...`;
         case 5:
-          return `같은 팀이 추리권 선택중입니다...`;
+          return `추리권 사용 선택중입니다...`;
       }
     },
     modalText() {
