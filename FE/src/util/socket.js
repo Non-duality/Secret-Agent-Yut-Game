@@ -769,7 +769,7 @@ export function initPick(router, from) {
   );
 }
 // 게임 연결.
-export function gameConnect() {
+function gameConnect() {
   useGameStore().myTeam = usePickStore().code.includes("red") ? 1 : 2;
   console.log(useRoomStore().accessToken);
   if (useGameStore().myTeam === 2) {
