@@ -26,7 +26,7 @@ public class EventController {
     @MessageMapping("/event")
     public void event(EventDto dto){
         String toUserEmail = dto.getToUserEmail();
-
+        System.out.println(dto);
         StompPrincipal principal = new StompPrincipal(sessionRepository.findById(toUserEmail).get().getStompPrincipal().getName());
         messagingTemplate.convertAndSendToUser(principal.getName(), "sub/event", dto);
     }

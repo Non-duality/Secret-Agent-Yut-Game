@@ -1,6 +1,7 @@
 package com.ssafy.hungry.domain.game.service;
 
 import com.ssafy.hungry.domain.game.dto.GameStartDto;
+import com.ssafy.hungry.domain.game.dto.UnitGoleDto;
 import com.ssafy.hungry.domain.game.dto.UnitInfo;
 import com.ssafy.hungry.domain.game.dto.UserInfo;
 import com.ssafy.hungry.domain.game.entity.UnitEntity;
@@ -229,14 +230,20 @@ public class GameService {
     }
 
     //유닛 도착시 저장
-    public void unitGole(int team, int unitIndex, String gameCode){
+    public void unitGole(int team, int unitIndex, String gameCode, UnitGoleDto dto){
         Game game = gameRepository.findByGameCode(gameCode);
         if(team == 2){
             BlueTeamUnit blueTeamUnit = blueTeamUnitRepository.findByGameCodeAndUnitIndex(game, unitIndex);
+            if(this.isSpy(blueTeamUnit.getId(), 2, gameCode)){
+                dto.setSpy(true);
+            }
             blueTeamUnit.setGole(true);
             blueTeamUnitRepository.save(blueTeamUnit);
         }else{
             RedTeamUnit redTeamUnit = redTeamUnitRepository.findByGameCodeAndUnitIndex(game, unitIndex);
+            if(this.isSpy(redTeamUnit.getId(), 2, gameCode)){
+                dto.setSpy(true);
+            }
             redTeamUnit.setGole(true);
             redTeamUnitRepository.save(redTeamUnit);
         }

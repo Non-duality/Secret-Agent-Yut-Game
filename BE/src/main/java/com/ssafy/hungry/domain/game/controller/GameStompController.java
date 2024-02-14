@@ -52,7 +52,6 @@ public class GameStompController {
             simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode + "/red", gamePreInfo.get("홍팀"));
             simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode + "/blue", gamePreInfo.get("청팀"));
         }
-
     }
 
     //윳을 던진 결과를 전달
@@ -79,12 +78,16 @@ public class GameStompController {
 
     @MessageMapping("/game/{roomCode}/unit-gole")
     public void unitGole(@DestinationVariable String roomCode, UnitGoleDto dto){
-        gameService.unitGole(dto.getTeam(), dto.getUnitIndex(), roomCode);
+        dto.setActionCategory(5);
+        gameService.unitGole(dto.getTeam(), dto.getUnitIndex(), roomCode, dto);
+        simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
     @MessageMapping("/game/{roomCode}/finish")
     public void finish(@DestinationVariable String roomCode, GameFinishDto dto){
+        dto.setActionCategory(9);
         gameService.saveGameResult(roomCode, dto.getTeam());
+        simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
     @MessageMapping("/game/{roomCode}/mission")
