@@ -43,9 +43,31 @@ export default {
       await userStore.userLogin(this.loginUser);
       if (userStore.isLogin) {
         userStore.getUserInfo();
-        this.closeModal();
-        userStore.showModalSide = true;
-        this.$router.push("/home");
+        setTimeout(() => {
+          switch (useUserStore().userInfo.email) {
+            case "123":
+              useUserStore().myTeamIdx = 2;
+              break;
+            case "4":
+              useUserStore().myTeamIdx = 2;
+              break;
+            case "5":
+              useUserStore().myTeamIdx = 2;
+              break;
+            case "1":
+              useUserStore().myTeamIdx = 1;
+              break;
+            case "2":
+              useUserStore().myTeamIdx = 1;
+              break;
+            case "3":
+              useUserStore().myTeamIdx = 1;
+              break;
+          }
+          this.closeModal();
+          userStore.showModalSide = true;
+          this.$router.push("/home");
+        }, 200);
       } else {
         userStore.isLogin = false;
         userStore.initData();
@@ -56,7 +78,7 @@ export default {
       this.closeModal();
       useUserStore().openModal("join");
     },
-    find(){
+    find() {
       this.closeModal();
       useUserStore().openModal("find");
     },

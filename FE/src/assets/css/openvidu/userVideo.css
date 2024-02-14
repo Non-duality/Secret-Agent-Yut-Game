@@ -1,21 +1,21 @@
 #user-name {
-    color: aliceblue;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .my-video {
-    margin: 10px;
-    border-radius: 50px;
-  }
-  
-  .mission-modal {
-    display: flex;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80vw;
-  }
+  color: aliceblue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.my-video {
+  margin: 10px;
+  border-radius: 50px;
+}
+
+.mission-modal {
+  display: flex;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+}

@@ -39,6 +39,7 @@ export const useUserStore = defineStore("user", {
       roomId: null,
       roomCode: null,
       currentRoomInfo: null,
+      myTeamIdx: null,
 
       // 닉네임, 이메일 중복체크
       isEmailCheck: false,
