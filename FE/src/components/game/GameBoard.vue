@@ -1,10 +1,14 @@
 <template>
   <div class="game-board">
+    <!-- 여기에 추리 말 선택 모달이 나와야한다. -->
     <!-- 방향 전환 시 모달로 선택 -->
     <GameModal
-      class="game-board-modal"
       v-if="isShowReasoning || isShowGoDig"
       :modalType="modalType"
+      @trueMethod="goDigYes"
+      @falseMethod="goDigNo"
+      @useTicket="useTicket"
+      @notUseTicket="notUseTicket"
     />
     <!-- 차례 메시지  -->
     <span v-if="isShowTurnMessage" class="game-board-turn-message">{{
@@ -58,20 +62,6 @@
     >
       던지기
     </button>
-    <button
-      v-if="isShowGoDig"
-      @click="goDigYes"
-      style="top: 150px; left: 250px; position: absolute"
-    >
-      {{ goModalText1 }}
-    </button>
-    <button
-      v-if="isShowGoDig"
-      @click="goDigNo"
-      style="top: 250px; left: 250px; position: absolute"
-    >
-      {{ goModalText2 }}
-    </button>
   </div>
 </template>
                                                                         
@@ -110,7 +100,7 @@ export default {
       goModalText2: "",
       recvList: [],
       // 모달 타입 1=> 대각선 2=> 가운데 방향 3=> 추리.
-      modalType: null,
+      modalType: 2,
     };
   },
   computed: {
@@ -178,12 +168,49 @@ export default {
     isShowReasoning() {
       const gameStore = useGameStore();
       if (gameStore.isShowReasoning) {
-        this.modalType = 3;
+        // 내 차례
+        if (gameStore.isThrowYut) {
+          this.modalType = 3;
+        }
+        // 홍팀
+        else if (!gameStore.teamTurn) {
+          // 같은 팀 차례.
+          if (gameStore.myTeam === 1) {
+            this.modalType = 4;
+          }
+          // 다른 팀 차례.
+          else {
+            this.modalType = 5;
+          }
+        }
+        // 청팀
+        else {
+          // 같은 팀 차례.
+          if (gameStore.myTeam === 2) {
+            this.modalType = 4;
+          }
+          // 다른 팀 차례.
+          else {
+            this.modalType = 5;
+          }
+        }
       }
       return gameStore.isShowReasoning;
     },
   },
   methods: {
+    // 로딩 완료 후 게임 시작.
+    gameStart() {
+      const gameStore = useGameStore();
+      gameStore.turnMessage = "게임 시작";
+      setTimeout(() => {
+        gameStore.isShowTurnMessage = true;
+      }, 1000);
+      setTimeout(() => {
+        gameStore.isShowTurnMessage = false;
+        gameStore.startTimer();
+      }, 3000);
+    },
     leave(event) {
       event.preventDefault();
       event.returnValue = "홈으로...";
@@ -203,10 +230,10 @@ export default {
       const gameStore = useGameStore();
       // 테스트
       if (["4", "5", "123"].includes(userStore.userInfo.email)) {
-        gameStore.myTeam = 2;
+        // gameStore.myTeam = 2;
         connect("blue", userStore.accessToken, this.handleRecvMessage);
       } else {
-        gameStore.myTeam = 1;
+        // gameStore.myTeam = 1;
         connect("red", userStore.accessToken, this.handleRecvMessage);
       }
       setTimeout(() => {
@@ -229,6 +256,15 @@ export default {
         this.isSelectedHorse = false;
         this.canSelectHorse = false;
         gameStore.isSelect = false;
+      } else if (receivedMsg.actionCategory === 3) {
+      } else if (receivedMsg.actionCategory === 4) {
+        gameStore.isShowReasoning = false;
+        if (receivedMsg.reasoningChoose) {
+          // 추리권 사용.
+          gameStore.reasoningChoose = true;
+        } else {
+          gameStore.startTimer();
+        }
       }
     },
     // 초기 정보 저장
@@ -287,7 +323,10 @@ export default {
       gameStore.gameSpeed = receivedMsg.gameSpeed;
       // 미션 타일
       // gameStore.missionTiles = receivedMsg.missionRegion;
-      gameStore.startTimer();
+      // gameStore.startTimer();
+      setTimeout(() => {
+        this.gameStart();
+      },5000)
     },
 
     // 윷 결과를 받아 왔을 때.
@@ -499,9 +538,6 @@ export default {
             } else {
               // 선택 모달
               this.modalType = 1;
-              // 텍스트 바꿈.
-              this.goModalText1 = "네";
-              this.goModalText2 = "아니오";
               // 대각선으로 갈지 선택.
               this.isShowGoDig = true;
               this.$watch("isShowGoDig", () => {
@@ -520,9 +556,6 @@ export default {
             } else {
               // 선택 모달
               this.modalType = 2;
-              // 텍스트 바꿈.
-              this.goModalText1 = "왼쪽";
-              this.goModalText2 = "오른쪽";
               // 대각선으로 갈지 선택.
               this.isShowGoDig = true;
               this.$watch("isShowGoDig", () => {
@@ -557,6 +590,16 @@ export default {
     // 대각선으로 안갈때
     goDigNo() {
       this.isShowGoDig = false;
+    },
+    // 추리권을 사용할때.
+    useTicket() {
+      const msg = { reasoningChoose: true };
+      socketSend(`/pub/game/${this.roomCode}/reason-ticket-use`, msg);
+    },
+    // 추리권을 사용하지 않을때.
+    notUseTicket() {
+      const msg = { reasoningChoose: false };
+      socketSend(`/pub/game/${this.roomCode}/reason-ticket-use`, msg);
     },
   },
 

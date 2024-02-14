@@ -51,9 +51,12 @@ export const useGameStore = defineStore("game", {
       isShowTurnMessage: false,
       // 추리권
       isShowReasoning: false,
-      reasoningChoose: null,
+      reasoningChoose: false,
       ticket: 0,
       ticketTemp: 0,
+      // 적팀 추리권,.
+      enemyTicket: 0,
+      enemyTicketTemp: 0,
       // 몇라운드마다 티켓을 얻을 지
       gameSpeed: 0,
       // 말
@@ -440,6 +443,12 @@ export const useGameStore = defineStore("game", {
             this.ticketTemp = 0;
             this.ticket++;
           }
+        } else {
+          this.enemyTicketTemp++;
+          if (this.enemyTicket === this.gameSpeed) {
+            this.enemyTicket = 0;
+            this.enemyTicket++;
+          }
         }
         this.turn[0]++;
         if (this.turn[0] > 2) this.turn[0] = 0;
@@ -452,6 +461,12 @@ export const useGameStore = defineStore("game", {
           if (this.ticketTemp === this.gameSpeed) {
             this.ticketTemp = 0;
             this.ticket++;
+          }
+        } else {
+          this.enemyTicketTemp++;
+          if (this.enemyTicket === this.gameSpeed) {
+            this.enemyTicket = 0;
+            this.enemyTicket++;
           }
         }
         this.turn[1]++;
@@ -493,7 +508,7 @@ export const useGameStore = defineStore("game", {
 
         // 여기서 추리를 할건지 윷을 던질건지 선택한다.
         // 티켓이 하나 이상은 있어야 한다.
-        if (this.ticket > 0) {
+        if (this.ticket > 0 || this.enemyTicket > 0) {
           this.isShowReasoning = true;
           // 여기에 추리 모달 결과 작성.
         } else {
