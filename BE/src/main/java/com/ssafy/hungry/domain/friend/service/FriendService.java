@@ -41,7 +41,7 @@ public class FriendService {
 
         //현재 이용자 기준 내가 보낸 요청과 상대가 받은 요청이 모두 True로 세팅 되어 있는 컬럼을 찾고 중복제거 하여 검색
         String jpql = "select distinct f.toUserId from FriendEntity as f join FriendEntity as sf on f.toUserId = sf.fromUserId" +
-                " where f.fromUserId = : myId and f.weAreFriend = true and sf.weAreFriend = true";
+                " where f.fromUserId = : myId and f.weAreFriend = true and sf.toUserId = : myId and sf.weAreFriend = true";
 
         //쿼리 실행. 반환값은 List<Integer>형이다.
         TypedQuery<Integer> query = em.createQuery(jpql, Integer.class);
