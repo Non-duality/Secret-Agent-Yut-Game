@@ -48,12 +48,10 @@
     </div>
     <div class="game-board-tile">
       <!-- 윷 던진 결과 -->
+      <div class="game-yut-text-div" v-show="isShowResText || true">
+        <span class="game-yut-res-text">{{ yutText }}</span>
+      </div>
       <div class="game-yut-res" v-show="isShowRes">
-        <div class="game-yut-text-div">
-          <span class="game-yut-res-text" v-show="isShowResText">{{
-            yutText
-          }}</span>
-        </div>
         <GameYut ref="yutThrow" />
       </div>
       <!-- 윷판 -->
@@ -265,7 +263,7 @@ export default {
       }
       setTimeout(() => {
         if (gameStore.redUser.length === 0) this.sendStart();
-      }, 2000);
+      }, 3000);
     },
     // 받아오기.
     handleRecvMessage(receivedMsg) {
@@ -363,7 +361,7 @@ export default {
           if (i === 0 && gameStore.myTeam === 1) {
             setTimeout(() => {
               gameStore.isThrowYut = true;
-            }, 5000);
+            }, 10000);
           }
           break;
         }
@@ -382,7 +380,7 @@ export default {
       // gameStore.startTimer();
       setTimeout(() => {
         this.gameStart();
-      }, 5000);
+      }, 10000);
     },
 
     // 윷 결과를 받아 왔을 때.
@@ -412,7 +410,6 @@ export default {
       // 윷 결과를 없앤다.
       setTimeout(() => {
         this.isShowRes = false;
-        this.isShowResText = false;
       }, 3500);
       // 만약 아무 말도 안나갔는데 백도가 나오면 그냥 넘어간다.
       if (gameStore.yutRes == -1) {
@@ -443,6 +440,7 @@ export default {
     // 말 선택 결과를 받아 왔을 때.
     receiveSelectHorse(receivedMsg) {
       const gameStore = useGameStore();
+      this.isShowResText = false;
       if (gameStore.timerId !== null) {
         clearInterval(gameStore.timerId);
         gameStore.timerId = null;
@@ -482,7 +480,6 @@ export default {
       // 윷 결과를 없앤다.
       setTimeout(() => {
         this.isShowRes = false;
-        this.isShowResText = false;
       }, 3500);
 
       // 만약 아무 말도 안나갔는데 백도가 나오면 그냥 넘어간다.
@@ -517,6 +514,7 @@ export default {
         this.$watch("isSelectedHorse", () => {
           // 선택을 하였다면.
           if (this.isSelectedHorse) {
+            this.isShowResText = false;
             // clearInterval(gameStore.timerId);
             // gameStore.timerId = null;
             console.log("소켓 보내기 전");

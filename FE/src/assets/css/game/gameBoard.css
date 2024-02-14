@@ -18,16 +18,24 @@
   width: 400px;
   height: 400px;
   /* background-color: bisque; */
-  top: 100px;
+  top: 200px;
   left: 100px;
-  z-index: 100;
+  z-index: 1005;
 }
 .game-yut-text-div{
-  height: 100px;
+  position: absolute;
+  /* background-color: #93a603; */
+  /* border: 1px solid white; */
+  border-radius: 15px;
+  top: 100px;
+  left: 250px;
+  z-index: 1005;
 }
 .game-yut-res-text{
-  color:rgb(255, 166, 57);
+  -webkit-text-stroke: 1px white;
+  color:rgb(0, 144, 43);
   font-size: 100px;
+  font-weight: 700;
 }
 
 .game-board-throw-btn{
