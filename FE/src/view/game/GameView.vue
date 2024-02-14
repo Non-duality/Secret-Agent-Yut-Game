@@ -297,7 +297,7 @@ export default {
           delay2(150 * i);
         }
       }
-    }, 5800);
+    }, 9000);
   },
 };
 </script>
