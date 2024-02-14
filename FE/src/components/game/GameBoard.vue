@@ -230,10 +230,10 @@ export default {
       const gameStore = useGameStore();
       // 테스트
       if (["4", "5", "123"].includes(userStore.userInfo.email)) {
-        // gameStore.myTeam = 2;
+        gameStore.myTeam = 2;
         connect("blue", userStore.accessToken, this.handleRecvMessage);
       } else {
-        // gameStore.myTeam = 1;
+        gameStore.myTeam = 1;
         connect("red", userStore.accessToken, this.handleRecvMessage);
       }
       setTimeout(() => {
