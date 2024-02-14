@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useRoomStore } from "./roomStore";
 import { usePickStore } from "./pickStore";
+import { useGameStore } from "./gameStore";
 
 import {
   userConfirm,
@@ -56,9 +57,11 @@ export const useUserStore = defineStore("user", {
       const initialStateUser = useUserStore().$reset();
       const initialStateRoom = useRoomStore().$reset();
       const initialStatePick = usePickStore().$reset();
+      const initialStateGame = useGameStore().$reset();
       Object.assign(this, initialStateUser);
       Object.assign(this, initialStateRoom);
       Object.assign(this, initialStatePick);
+      Object.assign(this, initialStateGame);
     },
     
     // 로그인, 회원가입 모달 창을 나타내기 위한 함수 매개변수를 입력받아

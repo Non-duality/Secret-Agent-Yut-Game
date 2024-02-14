@@ -191,7 +191,6 @@ export function initRoom(router, from) {
     // 구독 메시지 이벤트 처리
     (message) => {
       useRoomStore().receivedMessage = JSON.parse(message.body);
-      console.log(useRoomStore().receivedMessage);
 
       // (경우1) 입장 정보 타입
       if (useRoomStore().receivedMessage.type === "ROOM_ENTER_INFO") {
@@ -240,7 +239,6 @@ export function initRoom(router, from) {
         }
       } else if (useRoomStore().receivedMessage.type === "ROOM_EXIT_INFO") {
         // 방장이 방을 삭제한 경우 모두 alert를 받고 나간다.
-        console.log(useRoomStore().receivedMessage.data.message);
         if (
           useRoomStore().receivedMessage.data.message.includes(
             "삭제되었습니다."
@@ -386,14 +384,11 @@ export function initRoom(router, from) {
  * from : 자신의 팀 이름 변수
  */
 export function initPick(router, from) {
-  console.log(from);
-
   // 먼저, create된 roomCode를 가져와서 방 구독
   usePickStore().subscription.pick = stompClient.subscribe(
     "/sub/room/" + useUserStore().currentRoomInfo.roomCode + "/" + from,
     (message) => {
       usePickStore().receivedMessage = JSON.parse(message.body);
-      console.log(usePickStore().receivedMessage);
 
       // 홍팀, 청팀 정보를 받아오는 것
       if (usePickStore().receivedMessage.type === "PICK_GET_PRE_INFO") {
@@ -488,7 +483,6 @@ export function initPick(router, from) {
 
           // 로컬 스토리지에 업데이트된 데이터 저장
           const storedPickData = JSON.parse(localStorage.getItem("pick"));
-          // console.log(storedPickData);
 
           const updatedPickData = {
             ...storedPickData,
@@ -564,7 +558,6 @@ export function pubPickInfo(destination, content) {
 
 // 서버로 보내기.
 export function socketSend(destination, msg) {
-  console.log(destination);
   stompClient.publish({
     destination: destination,
     body: JSON.stringify(msg),

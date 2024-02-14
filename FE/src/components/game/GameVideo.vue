@@ -192,21 +192,21 @@ export default {
     this.mySessionId = "A";
 
     // 자신의 팀 정보 받아오기
-    const myNickname = useUserStore().userInfo.nickname;
+    // const myNickname = useUserStore().userInfo.nickname;
 
-    for (let i = 0; i < 3; i++) {
-      if (myNickname === useGameStore().redUser[i].nickname)
-        this.myTeamName = "red";
-    }
+    // for (let i = 0; i < 3; i++) {
+    //   if (myNickname === useGameStore().redUser[i].nickname)
+    //     this.myTeamName = "red";
+    // }
 
-    if (!this.myTeamName) {
-      for (let i = 0; i < 3; i++) {
-        if (myNickname === useGameStore().blueUser[i].nickname)
-          this.myTeamName = "blue";
-      }
-    }
+    // if (!this.myTeamName) {
+    //   for (let i = 0; i < 3; i++) {
+    //     if (myNickname === useGameStore().blueUser[i].nickname)
+    //       this.myTeamName = "blue";
+    //   }
+    // }
 
-    this.joinSession();
+    // this.joinSession();
   },
 };
 </script>
