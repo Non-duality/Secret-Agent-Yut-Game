@@ -28,7 +28,6 @@ export function connectWebSocket(accessToken) {
 
       onConnect: () => {
         resolve();
-
         stompClient.subscribe("/sub/event", handleWebSocketMessage);
         stompClient.subscribe("/user/sub/event", handleWebSocketMessage);
       },

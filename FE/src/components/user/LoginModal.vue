@@ -73,7 +73,6 @@ export default {
         this.closeModal();
         userStore.showModalSide = true;
         // 로그인 메시지 서버에 전달
-        console.log(typeof userStore.userInfo.email)
         const event = {
         fromUserEmail: userStore.userInfo.email,
         eventCategory: '4',
