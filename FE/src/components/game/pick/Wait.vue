@@ -2,11 +2,8 @@
   <!-- 패치노트 모달창 -->
   <div class="modal">
     <div class="modal-content">
-      <!-- <h2 ref="titleElement" class="title">
+      <h2 ref="titleElement" class="title">
         상대 팀 픽을 기다리고 있습니다...
-      </h2> -->
-      <h2 class="title">
-        상대 팀 픽을 기다리고 있습니다.
       </h2>
     </div>
   </div>
@@ -34,27 +31,27 @@ export default {
   },
   methods: {
     startLoadingAnimation() {
-      // const dots = [".", "..", "...", "....", "....."];
-      // let index = 0;
-      // this.intervalId = setInterval(() => {
-      //   this.loadingText = dots[index];
-      //   index = (index + 1) % dots.length;
-      //   this.$refs.titleElement.innerText =
-      //     "상대 팀 픽을 기다리고 있습니다" + this.loadingText;
-      //   if (this.redUser.length !== 0) {
-      //     clearInterval(this.intervalId);
-      //     this.intervalId = null;
-      //   }
-      // }, 800);
-      // this.$emit("close-modal", "start");
+      const dots = [".", "..", "...", "....", "....."];
+      let index = 0;
+      this.intervalId = setInterval(() => {
+        this.loadingText = dots[index];
+        index = (index + 1) % dots.length;
+        this.$refs.titleElement.innerText =
+          "상대 팀 픽을 기다리고 있습니다" + this.loadingText;
+        if (this.redUser.length !== 0) {
+          clearInterval(this.intervalId);
+          this.intervalId = null;
+        }
+      }, 800);
+      this.$emit("close-modal", "start");
     },
   },
   mounted() {
-    // this.startLoadingAnimation();
+    this.startLoadingAnimation();
   },
   beforeDestroy() {
-    // clearInterval(this.intervalId);
-    // this.intervalId = null;
+    clearInterval(this.intervalId);
+    this.intervalId = null;
   },
 };
 </script>
