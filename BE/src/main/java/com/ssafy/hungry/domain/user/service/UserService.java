@@ -329,7 +329,10 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
             //이미 친구라면 리스트에 포함하지 않음
             if(friendService.areWeFriend(myId, userEntity.getId())){
                 continue;
-            }else {
+            //친구 목록이므로 나 자신도 포함하지 않음
+            }else if(myId == userEntity.getId()){
+                continue;
+            } else {
                 UserDto dto = new UserDto();
                 dto.setEmail(userEntity.getEmail());
                 dto.setNickname(userEntity.getNickname());
