@@ -16,7 +16,7 @@ import {
 } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
-import { connectWebSocket } from '@/store/socket.js';
+import { connectWebSocket } from '@/util/socket.js';
 
 export const useUserStore = defineStore("user", {
   id: "myStore",
@@ -274,22 +274,28 @@ export const useUserStore = defineStore("user", {
       )
     },
     getUserInfo: () => {
-      findByToken(
-        (response) => {
-          if (response.status === httpStatusCode.OK) {
-            useUserStore().userInfo = response.data.userInfo;
+      return new Promise((resolve, reject) => {
+        findByToken(
+          (response) => {
+            if (response.status === httpStatusCode.OK) {
+              console.log('로그인 확인완')
+              useUserStore().userInfo = response.data.userInfo;
+              console.log(useUserStore().userInfo.email)
+              resolve()
+            }
+          },
+  
+          async (error) => {
+            console.error(
+              "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ",
+              error.response.status
+            );
+  
+            await tokenRegenerate();
+            reject(error)
           }
-        },
-
-        async (error) => {
-          console.error(
-            "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ",
-            error.response.status
-          );
-
-          await tokenRegenerate();
-        }
-      );
+        );
+      })
     },
 
     tokenRegenerate: async () => {

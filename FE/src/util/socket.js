@@ -62,7 +62,7 @@ export function connectWebSocket(accessToken) {
         alert('소켓 연결이 끊어졌습니다.');
       },
 
-      reconnectDelay: 5000, //자동재연결
+      reconnectDelay: 3000, //자동재연결
     })
 
     try {
@@ -78,18 +78,27 @@ export function connectWebSocket(accessToken) {
 
 // 로그인 이벤트 메시지 보내기
 export function sendLoginEvent(event) {
+  console.log('로그인 소켓 이벤트 메시지 발송')
   stompClient.publish({
     destination: "/pub/login",
     body: JSON.stringify(event)
   })
 }
-// 로그아웃 이벤트 메시지 보내기
+// 로그아웃 이벤트 메시지 보내고 연결 끊기
 export function sendLogoutEvent(event) {
-  stompClient.publish({
-    destination: "/pub/logout",
-    body: JSON.stringify(event)
-  })
+  if (stompClient) {
+    stompClient.publish({
+      destination: "/pub/logout",
+      body: JSON.stringify(event)
+    })
+    console.log('로그아웃 소켓 이벤트 메시지 발송')
+    stompClient.deactivate()
+    stompClient = null
+    connected = false
+    console.log('소켓 연결이 끊어졌습니다.');
+  }
 }
+
 // 일반 이벤트 메시지 보내기
 export function sendEvent(event) {
   stompClient.publish({
@@ -102,16 +111,22 @@ export function sendEvent(event) {
 function handleWebSocketMessage(message) {
   const event = JSON.parse(message.body);
   const friendStore = useFriendStore()
-
+  console.log(event.eventCategory)
   switch(event.eventCategory) {
-    case 1:
+    case "1":
       friendStore.receiveChatMessage({ friendID: event.fromUserEmail, message: event.message })
       break
-    case 2:
-      friendStore.receiveFriendRequest({ fromUserEmail: event.fromUserEmail, message: event.message })
+    case "2":
+      friendStore.receiveFriendRequest(event.fromUserEmail)
       break
-    case 3:
+    case "3":
       friendStore.receiveGameInvitation({ fromUserEmail: event.fromUserEmail, message: event.message })
+      break
+    case "4":
+      friendStore.updateOnlineFriends(event.fromUserEmail)
+      break
+    case "5":
+      friendStore.updateOfflineFriends(event.fromUserEmail)
       break
   } 
 }

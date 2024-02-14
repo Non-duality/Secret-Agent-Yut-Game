@@ -1,12 +1,11 @@
 import { defineStore } from "pinia";
 
-import { getMyFriend } from "@/api/friend";
+import { getMyFriend, getMyFriendRequest } from "@/api/friend";
 
 export const useFriendStore = defineStore("friend", {
   state() {
     return {
       friends: [], // 친구 목록
-      onlineFriends: [], // 온라인 상태인 친구 목록
       friendRequests: [], // 친구 요청 목록
       chatMessages: {}, // 친구 별 채팅 메시지 {friendID: [message]}
       gameInvitations: [], // 게임 초대 목록
@@ -16,8 +15,12 @@ export const useFriendStore = defineStore("friend", {
     // 기존 친구 가져오기
     async getFriend() {
       try {
-        const response = await getMyFriend();
-        this.friends = response.data;
+        await getMyFriend((response) => {
+          // 친구 있을 때만 가져오기
+          if (response.data.length > 0) {
+            this.friends = response.data;
+          }
+        });
       } catch (error) {
         console.log(error);
       }
@@ -28,8 +31,16 @@ export const useFriendStore = defineStore("friend", {
       this.findUser.nickName = searchName;
     },
     // 친구 요청
-    receiveFriendRequest(request) {
-      this.friendRequests.push(request)
+    async receiveFriendRequest(request) {
+      // 요청 신호 오면 친구 요청 업데이트
+      try {
+        await getMyFriendRequest((response) => {
+          this.friendRequests = response.data
+          console.log('친구 요청 왔습니다.', response)
+        })
+      } catch (error) {
+        console.log('친구 요청 오다가 말았습니다.', error)
+      }
     },
     // 친구 채팅
     receiveChatMessage({ friendID, message }) {
@@ -41,6 +52,22 @@ export const useFriendStore = defineStore("friend", {
     // 게임 초대
     receiveGameInvitation(invitation) {
       this.gameInvitations.push(invitation)
-    }
+    },
+    // 친구 온라인 상태 업데이트
+    updateOnlineFriends(friendID) {
+      this.friends.forEach(friend => {
+        if (friend.email === friendID) {
+          friend.online = true
+        }
+      })
+    },
+    // 친구 오프라인 상태 업데이트
+    updateOfflineFriends(friendID) {
+      this.friends.forEach(friend => {
+        if (friend.email === friendID) {
+          friend.online = false
+        }
+      })
+    },
   },
 });
