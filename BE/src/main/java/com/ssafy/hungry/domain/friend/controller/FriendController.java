@@ -5,6 +5,7 @@ import com.ssafy.hungry.domain.friend.dto.ReceiveRequestFriendDto;
 import com.ssafy.hungry.domain.friend.dto.SendRequestFriendDto;
 import com.ssafy.hungry.domain.friend.entity.FriendEntity;
 import com.ssafy.hungry.domain.friend.service.FriendService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
@@ -24,9 +25,9 @@ public class FriendController {
 
     //내 친구 목록 가져오기 api
     @GetMapping("/myfriend")
-    public List<MyFriendDto> myFriend(){
+    public ResponseEntity<List<MyFriendDto>> myFriend(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return friendService.myFriend(email);
+        return new ResponseEntity<>(friendService.myFriend(email), HttpStatus.OK);
     }
 
     //친구 요청 보내기 api
@@ -49,17 +50,17 @@ public class FriendController {
 
     //내가 보낸 요청 목록
     @GetMapping("/send")
-    public List<SendRequestFriendDto> mySendRequest(){
+    public ResponseEntity<List<SendRequestFriendDto>> mySendRequest(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return friendService.mySendRequest(email);
+        return new ResponseEntity<>(friendService.mySendRequest(email), HttpStatus.OK);
     }
 
 
     //내가 받은 요청 목록
     @GetMapping("/receive")
-    public List<ReceiveRequestFriendDto> myReceiveRequest(){
+    public ResponseEntity<List<ReceiveRequestFriendDto>> myReceiveRequest(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return friendService.myReceiveRequest(email);
+        return new ResponseEntity<>(friendService.myReceiveRequest(email), HttpStatus.OK);
     }
 
     //요청 거절 api

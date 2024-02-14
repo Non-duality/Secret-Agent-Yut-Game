@@ -166,15 +166,15 @@ public class UserController {
 
     //전적 검색
     @GetMapping("/stat")
-    public List<GameHistoryDto> myGameHistory(){
+    public ResponseEntity<List<GameHistoryDto>> myGameHistory(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userService.myGameHistory(email);
+        return new ResponseEntity<>(userService.myGameHistory(email), HttpStatus.OK);
     }
 
     //유저 검색
     @GetMapping("/search/{nickname}")
-    public List<UserDto> userSearch(@PathVariable String nickname){
+    public ResponseEntity<List<UserDto>> userSearch(@PathVariable String nickname){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userService.userSearch(nickname, email);
+        return new ResponseEntity<>(userService.userSearch(nickname, email), HttpStatus.OK);
     }
 }
