@@ -65,7 +65,7 @@ public class FriendController {
 
     //요청 거절 api
     @PostMapping("/reject")
-    public ResponseEntity<String> reject(ReceiveRequestFriendDto dto){
+    public ResponseEntity<String> reject(@RequestBody ReceiveRequestFriendDto dto){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         String result = friendService.reject(dto, email);
         return ResponseEntity.status(200).body(result);
