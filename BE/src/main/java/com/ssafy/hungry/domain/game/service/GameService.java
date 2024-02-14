@@ -217,9 +217,9 @@ public class GameService {
     }
 
     //추리 성공시 저장
-    public void reasoning(String team, String gameCode){
+    public void reasoning(int team, String gameCode){
         Game game = gameRepository.findByGameCode(gameCode);
-        if(team.equals("청팀")){
+        if(team == 2){
             game.setBlueTeamReasoningResult(true);
             gameRepository.save(game);
         }else{
@@ -229,9 +229,9 @@ public class GameService {
     }
 
     //유닛 도착시 저장
-    public void unitGole(String team, int unitIndex, String gameCode){
+    public void unitGole(int team, int unitIndex, String gameCode){
         Game game = gameRepository.findByGameCode(gameCode);
-        if(team.equals("청팀")){
+        if(team == 2){
             BlueTeamUnit blueTeamUnit = blueTeamUnitRepository.findByGameCodeAndUnitIndex(game, unitIndex);
             blueTeamUnit.setGole(true);
             blueTeamUnitRepository.save(blueTeamUnit);
@@ -296,13 +296,14 @@ public class GameService {
             blueTeamMember.setUserIndex(i);
             blueTeamMemberRepository.save(blueTeamMember);
         }
-
+        int i = 0;
         //청팀 유닛 정보 저장
         for(UnitInfo unitInfo : blueUnitList){
             UnitEntity unit = unitRepository.findById(unitInfo.getUnitId());
             BlueTeamUnit blueTeamUnit = new BlueTeamUnit();
             blueTeamUnit.setGameCode(game);
             blueTeamUnit.setUnitId(unit);
+            blueTeamUnit.setUnitIndex(i);
             blueTeamUnit.setPlace(unitInfo.getPlace());
             blueTeamUnit.setTime(unitInfo.getTime());
             blueTeamUnit.setContactor(unitInfo.getContactor());
@@ -310,14 +311,17 @@ public class GameService {
             blueTeamUnit.setScal(unitInfo.getScal());
             blueTeamUnit.setGole(false);
             blueTeamUnitRepository.save(blueTeamUnit);
+            i++;
         }
 
+        i = 0;
         //홍팀 유닛 정보 저장
         for(UnitInfo unitInfo : redUnitList){
             UnitEntity unit = unitRepository.findById(unitInfo.getUnitId());
             RedTeamUnit redTeamUnit = new RedTeamUnit();
             redTeamUnit.setGameCode(game);
             redTeamUnit.setUnitId(unit);
+            redTeamUnit.setUnitIndex(i);
             redTeamUnit.setPlace(unitInfo.getPlace());
             redTeamUnit.setTime(unitInfo.getTime());
             redTeamUnit.setContactor(unitInfo.getContactor());
@@ -325,6 +329,7 @@ public class GameService {
             redTeamUnit.setScal(unitInfo.getScal());
             redTeamUnit.setGole(false);
             redTeamUnitRepository.save(redTeamUnit);
+            i++;
         }
     }
 
@@ -561,12 +566,14 @@ public class GameService {
 
         if(team == 1){
             if(unitId == Integer.parseInt(String.valueOf(spyPickInfo.get("홍팀")))){
+                this.reasoning(team, roomCode);
                 return true;
             }else {
                 return false;
             }
         }else{
             if(unitId == Integer.parseInt(String.valueOf(spyPickInfo.get("청팀")))){
+                this.reasoning(team, roomCode);
                 return true;
             }else {
                 return false;

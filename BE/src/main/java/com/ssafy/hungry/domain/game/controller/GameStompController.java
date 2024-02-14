@@ -77,6 +77,16 @@ public class GameStompController {
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
+    @MessageMapping("/game/{roomCode}/unit-gole")
+    public void unitGole(@DestinationVariable String roomCode, UnitGoleDto dto){
+        gameService.unitGole(dto.getTeam(), dto.getUnitIndex(), roomCode);
+    }
+
+    @MessageMapping("/game/{roomCode}/finish")
+    public void finish(@DestinationVariable String roomCode, GameFinishDto dto){
+        gameService.saveGameResult(roomCode, dto.getTeam());
+    }
+
     @MessageMapping("/game/{roomCode}/mission")
     public void mission(@DestinationVariable String roomCode){
 
