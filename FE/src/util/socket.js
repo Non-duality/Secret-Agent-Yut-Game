@@ -15,7 +15,7 @@ const { VITE_WSS_API_URL } = import.meta.env;
 let stompClient = null;
 let connected = false;
 let roomCode = null;
-
+let cntTemp = 0;
 /* 접속 소켓 */
 export function connectWebSocket(accessToken) {
   return new Promise((resolve, reject) => {
@@ -769,7 +769,7 @@ export function gameConnect() {
   console.log(useRoomStore().accessToken);
   if (useGameStore().myTeam === 2) {
     if (useGameStore().redUser.length === 0) {
-      console.log("연결 중");
+      console.log("연결 중 : " + cntTemp++);
       connect("blue", gameHandleRecvMessage)
         .then(() => {
           pubPick(
@@ -780,7 +780,7 @@ export function gameConnect() {
     }
   } else {
     if (useGameStore().redUser.length === 0) {
-      console.log("연결 중");
+      console.log("연결 중 : " + cntTemp++);
       connect("red", gameHandleRecvMessage)
         .then(() => {
           pubPick(
