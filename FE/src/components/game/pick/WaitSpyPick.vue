@@ -40,6 +40,7 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.intervalId);
+    this.intervalId = null;
   },
 };
 </script>
