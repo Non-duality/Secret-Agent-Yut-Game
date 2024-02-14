@@ -290,6 +290,11 @@ function setInfo(receivedMsg) {
       useGameStore().blueUser[i].email === useUserStore().userInfo.email
     ) {
       useGameStore().myTurn = i;
+      if (i === 0 && useGameStore().myTeam === 1) {
+        setTimeout(() => {
+          useGameStore().isThrowYut = true;
+        }, 2000);
+      }
       break;
     }
   }
@@ -765,8 +770,8 @@ export function initPick(router, from) {
   );
 }
 // 게임 연결.
-export function gameConnect() {
-  useGameStore().myTeam = useRoomStore().myTeamIdx;
+function gameConnect() {
+  useGameStore().myTeam = usePickStore().code.includes("red") ? 1 : 2;
   console.log(useRoomStore().accessToken);
   if (useGameStore().myTeam === 2) {
     if (useGameStore().redUser.length === 0) {

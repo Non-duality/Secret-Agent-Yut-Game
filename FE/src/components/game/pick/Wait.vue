@@ -2,45 +2,59 @@
   <!-- 패치노트 모달창 -->
   <div class="modal">
     <div class="modal-content">
-      <h2 ref="titleElement" class="title">
+      <!-- <h2 ref="titleElement" class="title">
         상대 팀 픽을 기다리고 있습니다...
+      </h2> -->
+      <h2 class="title">
+        상대 팀 픽을 기다리고 있습니다.
       </h2>
     </div>
   </div>
 </template>
 
 <script>
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faX } from "@fortawesome/free-solid-svg-icons";
-library.add(faX);
+// import { library } from "@fortawesome/fontawesome-svg-core";
+// import { faX } from "@fortawesome/free-solid-svg-icons";
+import { useGameStore } from "@/store/gameStore";
+// library.add(faX);
 
 export default {
   data() {
     return {
       loadingText: ".",
-      loadingPercent: 0, 
-      intervalId: null, 
+      loadingPercent: 0,
+      intervalId: null,
     };
+  },
+  computed: {
+    redUser() {
+      const gameStore = useGameStore();
+      return gameStore.redUser;
+    },
   },
   methods: {
     startLoadingAnimation() {
-      const dots = [".", "..", "...", "....", "....."];
-      let index = 0; 
-      this.intervalId = setInterval(() => {
-        this.loadingText = dots[index];
-        index = (index + 1) % dots.length; 
-        this.$refs.titleElement.innerText =
-          "상대 팀 픽을 기다리고 있습니다" + this.loadingText;
-      }, 800);
-      this.$emit("close-modal", "start");
+      // const dots = [".", "..", "...", "....", "....."];
+      // let index = 0;
+      // this.intervalId = setInterval(() => {
+      //   this.loadingText = dots[index];
+      //   index = (index + 1) % dots.length;
+      //   this.$refs.titleElement.innerText =
+      //     "상대 팀 픽을 기다리고 있습니다" + this.loadingText;
+      //   if (this.redUser.length !== 0) {
+      //     clearInterval(this.intervalId);
+      //     this.intervalId = null;
+      //   }
+      // }, 800);
+      // this.$emit("close-modal", "start");
     },
   },
   mounted() {
-    this.startLoadingAnimation(); 
+    // this.startLoadingAnimation();
   },
   beforeDestroy() {
-    clearInterval(this.intervalId);
-    this.intervalId = null;
+    // clearInterval(this.intervalId);
+    // this.intervalId = null;
   },
 };
 </script>
