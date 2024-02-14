@@ -555,4 +555,22 @@ public class GameService {
 
         return result;
     }
+
+    public boolean isSpy(int unitId, int team, String roomCode) {
+        Map<Object,Object> spyPickInfo = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + roomCode);
+
+        if(team == 1){
+            if(unitId == Integer.parseInt(String.valueOf(spyPickInfo.get("홍팀")))){
+                return true;
+            }else {
+                return false;
+            }
+        }else{
+            if(unitId == Integer.parseInt(String.valueOf(spyPickInfo.get("청팀")))){
+                return true;
+            }else {
+                return false;
+            }
+        }
+    }
 }

@@ -73,6 +73,7 @@ public class GameStompController {
     @MessageMapping("/game/{roomCode}/reasoning")
     public void reasoning(@DestinationVariable String roomCode, ReasoningDto dto) {
         dto.setActionCategory(3);
+        dto.setSpy(gameService.isSpy(dto.getSelectedUnit(), dto.getTeam(), roomCode));
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 

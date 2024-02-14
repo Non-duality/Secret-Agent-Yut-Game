@@ -32,7 +32,7 @@ public class FriendController {
 
     //친구 요청 보내기 api
     @PostMapping("/send")
-    public ResponseEntity<String> sendRequestToUser(@ModelAttribute SendRequestFriendDto dto){
+    public ResponseEntity<String> sendRequestToUser(SendRequestFriendDto dto){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         System.out.println(dto.getToUserEmail());
         String result = friendService.sendRequestToUser(dto, email);

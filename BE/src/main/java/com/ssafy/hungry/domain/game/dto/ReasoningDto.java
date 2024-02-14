@@ -8,6 +8,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ReasoningDto {
+    private int team;
     private int actionCategory;
     private int selectedUnit;
+    private boolean isSpy;
 }
