@@ -16,6 +16,7 @@ let stompClient = null;
 let connected = false;
 let roomCode = null;
 let cntTemp = 0;
+
 /* 접속 소켓 */
 export function connectWebSocket(accessToken) {
   return new Promise((resolve, reject) => {

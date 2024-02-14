@@ -99,7 +99,6 @@ export default {
       currentUserNickname: "",
 
       redUsers: [],
-
       blueUsers: [],
     };
   },
@@ -163,10 +162,13 @@ export default {
 
         this.redUsers.push(subscriber);
 
-        if (stream.connection.data.team === 1) {
-          console.log("당신은 우리팀??")
+        const data = JSON.parse(stream.connection.data); 
+        const jsonData = JSON.parse(data.data); 
+        const teamValue = jsonData.team; 
+
+        if (teamValue === 1) {
           this.redUsers.push(subscriber);
-        } else if (stream.connection.data.team === 2) {
+        } else if (teamValue === 2) {
           this.blueUsers.push(subscriber);
         }
       });
@@ -204,7 +206,7 @@ export default {
             // this.publisher = publisher;
             this.redUsers.push(publisher);
             // console.log(publisher);
-            
+
             this.session.publish(publisher);
 
             // for(let i=0; i<this.redUsers.length; i++){
@@ -279,9 +281,7 @@ export default {
     // this.joinSession();
 
     // 로딩창 7.5초동안 데이터 받는 시간 확보
-    setTimeout(() => {
-      console.log(this.redUsers);
-    }, 7800);
+    setTimeout(() => {}, 5800);
   },
 };
 </script>
