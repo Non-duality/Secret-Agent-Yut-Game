@@ -729,6 +729,10 @@ export function initPick(router, from) {
       // 양 팀 모두 밀정 픽 성공했다면, 게임 START을 알림.
       else if (usePickStore().receivedMessage.type === "GAME_START") {
         setTimeout(() => {
+          usePickStore().pickFinalFinished = !usePickStore().pickFinalFinished;
+        }, 100);
+
+        setTimeout(() => {
           // (1) 소켓 끊고 다음 게임 소켓으로 연결하기??
           // const gameBoard = new GameBoardVue();
           // gameBoard.connectSocket();

@@ -8,26 +8,36 @@
     <!-- <span class="game-red-team-name">홍팀</span> -->
     <div class="game-video-team1">
       <div id="session" v-if="session">
-        <!-- (시작) 카메라 영역 -->
         <div class="rtc-container">
           <div id="video-container">
             <user-video
               v-for="user in redUsers"
               :key="user.stream.connection.connectionId"
               :stream-manager="user"
-              @click="updateMainVideoStreamManager(user)"
               :nickname="currentUserNickname"
             />
           </div>
         </div>
-        <!-- (끝) 카메라 영역 -->
       </div>
     </div>
 
     <GameBoard class="game-board-main" />
 
     <!-- <span class="game-blue-team-name">청팀</span> -->
-    <div class="game-video-team2"></div>
+    <div class="game-video-team2">
+      <div id="session" v-if="session">
+        <div class="rtc-container">
+          <div id="video-container">
+            <!-- <user-video
+              v-for="user in blueUsers"
+              :key="user.stream.connection.connectionId"
+              :stream-manager="user"
+              :nickname="currentUserNickname"
+            /> -->
+          </div>
+        </div>
+      </div>
+    </div>
 
     <MiniGame v-show="isMission" />
     <GameChat class="game-chat-main" />
@@ -120,17 +130,6 @@ export default {
     currentUserNickname() {
       return useUserStore().userInfo.nickname;
     },
-
-    // 현재 팀에 따라 구독자를 필터링
-    filteredRedSubscribers() {
-      return this.subscribers.filter((sub) => sub.teamNumber === 1);
-    },
-
-    // 현재 팀에 따라 구독자를 필터링
-    filteredBlueSubscribers() {
-      console.log(this.subscribers);
-      return this.subscribers.filter((sub) => sub.teamNumber === 2);
-    },
   },
 
   methods: {
@@ -162,11 +161,12 @@ export default {
         const subscriber = this.session.subscribe(stream);
         this.subscribers.push(subscriber);
 
+        this.redUsers.push(subscriber);
+
         if (stream.connection.data.team === 1) {
-          // this.redUsers.push({ streamManager: subscriber });
+          console.log("당신은 우리팀??")
           this.redUsers.push(subscriber);
         } else if (stream.connection.data.team === 2) {
-          // this.blueUsers.push({ streamManager: subscriber });
           this.blueUsers.push(subscriber);
         }
       });
@@ -177,8 +177,6 @@ export default {
           this.subscribers.splice(index, 1);
         }
       });
-
-      this.session.on("exception", ({ exception }) => {});
 
       const userData = {
         team: useUserStore().myTeamIdx,
@@ -203,9 +201,15 @@ export default {
             });
 
             this.mainStreamManager = publisher;
-            this.publisher = publisher;
+            // this.publisher = publisher;
+            this.redUsers.push(publisher);
+            // console.log(publisher);
+            
+            this.session.publish(publisher);
 
-            this.session.publish(this.publisher);
+            // for(let i=0; i<this.redUsers.length; i++){
+            //   this.session.publish(this.redUser[i]);
+            // }
           })
           .catch((error) => {});
       });
@@ -272,10 +276,12 @@ export default {
   mounted() {
     this.myUserName = useUserStore().userInfo.nickname;
     this.mySessionId = "A";
-    this.joinSession();
+    // this.joinSession();
 
     // 로딩창 7.5초동안 데이터 받는 시간 확보
-    setTimeout(() => {}, 7800);
+    setTimeout(() => {
+      console.log(this.redUsers);
+    }, 7800);
   },
 };
 </script>

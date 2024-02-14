@@ -23,6 +23,7 @@ export const usePickStore = defineStore("pick", {
     pickFinished: false,
     pickRealFinished: false,
     pickSpyWait: false,
+    pickFinalFinished: false,
   }),
 
   persist: {

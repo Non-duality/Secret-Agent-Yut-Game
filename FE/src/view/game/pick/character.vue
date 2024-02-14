@@ -543,6 +543,13 @@ export default {
       }
     );
 
+    watch(
+      () => pickStore.pickFinalFinished,
+      (newValue) => {
+        this.showWaitSpyOppModal = false;
+      }
+    );
+
     // 새로고침 방지 이벤트를 추가한다.
     window.addEventListener("beforeunload", this.leave);
 
