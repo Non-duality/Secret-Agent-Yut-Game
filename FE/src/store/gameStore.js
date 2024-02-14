@@ -415,6 +415,15 @@ export const useGameStore = defineStore("game", {
           // 비워준다.
           this.tiles[horseInfo.index].horse = [];
           // 그냥 끝낸다.
+          // 초기화.
+          this.isHorseEnd = false;
+          this.isGoDiagonal = false;
+          this.isCenterDir = false;
+
+          // 턴 바꿈.
+          if (this.throwChance === 0) {
+            this.turnChange();
+          }
           return;
         }
         // 15번 부터 마지막 타일 또는 들어왔다면
@@ -532,7 +541,7 @@ export const useGameStore = defineStore("game", {
 
       // 팀당 다음 차례 닉네임.
       this.redTurnName = this.redUser[this.turn[0]].nickname;
-      this.blueTurnName = this.blueUser[this.turn[0]].nickname;
+      this.blueTurnName = this.blueUser[this.turn[1]].nickname;
 
       // 약간의 여유를 준다.
       setTimeout(() => {
@@ -571,6 +580,12 @@ export const useGameStore = defineStore("game", {
 
     // 타이머 함수
     startTimer() {
+      // 이미 타이머가 실행 중이라면 중지
+      if (this.timerId !== null) {
+        clearInterval(this.timerId);
+        this.timerId = null;
+      }
+
       this.timer = 20;
       this.timerId = setInterval(() => {
         this.timer--;
@@ -825,8 +840,10 @@ export const useGameStore = defineStore("game", {
       console.log("res = " + this.yutRes);
     },
     setYutText(res) {
-      clearInterval(this.timerId);
-      this.timerId = null;
+      if (this.timerId !== null) {
+        clearInterval(this.timerId);
+        this.timerId = null;
+      }
       this.throwChance--;
       switch (res) {
         case -1:

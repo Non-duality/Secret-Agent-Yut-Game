@@ -11,20 +11,40 @@
       @notUseTicket="notUseTicket"
     />
     <!-- 차례 메시지  -->
-    <span v-if="isShowTurnMessage" class="game-board-turn-message">{{
-      turnMessage
-    }}</span>
+    <div v-if="isShowTurnMessage" class="game-board-turn-message-container">
+      <span class="game-board-turn-message">{{ turnMessage }}</span>
+    </div>
+
     <!-- 타이머 -->
-    <span
-      class="game-board-timer"
-      :class="{ 'game-board-timer-five': timerCheck <= 5 }"
-      >{{ timerCheck }}</span
-    >
+    <div class="game-board-timer-container">
+      <span
+        class="game-board-timer"
+        :class="{ 'game-board-timer-five': timerCheck <= 5 }"
+        >{{ timerCheck }}</span
+      >
+    </div>
     <!-- 팀당 다음차례 -->
     <div class="game-board-team-turn">
-      <span class="game-board-team-turn-title">다음 차례</span>
-      <span class="game-board-team-turn-red">홍팀 : {{ redTurnName }}</span>
-      <span class="game-board-team-turn-blue">청팀 : {{ blueTurnName }}</span>
+      <div class="game-board-team-turn-container">
+        <span class="game-board-team-turn-title">현재 차례</span>
+        <span
+          :class="{
+            'game-board-team-turn-red': !teamTurn,
+            'game-board-team-turn-blue': teamTurn,
+          }"
+          >{{ nowTunrName }}</span
+        >
+      </div>
+      <div class="game-board-team-turn-container">
+        <span class="game-board-team-turn-title">다음 차례</span>
+        <span
+          :class="{
+            'game-board-team-turn-red': teamTurn,
+            'game-board-team-turn-blue': !teamTurn,
+          }"
+          >{{ nextTurnName }}</span
+        >
+      </div>
     </div>
     <div class="game-board-tile">
       <!-- 윷 던진 결과 -->
@@ -154,15 +174,22 @@ export default {
       const gameStore = useGameStore();
       return gameStore.isShowTurnMessage;
     },
-    // 홍팀 차례
-    redTurnName() {
+    // 현재 차례
+    nowTunrName() {
       const gameStore = useGameStore();
-      return gameStore.redTurnName;
+      // 홍팀
+      if (!gameStore.teamTurn) return "홍팀 : " + gameStore.redTurnName + "님";
+      else return "청팀 : " + gameStore.blueTurnName + "님";
     },
-    // 청팀 차례
-    blueTurnName() {
+    // 다음 차례
+    nextTurnName() {
       const gameStore = useGameStore();
-      return gameStore.blueTurnName;
+      if (!gameStore.teamTurn) return "청팀 : " + gameStore.blueTurnName + "님";
+      else return "홍팀 : " + gameStore.redTurnName + "님";
+    },
+    teamTurn() {
+      const gameStore = useGameStore();
+      return gameStore.teamTurn;
     },
     // 추리 선택 모달 Flag
     isShowReasoning() {
@@ -336,7 +363,7 @@ export default {
           if (i === 0 && gameStore.myTeam === 1) {
             setTimeout(() => {
               gameStore.isThrowYut = true;
-            },5000);
+            }, 5000);
           }
           break;
         }
@@ -361,8 +388,10 @@ export default {
     // 윷 결과를 받아 왔을 때.
     receiveYutRes(receivedMsg) {
       const gameStore = useGameStore();
-      clearInterval(gameStore.timerId);
-      gameStore.timerId = null;
+      if (gameStore.timerId !== null) {
+        clearInterval(gameStore.timerId);
+        gameStore.timerId = null;
+      }
       gameStore.yutRes = receivedMsg.yutRes;
       gameStore.throwRes = receivedMsg.throwRes;
       gameStore.setYutText(receivedMsg.yutRes);
@@ -414,8 +443,10 @@ export default {
     // 말 선택 결과를 받아 왔을 때.
     receiveSelectHorse(receivedMsg) {
       const gameStore = useGameStore();
-      clearInterval(gameStore.timerId);
-      gameStore.timerId = null;
+      if (gameStore.timerId !== null) {
+        clearInterval(gameStore.timerId);
+        gameStore.timerId = null;
+      }
       gameStore.isGoDiagonal = receivedMsg.goDiagonal;
       gameStore.isCenterDir = receivedMsg.centerDir;
       gameStore.moveHorse(receivedMsg);

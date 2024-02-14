@@ -26,48 +26,46 @@
   height: 100px;
 }
 .game-yut-res-text{
-  color:bisque;
+  color:rgb(255, 166, 57);
   font-size: 100px;
 }
 
 .game-board-throw-btn{
   position: absolute;
-  top: 300px;
+  top: 330px;
   right: 350px;
-  background-image: linear-gradient(to top, #fa8d2d, white);
+  background-image: linear-gradient(to top, #b95600, #ffb574);
   border-radius: 40%;
   width: 200px;
   height: 50px;
-  box-shadow:.8rem .5rem 1.4rem  #BEC5D0, -.3rem -.4rem .8rem #FBFBFB;
+  font-size: large;
+  box-shadow:.8rem .5rem 1.4rem  #94500b, -.3rem -.4rem .8rem #fcd7ad;
 }
 .game-board-throw-btn:active {
   /* background-color: #e57f25; 색상 변경 예시 */
-  box-shadow: inset -.3rem -.1rem 1.4rem  #FBFBFB, inset .3rem .4rem .8rem #BEC5D0; 
+  box-shadow: inset -.3rem -.1rem 1.4rem  #94500b, inset .3rem .4rem .8rem #fcd7ad; 
     cursor: pointer;
 }
 
 /* 메시지 */
-.game-board-turn-message{
+.game-board-turn-message-container{
+  background-color: rgba(0, 0, 0, 0.499);
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
   position: absolute;
   z-index: 1003;
-  color: white;
+  top: 250px;
+  left: 450px;
+  width: 600px;
+  height: 90px;
+  color: rgb(234, 255, 0);
+  text-align: center;
   font-size: 50px;
-  top: 150px;
-  left: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.game-board-timer{
-  position: absolute;
-  color: black;
-  font-size: 100px;
-  font-weight: 900;
-  top: 30px;
-  right: 410px;
-}
-
-.game-board-timer-five{
-  color: red;
-}
 
 .game-board-modal{
   position: absolute;
@@ -77,30 +75,56 @@
   height: 100vh;
 }
 
+.game-board-timer-container{
+  position: absolute;
+  display: flex;
+  width: 200px;
+  right: 350px;
+  justify-content: center;
+}
+.game-board-timer{
+  color: black;
+  font-size: 100px;
+  font-weight: 900;
+}
+.game-board-timer-five{
+  color: red;
+}
 .game-board-team-turn{
   position: absolute;
   display: flex;
-  width: 150px;
-  top: 170px;
-  right: 380px;
   flex-direction: column;
-  color: black;
+  width: 200px;
+  top: 130px;
+  right: 350px;
+  flex-direction: column;
+  color: black(255, 242, 0);
   text-align: center;
 }
+.game-board-team-turn-container{
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
+  border-radius: 5px;
+  margin-top: 20px;
+}
 .game-board-team-turn-title{
-  font-size: xx-large;
-  font-weight: 800;
+  /* -webkit-text-stroke: 0.2px lightgrey; */
+  font-size: 22px;
+  font-weight: 600;
 }
 .game-board-team-turn-red{
   margin-top: 10px;
-  font-size: large;
-  font-weight: 800;
+  font-size: x-large;
+  font-weight: 900;
   color: red;
 }
 .game-board-team-turn-blue{
-  margin-top: 15px;
-  font-size: large;
-  font-weight: 800;
+  margin-top: 10px;
+  font-size: x-large;
+  font-weight: 900;
   color: blue;
 }
 /* @keyframes throwEffect {
