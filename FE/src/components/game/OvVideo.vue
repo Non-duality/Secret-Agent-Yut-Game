@@ -5,12 +5,22 @@
 <script>
 export default {
   name: "OvVideo",
-  
+
   props: {
     streamManager: Object,
   },
 
   mounted() {
+    const data = JSON.parse(this.streamManager.stream.connection.data);
+    const jsonData = JSON.parse(data.data);
+    const teamValue = jsonData.team;
+    
+    if (teamValue === 2) {
+      this.$el.style.border = "5px solid blue";
+    } else {
+      this.$el.style.border = "5px solid red";
+    }
+
     this.streamManager.addVideoElement(this.$el);
   },
 };
@@ -20,5 +30,6 @@ export default {
 video {
   max-width: 25vw;
   max-height: 18vh;
+  border: 5px solid red;
 }
 </style>

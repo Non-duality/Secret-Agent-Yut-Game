@@ -76,7 +76,7 @@ export default {
       setTimeout(() => {
         this.loadingPercent = 100;
         this.$emit("close-start-modal", "start");
-      }, 7500);
+      }, 6500);
     },
   },
   mounted() {
