@@ -264,8 +264,8 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
             gameHistoryDto.setMissionRegion(game.getMissionRegion());
             gameHistoryDto.setBlueSpyHint(game.getBlueSpyHint());
             gameHistoryDto.setRedSpyHint(game.getRedSpyHint());
-            gameHistoryDto.setCreatedDate(game.getCreatedDate());
-            gameHistoryDto.setEndDate(game.getEndDate());
+//            gameHistoryDto.setCreatedDate(game.getCreatedDate());
+//            gameHistoryDto.setEndDate(game.getEndDate());
             UnitEntity unit = unitRepository.findById(game.getBlueSpyId());
             gameHistoryDto.setBlueSpyName(unit.getName());
             unit = unitRepository.findById(game.getRedSpyId());

@@ -25,15 +25,15 @@ public class Game {
     @Column(name = "game_Code")
     private String gameCode;
 
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable=false)
-    private Date createdDate;
-
-    @UpdateTimestamp
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date endDate;
+//    @CreationTimestamp
+//    @Temporal(TemporalType.TIMESTAMP)
+//    @Column(nullable=false)
+//    private Date createdDate;
+//
+//    @UpdateTimestamp
+//    @Column(nullable = false)
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date endDate;
 
     private int gameSpeed;
     private String gameTheme;
