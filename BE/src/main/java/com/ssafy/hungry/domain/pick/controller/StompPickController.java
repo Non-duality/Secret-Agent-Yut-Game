@@ -33,6 +33,9 @@ public class StompPickController {
     // 유닛 선택이 시작되면 유닛 선택 정보 반환, 선택할 수 있는 유닛 리스트도 반환.
     @MessageMapping(value = "/pick/{roomCode}/get-pre-info")
     public void getPrePickInfo(@DestinationVariable String roomCode) {
+        // 픽이 시작되었기 때문에 방 비활성화
+        pickRedisService.disableRoom(roomCode);
+
         log.info("유닛 선택 호출 : " + roomCode);
 
         // 현재 유저 선택 정보 불러오기

@@ -9,13 +9,16 @@ import com.ssafy.hungry.domain.pick.dto.PickInfoDto;
 import com.ssafy.hungry.domain.pick.exception.TeamNotFoundException;
 import com.ssafy.hungry.domain.pick.repository.PickRedisRepository;
 import com.ssafy.hungry.domain.room.dto.CurrentSeatDto;
+import com.ssafy.hungry.domain.room.entity.RoomEntity;
 import com.ssafy.hungry.domain.room.repository.RoomRedisRepository;
+import com.ssafy.hungry.domain.room.repository.RoomRepository;
 import com.ssafy.hungry.domain.user.entity.UserEntity;
 import com.ssafy.hungry.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +31,7 @@ public class PickRedisService {
 
     private final PickRedisRepository pickRedisRepository;
     private final RoomRedisRepository roomRedisRepository;
+    private final RoomRepository roomRepository;
     private final UnitRepository unitRepository;
     private final UserRepository userRepository;
     private final static String PICK_KEY_PREFIX = "UserPickInfo:";
@@ -347,5 +351,12 @@ public class PickRedisService {
         String key = generateKey(SPY_KEY_PREFIX, roomCode);
         Map<Object, Object> spyPickInfo = pickRedisRepository.getCurrentSpyPickInfo(key);
         return spyPickInfo;
+    }
+
+    // 픽 창이 시작되면 방 비활성화
+    public void disableRoom(String roomCode){
+        RoomEntity roomEntity = roomRepository.findByRoomCode(roomCode);
+        roomEntity.setEndAt(LocalDateTime.now());
+        roomRepository.save(roomEntity);
     }
 }
