@@ -1,12 +1,13 @@
 /* 라이브러리 사용 */
 import { Client } from "@stomp/stompjs";
 
+import GameBoardVue from "@/components/game/GameBoard.vue";
+
 /* LocalStorage 사용 */
 import { useUserStore } from "@/store/userStore";
 import { useRoomStore } from "@/store/roomStore";
 import { usePickStore } from "@/store/pickStore";
 import { useFriendStore } from "@/store/friendStore";
-
 
 /* .env 저장 주소 사용 */
 const { VITE_WSS_API_URL } = import.meta.env;
@@ -15,7 +16,6 @@ const { VITE_WSS_API_URL } = import.meta.env;
 let stompClient = null;
 let connected = false;
 let roomCode = null;
-
 
 /* 접속 소켓 */
 export function connectWebSocket(accessToken) {
@@ -641,6 +641,8 @@ export function initPick(router, from) {
       else if (usePickStore().receivedMessage.type === "GAME_START") {
         setTimeout(() => {
           // (1) 소켓 끊고 다음 게임 소켓으로 연결하기??
+          const gameBoard = new GameBoardVue;
+          gameBoard.connectSocket();
 
           // (2) 그리고 나서 현재 방, 픽 창 리셋하기 --> 구독 정보 없애기
 

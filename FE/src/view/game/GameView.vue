@@ -7,76 +7,14 @@
     <MessageModal />
     <!-- <span class="game-red-team-name">홍팀</span> -->
     <div class="game-video-team1">
-      <!-- <div v-if="myTeamIdx === 1" class="video-display">
-        <div id="session" v-if="session">
-          <div class="rtc-container">
-            <div id="video-container">
-              <user-video
-                :stream-manager="publisher"
-                :nickname="currentUserNickname"
-              />
-
-              <user-video
-                v-for="sub in filteredRedSubscribers"
-                :key="sub.stream.connection.connectionId"
-                :stream-manager="sub"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-else-if="myTeamIdx === 2" class="video-display">
-        <div id="session" v-if="session">
-          <div class="rtc-container">
-            <div id="video-container">
-              <user-video
-                v-for="sub in filteredRedSubscribers"
-                :key="sub.stream.connection.connectionId"
-                :stream-manager="sub"
-              />
-            </div>
-          </div>
-        </div>
-      </div> -->
+      
     </div>
 
     <GameBoard class="game-board-main" />
 
     <!-- <span class="game-blue-team-name">청팀</span> -->
     <div class="game-video-team2">
-      <!-- <div v-if="myTeamIdx === 1" class="video-display">
-        <div id="session" v-if="session">
-          <div class="rtc-container">
-            <div id="video-container">
-              <user-video
-                v-for="sub in filteredBlueSubscribers"
-                :key="sub.stream.connection.connectionId"
-                :stream-manager="sub"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-else-if="myTeamIdx === 2" class="video-display">
-        <div id="session" v-if="session">
-          <div class="rtc-container">
-            <div id="video-container">
-              <user-video
-                :stream-manager="publisher"
-                :nickname="currentUserNickname"
-              />
-
-              <user-video
-                v-for="sub in filteredBlueSubscribers"
-                :key="sub.stream.connection.connectionId"
-                :stream-manager="sub"
-              />
-            </div>
-          </div>
-        </div>
-      </div> -->
+      
     </div>
 
     <MiniGame v-show="isMission" />
