@@ -764,7 +764,7 @@ export function initPick(router, from) {
 
           // 게임으로 푸쉬하기.
           router.push({ name: "game" });
-        }, 10000);
+        }, 3000);
       }
     }
   );

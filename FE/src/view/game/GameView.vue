@@ -266,38 +266,38 @@ export default {
     },
   },
 
-  async mounted() {
-    this.myUserName = useUserStore().userInfo.nickname;
-    this.mySessionId = useUserStore().currentRoomInfo.roomCode;
-    // this.mySessionId = "A";
+  mounted() {
+    // 로딩창 5.8초동안 데이터 받는 시간 확보
+    setTimeout(() => {
+      this.myUserName = useUserStore().userInfo.nickname;
+      this.mySessionId = useUserStore().currentRoomInfo.roomCode;
+      // this.mySessionId = "A";
 
-    // 여기서 순서 생각하기.
-    const red = useGameStore().redUser;
-    const blue = useGameStore().blueUser;
+      // 여기서 순서 생각하기.
+      const red = useGameStore().redUser;
+      const blue = useGameStore().blueUser;
 
-    console.log(red);
-    console.log(blue);
+      console.log(red);
+      console.log(blue);
 
-    if (useGameStore().myTeam === 1) {
-      for (let i = 1; i <= 3; i++) {
-        if (this.myUserName === red[i - 1].nickname) {
-          this.joinSession();
-          break;
+      if (useGameStore().myTeam === 1) {
+        for (let i = 1; i <= 3; i++) {
+          if (this.myUserName === red[i - 1].nickname) {
+            this.joinSession();
+            break;
+          }
+          delay2(150 * i);
         }
-        await delay2(150 * i);
-      }
-    } else {
-      for (let i = 1; i <= 3; i++) {
-        if (this.myUserName === blue[i - 1].nickname) {
-          this.joinSession();
-          break;
+      } else {
+        for (let i = 1; i <= 3; i++) {
+          if (this.myUserName === blue[i - 1].nickname) {
+            this.joinSession();
+            break;
+          }
+          delay2(150 * i);
         }
-        await delay2(150 * i);
       }
-    }
-
-    // 로딩창 7.5초동안 데이터 받는 시간 확보
-    setTimeout(() => {}, 5800);
+    }, 5800);
   },
 };
 </script>
