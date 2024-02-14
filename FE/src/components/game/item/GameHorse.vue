@@ -9,12 +9,54 @@
       <img :src="imgSrc" :style="horseImgStyle" />
     </button>
     <div
+      class="horse-info-container"
       @mouseover="MouseOver"
       @mouseleave="MouseLeave"
       v-if="isMouseOver"
       :style="horseModalStyle"
     >
-      {{ horse }}
+      <span class="horse-info-name">{{ horse.name }}</span>
+      <div class="horse-info-hr"></div>
+      <div class="horse-info-div">
+        <span class="horse-info-title"
+          >&nbsp;&nbsp;&nbsp;시간&nbsp;&nbsp;&nbsp;:</span
+        >
+        <span :style="horseInfoSize(horse.time)"
+          >&nbsp;&nbsp;{{ horse.time }}</span
+        >
+      </div>
+      <div class="horse-info-div">
+        <span class="horse-info-title"
+          >&nbsp;&nbsp;&nbsp;장소&nbsp;&nbsp;&nbsp;:</span
+        >
+        <span :style="horseInfoSize(horse.place)"
+          >&nbsp;&nbsp;{{ horse.place }}</span
+        >
+      </div>
+      <div class="horse-info-div">
+        <span class="horse-info-title"
+          >&nbsp;&nbsp;&nbsp;동료&nbsp;&nbsp;&nbsp;:</span
+        >
+        <span :style="horseInfoSize(horse.contactor)"
+          >&nbsp;&nbsp;{{ horse.contactor }}</span
+        >
+      </div>
+      <div class="horse-info-div">
+        <span class="horse-info-title"
+          >&nbsp;&nbsp;&nbsp;흉터&nbsp;&nbsp;&nbsp;:</span
+        >
+        <span :style="horseInfoSize(horse.scal)"
+          >&nbsp;&nbsp;{{ horse.scal }}</span
+        >
+      </div>
+      <div class="horse-info-div">
+        <span class="horse-info-title"
+          >&nbsp;&nbsp;&nbsp;물건&nbsp;&nbsp;&nbsp;:</span
+        >
+        <span :style="horseInfoSize(horse.stuff)"
+          >&nbsp;&nbsp;{{ horse.stuff }}</span
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -200,15 +242,16 @@ export default {
         position: "fixed",
         zIndex: "1000",
         top: "500px",
-        width: "200px",
+        width: "150px",
         height: "200px",
+        borderRadius: "10px",
       };
       if (this.horse.team === 1) {
-        styles.left = "250px";
-        styles.backgroundColor = "rgba(255, 2, 2, 0.05)";
+        styles.left = "200px";
+        styles.backgroundColor = "rgba(255, 2, 2, 0.5)";
       } else {
-        styles.right = "250px";
-        styles.backgroundColor = "rgba(36, 2, 255, 0.05)";
+        styles.right = "200px";
+        styles.backgroundColor = "rgba(36, 2, 255, 0.5)";
       }
       return styles;
     },
@@ -246,6 +289,20 @@ export default {
     }, 4000);
   },
   methods: {
+    horseInfoSize(text) {
+      let styles = { "font-size": "16px",}; // 기본 스타일
+      const len = text.length;
+
+      if (len === 3) {
+        styles["font-size"] = "15px"; // 글자 길이가 10 이하일 때 폰트 사이즈
+      } else if (len >= 3 && len < 5) {
+        styles["font-size"] = "13px"; // 글자 길이가 10 초과 20 이하일 때 폰트 사이즈
+      } else if(len >= 5){
+        styles["font-size"] = "10px"; // 글자 길이가 20 초과일 때 폰트 사이즈
+      }
+
+      return styles;
+    },
     MouseOver() {
       this.isMouseOver = true;
     },
@@ -393,5 +450,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+@import "@/assets/css/game/item/gameHorse.css";
 </style>
