@@ -329,8 +329,6 @@ export function initRoom(router, from) {
               useRoomStore().seatInfo[seatKey].team = seat.team;
             }
           }
-
-          // useRoomStore().receivedMessage.data.roomDetailDto.currentUserCount;
         );
 
         const storedRoomData = JSON.parse(localStorage.getItem("room"));

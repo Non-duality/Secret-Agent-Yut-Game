@@ -7,15 +7,27 @@
     <MessageModal />
     <!-- <span class="game-red-team-name">홍팀</span> -->
     <div class="game-video-team1">
-      
+      <div id="session" v-if="session">
+        <!-- (시작) 카메라 영역 -->
+        <div class="rtc-container">
+          <div id="video-container">
+            <user-video
+              v-for="user in redUsers"
+              :key="user.stream.connection.connectionId"
+              :stream-manager="user"
+              @click="updateMainVideoStreamManager(user)"
+              :nickname="currentUserNickname"
+            />
+          </div>
+        </div>
+        <!-- (끝) 카메라 영역 -->
+      </div>
     </div>
 
     <GameBoard class="game-board-main" />
 
     <!-- <span class="game-blue-team-name">청팀</span> -->
-    <div class="game-video-team2">
-      
-    </div>
+    <div class="game-video-team2"></div>
 
     <MiniGame v-show="isMission" />
     <GameChat class="game-chat-main" />
@@ -75,6 +87,10 @@ export default {
       myTeamIdx: null,
 
       currentUserNickname: "",
+
+      redUsers: [],
+
+      blueUsers: [],
     };
   },
 
@@ -144,9 +160,15 @@ export default {
 
       this.session.on("streamCreated", ({ stream }) => {
         const subscriber = this.session.subscribe(stream);
-        subscriber.teamNumber = useUserStore().myTeamIdx;
-        subscriber.email = useUserStore().userInfo.email;
         this.subscribers.push(subscriber);
+
+        if (stream.connection.data.team === 1) {
+          // this.redUsers.push({ streamManager: subscriber });
+          this.redUsers.push(subscriber);
+        } else if (stream.connection.data.team === 2) {
+          // this.blueUsers.push({ streamManager: subscriber });
+          this.blueUsers.push(subscriber);
+        }
       });
 
       this.session.on("streamDestroyed", ({ stream }) => {
@@ -158,12 +180,15 @@ export default {
 
       this.session.on("exception", ({ exception }) => {});
 
+      const userData = {
+        team: useUserStore().myTeamIdx,
+      };
+
       this.getToken(this.mySessionId).then((token) => {
         this.session
           .connect(token, {
             clientData: this.myUserName,
-            teamNumber: useUserStore().myTeamIdx,
-            email: useUserStore().userInfo.email,
+            data: JSON.stringify(userData),
           })
           .then(() => {
             let publisher = this.OV.initPublisher(undefined, {
@@ -189,31 +214,28 @@ export default {
     },
 
     leaveSession() {
-      if (this.session) this.session.disconnect();
+      // if (this.session) this.session.disconnect();
 
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
+      // this.session = undefined;
+      // this.mainStreamManager = undefined;
+      // this.publisher = undefined;
+      // this.subscribers = [];
+      // this.OV = undefined;
 
-      window.removeEventListener("beforeunload", this.leaveSession);
-    },
+      // 세션에서 퇴장하는 코드...
 
-    updateMainVideoStreamManager(stream) {
-      let publisher = this.OV.initPublisher(undefined, {
-        audioSource: undefined,
-        videoSource: undefined,
-        publishAudio: true,
-        publishVideo: false,
-        resolution: "640x480",
-        frameRate: 30,
-        insertMode: "PREPEND",
-        mirror: false,
+      // 스트림 매니저 삭제
+      this.subscribers.forEach((subscriber, index) => {
+        subscriber.stream.disposeVideoElement();
+        subscriber.unsubscribe();
+        this.subscribers.splice(index, 1);
       });
 
-      if (this.publisher === publisher) return;
-      this.publisher = publisher;
+      // 빨간 팀 사용자와 파란 팀 사용자 배열 초기화
+      this.redUsers = [];
+      this.blueUsers = [];
+
+      window.removeEventListener("beforeunload", this.leaveSession);
     },
 
     async getToken(mySessionId) {
