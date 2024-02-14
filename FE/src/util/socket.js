@@ -781,6 +781,8 @@ export function pubPickInfo(destination, content) {
 
 // 서버로 보내기.
 export function socketSend(destination, msg) {
+  console.log("윷놀이 메시지 : " + destination);
+  console.log(stompClient);
   stompClient.publish({
     destination: destination,
     body: JSON.stringify(msg),

@@ -107,6 +107,7 @@ export default {
     window.addEventListener("beforeunload", this.leave);
     // this.connectSocket();
     // gameConnect();
+    console.log("게임 시작");
     this.gameStart();
     useUserStore().showModalSide = false;
   },
