@@ -88,7 +88,6 @@ public class GameStompController {
     }
     
     //게임 결과 (승리팀)
-
     @MessageMapping("/game/{roomCode}/chat")
     public void gameChat(@DestinationVariable String roomCode, GameChatDto gameChatDto){
         gameChatDto.setActionCategory(6);

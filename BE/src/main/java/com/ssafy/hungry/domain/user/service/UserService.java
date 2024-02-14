@@ -331,6 +331,7 @@ public class UserService implements UserDetailsService { //회원 관련 서비�
                 continue;
             }else {
                 UserDto dto = new UserDto();
+                dto.setEmail(userEntity.getEmail());
                 dto.setNickname(userEntity.getNickname());
                 userDtoList.add(dto);
             }
