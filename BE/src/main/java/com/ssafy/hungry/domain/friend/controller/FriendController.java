@@ -32,7 +32,7 @@ public class FriendController {
 
     //친구 요청 보내기 api
     @PostMapping("/send")
-    public ResponseEntity<String> sendRequestToUser(SendRequestFriendDto dto){
+    public ResponseEntity<String> sendRequestToUser(@RequestBody SendRequestFriendDto dto){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         System.out.println(dto.getToUserEmail());
         String result = friendService.sendRequestToUser(dto, email);
@@ -42,7 +42,7 @@ public class FriendController {
 
     //친구 요청 수락 api
     @PostMapping("/accept")
-    public ResponseEntity<String> acceptRequsetFromUser(@ModelAttribute ReceiveRequestFriendDto dto){
+    public ResponseEntity<String> acceptRequsetFromUser(@RequestBody ReceiveRequestFriendDto dto){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         String result = friendService.acceptRequestFromUser(dto, email);
         return ResponseEntity.status(200).body(result);
