@@ -65,8 +65,8 @@ export default {
     // 방 코드
     roomCode() {
       const userStore = useUserStore();
-    //   return userStore.currentRoomInfo.roomCode;
-      return "720ca5";
+      return userStore.currentRoomInfo.roomCode;
+      // return "720ca5";
     },
   },
   watch: {

@@ -28,7 +28,6 @@ export function connectWebSocket(accessToken) {
 
       onConnect: () => {
         resolve();
-
         stompClient.subscribe("/sub/event", handleWebSocketMessage);
         stompClient.subscribe("/user/sub/event", handleWebSocketMessage);
       },
@@ -139,9 +138,10 @@ function handleWebSocketMessage(message) {
 }
 
 /* 게임 소켓 */
-export function connect(team, accessToken, recvCallback) {
+export function connect(team, recvCallback) {
   return new Promise((resolve, reject) => {
-    let token = accessToken;
+    let token = useUserStore().accessToken;
+    console.log(token);
     stompClient = new Client({
       brokerURL: VITE_WSS_API_URL,
 
@@ -152,16 +152,16 @@ export function connect(team, accessToken, recvCallback) {
       beforeConnect: () => {},
 
       onConnect: () => {
-        resolve();
         // 여기에서 구독 설정
-        stompClient.subscribe(`/sub/game/${roomCode}/${team}`, (message) => {
+        stompClient.subscribe(`/sub/game/${useUserStore().currentRoomInfo.roomCode}/${team}`, (message) => {
           console.log("메시지 받음:", message.body);
           recvCallback(JSON.parse(message.body));
         });
-        stompClient.subscribe(`/sub/game/${roomCode}`, (message) => {
+        stompClient.subscribe(`/sub/game/${useUserStore().currentRoomInfo.roomCode}`, (message) => {
           console.log("메시지 받음:", message.body);
           recvCallback(JSON.parse(message.body));
         });
+        resolve();
       },
 
       /* 연결이 끊어지면 값 초기화 */
@@ -188,13 +188,14 @@ export function connect(team, accessToken, recvCallback) {
         reject(new Error("STOMP error"));
         alert("소켓이 끊어졌습니다.");
       },
-      // reconnectDelay: 5000, //자동재연결
+      reconnectDelay: 5000, //자동재연결
     });
 
     try {
       stompClient.activate();
       connected = true;
       // this.socketSend("/pub/game/b2bc27/start","start");
+      console.log(stompClient);
       console.log("연결 성공");
     } catch (error) {
       connected = false;
@@ -204,89 +205,87 @@ export function connect(team, accessToken, recvCallback) {
 }
 // 게임 소켓 핸들
 function gameHandleRecvMessage(receivedMsg) {
-  const gameStore = useGameStore();
-  if (receivedMsg.actionCategory === 0 && gameStore.redUser.length === 0) {
+  console.log(receivedMsg);
+  if (receivedMsg.actionCategory === 0 && useGameStore().redUser.length === 0) {
     setInfo(receivedMsg);
   } else {
-    gameStore.receivedMsg = receivedMsg;
+    useGameStore().receivedMsg = receivedMsg;
   }
 }
 // 게임 시작 전 유저, 말 저장.
 // 초기 정보 저장
 function setInfo(receivedMsg) {
-  const gameStore = useGameStore();
-  const userStore = useUserStore();
   // 우리팀의 스파이
-  gameStore.mySpyId = receivedMsg.mySpyUnitId;
+  useGameStore().mySpyId = receivedMsg.mySpyUnitId;
 
   for (let i = 0; i <= 30; i++) {
-    gameStore.tiles[i].horse = [];
+    useGameStore().tiles[i].horse = [];
   }
 
   for (let i = 0; i < 5; i++) {
-    gameStore.redHorses[i].name = receivedMsg.redTeamUnitList[i].name;
-    gameStore.redHorses[i].age = receivedMsg.redTeamUnitList[i].age;
-    gameStore.redHorses[i].skill = receivedMsg.redTeamUnitList[i].skill;
-    gameStore.redHorses[i].contactor =
-      gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].contactor;
-    gameStore.redHorses[i].place =
-      gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].place;
-    gameStore.redHorses[i].scal =
-      gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].scal;
-    gameStore.redHorses[i].stuff =
-      gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
-    gameStore.redHorses[i].time =
-      gameStore.myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].time;
-    gameStore.redHorses[i].id = i + 1;
-    gameStore.redHorses[i].index = 0;
-    gameStore.redHorses[i].team = 1;
-    gameStore.redHorses[i].status = "wait";
-    gameStore.redHorses[i].check = i;
-    gameStore.redHorses[i].endOrder = 0;
-    gameStore.redHorses[i].stun = 0;
-    gameStore.blueHorses[i].name = receivedMsg.blueTeamUnitList[i].name;
-    gameStore.blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
-    gameStore.blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
-    gameStore.blueHorses[i].contactor =
-      gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].contactor;
-    gameStore.blueHorses[i].place =
-      gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].place;
-    gameStore.blueHorses[i].scal =
-      gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].scal;
-    gameStore.blueHorses[i].stuff =
-      gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
-    gameStore.blueHorses[i].time =
-      gameStore.myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].time;
-    gameStore.blueHorses[i].id = i + 1;
-    gameStore.blueHorses[i].index = 0;
-    gameStore.blueHorses[i].team = 2;
-    gameStore.blueHorses[i].status = "wait";
-    gameStore.blueHorses[i].check = i;
-    gameStore.blueHorses[i].endOrder = 0;
-    gameStore.blueHorses[i].stun = 0;
+    useGameStore().redHorses[i].name = receivedMsg.redTeamUnitList[i].name;
+    useGameStore().redHorses[i].age = receivedMsg.redTeamUnitList[i].age;
+    useGameStore().redHorses[i].skill = receivedMsg.redTeamUnitList[i].skill;
+    useGameStore().redHorses[i].contactor =
+    useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].contactor;
+    useGameStore().redHorses[i].place =
+    useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].place;
+    useGameStore().redHorses[i].scal =
+    useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].scal;
+    useGameStore().redHorses[i].stuff =
+    useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
+    useGameStore().redHorses[i].time =
+    useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].time;
+    useGameStore().redHorses[i].id = i + 1;
+    useGameStore().redHorses[i].index = 0;
+    useGameStore().redHorses[i].team = 1;
+    useGameStore().redHorses[i].status = "wait";
+    useGameStore().redHorses[i].check = i;
+    useGameStore().redHorses[i].endOrder = 0;
+    useGameStore().redHorses[i].stun = 0;
+    useGameStore().blueHorses[i].name = receivedMsg.blueTeamUnitList[i].name;
+    useGameStore().blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
+    useGameStore().blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
+    useGameStore().blueHorses[i].contactor =
+    useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].contactor;
+    useGameStore().blueHorses[i].place =
+    useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].place;
+    useGameStore().blueHorses[i].scal =
+    useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].scal;
+    useGameStore().blueHorses[i].stuff =
+    useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
+    useGameStore().blueHorses[i].time =
+    useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].time;
+    useGameStore().blueHorses[i].id = i + 1;
+    useGameStore().blueHorses[i].index = 0;
+    useGameStore().blueHorses[i].team = 2;
+    useGameStore().blueHorses[i].status = "wait";
+    useGameStore().blueHorses[i].check = i;
+    useGameStore().blueHorses[i].endOrder = 0;
+    useGameStore().blueHorses[i].stun = 0;
   }
-  gameStore.redUser = receivedMsg.redTeamUserList;
-  gameStore.blueUser = receivedMsg.blueTeamUserList;
+  useGameStore().redUser = receivedMsg.redTeamUserList;
+  useGameStore().blueUser = receivedMsg.blueTeamUserList;
   for (let i = 0; i < 3; i++) {
     if (
-      gameStore.redUser[i].email === userStore.userInfo.email ||
-      gameStore.blueUser[i].email === userStore.userInfo.email
+      useGameStore().redUser[i].email === useUserStore().userInfo.email ||
+      useGameStore().blueUser[i].email === useUserStore().userInfo.email
     ) {
-      gameStore.myTurn = i;
+      useGameStore().myTurn = i;
       break;
     }
   }
   // 차례 닉네임
-  gameStore.redTurnName = receivedMsg.redTeamUserList[0].nickname;
-  gameStore.blueTurnName = receivedMsg.blueTeamUserList[0].nickname;
-  gameStore.ticket = 0;
-  gameStore.enemyTicket = 0;
-  gameStore.ticketTemp = 0;
-  gameStore.enemyTicketTemp = 0;
+  useGameStore().redTurnName = receivedMsg.redTeamUserList[0].nickname;
+  useGameStore().blueTurnName = receivedMsg.blueTeamUserList[0].nickname;
+  useGameStore().ticket = 0;
+  useGameStore().enemyTicket = 0;
+  useGameStore().ticketTemp = 0;
+  useGameStore().enemyTicketTemp = 0;
   // 라운드
-  gameStore.gameSpeed = 3;
+  useGameStore().gameSpeed = 3;
   // 미션 타일
-  gameStore.missionTiles = receivedMsg.missionRegion;
+  useGameStore().missionTiles = receivedMsg.missionRegion;
 }
 
 /*
@@ -747,20 +746,17 @@ export function initPick(router, from) {
   );
 }
 // 게임 연결.
-function gameConnect() {
-  const userStore = useUserStore();
-  const gameStore = useGameStore();
-
-  gameStore.myTeam = userStore.myTeamIdx;
-
-  if (gameStore.myTeam === 2) {
-    connect("blue", userStore.accessToken, gameHandleRecvMessage);
+export function gameConnect() {
+  useGameStore().myTeam = useRoomStore().myTeamIdx;
+  console.log(useRoomStore().accessToken);
+  if (useGameStore().myTeam === 2) {
+    connect("blue", gameHandleRecvMessage)
+    .then(() => {pubPick('/pub/game/' + useUserStore().currentRoomInfo.roomCode + '/start');})
+    .catch((error) => console.log(error));
   } else {
-    connect("red", userStore.accessToken, gameHandleRecvMessage);
-  }
-  // 아직 받은 데이터가 없을때는 서버에서 받아온다.
-  if (gameStore.redUser.length === 0) {
-    socketSend(`/pub/game/${roomCode}/start`, "");
+    connect("red", gameHandleRecvMessage)
+    .then(() => {pubPick('/pub/game/' + useUserStore().currentRoomInfo.roomCode + '/start');})
+    .catch((error) => console.log(error));
   }
 }
 
@@ -789,6 +785,8 @@ export function pubPickInfo(destination, content) {
 
 // 서버로 보내기.
 export function socketSend(destination, msg) {
+  console.log("윷놀이 메시지 : " + destination);
+  console.log(stompClient);
   stompClient.publish({
     destination: destination,
     body: JSON.stringify(msg),

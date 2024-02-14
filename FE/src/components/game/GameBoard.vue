@@ -87,7 +87,7 @@
 <script>
 import { useGameStore } from "@/store/gameStore";
 import { useUserStore } from "@/store/userStore";
-import { connect, socketSend } from "@/util/socket.js";
+import { gameConnect, socketSend } from "@/util/socket.js";
 import GameBoardTile from "./item/GameBoardTile.vue";
 import GameHorse from "./item/GameHorse.vue";
 import GameYut from "./item/GameYut.vue";
@@ -106,6 +106,8 @@ export default {
     // 새로고침 방지 이벤트를 추가한다.
     window.addEventListener("beforeunload", this.leave);
     // this.connectSocket();
+    // gameConnect();
+    console.log("게임 시작");
     this.gameStart();
     useUserStore().showModalSide = false;
   },
@@ -192,8 +194,8 @@ export default {
     // 방 코드
     roomCode() {
       const userStore = useUserStore();
-      //   return userStore.currentRoomInfo.roomCode;
-      return "720ca5";
+        return userStore.currentRoomInfo.roomCode;
+      // return "720ca5";
     },
     // 차례 메시지
     turnMessage() {
