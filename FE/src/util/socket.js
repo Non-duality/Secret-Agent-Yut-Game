@@ -153,11 +153,11 @@ export function connect(team, recvCallback) {
 
       onConnect: () => {
         // 여기에서 구독 설정
-        stompClient.subscribe(`/sub/game/720ca5/${team}`, (message) => {
+        stompClient.subscribe(`/sub/game/${useUserStore().currentRoomInfo.roomCode}/${team}`, (message) => {
           console.log("메시지 받음:", message.body);
           recvCallback(JSON.parse(message.body));
         });
-        stompClient.subscribe(`/sub/game/720ca5`, (message) => {
+        stompClient.subscribe(`/sub/game/${useUserStore().currentRoomInfo.roomCode}`, (message) => {
           console.log("메시지 받음:", message.body);
           recvCallback(JSON.parse(message.body));
         });
@@ -747,11 +747,11 @@ export function gameConnect() {
   console.log(useRoomStore().accessToken);
   if (useGameStore().myTeam === 2) {
     connect("blue", gameHandleRecvMessage)
-    .then(() => {pubPick('/pub/game/720ca5/start');})
+    .then(() => {pubPick('/pub/game/' + useUserStore().currentRoomInfo.roomCode + '/start');})
     .catch((error) => console.log(error));
   } else {
     connect("red", gameHandleRecvMessage)
-    .then(() => {pubPick('/pub/game/720ca5/start');})
+    .then(() => {pubPick('/pub/game/' + useUserStore().currentRoomInfo.roomCode + '/start');})
     .catch((error) => console.log(error));
   }
 }
