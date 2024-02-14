@@ -87,7 +87,7 @@
 <script>
 import { useGameStore } from "@/store/gameStore";
 import { useUserStore } from "@/store/userStore";
-import { connect, socketSend } from "@/util/socket.js";
+import { gameConnect, socketSend } from "@/util/socket.js";
 import GameBoardTile from "./item/GameBoardTile.vue";
 import GameHorse from "./item/GameHorse.vue";
 import GameYut from "./item/GameYut.vue";
@@ -106,6 +106,7 @@ export default {
     // 새로고침 방지 이벤트를 추가한다.
     window.addEventListener("beforeunload", this.leave);
     // this.connectSocket();
+    // gameConnect();
     this.gameStart();
     useUserStore().showModalSide = false;
   },
