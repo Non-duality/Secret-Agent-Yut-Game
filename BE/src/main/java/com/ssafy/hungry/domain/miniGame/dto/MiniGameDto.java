@@ -7,9 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class flyCatchDto {
+public class MiniGameDto {
 
-    private int timer;
-    private int flyCount;
+    private int actionCategory;
+    private String email;
+    private String result;
 
 }
