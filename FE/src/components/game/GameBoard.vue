@@ -130,30 +130,6 @@ export default {
   computed: {
     receivedMsg() {
       const gameStore = useGameStore();
-      switch (gameStore.receivedMsg.actionCategory) {
-        case 1:
-          if (!gameStore.isThrowYut) {
-            this.receiveYutRes();
-          }
-          break;
-        case 2: // 말 이동.
-          this.receiveSelectHorse();
-
-          // boolean값들 초기화.
-          this.isSelectedHorse = false;
-          this.canSelectHorse = false;
-          gameStore.isSelect = false;
-          break;
-        case 3:
-          gameStore.reasoningChoose = false;
-          gameStore.turnChange();
-          break;
-        case 4:
-          gameStore.isShowReasoning = false;
-          break;
-        case 5:
-          break;
-      }
       return gameStore.receivedMsg;
     },
     // 홍팀 말
@@ -261,6 +237,35 @@ export default {
     reasoningChoose() {
       const gameStore = useGameStore();
       return gameStore.reasoningChoose;
+    },
+  },
+  watch:{
+    receivedMsg(newVal){
+      const gameStore = useGameStore();
+      console.log(newVal);
+      switch (newVal.actionCategory) {
+        case 1:
+          if (!gameStore.isThrowYut) {
+            this.receiveYutRes();
+          }
+          break;
+        case 2: // 말 이동.
+          this.receiveSelectHorse();
+          // boolean값들 초기화.
+          this.isSelectedHorse = false;
+          this.canSelectHorse = false;
+          gameStore.isSelect = false;
+          break;
+        case 3:
+          gameStore.reasoningChoose = false;
+          gameStore.turnChange();
+          break;
+        case 4:
+          gameStore.isShowReasoning = false;
+          break;
+        case 5:
+          break;
+      }
     },
   },
   methods: {
