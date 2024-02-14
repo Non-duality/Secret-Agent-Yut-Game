@@ -1,7 +1,6 @@
 /* 라이브러리 사용 */
 import { Client } from "@stomp/stompjs";
 
-
 /* LocalStorage 사용 */
 import { useUserStore } from "@/store/userStore";
 import { useRoomStore } from "@/store/roomStore";
@@ -153,14 +152,20 @@ export function connect(team, recvCallback) {
 
       onConnect: () => {
         // 여기에서 구독 설정
-        stompClient.subscribe(`/sub/game/${useUserStore().currentRoomInfo.roomCode}/${team}`, (message) => {
-          console.log("메시지 받음:", message.body);
-          recvCallback(JSON.parse(message.body));
-        });
-        stompClient.subscribe(`/sub/game/${useUserStore().currentRoomInfo.roomCode}`, (message) => {
-          console.log("메시지 받음:", message.body);
-          recvCallback(JSON.parse(message.body));
-        });
+        stompClient.subscribe(
+          `/sub/game/${useUserStore().currentRoomInfo.roomCode}/${team}`,
+          (message) => {
+            console.log("메시지 받음:", message.body);
+            recvCallback(JSON.parse(message.body));
+          }
+        );
+        stompClient.subscribe(
+          `/sub/game/${useUserStore().currentRoomInfo.roomCode}`,
+          (message) => {
+            console.log("메시지 받음:", message.body);
+            recvCallback(JSON.parse(message.body));
+          }
+        );
         resolve();
       },
 
@@ -227,15 +232,21 @@ function setInfo(receivedMsg) {
     useGameStore().redHorses[i].age = receivedMsg.redTeamUnitList[i].age;
     useGameStore().redHorses[i].skill = receivedMsg.redTeamUnitList[i].skill;
     useGameStore().redHorses[i].contactor =
-    useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].contactor;
+      useGameStore().myTeam === 1
+        ? "???"
+        : receivedMsg.redTeamUnitList[i].contactor;
     useGameStore().redHorses[i].place =
-    useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].place;
+      useGameStore().myTeam === 1
+        ? "???"
+        : receivedMsg.redTeamUnitList[i].place;
     useGameStore().redHorses[i].scal =
-    useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].scal;
+      useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].scal;
     useGameStore().redHorses[i].stuff =
-    useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
+      useGameStore().myTeam === 1
+        ? "???"
+        : receivedMsg.redTeamUnitList[i].stuff;
     useGameStore().redHorses[i].time =
-    useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].time;
+      useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].time;
     useGameStore().redHorses[i].id = i + 1;
     useGameStore().redHorses[i].index = 0;
     useGameStore().redHorses[i].team = 1;
@@ -247,15 +258,21 @@ function setInfo(receivedMsg) {
     useGameStore().blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
     useGameStore().blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
     useGameStore().blueHorses[i].contactor =
-    useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].contactor;
+      useGameStore().myTeam === 2
+        ? "???"
+        : receivedMsg.redTeamUnitList[i].contactor;
     useGameStore().blueHorses[i].place =
-    useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].place;
+      useGameStore().myTeam === 2
+        ? "???"
+        : receivedMsg.redTeamUnitList[i].place;
     useGameStore().blueHorses[i].scal =
-    useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].scal;
+      useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].scal;
     useGameStore().blueHorses[i].stuff =
-    useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].stuff;
+      useGameStore().myTeam === 2
+        ? "???"
+        : receivedMsg.redTeamUnitList[i].stuff;
     useGameStore().blueHorses[i].time =
-    useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].time;
+      useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].time;
     useGameStore().blueHorses[i].id = i + 1;
     useGameStore().blueHorses[i].index = 0;
     useGameStore().blueHorses[i].team = 2;
@@ -735,6 +752,7 @@ export function initPick(router, from) {
           // (1) 소켓 끊고 다음 게임 소켓으로 연결하기??
           // const gameBoard = new GameBoardVue();
           // gameBoard.connectSocket();
+          console.log("연결 시도");
           gameConnect();
           // (2) 그리고 나서 현재 방, 픽 창 리셋하기 --> 구독 정보 없애기
 
@@ -750,13 +768,27 @@ export function gameConnect() {
   useGameStore().myTeam = useRoomStore().myTeamIdx;
   console.log(useRoomStore().accessToken);
   if (useGameStore().myTeam === 2) {
-    connect("blue", gameHandleRecvMessage)
-    .then(() => {pubPick('/pub/game/' + useUserStore().currentRoomInfo.roomCode + '/start');})
-    .catch((error) => console.log(error));
+    if (useGameStore().redUser.length === 0) {
+      console.log("연결 중");
+      connect("blue", gameHandleRecvMessage)
+        .then(() => {
+          pubPick(
+            "/pub/game/" + useUserStore().currentRoomInfo.roomCode + "/start"
+          );
+        })
+        .catch((error) => console.log(error));
+    }
   } else {
-    connect("red", gameHandleRecvMessage)
-    .then(() => {pubPick('/pub/game/' + useUserStore().currentRoomInfo.roomCode + '/start');})
-    .catch((error) => console.log(error));
+    if (useGameStore().redUser.length === 0) {
+      console.log("연결 중");
+      connect("red", gameHandleRecvMessage)
+        .then(() => {
+          pubPick(
+            "/pub/game/" + useUserStore().currentRoomInfo.roomCode + "/start"
+          );
+        })
+        .catch((error) => console.log(error));
+    }
   }
 }
 
