@@ -1,12 +1,12 @@
 <template>
   <div class="mini-main">
     <MiniCard v-if="isShowCardSelect && isThrowYut" @selectCard="selectCard" />
-    <Cake v-if="isShowCake && isThrowYut"/>
-    <cham v-if="isShowCham && isThrowYut"/>
-    <FlyCatch v-if="isShowFlyCatch && isThrowYut"/>
-    <Mineral v-if="isShowMineral && isThrowYut"/>
+    <Cake v-if="isShowCake && isThrowYut" />
+    <cham v-if="isShowCham && isThrowYut" />
+    <FlyCatch v-if="isShowFlyCatch && isThrowYut" />
+    <Mineral v-if="isShowMineral && isThrowYut" />
     <div class="mini-wait" v-if="!isThrowYut">
-      {{ nickName }}님이 미션중입니다.<br/>
+      {{ nickName }}님이 미션중입니다.<br />
       잠시만 기다려 주세요
     </div>
   </div>
@@ -21,6 +21,9 @@ import Mineral from "./minigame/Mineral.vue";
 
 import { useMiniGameStore } from "@/store/miniGameStore";
 import { useGameStore } from "@/store/gameStore";
+import { useUserStore } from "@/store/userStore";
+
+import { socketSend } from "@/util/socket.js";
 
 export default {
   data() {
@@ -43,15 +46,15 @@ export default {
       const miniStore = useMiniGameStore();
       return miniStore.isShowCardSelect;
     },
-    isThrowYut(){
+    isThrowYut() {
       const gameStore = useGameStore();
       return gameStore.isThrowYut;
     },
-    nickName(){
+    nickName() {
       const gameStore = useGameStore();
-      if(!gameStore.teamTurn) return gameStore.redTurnName;
-      else                    return gameStore.blueTurnName;
-    }
+      if (!gameStore.teamTurn) return gameStore.redTurnName;
+      else return gameStore.blueTurnName;
+    },
   },
   methods: {
     selectCard(selectedCard) {
@@ -74,8 +77,15 @@ export default {
       // 테스트 용으로 나중에 없앰.
       setTimeout(() => {
         useGameStore().isMission = false;
-        useGameStore().missionEnd();
-      },5000)
+        if (this.isThrowYut) {
+          const msg = {
+            email : useUserStore().userInfo.email,
+            result : true,
+          }
+          socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/mini-game-finish`, msg);
+        }
+        // useGameStore().missionEnd();
+      }, 5000);
     },
   },
 };

@@ -68,7 +68,7 @@
     </div>
     <!-- 홍팀 말 -->
     <GameHorse
-      v-for="(horse,index) in redHorses"
+      v-for="(horse, index) in redHorses"
       :key="horse.id"
       :horse="horse"
       :index="index"
@@ -76,7 +76,7 @@
     />
     <!-- 청팀 말 -->
     <GameHorse
-      v-for="(horse,index) in blueHorses"
+      v-for="(horse, index) in blueHorses"
       :key="horse.id"
       :horse="horse"
       :index="index"
@@ -379,11 +379,24 @@ export default {
           let spyIndex = null;
           let arr = newVal.unitId;
           for (let i = 0; i < 5; i++) {
-            if (arr.includes(newVal.team === 1 ? this.redHorses[i].id : this.blueHorses[i].id)) {
-              this.warningMessage += (newVal.team === 1 ? this.redHorses[i].name : this.blueHorses[i].name) + " ";
+            if (
+              arr.includes(
+                newVal.team === 1 ? this.redHorses[i].id : this.blueHorses[i].id
+              )
+            ) {
+              this.warningMessage +=
+                (newVal.team === 1
+                  ? this.redHorses[i].name
+                  : this.blueHorses[i].name) + " ";
             }
             if (newVal.spy) {
-              if (arr.includes(newVal.team === 1 ? this.redHorses[i].id : this.blueHorses[i].id)) {
+              if (
+                arr.includes(
+                  newVal.team === 1
+                    ? this.redHorses[i].id
+                    : this.blueHorses[i].id
+                )
+              ) {
                 spyIndex = i;
               }
             }
@@ -412,6 +425,9 @@ export default {
               }
             }, 2000);
           }
+          break;
+        case 8:
+          gameStore.missionEnd(newVal);
           break;
       }
     },

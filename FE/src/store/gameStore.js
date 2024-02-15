@@ -554,7 +554,8 @@ export const useGameStore = defineStore("game", {
       this.isHorseEnd = false;    
     },
     // 미션 끝
-    missionEnd(){
+    missionEnd(val){
+      console.log("미션 종료 : " + val);
       this.turnChange();
     },
     // 스턴
