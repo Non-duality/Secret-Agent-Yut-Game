@@ -1,15 +1,14 @@
 package com.ssafy.hungry.domain.game.service;
 
-import com.ssafy.hungry.domain.game.dto.GameStartDto;
-import com.ssafy.hungry.domain.game.dto.UnitGoleDto;
-import com.ssafy.hungry.domain.game.dto.UnitInfo;
-import com.ssafy.hungry.domain.game.dto.UserInfo;
+import com.ssafy.hungry.domain.game.dto.*;
 import com.ssafy.hungry.domain.game.entity.UnitEntity;
 import com.ssafy.hungry.domain.game.entity.game.Game;
 import com.ssafy.hungry.domain.game.entity.game.blue.BlueTeamMember;
 import com.ssafy.hungry.domain.game.entity.game.blue.BlueTeamUnit;
 import com.ssafy.hungry.domain.game.entity.game.red.RedTeamMember;
 import com.ssafy.hungry.domain.game.entity.game.red.RedTeamUnit;
+import com.ssafy.hungry.domain.game.entity.game.redis.BlueUnitHint;
+import com.ssafy.hungry.domain.game.entity.game.redis.RedUnitHint;
 import com.ssafy.hungry.domain.game.repository.*;
 import com.ssafy.hungry.domain.pick.dto.CurrentUnitPickDto;
 import com.ssafy.hungry.domain.pick.dto.CurrentUserPickDto;
@@ -46,6 +45,8 @@ public class GameService {
     private final BlueTeamMemberRepository blueTeamMemberRepository;
     private final UnitRepository unitRepository;
     private final BlueTeamUnitRepository blueTeamUnitRepository;
+    private final RedUnitHintRepository redUnitHintRepository;
+    private final BlueUnitHintRepository blueUnitHintRepository;
 
 
     public int[] generateMissionRegion() {
@@ -143,6 +144,10 @@ public class GameService {
         String redSpyHint = "";
         String blueSpyHint = "";;
 
+        Map<Integer, List<String>> blueUnitHints = new HashMap<>();
+        Map<Integer, List<String>> redUnitHints = new HashMap<>();
+        List<String> hints;
+
         // 홍팀 유저들의 유닛 선택창 정보
         List<CurrentUnitPickDto> redTeamUnitPickInfo = pickRedisRepository.getCurrentUnitPickInfo("RedUnitInfo: " + roomCode);
         List<UnitInfo> redUnitList = new ArrayList<>();
@@ -163,6 +168,13 @@ public class GameService {
                 redSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다. " +
                         "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";
             }
+            hints = new ArrayList<>();
+            hints.add(unitInfo.getScal());
+            hints.add(unitInfo.getStuff());
+            hints.add(unitInfo.getContactor());
+            hints.add(unitInfo.getTime());
+            hints.add(unitInfo.getPlace());
+            redUnitHints.put(unitInfo.getUnitId(), hints);
             i++;
         }
 
@@ -186,9 +198,25 @@ public class GameService {
                 blueSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다." +
                         "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";;
             }
+            hints = new ArrayList<>();
+            hints.add(unitInfo.getScal());
+            hints.add(unitInfo.getStuff());
+            hints.add(unitInfo.getContactor());
+            hints.add(unitInfo.getTime());
+            hints.add(unitInfo.getPlace());
+            blueUnitHints.put(unitInfo.getUnitId(), hints);
             blueUnitList.add(unitInfo);
             i++;
         }
+
+        BlueUnitHint blueUnitHint = new BlueUnitHint();
+        RedUnitHint redUnitHint = new RedUnitHint();
+        blueUnitHint.setUnitHint(blueUnitHints);
+        blueUnitHint.setRoomCode(roomCode);
+        redUnitHint.setUnitHint(redUnitHints);
+        redUnitHint.setRoomCode(roomCode);
+        blueUnitHintRepository.save(blueUnitHint);
+        redUnitHintRepository.save(redUnitHint);
 
         int[] missionRegion = this.generateMissionRegion();
 
@@ -586,6 +614,45 @@ public class GameService {
         result.put("청팀", blueGameDto);
 
         return result;
+    }
+
+    //미션 성공시 힌트 주기
+    public String unitHint(String roomCode, MissionSuccessDto dto){
+        int unitId = dto.getUnitId();
+        int team = dto.getTeam();
+        String hint;
+        if(team == 1){ // 홍팀
+            //유닛 힌트 객체 가져오기
+            RedUnitHint redUnitHint = redUnitHintRepository.findById(roomCode).get();
+            //해시맵 가져오기
+            Map<Integer, List<String>> unitHints = redUnitHint.getUnitHint();
+            //해시맵에서 유닛 아이디로 검색
+            List<String> hints = unitHints.get(unitId);
+            //리스트에서 마지막으로 입력된 힌트 가져오기
+            hint = hints.remove(hints.size() - 1);
+            //다시 해시맵에 입력
+            unitHints.put(unitId, hints);
+            //데이터 입력
+            redUnitHint.setUnitHint(unitHints);
+            //다시 저장
+            redUnitHintRepository.save(redUnitHint);
+        }else{
+            //유닛 힌트 객체 가져오기
+            BlueUnitHint blueUnitHint = blueUnitHintRepository.findById(roomCode).get();
+            //해시맵 가져오기
+            Map<Integer, List<String>> unitHints = blueUnitHint.getUnitHint();
+            //해시맵에서 유닛 아이디로 검색
+            List<String> hints = unitHints.get(unitId);
+            //리스트에서 마지막으로 입력된 힌트 가져오기
+            hint = hints.remove(hints.size() - 1);
+            //다시 해시맵에 입력
+            unitHints.put(unitId, hints);
+            //데이터 입력
+            blueUnitHint.setUnitHint(unitHints);
+            //다시 저장
+            blueUnitHintRepository.save(blueUnitHint);
+        }
+        return hint;
     }
 
 

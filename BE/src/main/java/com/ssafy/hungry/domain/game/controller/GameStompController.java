@@ -93,9 +93,12 @@ public class GameStompController {
     }
 
 
-    @MessageMapping("/game/{roomCode}/mission")
-    public void mission(@DestinationVariable String roomCode){
-
+    //레디스에 RedUnitHint / blueUnitHint 로 나누고 방 코드로 저장
+    @MessageMapping("/game/{roomCode}/hint")
+    public void hint(@DestinationVariable String roomCode, MissionSuccessDto dto){
+        dto.setActionCategory(10);
+        dto.setHint(gameService.unitHint(roomCode ,dto));
+        simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
     //추리권 사용여부
@@ -108,7 +111,6 @@ public class GameStompController {
     //게임 결과 (승리팀)
     @MessageMapping("/game/{roomCode}/chat")
     public void gameChat(@DestinationVariable String roomCode, GameChatDto gameChatDto){
-        gameChatDto.setActionCategory(6);
         log.info("게임 채팅 호출 : " + roomCode + " " + gameChatDto.getMessage());
 
         if(gameChatDto.getTeam().equals("홍팀")){
