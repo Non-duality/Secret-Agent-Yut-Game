@@ -393,7 +393,7 @@ export const useGameStore = defineStore("game", {
       let target = horseInfo.index + this.yutRes;
 
       // 노비의 능력으로 0값이면.
-      if (this.yutRes != 0) {
+      if (this.yutRes !== 0) {
         // 처음 출발할때는 상태를 바꿔야한다.
         if (horseInfo.status === "wait") {
           // 처음 출발한 말을 0번에 넣어 시작한다.

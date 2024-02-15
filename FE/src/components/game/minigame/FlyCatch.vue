@@ -155,11 +155,12 @@
         const gameInterval = await setInterval(() => {
           this.gameTimer -= 1
           if (this.gameTimer === 0) {
+            console.log("파리잡기 게임 끝");
+            this.$emit('endMinigame', this.victory)
             clearInterval(gameInterval)
             this.webcamRunning = false
             this.clearFlyCanvas()
             this.gameResult = true
-            this.$emit('endMinigame', this.victory)
           }
         }, 1000)
       },
