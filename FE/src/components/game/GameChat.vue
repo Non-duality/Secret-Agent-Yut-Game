@@ -2,7 +2,7 @@
   <div class="board-chat">
     <div class="chat-container">
       <div
-        v-for="(message, index) in reversedRoomChat"
+        v-for="(message, index) in gameChatMsg"
         :key="index"
         class="chat-log"
       >
@@ -49,9 +49,9 @@ export default {
       console.log(this.reversedRoomChat);
       return gameStore.gameChatMsg;
     },
-    reversedRoomChat() {
-      return this.gameChatMsg.reverse();
-    },
+    // reversedRoomChat() {
+    //   return this.gameChatMsg.reverse();
+    // },
     receivedMsg() {
       const gameStore = useGameStore();
       return gameStore.receivedMsg;
