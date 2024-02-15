@@ -14,5 +14,11 @@ import java.util.Map;
 public class RedUnitHint {
     @Id
     private String roomCode;
-    private Map<Integer, ArrayList<String>> unitHint = new HashMap<>();
+
+    private Map<Integer, List<String>> unitHint;
+
+    public RedUnitHint(String roomCode, Map<Integer, List<String>> unitHint){
+        this.roomCode = roomCode;
+        this.unitHint = unitHint;
+    }
 }
