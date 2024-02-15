@@ -6,12 +6,13 @@
         :key="index"
         class="chat-log"
       >
-        <span
+        <!-- <span
           :style="{
             color: getColorForMessage(message).color,
           }"
           v-html="getColorForMessage(message).text"
-        ></span>
+        ></span> -->
+        <span>{{ message }}</span>
       </div>
     </div>
 
@@ -72,12 +73,16 @@ export default {
       if (usePickStore().code.includes("red")) teamName = "홍팀";
       else teamName = "청팀";
 
+      console.log(teamName);
+
       const tempMSG = {
         actionCategory: 6,
         team: teamName,
         nickname: useUserStore().userInfo.nickname,
         message: this.msg,
       };
+
+      console.log(tempMSG);
 
       socketSend(
         "/pub/game/" + useUserStore().currentRoomInfo.roomCode + "/chat",
@@ -98,19 +103,19 @@ export default {
 
         let idx = 0;
 
-        for (let i = 1; i <= 6; i++) {
-          if (
-            useUserStore().userInfo.nickname ===
-            useRoomStore().seatInfo[`seatnum${i}`].nickname
-          ) {
-            idx = i;
-            break;
-          }
-        }
+        // for (let i = 1; i <= 6; i++) {
+        //   if (
+        //     useUserStore().userInfo.nickname ===
+        //     useRoomStore().seatInfo[`seatnum${i}`].nickname
+        //   ) {
+        //     idx = i;
+        //     break;
+        //   }
+        // }
 
-        return {
-          text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
-        };
+        // return {
+        //   text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
+        // };
       }
     },
   },
@@ -174,7 +179,7 @@ export default {
   background-color: rgba(72, 27, 222, 0.637);
 }
 
-.send-btn > span{
+.send-btn > span {
   display: flex;
 }
 
