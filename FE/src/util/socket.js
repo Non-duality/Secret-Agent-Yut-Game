@@ -51,7 +51,7 @@ export function connectWebSocket(accessToken) {
         console.log("[socket.onStompError] : " + error.headers["message"]);
         console.log("STOMP 상세 에러 : " + error.body);
         reject(new Error("STOMP ERROR"));
-        alert("소켓 연결이 끊어졌습니다.");
+        // alert("소켓 연결이 끊어졌습니다.");
       },
 
       // WebSocket ERROR
@@ -59,7 +59,7 @@ export function connectWebSocket(accessToken) {
         console.log("[socket.onWebSocketError] : " + error.headers["message"]);
         console.log("WebSocket 상세 에러 : " + error.body);
         reject(new Error("WebSocket error"));
-        alert("소켓 연결이 끊어졌습니다.");
+        // alert("소켓 연결이 끊어졌습니다.");
       },
 
       reconnectDelay: 5000, //자동재연결
