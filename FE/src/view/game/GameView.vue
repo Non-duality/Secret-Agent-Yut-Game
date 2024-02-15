@@ -270,9 +270,6 @@ export default {
   },
 
   mounted() {
-    this.redUsers = [];
-    this.blueUsers = [];
-
     window.addEventListener("beforeunload", this.leaveSession);
 
     // 로딩창 5.8초동안 데이터 받는 시간 확보

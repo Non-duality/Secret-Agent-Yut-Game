@@ -16,9 +16,9 @@ export default {
     const teamValue = jsonData.team;
     
     if (teamValue === 2) {
-      this.$el.style.border = "5px solid blue";
-    } else {
       this.$el.style.border = "5px solid red";
+    } else {
+      this.$el.style.border = "5px solid blue";
     }
 
     this.streamManager.addVideoElement(this.$el);
