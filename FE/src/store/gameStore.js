@@ -381,11 +381,6 @@ export const useGameStore = defineStore("game", {
       // 목적지 설정.
       let target = horseInfo.index + this.yutRes;
 
-      // 창병 앞 뒤 적은 1턴간 이동 금지.
-      if (horseInfo.name === "창병") {
-        horseStun(target, horseInfo);
-      }
-
       // 노비의 능력으로 0값이면.
       if (this.yutRes != 0) {
         // 처음 출발할때는 상태를 바꿔야한다.
@@ -403,6 +398,19 @@ export const useGameStore = defineStore("game", {
           horseInfo.status = "ing";
         }
 
+        // 창병 앞 뒤 적은 1턴간 이동 금지.
+        if (horseInfo.name === "창병") {
+          this.turnMessage = "";
+          this.horseStun(target, horseInfo);
+          if (this.turnMessage !== "") {
+            this.turnMessage =
+              this.turnMessage + "말들은 1턴간 이동 불가입니다.";
+            this.isShowTurnMessage = true;
+            setTimeout(() => {
+              this.isShowTurnMessage = false;
+            });
+          }
+        }
         // 5, 10 모서리 출발
         if (this.isGoDiagonal) target += 14;
 
@@ -415,7 +423,9 @@ export const useGameStore = defineStore("game", {
           target > 24 &&
           target === horseInfo.index + this.yutRes
         )
-          target -= 10;
+          if (target !== 30) {
+            target -= 10;
+          }
         if (horseInfo.index == 27 && this.isCenterDir && target > 24)
           target -= 10;
 
@@ -519,7 +529,7 @@ export const useGameStore = defineStore("game", {
       }
     },
     // 스턴
-    horseStun(target, horseInfo){
+    horseStun(target, horseInfo) {
       // 24,29번이 아닌 타일만.
       if (![24, 30].includes(target)) {
         // 앞 스턴.
@@ -536,6 +546,7 @@ export const useGameStore = defineStore("game", {
             if (horsedel.team !== horseInfo.team) {
               break;
             }
+            this.turnMessage = this.turnMessage + horsedel.name;
             horsedel.stun += 1;
           }
         }
@@ -555,6 +566,7 @@ export const useGameStore = defineStore("game", {
             if (horsedel.team !== horseInfo.team) {
               break;
             }
+            this.turnMessage = this.turnMessage + "," + horsedel.name;
 
             horsedel.stun += 1;
           }
@@ -576,6 +588,7 @@ export const useGameStore = defineStore("game", {
             if (horsedel.team !== horseInfo.team) {
               break;
             }
+            this.turnMessage = this.turnMessage + "," + horsedel.name;
 
             horsedel.stun += 1;
           }
@@ -586,17 +599,16 @@ export const useGameStore = defineStore("game", {
             const horsedel =
               this.tiles[target + 1].horse[i].team === 1
                 ? this.redHorses.find(
-                    (horse) =>
-                      horse.id === this.tiles[target - 15].horse[i].id
+                    (horse) => horse.id === this.tiles[target - 15].horse[i].id
                   )
                 : this.blueHorses.find(
-                    (horse) =>
-                      horse.id === this.tiles[target - 15].horse[i].id
+                    (horse) => horse.id === this.tiles[target - 15].horse[i].id
                   );
 
             if (horsedel.team !== horseInfo.team) {
               break;
             }
+            this.turnMessage = this.turnMessage + "," + horsedel.name;
 
             horsedel.stun += 1;
           }
@@ -610,13 +622,12 @@ export const useGameStore = defineStore("game", {
             const horsedel =
               this.tiles[target + 1].horse[i].team === 1
                 ? this.redHorses.find(
-                    (horse) =>
-                      horse.id === this.tiles[target + 15].horse[i].id
+                    (horse) => horse.id === this.tiles[target + 15].horse[i].id
                   )
                 : this.blueHorses.find(
-                    (horse) =>
-                      horse.id === this.tiles[target + 15].horse[i].id
+                    (horse) => horse.id === this.tiles[target + 15].horse[i].id
                   );
+            this.turnMessage = this.turnMessage + "," + horsedel.name;
             horsedel.stun += 1;
           }
         }
@@ -631,6 +642,7 @@ export const useGameStore = defineStore("game", {
                 : this.blueHorses.find(
                     (horse) => horse.id === this.tiles[24].horse[i].id
                   );
+            this.turnMessage = this.turnMessage + "," + horsedel.name;
             horsedel.stun += 1;
           }
         }
@@ -648,6 +660,7 @@ export const useGameStore = defineStore("game", {
                 : this.blueHorses.find(
                     (horse) => horse.id === this.tiles[26].horse[i].id
                   );
+            this.turnMessage = this.turnMessage + "," + horsedel.name;
             horsedel.stun += 1;
           }
         }
@@ -661,6 +674,7 @@ export const useGameStore = defineStore("game", {
                 : this.blueHorses.find(
                     (horse) => horse.id === this.tiles[28].horse[i].id
                   );
+            this.turnMessage = this.turnMessage + "," + horsedel.name;
             horsedel.stun += 1;
           }
         }
@@ -677,6 +691,7 @@ export const useGameStore = defineStore("game", {
                 : this.blueHorses.find(
                     (horse) => horse.id === this.tiles[21].horse[i].id
                   );
+            this.turnMessage = this.turnMessage + "," + horsedel.name;
             horsedel.stun += 1;
           }
         }
@@ -690,6 +705,7 @@ export const useGameStore = defineStore("game", {
                 : this.blueHorses.find(
                     (horse) => horse.id === this.tiles[23].horse[i].id
                   );
+            this.turnMessage = this.turnMessage + "," + horsedel.name;
             horsedel.stun += 1;
           }
         }
@@ -842,9 +858,18 @@ export const useGameStore = defineStore("game", {
           }
         }
         this.toCnt = 0;
-        // 말을 잡았으니 기회 한번더.
-        this.throwChance += 1;
         this.tiles[target].horse = [];
+        // 말을 잡았으니 기회 한번더.
+        setTimeout(() => {
+          this.turnMessage = "한번 더!!!";
+          this.isShowTurnMessage = true;
+        }, 2000);
+
+        setTimeout(() => {
+          this.throwChance += 1;
+          this.turnMessage = "";
+          this.isShowTurnMessage = false;
+        },5000)
       }
 
       this.tiles[target].horse.push(...this.tiles[horseInfo.index].horse);
