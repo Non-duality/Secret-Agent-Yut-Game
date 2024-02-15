@@ -43,7 +43,7 @@
     <!-- <MiniGame v-show="isMission" /> -->
     <GameChat class="game-chat-main" />
     <GameEnd
-      v-if="isGameEnd"
+      v-if="isGameEnd || true"
       class="game-end"
       :winMessage="winMessage"
       @closeModal="closeModal"

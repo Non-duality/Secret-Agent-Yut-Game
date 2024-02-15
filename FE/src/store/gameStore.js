@@ -8,7 +8,7 @@ export const useGameStore = defineStore("game", {
   state: () => {
     return {
       // 채팅 메시지
-      gameChatMsg: null,
+      gameChatMsg: [],
       // 소켓 메시지
       receivedMsg: null,
       // 타이머

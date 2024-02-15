@@ -57,10 +57,10 @@ export default {
 
   watch: {
     receivedMsg(newVal) {
-      switch (newVal.actionCategory) {
-        case 6:
-          useGameStore().gameChatMsg.push(newVal.message);
-          break;
+      const gameStore = useGameStore();
+      if(newVal.actionCategory === 6){
+          console.log(newVal);
+          gameStore.gameChatMsg.push(newVal.message);
       }
     },
   },

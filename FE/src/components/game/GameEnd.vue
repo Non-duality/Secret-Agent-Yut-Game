@@ -1,9 +1,12 @@
 <template>
   <div class="end-main">
     <div class="end-container">
-      <span class="end-myTeam-res">WIN</span>
-      <button class="end-btn" @click="sendToParent">확인</button>
+      <span class="end-text">승리</span>
     </div>
+    <!-- <div class="end-container">
+      <span class="end-myTeam-res">승리</span>
+      <button class="end-btn" @click="sendToParent">확인</button>
+    </div> -->
   </div>
 </template>
 
