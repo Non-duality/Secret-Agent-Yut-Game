@@ -49,9 +49,9 @@ export default {
       console.log(this.reversedRoomChat);
       return gameStore.gameChatMsg;
     },
-    reversedRoomChat() {
-      return this.gameChatMsg.reverse();
-    },
+    // reversedRoomChat() {
+    //   return this.gameChatMsg.reverse();
+    // },
     receivedMsg() {
       const gameStore = useGameStore();
       return gameStore.receivedMsg;
