@@ -60,7 +60,7 @@ export default {
   watch: {
     receivedMsg(newVal) {
       const gameStore = useGameStore();
-      if (newVal.actionCategory === 0) {
+      if (newVal.actionCategory === 6) {
         gameStore.gameChatMsg.push(newVal.nickname + " : " + newVal.message);
       }
     },
@@ -112,7 +112,7 @@ export default {
 
 .chat-container {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   overflow-y: scroll;
   height: 20vh;
   margin-left: 20px;
