@@ -763,8 +763,15 @@ export function initPick(router, from) {
           // (2) 그리고 나서 현재 방, 픽 창 리셋하기 --> 구독 정보 없애기
 
           // 게임으로 푸쉬하기.
-          router.push({ name: "game" });
-        }, 9500);
+          const check = setInterval(() => {
+            if(useGameStore().redUser.length !== 0){
+              router.push({ name: "game" });
+              clearInterval(check);
+              check = null;
+            }
+          },1000)
+
+        }, 2000);
       }
     }
   );

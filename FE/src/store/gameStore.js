@@ -367,9 +367,16 @@ export const useGameStore = defineStore("game", {
         if (this.yutRes === -1) {
           this.yutRes += 1;
         } else this.yutRes -= 1;
-      }
+      } 
       // 목적지 설정.
       let target = horseInfo.index + this.yutRes;
+
+      // 창병 앞 뒤 적은 1턴간 이동 금지.
+      if (horseInfo.name === "창병"){
+        if([5,10,15,30].includes(target)){
+          
+        }
+      }
 
       // 노비의 능력으로 0값이면.
       if (this.yutRes != 0) {
