@@ -3,6 +3,7 @@
     <div class="side-bar" v-if="showFlag">
       <div class="side-title">
         <span class="side-text" v-if="showMessageFlag">알림</span>
+        <span class="side-text" v-if="showChatFlag">채팅방</span>
         <span class="side-text" v-if="showFriendFlag">친구목록</span>
         <span class="side-text" v-if="showUserSearchFlag">사용자 검색</span>
         <button class="btn" @click="closeSidebar">
@@ -12,9 +13,15 @@
       <div class="side-line"></div>
       <transition name="fade" mode="out-in">
         <MessageComponents v-if="showMessageFlag"
+        @open-chat-room="handleOpenChatRoom"
+      /></transition>
+      <transition name="fade" mode="out-in">
+        <ChatComponents v-if="showChatFlag"
+        :friendInfo="chatFriend"
       /></transition>
       <transition name="fade" mode="out-in">
         <FriendComponents v-if="showFriendFlag"
+        @open-chat-room="handleOpenChatRoom"
       /></transition>
       <transition name="fade" mode="out-in">
         <UserSearchComponents v-if="showUserSearchFlag"
@@ -47,6 +54,7 @@ import MessageComponents from "./MessageComponents.vue";
 import FriendComponents from "./FriendComponents.vue";
 import SettingComponents from "./SettingComponents.vue";
 import UserSearchComponents from './UserSearchComponents.vue';
+import ChatComponents from "./ChatComponents.vue";
 
 export default {
   // 컴포넌트
@@ -54,6 +62,7 @@ export default {
     MessageComponents,
     FriendComponents,
     SettingComponents,
+    ChatComponents,
     UserSearchComponents,
   },
   data() {
@@ -62,15 +71,19 @@ export default {
       showMessageFlag: false,
       showFriendFlag: true,
       showUserSearchFlag: false,
+      showChatFlag: false,
       showSettingFlag: false,
+      chatFriend: null,
     };
   },
   methods: {
+
     // 알림 메시지
     showMessage() {
       this.showFlag = true;
       this.showFriendFlag = false;
       this.showMessageFlag = true;
+      this.showChatFlag = false,
       this.showUserSearchFlag = false;
     },
     // 친구 목록
@@ -78,6 +91,7 @@ export default {
       this.showFlag = true;
       this.showMessageFlag = false;
       this.showFriendFlag = true;
+      this.showChatFlag = false,
       this.showUserSearchFlag = false;
     },
     // 유저 검색
@@ -85,8 +99,18 @@ export default {
       this.showFlag = true;
       this.showMessageFlag = false;
       this.showFriendFlag = false;
+      this.showChatFlag = false,
       this.showUserSearchFlag = true;
     },
+    // 유저 채팅
+    showChat() {
+      this.showFlag = true;
+      this.showMessageFlag = false;
+      this.showFriendFlag = false;
+      this.showChatFlag = true,
+      this.showUserSearchFlag = false;
+    },
+
     // 설정 모달 열기
     showSetting() {
       this.showSettingFlag = true;
@@ -101,8 +125,15 @@ export default {
     closeSidebar() {
       this.showMessageFlag = false;
       this.showFriendFlag = false;
+      this.showChatFlag = false;
       this.showFlag = false;
     },
+
+    // 유저 채팅 접근
+    handleOpenChatRoom(friend) {
+      this.chatFriend = friend
+      this.showChat()
+    }
   },
 };
 </script>
