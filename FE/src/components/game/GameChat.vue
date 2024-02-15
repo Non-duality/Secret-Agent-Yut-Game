@@ -1,6 +1,5 @@
 <template>
   <div class="board-chat">
-    <!-- 채팅 로그 -->
     <div class="chat-container">
       <div
         v-for="(message, index) in reversedGameChat"
@@ -16,7 +15,6 @@
       </div>
     </div>
 
-    <!-- 입력 부분 -->
     <div class="chat-input-div">
       <input
         class="chat-input"
@@ -122,8 +120,8 @@ export default {
 <style scoped>
 .board-chat {
   color: white;
-  width: 27vw;
-  height: 22vh;
+  width: 18vw;
+  height: 26vh;
   background-color: rgba(90, 90, 90, 0.409);
   border-radius: 10px;
   border: 1px solid white;
@@ -133,7 +131,7 @@ export default {
   display: flex;
   flex-direction: column-reverse;
   overflow-y: scroll;
-  height: 120px;
+  height: 20vh;
   scrollbar-width: thin;
   scrollbar-color: #888 transparent;
 }
@@ -153,16 +151,16 @@ export default {
 }
 
 .chat-chat {
-  margin-left: 20px;
+  margin-left: 10px;
 }
 /* 입력 칸 */
 .chat-input-div {
   border-radius: 10px;
   border: 1px solid white;
   height: 5vh;
-  width: 25vw;
+  width: 17vw;
   text-align: left;
-  margin-left: 15px;
+  margin-left: 8px;
   color: green;
   display: flex;
   justify-content: space-between;
@@ -172,11 +170,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  margin-right: 20px;
-  margin: 3px;
   border-radius: 100px;
   background-color: rgba(72, 27, 222, 0.637);
+}
+
+.send-btn > span{
+  display: flex;
 }
 
 .send-btn:hover {
@@ -188,8 +187,8 @@ export default {
 }
 
 .chat-input {
-  margin-left: 20px;
-  width: 17vw;
+  margin-left: 10px;
+  width: 10vw;
   background-color: transparent;
   border: none;
   color: white;
