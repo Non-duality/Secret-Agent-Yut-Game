@@ -55,16 +55,6 @@ export function connectWebSocket(accessToken) {
         const userStore = useUserStore();
         const event = {
           fromUserEmail: userStore.userInfo.email,
-<<<<<<< HEAD
-          eventCategory: '5',
-          eventAction: 'LOGOUT',
-          message: `${userStore.userInfo.nickname}님이 로그아웃했습니다.`
-        }
-        this.sendLogoutEvent(event)
-        alert("서버 오류로 로그아웃 처리되었습니다.")
-        userStore.initData()
-        useSettingStore().isMusicPlaying = false
-=======
           eventCategory: "5",
           eventAction: "LOGOUT",
           message: `${userStore.userInfo.nickname}님이 로그아웃했습니다.`,
@@ -73,7 +63,6 @@ export function connectWebSocket(accessToken) {
         userStore.initData();
         alert("서버 오류로 로그아웃 처리되었습니다.");
 
->>>>>>> 728b8823bbb9e87b55ce45ec43cf43d48f2d4b65
         // alert("소켓 연결이 끊어졌습니다.");
       },
 
