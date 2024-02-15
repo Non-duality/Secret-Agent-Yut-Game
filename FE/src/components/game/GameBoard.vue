@@ -357,7 +357,7 @@ export default {
         case 4:
           gameStore.isShowReasoning = false;
           if (newVal.reasoningChoose) {
-            gameStorereasoningChoose = true;
+            gameStore.reasoningChoose = true;
             if (gameStore.teamTurn) {
               if (gameStore.myTeam === 2) gameStore.ticket -= 1;
               else gameStore.enemyTicket -= 1;
