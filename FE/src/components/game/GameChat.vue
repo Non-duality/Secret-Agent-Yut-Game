@@ -2,7 +2,7 @@
   <div class="board-chat">
     <div class="chat-container">
       <div
-        v-for="(message, index) in gameChatMsg"
+        v-for="(message, index) in reversedRoomChat"
         :key="index"
         class="chat-log"
       >
