@@ -249,7 +249,7 @@ function setInfo(receivedMsg) {
         : receivedMsg.redTeamUnitList[i].stuff;
     useGameStore().redHorses[i].time =
       useGameStore().myTeam === 1 ? "???" : receivedMsg.redTeamUnitList[i].time;
-    useGameStore().redHorses[i].id = i + 1;
+    useGameStore().redHorses[i].id = receivedMsg.redTeamUnitList[i].unitId;
     useGameStore().redHorses[i].index = 0;
     useGameStore().redHorses[i].team = 1;
     useGameStore().redHorses[i].status = "wait";
@@ -275,7 +275,7 @@ function setInfo(receivedMsg) {
         : receivedMsg.redTeamUnitList[i].stuff;
     useGameStore().blueHorses[i].time =
       useGameStore().myTeam === 2 ? "???" : receivedMsg.redTeamUnitList[i].time;
-    useGameStore().blueHorses[i].id = i + 1;
+    useGameStore().blueHorses[i].id = receivedMsg.blueTeamUnitList[i].unitId;
     useGameStore().blueHorses[i].index = 0;
     useGameStore().blueHorses[i].team = 2;
     useGameStore().blueHorses[i].status = "wait";

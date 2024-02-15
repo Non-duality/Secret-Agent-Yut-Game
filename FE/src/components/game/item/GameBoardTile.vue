@@ -39,11 +39,15 @@ export default {
         styles.height = "100px";
       }
 
+      console.log("미션 타일 : " + useGameStore().missionTiles);
       if ([22, 27].includes(this.tile.id)) {
         styles.backgroundImage = `url(${this.taegeukImageUrl})`;
         styles.backgroundSize = "cover"; // This will ensure that your image covers the entire tile
         styles.backgroundPosition = "center";
-      } else {
+      } else if(useGameStore().missionTiles.includes(this.tile.id)){
+        styles.backgroundImage = `url(${this.missionTileUrl})`;
+      }
+      else {
         styles.backgroundColor = "#D2691E"; // 기본 색
       }
 

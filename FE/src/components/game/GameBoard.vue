@@ -293,6 +293,7 @@ export default {
                 if (newVal.selectedUnit === gameStore.redHorses[i].id) {
                   gameStore.redHorses[i].kill = true;
                   gameStore.redHorses[i].status = "end";
+                  gameStore.redHorses[i].index = 0;
                   gameStore.redEnd += 1;
                   this.warningMessageSecond = gameStore.redHorses[i].name;
                   break;
@@ -303,6 +304,7 @@ export default {
                 if (newVal.selectedUnit === gameStore.blueHorses[i].id) {
                   gameStore.blueHorses[i].kill = true;
                   gameStore.blueHorses[i].status = "end";
+                  gameStore.blueHorses[i].index = 0;
                   gameStore.blueEnd += 1;
                   this.warningMessageSecond = gameStore.blueHorses[i].name;
                   break;
@@ -317,6 +319,7 @@ export default {
 
             setTimeout(() => {
               this.isShowWarningMessage = false;
+              gameStore.startTimer();
             }, 2000);
           }
           // 실패
@@ -574,7 +577,7 @@ export default {
           if (gameStore.redHorses[random] !== "end") {
             if (
               gameStore.redHorses[random] === "wait" &&
-              gameStore.yutRes === -1
+              gameStore.yutRes === -1 && gameStore.redHorses[random].stun > 0
             ) {
               continue;
             }
@@ -593,7 +596,7 @@ export default {
           if (gameStore.blueHorses[random] !== "end") {
             if (
               gameStore.blueHorses[random] === "wait" &&
-              gameStore.yutRes === -1
+              gameStore.yutRes === -1 && gameStore.blueHorses[random].stun > 0
             ) {
               continue;
             }
