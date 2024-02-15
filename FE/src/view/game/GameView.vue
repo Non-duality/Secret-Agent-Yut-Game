@@ -303,9 +303,11 @@ export default {
         }
       }
     } else {
-      for (let i = 1; i <= 3; i++) {
-        await this.delay2(1100);
+      await this.delay2(2200);
 
+      for (let i = 1; i <= 3; i++) {  
+        await this.delay2(700);
+        
         if (this.myUserName === blue[i - 1].nickname) {
           this.joinSession();
           break;

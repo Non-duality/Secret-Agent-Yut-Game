@@ -1,5 +1,5 @@
 <template>
-  <div class="wait-chat">
+  <div class="board-chat">
     <!-- 채팅 로그 -->
     <div class="chat-container">
       <div
@@ -52,8 +52,7 @@ export default {
     },
 
     reversedGameChat() {
-      // roomChat 배열을 뒤집어 반환
-      return this.receivedMsg.slice().reverse();
+      return this.receivedMsg;
     },
   },
 
@@ -111,18 +110,9 @@ export default {
           }
         }
 
-        if (useRoomStore().seatInfo[`seatnum${idx}`].team === 1) {
-          // 이름과 내용이 존재하는 경우
-          return {
-            text: `<span style="color: #ff0000; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
-          };
-        } else {
-          if (useRoomStore().seatInfo[`seatnum${idx}`].team === 2)
-            // 이름과 내용이 존재하는 경우
-            return {
-              text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
-            };
-        }
+        return {
+          text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
+        };
       }
     },
   },
