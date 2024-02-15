@@ -277,7 +277,7 @@ function setInfo(receivedMsg) {
     useGameStore().blueHorses[i].contactor =
       useGameStore().myTeam === 2 && receivedMsg.blueTeamUnitList[i].name !== '대왕'
         ? "???"
-        : receivedMsg.redTeamUnblueTeamUnitListitList[i].contactor;
+        : receivedMsg.blueTeamUnitList[i].contactor;
     useGameStore().blueHorses[i].place =
       useGameStore().myTeam === 2 && receivedMsg.blueTeamUnitList[i].name !== '대왕'
         ? "???"
