@@ -295,19 +295,13 @@ export default {
 
     if (useGameStore().myTeam === 1) {
       for (let i = 1; i <= 3; i++) {
-        await this.delay2(700);
-
         if (this.myUserName === red[i - 1].nickname) {
           this.joinSession();
           break;
         }
       }
     } else {
-      await this.delay2(2200);
-
       for (let i = 1; i <= 3; i++) {  
-        await this.delay2(700);
-        
         if (this.myUserName === blue[i - 1].nickname) {
           this.joinSession();
           break;

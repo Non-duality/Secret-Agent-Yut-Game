@@ -584,7 +584,7 @@ export default {
         this.myUserName = useUserStore().userInfo.nickname;
         this.mySessionId = usePickStore().code.replace(/\//g, "");
         this.joinSession();
-      }, 1000 * myTurnNumber);
+      }, 1500 * myTurnNumber);
 
       // (3) 서버에게 받은 현재 픽 해야하는 이메일과 타임을 가져온다.
       setTimeout(async () => {
