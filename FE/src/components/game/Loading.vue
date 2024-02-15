@@ -1,5 +1,4 @@
 <template>
-  <!-- 패치노트 모달창 -->
   <div class="modal">
     <div class="modal-content">
       <h2 class="title">로딩중입니다... {{ loadingPercent }}%</h2>
@@ -24,59 +23,59 @@ export default {
       // 각 시간에 맞는 로딩 퍼센트 설정
       setTimeout(() => {
         this.loadingPercent = 10;
-      }, 1000);
+      }, 200);
       setTimeout(() => {
         this.loadingPercent = 12;
-      }, 1200);
+      }, 500);
       setTimeout(() => {
         this.loadingPercent = 24;
-      }, 1500);
+      }, 1000);
       setTimeout(() => {
         this.loadingPercent = 25;
-      }, 1800);
+      }, 1200);
       setTimeout(() => {
         this.loadingPercent = 31;
-      }, 2000);
+      }, 1400);
       setTimeout(() => {
         this.loadingPercent = 35;
-      }, 2200);
+      }, 1600);
       setTimeout(() => {
         this.loadingPercent = 37;
-      }, 2400);
+      }, 1800);
       setTimeout(() => {
         this.loadingPercent = 45;
-      }, 2500);
+      }, 2000);
       setTimeout(() => {
         this.loadingPercent = 52;
-      }, 2800);
+      }, 2200);
       setTimeout(() => {
         this.loadingPercent = 60;
-      }, 3300);
+      }, 2500);
       setTimeout(() => {
         this.loadingPercent = 66;
-      }, 3700);
+      }, 2800);
       setTimeout(() => {
         this.loadingPercent = 72;
-      }, 4000);
+      }, 3000);
       setTimeout(() => {
         this.loadingPercent = 86;
-      }, 4200);
+      }, 3200);
       setTimeout(() => {
         this.loadingPercent = 88;
-      }, 4800);
+      }, 3400);
       setTimeout(() => {
         this.loadingPercent = 90;
-      }, 5200);
+      }, 3600);
       setTimeout(() => {
-        this.loadingPercent = 95;
-      }, 5800);
+        this.loadingPercent = 92;
+      }, 3800);
       setTimeout(() => {
-        this.loadingPercent = 100;
-      }, 6000);
+        this.loadingPercent = 97;
+      }, 4000);
       setTimeout(() => {
         this.loadingPercent = 100;
         this.$emit("close-start-modal", "start");
-      }, 6500);
+      }, 4200);
     },
   },
   mounted() {
