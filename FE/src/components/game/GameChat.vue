@@ -48,9 +48,9 @@ export default {
       const gameStore = useGameStore();
       return gameStore.gameChatMsg;
     },
-    // reversedRoomChat() {
-    //   return this.gameChatMsg.reverse();
-    // },
+    reversedRoomChat() {
+      return this.gameChatMsg.slice().reverse();
+    },
     receivedMsg() {
       const gameStore = useGameStore();
       return gameStore.receivedMsg;
@@ -112,7 +112,7 @@ export default {
 
 .chat-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   overflow-y: scroll;
   height: 20vh;
   margin-left: 20px;
