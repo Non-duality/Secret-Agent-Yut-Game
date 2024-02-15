@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import { useMsgModalStore } from "./messageModalStore.js";
+import { socketSend } from "@/util/socket.js";
+import { useUserStore } from "@/store/userStore";
 
 export const useGameStore = defineStore("game", {
   // 반응형 상태 (data)
@@ -46,6 +48,8 @@ export const useGameStore = defineStore("game", {
       blueUser: [],
       // 스파이 말
       mySpyId: 0,
+      isFindSpy: false,
+      isEnemyFindSpy: false,
       // 다음 차례 메시지.
       turnMessage: "",
       redTurnName: "",
@@ -61,6 +65,8 @@ export const useGameStore = defineStore("game", {
       enemyTicketTemp: 0,
       // 몇라운드마다 티켓을 얻을 지
       gameSpeed: 0,
+      // 스턴
+      isStunFlag: false,
       // 말
       redHorses: [
         {
@@ -381,19 +387,6 @@ export const useGameStore = defineStore("game", {
       // 목적지 설정.
       let target = horseInfo.index + this.yutRes;
 
-      // 창병 앞 뒤 적은 1턴간 이동 금지.
-      if (horseInfo.name === "창병") {
-        this.turnMessage = "";
-        this.horseStun(target, horseInfo);
-        if (this.turnMessage !== "") {
-          this.turnMessage = this.turnMessage + "말들은 1턴간 이동 불가입니다.";
-          this.isShowTurnMessage = true;
-          setTimeout(() => {
-            this.isShowTurnMessage = false;
-          });
-        }
-      }
-      
       // 노비의 능력으로 0값이면.
       if (this.yutRes != 0) {
         // 처음 출발할때는 상태를 바꿔야한다.
@@ -457,6 +450,8 @@ export const useGameStore = defineStore("game", {
           this.isGoDiagonal = false;
           this.isCenterDir = false;
 
+          // 말 들어오면 밀정인지 체크하기 위헤 서버 전송 이따.
+
           // 턴 바꿈.
           if (this.throwChance === 0) {
             this.turnChange();
@@ -499,6 +494,20 @@ export const useGameStore = defineStore("game", {
           }
         }
 
+        // 창병 앞 뒤 적은 1턴간 이동 금지.
+        if (horseInfo.name === "창병") {
+          this.turnMessage = "";
+          this.isStunFlag = false;
+          this.horseStun(target, horseInfo);
+          if (this.isStunFlag) {
+            this.turnMessage =
+              this.turnMessage + "말들은 1턴간 이동 불가입니다.";
+            this.isShowTurnMessage = true;
+            setTimeout(() => {
+              this.isShowTurnMessage = false;
+            });
+          }
+        }
         // 다른 말 체크
         if (!this.isHorseEnd) {
           // 도착지 말 카운트
@@ -547,6 +556,7 @@ export const useGameStore = defineStore("game", {
               break;
             }
             this.turnMessage = this.turnMessage + horsedel.name;
+            this.isStunFlag = true;
             horsedel.stun += 1;
           }
         }
@@ -567,6 +577,7 @@ export const useGameStore = defineStore("game", {
               break;
             }
             this.turnMessage = this.turnMessage + "," + horsedel.name;
+            this.isStunFlag = true;
 
             horsedel.stun += 1;
           }
@@ -589,6 +600,7 @@ export const useGameStore = defineStore("game", {
               break;
             }
             this.turnMessage = this.turnMessage + "," + horsedel.name;
+            this.isStunFlag = true;
 
             horsedel.stun += 1;
           }
@@ -609,6 +621,7 @@ export const useGameStore = defineStore("game", {
               break;
             }
             this.turnMessage = this.turnMessage + "," + horsedel.name;
+            this.isStunFlag = true;
 
             horsedel.stun += 1;
           }
@@ -632,6 +645,7 @@ export const useGameStore = defineStore("game", {
               break;
             }
             this.turnMessage = this.turnMessage + "," + horsedel.name;
+            this.isStunFlag = true;
             horsedel.stun += 1;
           }
         }
@@ -651,6 +665,7 @@ export const useGameStore = defineStore("game", {
               break;
             }
             this.turnMessage = this.turnMessage + "," + horsedel.name;
+            this.isStunFlag = true;
             horsedel.stun += 1;
           }
         }
@@ -673,6 +688,7 @@ export const useGameStore = defineStore("game", {
               break;
             }
             this.turnMessage = this.turnMessage + "," + horsedel.name;
+            this.isStunFlag = true;
             horsedel.stun += 1;
           }
         }
@@ -691,6 +707,7 @@ export const useGameStore = defineStore("game", {
               break;
             }
             this.turnMessage = this.turnMessage + "," + horsedel.name;
+            this.isStunFlag = true;
             horsedel.stun += 1;
           }
         }
@@ -712,6 +729,7 @@ export const useGameStore = defineStore("game", {
               break;
             }
             this.turnMessage = this.turnMessage + "," + horsedel.name;
+            this.isStunFlag = true;
             horsedel.stun += 1;
           }
         }
@@ -730,6 +748,7 @@ export const useGameStore = defineStore("game", {
               break;
             }
             this.turnMessage = this.turnMessage + "," + horsedel.name;
+            this.isStunFlag = true;
             horsedel.stun += 1;
           }
         }
@@ -822,10 +841,10 @@ export const useGameStore = defineStore("game", {
         if (
           (((!this.teamTurn && this.myTeam === 1) ||
             (this.teamTurn && this.myTeam === 2)) &&
-            this.ticket > 0) ||
+            this.ticket > 0 && !this.isFindSpy) ||
           (((!this.teamTurn && this.myTeam === 2) ||
             (this.teamTurn && this.myTeam === 1)) &&
-            this.enemyTicket > 0)
+            this.enemyTicket > 0 && !this.isEnemyFindSpy)
         ) {
           this.isShowReasoning = true;
           // 여기에 추리 모달 결과 작성.
@@ -886,14 +905,15 @@ export const useGameStore = defineStore("game", {
         this.throwChance += 1;
         // 말을 잡았으니 기회 한번더.
         setTimeout(() => {
+          this.startTimer();
           this.turnMessage = "한번 더!!!";
           this.isShowTurnMessage = true;
-        }, 2000);
+        }, 1000);
 
         setTimeout(() => {
           this.turnMessage = "";
           this.isShowTurnMessage = false;
-        }, 5000);
+        }, 4000);
       }
 
       this.tiles[target].horse.push(...this.tiles[horseInfo.index].horse);

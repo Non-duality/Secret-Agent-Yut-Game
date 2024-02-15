@@ -6,12 +6,16 @@
   
   <script>
 import taegeukImage from "@/assets/img/game/taegeuk.png";
+import { useGameStore } from "@/store/gameStore";
+import missionTile from "@/assets/icon/missionTile.png"
+
 export default {
   props: ["tile"],
   data() {
     return {
       // 이미지 경로를 데이터 프로퍼티로 저장합니다.
       taegeukImageUrl: taegeukImage,
+      missionTileUrl: missionTile,
     };
   },
   computed: {
@@ -41,6 +45,10 @@ export default {
         styles.backgroundPosition = "center";
       } else {
         styles.backgroundColor = "#D2691E"; // 기본 색
+      }
+
+      if(useGameStore().missionTiles.includes(this.tile.id)){
+        styles.backgroundImage = `url(${this.missionTileUrl})`;
       }
 
       // 오른쪽 0~5

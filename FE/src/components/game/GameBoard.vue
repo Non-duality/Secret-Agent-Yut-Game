@@ -276,10 +276,16 @@ export default {
           gameStore.reasoningChoose = false;
 
           // 성공
-          if (newVal.isSpy) {
+          if (newVal.spy) {
             this.warningMessage = gameStore.teamTurn ? "청팀" : "홍팀";
             this.warningMessage =
               this.warningMessage + "이 밀정잡이에 성공하였습니다.";
+
+            if(newVal.team === gameStore.myTeam){
+              gameStore.isFindSpy = true;
+            }else{
+              gameStore.isEnemyFindSpy = true;
+            }
 
             // 해당 말이 밀정이면
             if (newVal.team === 1) {
@@ -352,6 +358,17 @@ export default {
           gameStore.isShowReasoning = false;
           if (newVal.reasoningChoose) {
             gameStore.reasoningChoose = true;
+            if(gameStore.teamTurn){
+              if(gameStore.myTeam === 2)
+                gameStore.ticket -= 1;
+              else
+                gameStore.enemyTicket -= 1;
+            }else{
+              if(gameStore.myTeam === 1)
+                gameStore.ticket -= 1;
+              else
+                gameStore.enemyTicket -= 1;
+            }
           } else {
             gameStore.startTimer();
           }
