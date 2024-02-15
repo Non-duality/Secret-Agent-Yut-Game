@@ -269,10 +269,9 @@ export default {
     },
   },
 
-  mounted() {
+  async mounted() {
     window.addEventListener("beforeunload", this.leaveSession);
 
-    // 로딩창 5.8초동안 데이터 받는 시간 확보
     this.myUserName = useUserStore().userInfo.nickname;
     this.mySessionId = useUserStore().currentRoomInfo.roomCode;
     // this.mySessionId = "B";
@@ -282,21 +281,27 @@ export default {
     const red = useGameStore().redUser;
     const blue = useGameStore().blueUser;
 
+    console.log("!!! 오픈비두 !!!")
+    console.log(red);
+    console.log(blue);
+
     if (useGameStore().myTeam === 1) {
       for (let i = 1; i <= 3; i++) {
+        await this.delay2(1000);
+
         if (this.myUserName === red[i - 1].nickname) {
           this.joinSession();
           break;
         }
-        delay2(500 * i);
       }
     } else {
       for (let i = 1; i <= 3; i++) {
+        await this.delay2(1000);
+
         if (this.myUserName === blue[i - 1].nickname) {
           this.joinSession();
           break;
         }
-        delay2(500 * i);
       }
     }
   },

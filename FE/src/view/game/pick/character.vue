@@ -29,16 +29,10 @@
           <div class="rtc-container">
             <div id="video-container">
               <user-video
-                :stream-manager="publisher"
-                @click="updateMainVideoStreamManager(publisher)"
+                v-for="user in myTeamUsers"
+                :key="user.stream.connection.connectionId"
+                :stream-manager="user"
                 :nickname="currentUserNickname"
-              />
-
-              <user-video
-                v-for="sub in subscribers"
-                :key="sub.stream.connection.connectionId"
-                :stream-manager="sub"
-                @click="updateMainVideoStreamManager(sub)"
               />
             </div>
           </div>
@@ -177,6 +171,8 @@ export default {
       showWaitSpyOppModal: false,
 
       isLeader: false,
+
+      myTeamUsers: [],
     };
   },
 
@@ -209,8 +205,10 @@ export default {
       // On every new Stream received...
       this.session.on("streamCreated", ({ stream }) => {
         const subscriber = this.session.subscribe(stream);
-        this.subscribers.push(subscriber);
-        console.log(this.subscribers);
+        // this.subscribers.push(subscriber);
+        // console.log(this.subscribers);
+
+        this.myTeamUsers.push(subscriber);
       });
 
       // On every Stream destroyed...
@@ -250,10 +248,12 @@ export default {
 
             // Set the main video in the page to display our webcam and store our Publish er
             this.mainStreamManager = publisher;
-            this.publisher = publisher;
+            // this.publisher = publisher;
+
+            this.myTeamUsers.push(publisher);
 
             // --- 6) Publish your stream ---
-            this.session.publish(this.publisher);
+            this.session.publish(publisher);
           })
           .catch((error) => {});
       });
@@ -270,6 +270,7 @@ export default {
       this.publisher = undefined;
       this.subscribers = [];
       this.OV = undefined;
+      this.myTeamUsers = [];
 
       window.removeEventListener("beforeunload", this.leaveSession);
     },

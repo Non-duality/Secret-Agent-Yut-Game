@@ -22,9 +22,15 @@
 
       <div class="modal-btn">
         <div class="select-container">
-          <button @click="selectComplete" class="select-ready">
-            선택 완료
-          </button>
+          <transition name="fade">
+            <button
+              v-if="isSelected"
+              @click="selectComplete"
+              class="select-ready"
+            >
+              선택 완료
+            </button></transition
+          >
         </div>
       </div>
     </div>
@@ -49,6 +55,7 @@ export default {
   data() {
     return {
       selectedCharacter: null,
+      isSelected: true,
     };
   },
   methods: {
@@ -83,6 +90,8 @@ export default {
         "/pub/pick/" + useUserStore().currentRoomInfo.roomCode + "/spy",
         content
       );
+
+      this.isSelected = false;
     },
   },
   computed: {
