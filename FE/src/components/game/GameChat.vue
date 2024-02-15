@@ -2,7 +2,7 @@
   <div class="board-chat">
     <div class="chat-container">
       <div
-        v-for="(message, index) in receivedMsg"
+        v-for="(message, index) in gameChatMsg"
         :key="index"
         class="chat-log"
       >
@@ -47,8 +47,13 @@ export default {
   },
 
   computed: {
+    gameChatMsg() {
+      const gameStore = useGameStore();
+      return gameStore.gameChatMsg;
+    },
     receivedMsg() {
-      return useGameStore().gameChatMsg;
+      const gameStore = useGameStore();
+      return gameStore.receivedMsg;
     },
   },
 
