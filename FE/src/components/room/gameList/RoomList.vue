@@ -3,7 +3,9 @@
   <div class="room-list">
     <div class="room-search">
       <!-- 게임 방 검색바 -->
-      <RoomSearch />
+      <RoomSearch 
+      @search="searchRooms"
+      />
       <!-- 게임 방 새로고침 아이콘 -->
       <font-awesome-icon
         @click="refresh"
@@ -21,7 +23,7 @@
       </div>
       <div class="room-list-content">
         <RoomListComponent
-          v-for="roomInfo in roomInfos"
+          v-for="roomInfo in filteredRoomInfos"
           :key="roomInfo.roomId"
           :roomInfo="roomInfo"
           @click="selectRoom(roomInfo)"
@@ -57,6 +59,7 @@ export default {
     return {
       isRotating: false,
       selectedRoomId: null,
+      filteredRoomInfos: []
     };
   },
 
@@ -73,14 +76,19 @@ export default {
       this.$emit("showRoomInfo", roomInfo);
     },
 
-    refresh() {
+    async refresh() {
       this.isRotating = true;
       // 애니메이션 종료 후 다시 false로
-      setTimeout(() => {
-        this.isRotating = false;
+      try {
         const roomStore = useRoomStore();
-        roomStore.getRoomSomeListData();
-      }, 2000);
+        await roomStore.getRoomSomeListData();
+        this.filteredRoomInfos = this.roomInfos
+        setTimeout(() => {
+          this.isRotating = false;
+        }, 2000);
+      } catch (error) {
+        console.log("방 조회 에러", error)
+      }
     },
 
     // 방 선택 로직 추가
@@ -95,9 +103,21 @@ export default {
 
       this.$emit("show-room-info", roomInfo.roomId);
     },
+
+    // 방 필터링하기
+    searchRooms(query) {
+      if (!query) {
+        this.filteredRoomInfos = this.roomInfos
+      } else {
+        this.filteredRoomInfos = this.roomInfos.filter(room => {
+          return room.title.includes(query)
+        })
+      }
+    }
   },
 
   mounted() {
+    this.filteredRoomInfos = this.roomInfos
     setTimeout(() => {
       if (this.roomInfos.length > 0) {
         this.selectedRoomId = this.roomInfos[0].roomId;

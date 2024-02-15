@@ -3,6 +3,7 @@ import { useRoomStore } from "./roomStore";
 import { usePickStore } from "./pickStore";
 import { useGameStore } from "./gameStore";
 import { useFriendStore } from "./friendStore";
+import { useSettingStore } from "./settingStore";
 import {
   userConfirm,
   userDoJoin,
@@ -63,10 +64,12 @@ export const useUserStore = defineStore("user", {
       const initialStateRoom = useRoomStore().$reset();
       const initialStatePick = usePickStore().$reset();
       const initialStateGame = useGameStore().$reset();
+      const initialStateSetting = useSettingStore().$reset();
       Object.assign(this, initialStateUser);
       Object.assign(this, initialStateRoom);
       Object.assign(this, initialStatePick);
       Object.assign(this, initialStateGame);
+      Object.assign(this, initialStateSetting)
     },
     
     // 로그인, 회원가입 모달 창을 나타내기 위한 함수 매개변수를 입력받아

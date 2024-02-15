@@ -7,6 +7,7 @@ import { useRoomStore } from "@/store/roomStore";
 import { usePickStore } from "@/store/pickStore";
 import { useFriendStore } from "@/store/friendStore";
 import { useGameStore } from "@/store/gameStore";
+import { useSettingStore } from "@/store/settingStore";
 
 /* .env 저장 주소 사용 */
 const { VITE_WSS_API_URL } = import.meta.env;
