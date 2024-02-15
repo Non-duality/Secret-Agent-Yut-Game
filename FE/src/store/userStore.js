@@ -3,6 +3,7 @@ import { useRoomStore } from "./roomStore";
 import { usePickStore } from "./pickStore";
 import { useGameStore } from "./gameStore";
 import { useFriendStore } from "./friendStore";
+import { useSettingStore } from "./settingStore";
 import {
   userConfirm,
   userDoJoin,
@@ -63,10 +64,12 @@ export const useUserStore = defineStore("user", {
       const initialStateRoom = useRoomStore().$reset();
       const initialStatePick = usePickStore().$reset();
       const initialStateGame = useGameStore().$reset();
+      const initialStateSetting = useSettingStore().$reset();
       Object.assign(this, initialStateUser);
       Object.assign(this, initialStateRoom);
       Object.assign(this, initialStatePick);
       Object.assign(this, initialStateGame);
+      Object.assign(this, initialStateSetting)
     },
     
     // 로그인, 회원가입 모달 창을 나타내기 위한 함수 매개변수를 입력받아
@@ -147,6 +150,7 @@ export const useUserStore = defineStore("user", {
         );
       });
     },
+
     // 비밀번호 이메일 인증 요청
     passEmailVerRequest: async (email) => {
       await passEmailVeificationRequest(
@@ -159,6 +163,7 @@ export const useUserStore = defineStore("user", {
         }
       );
     },
+
     // 비밀번호 이메일 인증
     passEmailVer: async (param) => {
       await passEmailVeification(
@@ -177,6 +182,7 @@ export const useUserStore = defineStore("user", {
         }
       );
     },
+
     // 이메일 인증 요청
     EmailVerRequest: async (email) => {
       await emailVeificationRequest(
@@ -189,6 +195,7 @@ export const useUserStore = defineStore("user", {
         }
       );
     },
+
     // 이메일 인증
     EmailVer: async (param) => {
       await emailVeification(
@@ -208,6 +215,7 @@ export const useUserStore = defineStore("user", {
         }
       );
     },
+
     // 이메일 중복 체크
     emailCheck: async (email) => {
       await emailCheck(
@@ -225,6 +233,7 @@ export const useUserStore = defineStore("user", {
         }
       );
     },
+
     // 닉네임 중복 체크
     nickCheck: async (nickname) => {
       await nickCheck(
@@ -242,6 +251,7 @@ export const useUserStore = defineStore("user", {
         }
       );
     },
+
     // 회원가입
     userJoin: async (joinUser) => {
       await userDoJoin(
@@ -255,6 +265,7 @@ export const useUserStore = defineStore("user", {
         }
       );
     },
+    
     // 비밀번호 변경
     changePass: async(param) => {
       await changePass(
@@ -267,6 +278,7 @@ export const useUserStore = defineStore("user", {
         }
       )
     },
+
     // 닉네임 변경
     changeNick: async(param) => {
       await changeNick(
@@ -280,6 +292,7 @@ export const useUserStore = defineStore("user", {
         }
       )
     },
+
     getUserInfo: () => {
       return new Promise((resolve, reject) => {
         findByToken(
@@ -297,7 +310,7 @@ export const useUserStore = defineStore("user", {
             );
   
             await tokenRegenerate();
-            reject(error)
+            // reject(error)
           }
         );
       })
@@ -309,7 +322,6 @@ export const useUserStore = defineStore("user", {
           if (response.status === httpStatusCode.CREATE) {
             let accessToken = response.data["access-token"];
             useUserStore().accessToken = accessToken;
-
             console.log("[userStore] : 재발급 완료");
           }
         },
@@ -321,7 +333,6 @@ export const useUserStore = defineStore("user", {
 
             // 다시 로그인 전 DB에 저장된 RefreshToken 제거.
             await logout(
-              useUserStore().userInfo.email,
               (response) => {
                 if (response.status === httpStatusCode.OK) {
                   console.log("리프레시 토큰 제거 성공");

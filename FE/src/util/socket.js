@@ -7,6 +7,7 @@ import { useRoomStore } from "@/store/roomStore";
 import { usePickStore } from "@/store/pickStore";
 import { useFriendStore } from "@/store/friendStore";
 import { useGameStore } from "@/store/gameStore";
+import { useSettingStore } from "@/store/settingStore";
 
 /* .env 저장 주소 사용 */
 const { VITE_WSS_API_URL } = import.meta.env;
@@ -51,16 +52,17 @@ export function connectWebSocket(accessToken) {
         console.log("[socket.onStompError] : " + error.headers["message"]);
         console.log("STOMP 상세 에러 : " + error.body);
         reject(new Error("STOMP ERROR"));
-        const userStore = useUserStore()
+        const userStore = useUserStore();
         const event = {
           fromUserEmail: userStore.userInfo.email,
-          eventCategory: '5',
-          eventAction: 'LOGOUT',
-          message: `${userStore.userInfo.nickname}님이 로그아웃했습니다.`
-        }
-        this.sendLogoutEvent(event)
-        alert("서버 오류로 로그아웃 처리되었습니다.")
-        userStore.initData()
+          eventCategory: "5",
+          eventAction: "LOGOUT",
+          message: `${userStore.userInfo.nickname}님이 로그아웃했습니다.`,
+        };
+        // this.sendLogoutEvent(event);
+        userStore.initData();
+        alert("서버 오류로 로그아웃 처리되었습니다.");
+
         // alert("소켓 연결이 끊어졌습니다.");
       },
 
@@ -126,7 +128,7 @@ function handleWebSocketMessage(message) {
       const chatInfo = {
         friendID: event.fromUserEmail,
         message: event.message,
-      }
+      };
       friendStore.receiveChatMessage(chatInfo);
       break;
     case "2":
@@ -224,8 +226,7 @@ function gameHandleRecvMessage(receivedMsg) {
   console.log(receivedMsg);
   if (receivedMsg.actionCategory === 0 && useGameStore().redUser.length === 0) {
     setInfo(receivedMsg);
-  } 
-  else {
+  } else {
     useGameStore().receivedMsg = receivedMsg;
   }
 }
@@ -769,12 +770,12 @@ export function initPick(router, from) {
         gameConnect();
 
         const check = setInterval(() => {
-          if(useGameStore().redUser.length !== 0){
+          if (useGameStore().redUser.length !== 0) {
             setTimeout(() => {
               router.push({ name: "game" });
               clearInterval(check);
               check = null;
-            },2000);
+            }, 2000);
           }
         }, 1000);
       }

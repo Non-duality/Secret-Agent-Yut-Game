@@ -14,12 +14,12 @@ export function initializeSnowAnimation(canvasId, backgroundImageSrc) {
   });
 
   // 배경이미지 가져오기.
-  const backgroundImage = new Image();
-  backgroundImage.src = backgroundImageSrc;
-  backgroundImage.onload = function () {
-    Snowy();
-    d.drawImage(backgroundImage, 0, 0, w, h);
-  };
+  // const backgroundImage = new Image();
+  // backgroundImage.src = backgroundImageSrc;
+  // backgroundImage.onload = function () {
+  //   Snowy();
+  //   d.drawImage(backgroundImage, 0, 0, w, h);
+  // };
 
   // 눈 생성
   function Snowy() {
@@ -87,4 +87,5 @@ export function initializeSnowAnimation(canvasId, backgroundImageSrc) {
       };
     }
   }
+  Snowy();
 }

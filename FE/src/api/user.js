@@ -24,8 +24,8 @@ async function tokenRegeneration(success, fail) {
   await local.post().then(success).catch(fail);
 }
 // 로그아웃
-async function logout(userid, success, fail) {
-  await local.get(`/user/logout/${userid}`).then(success).catch(fail);
+async function logout(success, fail) {
+  await local.get(`/user/logout`).then(success).catch(fail);
 }
 // 이메일 중복 체크
 async function emailCheck(param, success, fail) {
