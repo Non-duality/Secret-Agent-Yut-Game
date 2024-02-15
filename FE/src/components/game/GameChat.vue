@@ -46,8 +46,7 @@ export default {
 
   computed: {
     receivedMsg() {
-      const gameStore = useGameStore();
-      return gameStore.receivedMsg;
+      return useGameStore().receivedMsg;
     },
 
     reversedGameChat() {
@@ -69,13 +68,13 @@ export default {
     sendLocalMessage() {
       if (this.msg === "") return;
 
-      const teamName = "";
+      let teamName = "";
       if (usePickStore().code.includes("red")) teamName = "홍팀";
       else teamName = "청팀";
 
       console.log(teamName);
 
-      const tempMSG = {
+      let tempMSG = {
         actionCategory: 6,
         team: teamName,
         nickname: useUserStore().userInfo.nickname,
