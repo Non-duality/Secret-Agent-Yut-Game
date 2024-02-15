@@ -76,12 +76,12 @@ export default {
       }
       // 테스트 용으로 나중에 없앰.
       setTimeout(() => {
-        useGameStore().isMission = false;
         if (this.isThrowYut) {
           const msg = {
             email : useUserStore().userInfo.email,
             result : true,
           }
+          console.log(msg);
           socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/mini-game-finish`, msg);
         }
         // useGameStore().missionEnd();

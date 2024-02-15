@@ -427,6 +427,8 @@ export default {
           }
           break;
         case 8:
+          console.log("미션 종료 board");
+          gameStore.isMission = false;
           gameStore.missionEnd(newVal);
           break;
       }
