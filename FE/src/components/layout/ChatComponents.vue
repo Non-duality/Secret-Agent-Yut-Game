@@ -1,7 +1,7 @@
 <template>
   <div class="chat-box">
     <div class="chat-top">
-      <h4 class="chat-partner">{{ friendNickname }}과의 채팅방</h4>
+      <h4 class="chat-partner">{{ friendNickname }}님과의 채팅방</h4>
       <font-awesome-icon 
       :icon="['fas', 'rotate-left']" size="lg" style="color: #ffffff;" 
       @click="goFriend"
@@ -15,7 +15,8 @@
           :key="index"
           class="chat-log"
         >
-          <span :class="getNicknameColor(message[0])">[{{ message[0] }}] </span>
+          <span v-if="me === message[0]" class="nick">[나] </span>
+          <span v-else class="nick">[{{ message[0] }}] </span>
           <span class="chat-message">{{ message[1] }}</span>
         </div>
         <!-- 입력 부분 -->
@@ -54,7 +55,8 @@ export default {
   data() {
     return {
       msg: "",
-      friendNickname: ""
+      friendNickname: "",
+      me: useUserStore().userInfo.nickname
     }
   },
   computed: {
