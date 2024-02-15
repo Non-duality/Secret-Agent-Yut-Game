@@ -426,6 +426,9 @@ export default {
             }, 2000);
           }
           break;
+        case 7:
+          console("미션 시작 board");
+          break;
         case 8:
           console.log("미션 종료 board");
           gameStore.isMission = false;

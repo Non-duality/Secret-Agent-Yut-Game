@@ -538,6 +538,13 @@ export const useGameStore = defineStore("game", {
       if (this.missionTiles.includes(target)) {
         this.turnMessage = "미션 장소 도착";
         this.isShowTurnMessage = true;
+        if (this.isThrowYut) {
+          const msg = {email : useUserStore().userInfo.email};
+          socketSend(
+            `/pub/game/${useUserStore().currentRoomInfo.roomCode}/mini-game-start`,
+            msg
+          );
+        }
         setTimeout(() => {
           this.isMission = true;
           this.isShowTurnMessage = false;
