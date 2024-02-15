@@ -62,7 +62,7 @@ export function connectWebSocket(accessToken) {
         alert("소켓 연결이 끊어졌습니다.");
       },
 
-      reconnectDelay: 3000, //자동재연결
+      reconnectDelay: 5000, //자동재연결
     });
 
     try {

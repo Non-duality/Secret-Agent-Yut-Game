@@ -34,12 +34,13 @@ export default {
     },
 
     chatMessages() {
-      return useFriendStore().chatMessages
+      return Array.from(useFriendStore().chatAlert)
     },
   },
 
   methods: {
 
+    // 친구 요청 수락
     async acceptFriendRequest(user) {
       try {
         const response = await acceptFriend(user);
@@ -51,6 +52,7 @@ export default {
       }
     },
 
+    // 친구 요청 거절
     async rejectFriendRequest(user) {
       try {
         const response = await rejectFriend(user);
@@ -64,13 +66,10 @@ export default {
 
     // 채팅
     async goChat(user) { 
-      // 채팅 온 사람과 채팅하러 가는 로직
-      // try {
-      //   const { res } = await axios.get('url', user)
-      //   console.log(res)
-      // } catch (error) {
-      //   console.log(error)
-      // }
+      const friends = useFriendStore().friends
+      const friend = friends.find(obj => obj.nickname === user)
+      this.$emit('open-chat-room', friend)
+      this.useFriendStore().chatAlert.delete(user)
     },
   },
 

@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 
 import { getMyFriend, getMyFriendRequest } from "@/api/friend";
+import { set } from "lodash";
 
 export const useFriendStore = defineStore("friend", {
   state() {
@@ -9,6 +10,7 @@ export const useFriendStore = defineStore("friend", {
       friendRequests: [], // 친구 요청 목록
       chatMessages: {}, // 친구 별 채팅 메시지 {friendID: [message]}
       gameInvitations: [], // 게임 초대 목록
+      chatAlert: new Set(), // 채팅 알림
     };
   },
   actions: {
@@ -25,11 +27,6 @@ export const useFriendStore = defineStore("friend", {
         console.log(error);
       }
     },
-    searchUser(searchName){
-      console.log("아직 서버 없음. " + searchName);
-      this.findUser.email = "test@test.com";
-      this.findUser.nickName = searchName;
-    },
     // 친구 요청
     async receiveFriendRequest(request) {
       // 요청 신호 오면 친구 요청 업데이트
@@ -43,13 +40,20 @@ export const useFriendStore = defineStore("friend", {
     },
     // 친구 채팅
     receiveChatMessage(chatInfo) {
-      console.log('메시지 보냅니다.')
       const { friendID, message } = chatInfo
+      const friendInfo = this.friends.find(friend => friend.email === friendID)
       if (!this.chatMessages[friendID]) {
-        this.chatMessages[friendID] = [message]
+        this.chatMessages[friendID] = []
       }
-      this.chatMessages[friendID].push(message)
-      console.log(this.chatMessages[friendID])
+      this.chatMessages[friendID].push([friendInfo.nickname ,message])
+      this.chatAlert.add(friendInfo.nickname)
+    },
+    // 내 채팅
+    addChatMyMessage(friendID, myNick, message) {
+      if (!this.chatMessages[friendID]) {
+        this.chatMessages[friendID] = []
+      }
+      this.chatMessages[friendID].push([myNick, message])
     },
     // 게임 초대
     receiveGameInvitation(invitation) {
@@ -71,5 +75,15 @@ export const useFriendStore = defineStore("friend", {
         }
       })
     },
+  },
+
+  persist: {
+    enabled: true, //storage 저장유무
+    strategies: [
+      {
+        key: "friend",
+        storage: localStorage,
+      },
+    ],
   },
 });

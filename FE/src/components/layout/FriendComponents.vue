@@ -8,7 +8,8 @@
       </div>
       <div class="profile-info">
         <h4>{{ friend.nickname }}님</h4>
-        <p @click="openChatRoom(friend)">채팅방</p>
+        <p v-if="friend.online" @click="openChatRoom(friend)">채팅</p>
+        <p v-else>채팅 불가</p>
       </div>
     </div>
   </div>

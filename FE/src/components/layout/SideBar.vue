@@ -13,6 +13,7 @@
       <div class="side-line"></div>
       <transition name="fade" mode="out-in">
         <MessageComponents v-if="showMessageFlag"
+        @open-chat-room="handleOpenChatRoom"
       /></transition>
       <transition name="fade" mode="out-in">
         <ChatComponents v-if="showChatFlag"
@@ -33,9 +34,6 @@
     <div class="side-btn">
       <button class="btn" @click="showMessage">
         <img class="btn-img" src="@/assets/icon/notification.png" />
-      </button>
-      <button class="btn" @click="showChat">
-        <img class="btn-img" src="@/assets/icon/message.png" />
       </button>
       <button class="btn" @click="showFriend">
         <img class="btn-img" src="@/assets/icon/friend.png" />
@@ -133,7 +131,6 @@ export default {
 
     // 유저 채팅 접근
     handleOpenChatRoom(friend) {
-      console.log('채팅 접근 확인완')
       this.chatFriend = friend
       this.showChat()
     }

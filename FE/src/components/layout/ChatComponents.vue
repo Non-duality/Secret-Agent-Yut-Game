@@ -7,11 +7,8 @@
         :key="index"
         class="chat-log"
       >
-        <span
-        ></span>
-      </div>
-      <div>
-        {{ personalChat }}
+        <span :class="getNicknameColor(message[0])">[{{ message[0] }}] </span>
+        <span class="chat-message">{{ message[1] }}</span>
       </div>
       <!-- 입력 부분 -->
       <div class="chat-input-div">
@@ -52,34 +49,44 @@ export default {
   },
   computed: {
     personalChat() {
-      return useFriendStore().chatMessages['toUserEmail']
+      return useFriendStore().chatMessages[this.friendInfo.email] || []
     },
 
-    // reversedpersonalChat() {
-    //   return this.personalChat.slice().reverse()
-    // }
+    reversedpersonalChat() {
+      return this.personalChat.slice().reverse()
+    }
   },
 
   methods: {
+    // 메시지 보내기
     sendLocalMessage() {
+      const friendStore = useFriendStore()
       if (this.msg === "") return;
 
       const event = {
         fromUserEmail: useUserStore().userInfo.email,
         toUserEmail: this.friendInfo.email,
-        eventCategory: "1",
+        eventCategory: "1", 
         eventAction: "메시지 보내기",
         message : this.msg,
       }
-
+      console.log(this.friendInfo)
       sendEvent(event)
 
+      friendStore.addChatMyMessage(this.friendInfo.email, useUserStore().userInfo.nickname, this.msg)
+
       this.msg =""
+    },
+
+    // 닉네임에 따라 색 변경
+    getNicknameColor(nickname) {
+      if (nickname === useUserStore().userInfo.nickname) {
+        return 'color-red'
+      } else {
+        return 'color-green'
+      }
     }
   },
-
-  mounted() {
-  }
 }
 </script>
 
