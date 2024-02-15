@@ -2,7 +2,7 @@
   <div class="board-chat">
     <div class="chat-container">
       <div
-        v-for="(message, index) in reversedGameChat"
+        v-for="(message, index) in receivedMsg"
         :key="index"
         class="chat-log"
       >
@@ -46,11 +46,7 @@ export default {
 
   computed: {
     receivedMsg() {
-      return useGameStore().receivedMsg;
-    },
-
-    reversedGameChat() {
-      return this.receivedMsg;
+      return useGameStore().gameChatMsg;
     },
   },
 
