@@ -373,7 +373,7 @@ export default {
           this.warningMessage = "";
           this.warningMessageSecond = "";
           let spyIndex = null;
-          let arr = newVal.unitIds;
+          let arr = newVal.unitId;
           for (let i = 0; i < 5; i++) {
             if (arr.includes(newVal.team === 1 ? this.redHorses[i].id : this.blueHorses[i].id)) {
               this.warningMessage += (newVal.team === 1 ? this.redHorses[i].name : this.blueHorses[i].name) + " ";
