@@ -94,7 +94,7 @@ public class GameService {
     public Map<String, Object> startGame(RoomEntity room) {
         SecureRandom sr = new SecureRandom();
         sr.setSeed(new Date().getTime());
-        String[] placeList = new String[]{"경복국", "덕수궁"};
+        String[] placeList = new String[]{"경복궁", "덕수궁"};
         String[] timeList = new String[]{"축시", "인시"};
         String[] contactorList = new String[] {"경비병", "궁녀"};
         String[] stuffList = new String[]{"쪽지", "지도"};
@@ -192,7 +192,7 @@ public class GameService {
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
                 .mySpyUnitId(Integer.parseInt( String.valueOf(spyPickInfo.get("청팀"))))
-                .mySpyHint(redSpyHint)
+                .mySpyHint(blueSpyHint)
                 .build();
 
         GameStartDto blueGameDto = GameStartDto.builder()
@@ -205,7 +205,7 @@ public class GameService {
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
                 .mySpyUnitId(Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀"))))
-                .mySpyHint(blueSpyHint)
+                .mySpyHint(redSpyHint)
                 .build();
 
         Map<String, Object> result = new HashMap<>();
@@ -230,22 +230,28 @@ public class GameService {
     }
 
     //유닛 도착시 저장
-    public void unitGole(int team, int unitIndex, String gameCode, UnitGoleDto dto){
+    public void unitGole(String gameCode, UnitGoleDto dto){
         Game game = gameRepository.findByGameCode(gameCode);
-        if(team == 2){
-            BlueTeamUnit blueTeamUnit = blueTeamUnitRepository.findByGameCodeAndUnitIndex(game, unitIndex);
-            if(this.isSpy(blueTeamUnit.getId(), 2, gameCode)){
-                dto.setSpy(true);
+        if(dto.getTeam() == 2){
+            for(int i = 0; i < dto.getUnitId().length; i++){
+                BlueTeamUnit blueTeamUnit = blueTeamUnitRepository.findByGameCodeAndUnitId(game, unitRepository.findById(dto.getUnitId()[i]));
+                if(this.isSpy(blueTeamUnit.getId(), 2, gameCode)){
+                    dto.setSpy(true);
+                    dto.setSpyId(blueTeamUnit.getId());
+                }
+                blueTeamUnit.setGole(true);
+                blueTeamUnitRepository.save(blueTeamUnit);
             }
-            blueTeamUnit.setGole(true);
-            blueTeamUnitRepository.save(blueTeamUnit);
         }else{
-            RedTeamUnit redTeamUnit = redTeamUnitRepository.findByGameCodeAndUnitIndex(game, unitIndex);
-            if(this.isSpy(redTeamUnit.getId(), 2, gameCode)){
-                dto.setSpy(true);
+            for(int i = 0; i < dto.getUnitId().length; i++){
+                RedTeamUnit redTeamUnit = redTeamUnitRepository.findByGameCodeAndUnitId(game, unitRepository.findById(dto.getUnitId()[i]));
+                if(this.isSpy(redTeamUnit.getId(), 2, gameCode)){
+                    dto.setSpy(true);
+                    dto.setSpyId(redTeamUnit.getId());
+                }
+                redTeamUnit.setGole(true);
+                redTeamUnitRepository.save(redTeamUnit);
             }
-            redTeamUnit.setGole(true);
-            redTeamUnitRepository.save(redTeamUnit);
         }
     }
 
@@ -567,6 +573,7 @@ public class GameService {
 
         return result;
     }
+
 
     public boolean isSpy(int unitId, int team, String roomCode) {
         Map<Object,Object> spyPickInfo = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + roomCode);

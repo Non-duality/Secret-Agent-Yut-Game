@@ -76,13 +76,15 @@ public class GameStompController {
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
+    //말도착
     @MessageMapping("/game/{roomCode}/unit-gole")
     public void unitGole(@DestinationVariable String roomCode, UnitGoleDto dto){
         dto.setActionCategory(5);
-        gameService.unitGole(dto.getTeam(), dto.getUnitIndex(), roomCode, dto);
+        gameService.unitGole(roomCode, dto);
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
+    //게임 종료
     @MessageMapping("/game/{roomCode}/finish")
     public void finish(@DestinationVariable String roomCode, GameFinishDto dto){
         dto.setActionCategory(9);
@@ -90,10 +92,12 @@ public class GameStompController {
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
+
     @MessageMapping("/game/{roomCode}/mission")
     public void mission(@DestinationVariable String roomCode){
 
     }
+
     //추리권 사용여부
     @MessageMapping("/game/{roomCode}/reason-ticket-use")
     public void reasonTicketUse(@DestinationVariable String roomCode, ReasonTicketDto dto){

@@ -6,6 +6,7 @@ import lombok.Data;
 public class UnitGoleDto {
     private int actionCategory;
     private int team;
-    private int unitIndex;
+    private int[] unitId;
     private boolean isSpy;
+    private int spyId;
 }
