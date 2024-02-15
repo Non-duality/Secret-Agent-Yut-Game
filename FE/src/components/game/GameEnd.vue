@@ -1,13 +1,15 @@
 <template>
   <div class="end-main">
     <div class="end-container">
-      <span class="end-text">{{ text }}</span>
+      <span class="end-myTeam-res">WIN</span>
       <button class="end-btn" @click="sendToParent">확인</button>
     </div>
   </div>
 </template>
 
 <script>
+import { useUserStore } from "@/store/userStore";
+
 export default {
   props: {
     winMessage: Number,
@@ -29,8 +31,8 @@ export default {
   methods: {
     sendToParent() {
       this.$emit("closeModal");
+      useUserStore().showModalSide = true;
     },
-    
   },
 };
 </script>
