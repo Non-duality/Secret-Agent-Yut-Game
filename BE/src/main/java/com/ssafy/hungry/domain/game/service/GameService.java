@@ -163,7 +163,6 @@ public class GameService {
                     .scal(scalList[randomPer[i]])
                     .skill(unit.getSkill())
                     .build();
-            redUnitList.add(unitInfo);
             if(unit.getUnitId() == blueTeamSpyId){
                 redSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다. " +
                         "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";
@@ -175,6 +174,7 @@ public class GameService {
 //            hints.add(unitInfo.getTime());
 //            hints.add(unitInfo.getPlace());
 //            redUnitHints.put(unitInfo.getUnitId(), hints);
+            redUnitList.add(unitInfo);
             i++;
         }
 
@@ -205,7 +205,7 @@ public class GameService {
 //            hints.add(unitInfo.getTime());
 //            hints.add(unitInfo.getPlace());
 //            blueUnitHints.put(unitInfo.getUnitId(), hints);
-//            blueUnitList.add(unitInfo);
+            blueUnitList.add(unitInfo);
             i++;
         }
 
