@@ -50,9 +50,16 @@
         <!-- 내용 -->
         <div id="patch-content">
           <div id="patch-list" v-if="patches.length > 0">
-            <span v-for="patch in filterPetch" :key="patch.id">
+            <span v-for="patch in filterPetch" :key="patch.id" @click="showPetchDetail(patch)">
               {{ patch.subject }}
             </span>
+            <transition name="fade">
+              <PatchDetail 
+                v-if="showPatchDetailModal"
+                @close-modal="closeModal"
+                :patchDetail="patchDetail"
+              />
+            </transition>
           </div>
         </div>
       </div>
@@ -82,7 +89,7 @@
   </div>
 </template>
       
-  <script>
+<script>
 import { defineComponent } from "vue";
 import { Carousel, Slide, Navigation } from "vue3-carousel";
 
@@ -90,6 +97,7 @@ import "vue3-carousel/dist/carousel.css";
 
 // Item vue
 import PatchNoteItem from "@/components/home/PatchItem.vue";
+import PatchDetail from "@/components/home/PatchDetail.vue";
 import HelpItem from "@/components/home/HelpItem.vue";
 import EventFirst from "@/view/home/EventFirst.vue";
 import EventSecond from "@/view/home/EventSecond.vue";
@@ -113,6 +121,7 @@ export default defineComponent({
     Slide,
     Navigation,
     PatchNoteItem,
+    PatchDetail,
     HelpItem,
     EventFirst,
     EventSecond,
@@ -128,6 +137,8 @@ export default defineComponent({
       } else if (value === "event") {
         this.showEventModal = true;
         this.clickedImageIndex = index;       // 클릭한 이미지의 인덱스 저장
+      } else if (value === "patchDetail") {
+        this.showPatchDetailModal = true
       }
     },
 
@@ -138,6 +149,8 @@ export default defineComponent({
         this.showHelpItemModal = false;
       } else if (value === "event") {
         this.showEventModal = false;
+      } else if (value === "patchDetail") {
+        this.showPatchDetailModal = false
       }
     },
 
@@ -148,6 +161,11 @@ export default defineComponent({
     closeMessage() {
       this.showMessage = false;
     },
+
+    showPetchDetail(patch) {
+      this.patchDetail = patch
+      this.openModal('patchDetail')
+    }
   },
 
   data() {
@@ -158,7 +176,9 @@ export default defineComponent({
       showMessage: false,
       showEventModal: false,
       clickedImageIndex: null,    // 클릭한 이미지의 인덱스를 저장할 변수
-      patches: []
+      patches: [],
+      showPatchDetailModal: false,
+      patchDetail: null,
     };
   },
 
