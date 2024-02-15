@@ -199,22 +199,15 @@ export default {
         const subscriber = this.session.subscribe(stream);
         // this.subscribers.push(subscriber);
 
-        const teamValue = useGameStore().myTeam;
+        const data = JSON.parse(stream.connection.data);
+        const jsonData = JSON.parse(data.data);
+        const teamValue = jsonData.team;
 
         if (teamValue === 1) {
           this.redUsers.push(subscriber);
         } else if (teamValue === 2) {
           this.blueUsers.push(subscriber);
         }
-        // const data = JSON.parse(stream.connection.data);
-        // const jsonData = JSON.parse(data.data);
-        // const teamValue = jsonData.team;
-
-        // if (teamValue === 1) {
-        //   this.redUsers.push(subscriber);
-        // } else if (teamValue === 2) {
-        //   this.blueUsers.push(subscriber);
-        // }
       });
 
       this.session.on("streamDestroyed", ({ stream }) => {
@@ -242,7 +235,7 @@ export default {
               publishVideo: true,
               resolution: "640x480",
               frameRate: 30,
-              insertMode: "PREPEND",
+              insertMode: "APPEND",
               mirror: false,
             });
 
@@ -327,7 +320,7 @@ export default {
 
     console.log("내팀은????????????????????")
     console.log(useGameStore().myTeam);
-    
+
     setTimeout(async () => {
       if (useGameStore().myTeam === 1) {
         for (let i = 1; i <= 3; i++) {
@@ -344,7 +337,7 @@ export default {
           }
         }
       }
-    }, 500);
+    }, 1500);
   },
 };
 </script>
