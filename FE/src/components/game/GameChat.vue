@@ -50,7 +50,7 @@ export default {
       return gameStore.gameChatMsg;
     },
     reversedRoomChat() {
-      return this.gameChatMsg.slice().reverse();
+      return this.gameChatMsg.reverse();
     },
     receivedMsg() {
       const gameStore = useGameStore();
