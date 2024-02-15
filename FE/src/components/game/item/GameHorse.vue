@@ -278,7 +278,7 @@ export default {
         styles.transform = "scale(1.2)"; // 확대
         styles.transition = "transform 0.3s ease";
       }
-      if (gameStore.myTeam === this.horse.team && gameStore.isSelect) {
+      if (gameStore.myTeam === this.horse.team && gameStore.isSelect && this.horse.status !== 'end') {
         styles.boxShadow = "0px 8px 5px rgba(255, 0, 0, 0.5)";
       }
       return styles;
@@ -313,7 +313,9 @@ export default {
       this.isMouseOver = false;
     },
     selectHorse() {
-      this.$emit("selectHorse", this.horse);
+      if(this.horse.status !== 'end'){
+        this.$emit("selectHorse", this.horse);
+      }
     },
     async loadImage() {
       try {

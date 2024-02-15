@@ -55,6 +55,7 @@
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/game/UserVideo.vue";
+import { socketSend } from "@/util/socket.js";
 
 import { useUserStore } from "@/store/userStore";
 import { useGameStore } from "@/store/gameStore";
@@ -97,6 +98,7 @@ export default {
 
       redUsers: [],
       blueUsers: [],
+      msg : { team : 1},
     };
   },
 
@@ -120,6 +122,10 @@ export default {
         this.blueWin();
         return true;
       }
+      if (useGameStore().spyGoal){
+        this.spyEnd();
+        return true;
+      }
       return false;
     },
 
@@ -130,11 +136,21 @@ export default {
 
   methods: {
     redWin() {
+      this.msg.team = 1;
+      socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`, this.msg);
       this.winMessage = 1;
       this.isShowEnd = true;
     },
     blueWin() {
+      this.msg.team = 1;
+      socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`, this.msg);
       this.winMessage = 2;
+      this.isShowEnd = true;
+    },
+    spyEnd(){
+      this.msg.team = useGameStore().receivedMsg.team === 1? 2 : 1;
+      socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`, this.msg);
+      this.winMessage = 3;
       this.isShowEnd = true;
     },
     closeModal() {

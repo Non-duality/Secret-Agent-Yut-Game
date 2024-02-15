@@ -19,6 +19,8 @@ export default {
           return "홍팀이 승리했습니다!";
         case 2:
           return "청팀이 승리했습니다!";
+        case 3:
+          return "밀정이 도착하였습니다.";
         default:
           return "게임 결과를 기다리는 중...";
       }

@@ -52,6 +52,7 @@ export const useGameStore = defineStore("game", {
       mySpyId: 0,
       isFindSpy: false,
       isEnemyFindSpy: false,
+      spyGoal: false,
       // 다음 차례 메시지.
       turnMessage: "",
       redTurnName: "",
@@ -427,6 +428,7 @@ export const useGameStore = defineStore("game", {
         // 말이 들어왔을 때
         // 마지막 위치에서 출발할 때는 그냥 끝.
         if (horseInfo.index === 30) {
+          let arr = [];
           for (var i = 0; i < this.tiles[horseInfo.index].horse.length; i++) {
             const horseTemp =
               horseInfo.team === 1
@@ -440,6 +442,7 @@ export const useGameStore = defineStore("game", {
                   );
             // 말 상태를 바꾼다.
             horseTemp.status = "end";
+            arr.push(horseTemp.id);
             // 카운트 한다.
             if (horseTemp.team === 1) horseTemp.endOrder = this.redEnd++;
             else horseTemp.endOrder = this.blueEnd++;
@@ -452,12 +455,17 @@ export const useGameStore = defineStore("game", {
           this.isGoDiagonal = false;
           this.isCenterDir = false;
 
+          const msg = {
+            team : horseInfo.team,
+            unitId : arr,
+          };
           // 말 들어오면 밀정인지 체크하기 위헤 서버 전송 이따.
+          socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/unit-gole`, msg);
 
           // 턴 바꿈.
-          if (this.throwChance === 0) {
-            this.turnChange();
-          }
+          // if (this.throwChance === 0) {
+          //   this.turnChange();
+          // }
           return;
         }
         // 15번 부터 마지막 타일 또는 들어왔다면
@@ -529,15 +537,15 @@ export const useGameStore = defineStore("game", {
           this.isMission = true;
         }, 2000);
       }
-      // 초기화.
-      this.isHorseEnd = false;
+
       this.isGoDiagonal = false;
       this.isCenterDir = false;
-
       // 턴 바꿈.
-      if (this.throwChance === 0) {
+      if (this.throwChance === 0 && !this.isHorseEnd) {
         this.turnChange();
       }
+      // 초기화.
+      this.isHorseEnd = false;
     },
     // 스턴
     horseStun(target, horseInfo) {
@@ -843,10 +851,12 @@ export const useGameStore = defineStore("game", {
         if (
           (((!this.teamTurn && this.myTeam === 1) ||
             (this.teamTurn && this.myTeam === 2)) &&
-            this.ticket > 0 && !this.isFindSpy) ||
+            this.ticket > 0 &&
+            !this.isFindSpy) ||
           (((!this.teamTurn && this.myTeam === 2) ||
             (this.teamTurn && this.myTeam === 1)) &&
-            this.enemyTicket > 0 && !this.isEnemyFindSpy)
+            this.enemyTicket > 0 &&
+            !this.isEnemyFindSpy)
         ) {
           this.isShowReasoning = true;
           // 여기에 추리 모달 결과 작성.
@@ -936,6 +946,7 @@ export const useGameStore = defineStore("game", {
 
       // 말이 들어왔다면.
       if (this.isHorseEnd) {
+        let arr = [];
         for (let i = 0; i < len; i++) {
           const horseInfo =
             team === 1
@@ -946,6 +957,7 @@ export const useGameStore = defineStore("game", {
                   (horse) => horse.id === this.tiles[from].horse[i].id
                 );
           horseInfo.index = 30;
+          arr.push(horseInfo.id);
         }
         setTimeout(() => {
           for (let i = 0; i < len; i++) {
@@ -963,6 +975,14 @@ export const useGameStore = defineStore("game", {
             else horseInfo.endOrder = this.blueEnd++;
           }
           this.tiles[from].horse = [];
+
+          const msg = {
+            team : team,
+            unitId : arr,
+          };
+          // 말 들어오면 밀정인지 체크하기 위헤 서버 전송 이따.
+          socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/unit-gole`, msg);
+
         }, 300);
       }
       // 모서리를 통과할때.

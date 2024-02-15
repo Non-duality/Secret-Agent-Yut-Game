@@ -281,9 +281,9 @@ export default {
             this.warningMessage =
               this.warningMessage + "이 밀정잡이에 성공하였습니다.";
 
-            if(newVal.team === gameStore.myTeam){
+            if (newVal.team === gameStore.myTeam) {
               gameStore.isFindSpy = true;
-            }else{
+            } else {
               gameStore.isEnemyFindSpy = true;
             }
 
@@ -361,22 +361,69 @@ export default {
           gameStore.isShowReasoning = false;
           if (newVal.reasoningChoose) {
             gameStore.reasoningChoose = true;
-            if(gameStore.teamTurn){
-              if(gameStore.myTeam === 2)
-                gameStore.ticket -= 1;
-              else
-                gameStore.enemyTicket -= 1;
-            }else{
-              if(gameStore.myTeam === 1)
-                gameStore.ticket -= 1;
-              else
-                gameStore.enemyTicket -= 1;
+            if (gameStore.teamTurn) {
+              if (gameStore.myTeam === 2) gameStore.ticket -= 1;
+              else gameStore.enemyTicket -= 1;
+            } else {
+              if (gameStore.myTeam === 1) gameStore.ticket -= 1;
+              else gameStore.enemyTicket -= 1;
             }
           } else {
             gameStore.startTimer();
           }
           break;
         case 5:
+          const gameStore = useGameStore();
+          this.warningMessage = "";
+          this.warningMessageSecond = "";
+          let spyIndex = null;
+          for (let i = 0; i < 5; i++) {
+            if (
+              newVal.unitIds.includes(
+                newVal.team === 1 ? this.redHorses[i].id : this.blueHorses[i].id
+              )
+            ) {
+              this.warningMessage =
+                this.warningMessage + newVal.team === 1
+                  ? this.redHorses[i].name
+                  : this.blueHorses[i].name + " ";
+            }
+            if (newVal.spy) {
+              if (
+                newVal.unitIds.includes(
+                  newVal.team === 1
+                    ? this.redHorses[i].id
+                    : this.blueHorses[i].id
+                )
+              ) {
+                spyIndex = i;
+              }
+            }
+          }
+          this.warningMessage = this.warningMessage + "말이 도착하였습니다.";
+          if (newVal.spy) {
+            this.warningMessageSecond =
+              newVal.team === 1
+                ? this.redHorses[spyIndex].name
+                : this.blueHorses[spyIndex].name +
+                  "말이 밀정이여서 게임이 종료되었습니다!!";
+            this.isShowWarningMessage = true;
+            setTimeout(() => {
+              this.isShowWarningMessage = false;
+              gameStore.spyGoal = true;
+            }, 2000);
+          } else {
+            this.isShowWarningMessage = true;
+            setTimeout(() => {
+              this.isShowWarningMessage = false;
+
+              if (gameStore.throwChance === 0) {
+                gameStore.turnChange();
+              } else {
+                gameStore.startTimer();
+              }
+            }, 2000);
+          }
           break;
       }
     },
@@ -577,7 +624,8 @@ export default {
           if (gameStore.redHorses[random] !== "end") {
             if (
               gameStore.redHorses[random] === "wait" &&
-              gameStore.yutRes === -1 && gameStore.redHorses[random].stun > 0
+              gameStore.yutRes === -1 &&
+              gameStore.redHorses[random].stun > 0
             ) {
               continue;
             }
@@ -596,7 +644,8 @@ export default {
           if (gameStore.blueHorses[random] !== "end") {
             if (
               gameStore.blueHorses[random] === "wait" &&
-              gameStore.yutRes === -1 && gameStore.blueHorses[random].stun > 0
+              gameStore.yutRes === -1 &&
+              gameStore.blueHorses[random].stun > 0
             ) {
               continue;
             }
