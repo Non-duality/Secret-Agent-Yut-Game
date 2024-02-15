@@ -691,14 +691,14 @@ public class GameService {
         Map<Object,Object> spyPickInfo = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + roomCode);
 
         if(team == 1){
-            if(unitId == Integer.parseInt(String.valueOf(spyPickInfo.get("홍팀")))){
+            if(unitId == Integer.parseInt(String.valueOf(spyPickInfo.get("청팀")))){
                 this.reasoning(team, roomCode);
                 return true;
             }else {
                 return false;
             }
         }else{
-            if(unitId == Integer.parseInt(String.valueOf(spyPickInfo.get("청팀")))){
+            if(unitId == Integer.parseInt(String.valueOf(spyPickInfo.get("홍팀")))){
                 this.reasoning(team, roomCode);
                 return true;
             }else {
