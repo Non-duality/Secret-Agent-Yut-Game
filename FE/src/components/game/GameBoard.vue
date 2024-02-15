@@ -277,6 +277,7 @@ export default {
     // 힌트 메시지
     mySpyHint() {
       const gameStore = useGameStore();
+      console.log("스파이 힌트 : " + gameStore.mySpyHint);
       return gameStore.mySpyHint;
     },
   },
