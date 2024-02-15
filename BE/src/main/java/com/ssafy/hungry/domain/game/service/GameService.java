@@ -172,8 +172,8 @@ public class GameService {
 
         Map<Object,Object> spyPickInfo = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + roomCode);
 
-        UnitInfo redSpyInfo = redUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀"))));
-        UnitInfo blueSpyInfo = blueUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("청팀"))));
+        UnitInfo redSpyInfo = redUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀"))) - 1);
+        UnitInfo blueSpyInfo = blueUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("청팀"))) - 1);
         String redSpyHint = "밀정은 " + redSpyInfo.getTime() + "에 " + redSpyInfo.getPlace() + "에서 " + redSpyInfo.getContactor() + "을(를) 만나 " + redSpyInfo.getStuff() + "을 전달받았습니다. " +
                 "그리고 밀정은 " + redSpyInfo.getScal() + "에 흉터가 있습니다.";
         String blueSpyHint = "밀정은 " + blueSpyInfo.getTime() + "에 " + blueSpyInfo.getPlace() + "에서 " + blueSpyInfo.getContactor() + "을(를) 만나 " + blueSpyInfo.getStuff() + "을 전달받았습니다." +
