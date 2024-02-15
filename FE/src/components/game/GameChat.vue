@@ -60,7 +60,7 @@ export default {
   watch: {
     receivedMsg(newVal) {
       const gameStore = useGameStore();
-      if (newVal.actionCategory === 0) {
+      if (newVal.actionCategory === 6) {
         gameStore.gameChatMsg.push(newVal.nickname + " : " + newVal.message);
       }
     },
