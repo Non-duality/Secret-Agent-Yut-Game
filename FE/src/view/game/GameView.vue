@@ -5,7 +5,7 @@
     </transition>
 
     <MessageModal />
-    
+
     <!-- 홍팀 -->
     <div class="game-video-team1">
       <div id="session" v-if="session">
@@ -98,7 +98,7 @@ export default {
 
       redUsers: [],
       blueUsers: [],
-      msg : { team : 1},
+      msg: { team: 1 },
     };
   },
 
@@ -123,7 +123,7 @@ export default {
         this.blueWin();
         return true;
       }
-      if (useGameStore().spyGoal){
+      if (useGameStore().spyGoal) {
         this.spyEnd();
         return true;
       }
@@ -148,19 +148,28 @@ export default {
     },
     redWin() {
       this.msg.team = 1;
-      socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`, this.msg);
+      socketSend(
+        `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
+        this.msg
+      );
       this.winMessage = 1;
       this.isShowEnd = true;
     },
     blueWin() {
       this.msg.team = 1;
-      socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`, this.msg);
+      socketSend(
+        `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
+        this.msg
+      );
       this.winMessage = 2;
       this.isShowEnd = true;
     },
-    spyEnd(){
-      this.msg.team = useGameStore().receivedMsg.team === 1? 2 : 1;
-      socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`, this.msg);
+    spyEnd() {
+      this.msg.team = useGameStore().receivedMsg.team === 1 ? 2 : 1;
+      socketSend(
+        `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
+        this.msg
+      );
       this.winMessage = 3;
       this.isShowEnd = true;
     },
@@ -203,8 +212,7 @@ export default {
       });
 
       const userData = {
-        // team: useGameStore().myTeam,
-        team: useUserStore().myTeamIdx,
+        team: useGameStore().myTeam,
       };
 
       this.getToken(this.mySessionId).then((token) => {
@@ -305,21 +313,25 @@ export default {
     const red = useGameStore().redUser;
     const blue = useGameStore().blueUser;
 
-    if (useGameStore().myTeam === 1) {
-      for (let i = 1; i <= 3; i++) {
-        if (this.myUserName === red[i - 1].nickname) {
-          this.joinSession();
-          break;
+    console.log(useGameStore().myTeam);
+
+    setTimeout(() => {
+      if (useGameStore().myTeam === 1) {
+        for (let i = 1; i <= 3; i++) {
+          if (this.myUserName === red[i - 1].nickname) {
+            this.joinSession();
+            break;
+          }
+        }
+      } else {
+        for (let i = 1; i <= 3; i++) {
+          if (this.myUserName === blue[i - 1].nickname) {
+            this.joinSession();
+            break;
+          }
         }
       }
-    } else {
-      for (let i = 1; i <= 3; i++) {  
-        if (this.myUserName === blue[i - 1].nickname) {
-          this.joinSession();
-          break;
-        }
-      }
-    }
+    }, 500);
   },
 };
 </script>
