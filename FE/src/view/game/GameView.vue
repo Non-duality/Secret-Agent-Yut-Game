@@ -1,8 +1,8 @@
 <template>
   <div class="game-main">
-    <!-- <transition name="fade">
+    <transition name="fade">
       <Loading v-if="showStartModal" @close-start-modal="closeStartModal" />
-    </transition> -->
+    </transition>
 
     <MessageModal />
     <!-- <span class="game-red-team-name">홍팀</span> -->
@@ -272,13 +272,11 @@ export default {
       this.myUserName = useUserStore().userInfo.nickname;
       this.mySessionId = useUserStore().currentRoomInfo.roomCode;
       // this.mySessionId = "A";
+      this.joinSession();
 
       // 여기서 순서 생각하기.
       const red = useGameStore().redUser;
       const blue = useGameStore().blueUser;
-
-      console.log(red);
-      console.log(blue);
 
       if (useGameStore().myTeam === 1) {
         for (let i = 1; i <= 3; i++) {
@@ -286,7 +284,7 @@ export default {
             this.joinSession();
             break;
           }
-          delay2(150 * i);
+          delay2(250 * i);
         }
       } else {
         for (let i = 1; i <= 3; i++) {
@@ -294,10 +292,10 @@ export default {
             this.joinSession();
             break;
           }
-          delay2(150 * i);
+          delay2(250 * i);
         }
       }
-    }, 9000);
+    }, 5000);
   },
 };
 </script>
