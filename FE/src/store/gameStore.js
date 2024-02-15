@@ -539,9 +539,11 @@ export const useGameStore = defineStore("game", {
         this.turnMessage = "미션 장소 도착";
         this.isShowTurnMessage = true;
         if (this.isThrowYut) {
-          const msg = {email : useUserStore().userInfo.email};
+          const msg = { email: useUserStore().userInfo.email };
           socketSend(
-            `/pub/game/${useUserStore().currentRoomInfo.roomCode}/mini-game-start`,
+            `/pub/game/${
+              useUserStore().currentRoomInfo.roomCode
+            }/mini-game-start`,
             msg
           );
         }
@@ -549,21 +551,46 @@ export const useGameStore = defineStore("game", {
           this.isMission = true;
           this.isShowTurnMessage = false;
         }, 2000);
-      }else{
+      } else {
         // 턴 바꿈.
         if (this.throwChance === 0 && !this.isHorseEnd) {
           this.turnChange();
+        } else if (this.throwChance > 0) {
+          // 한번 더 메시지 출력.
+          setTimeout(() => {
+            this.turnMessage = "한번 더!!!";
+            this.isShowTurnMessage = true;
+            this.startTimer();
+          }, 1000);
+
+          setTimeout(() => {
+            this.turnMessage = "";
+            this.isShowTurnMessage = false;
+          }, 4000);
         }
       }
       this.isGoDiagonal = false;
       this.isCenterDir = false;
       // 초기화.
-      this.isHorseEnd = false;    
+      this.isHorseEnd = false;
     },
     // 미션 끝
-    missionEnd(val){
-      console.log("미션 종료 : " + val);
-      this.turnChange();
+    missionEnd() {
+      if (this.throwChance > 0) {
+        // 한번 더 메시지 출력.
+        setTimeout(() => {
+          this.turnMessage = "한번 더!!!";
+          this.isShowTurnMessage = true;
+          this.startTimer();
+        }, 1000);
+
+        setTimeout(() => {
+          this.turnMessage = "";
+          this.isShowTurnMessage = false;
+        }, 4000);
+      } else {
+        this.turnChange();
+      }
     },
     // 스턴
     horseStun(target, horseInfo) {
@@ -934,16 +961,16 @@ export const useGameStore = defineStore("game", {
         this.tiles[target].horse = [];
         this.throwChance += 1;
         // 말을 잡았으니 기회 한번더.
-        setTimeout(() => {
-          this.startTimer();
-          this.turnMessage = "한번 더!!!";
-          this.isShowTurnMessage = true;
-        }, 1000);
+        // setTimeout(() => {
+        //   this.startTimer();
+        //   this.turnMessage = "한번 더!!!";
+        //   this.isShowTurnMessage = true;
+        // }, 1000);
 
-        setTimeout(() => {
-          this.turnMessage = "";
-          this.isShowTurnMessage = false;
-        }, 4000);
+        // setTimeout(() => {
+        //   this.turnMessage = "";
+        //   this.isShowTurnMessage = false;
+        // }, 4000);
       }
 
       this.tiles[target].horse.push(...this.tiles[horseInfo.index].horse);
@@ -1169,7 +1196,6 @@ export const useGameStore = defineStore("game", {
       if (this.yutRes >= 4) {
         this.throwChance += 1;
       }
-      console.log("res = " + this.yutRes);
     },
     setYutText(res) {
       if (this.timerId !== null) {
