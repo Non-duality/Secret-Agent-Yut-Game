@@ -214,7 +214,8 @@ function gameHandleRecvMessage(receivedMsg) {
   console.log(receivedMsg);
   if (receivedMsg.actionCategory === 0 && useGameStore().redUser.length === 0) {
     setInfo(receivedMsg);
-  } else {
+  } 
+  else {
     useGameStore().receivedMsg = receivedMsg;
   }
 }

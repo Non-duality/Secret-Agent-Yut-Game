@@ -277,10 +277,6 @@ export default {
     const red = useGameStore().redUser;
     const blue = useGameStore().blueUser;
 
-    console.log("!!! 오픈비두 !!!")
-    console.log(red);
-    console.log(blue);
-
     if (useGameStore().myTeam === 1) {
       for (let i = 1; i <= 3; i++) {
         await this.delay2(700);

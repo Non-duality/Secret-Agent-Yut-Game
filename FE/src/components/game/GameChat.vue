@@ -1,22 +1,230 @@
 <template>
-  <div class="board-chat">
-    나중에 최소 최대 버튼 넣어서 크기 조절가능.
+  <div class="wait-chat">
+    <!-- 채팅 로그 -->
+    <div class="chat-container">
+      <div
+        v-for="(message, index) in reversedGameChat"
+        :key="index"
+        class="chat-log"
+      >
+        <span
+          :style="{
+            color: getColorForMessage(message).color,
+          }"
+          v-html="getColorForMessage(message).text"
+        ></span>
+      </div>
+    </div>
+
+    <!-- 입력 부분 -->
+    <div class="chat-input-div">
+      <input
+        class="chat-input"
+        type="text"
+        placeholder="메시지를 입력하시오."
+        v-model="msg"
+        @keyup.enter="sendLocalMessage"
+      />
+      <button class="send-btn" @click="sendLocalMessage">
+        <span>보내기</span>
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
-export default {
+import { useGameStore } from "@/store/gameStore";
+import { useUserStore } from "@/store/userStore";
+import { usePickStore } from "@/store/pickStore";
+import { socketSend } from "@/util/socket";
 
-}
+export default {
+  data() {
+    return {
+      msg: "",
+    };
+  },
+
+  computed: {
+    receivedMsg() {
+      const gameStore = useGameStore();
+      return gameStore.receivedMsg;
+    },
+
+    reversedGameChat() {
+      // roomChat 배열을 뒤집어 반환
+      return this.receivedMsg.slice().reverse();
+    },
+  },
+
+  watch: {
+    receivedMsg(newVal) {
+      switch (newVal.actionCategory) {
+        case 6:
+          useGameStore().gameChatMsg.push(newVal.message);
+          break;
+      }
+    },
+  },
+
+  methods: {
+    sendLocalMessage() {
+      if (this.msg === "") return;
+
+      const teamName = "";
+      if (usePickStore().code.includes("red")) teamName = "홍팀";
+      else teamName = "청팀";
+
+      const tempMSG = {
+        actionCategory: 6,
+        team: teamName,
+        nickname: useUserStore().userInfo.nickname,
+        message: this.msg,
+      };
+
+      socketSend(
+        "/pub/game/" + useUserStore().currentRoomInfo.roomCode + "/chat",
+        tempMSG
+      );
+
+      this.msg = "";
+    },
+
+    // 메시지의 종류에 따라 색상을 반환하는 메서드
+    getColorForMessage(message) {
+      if (message.includes("님이 입장하였습니다.")) {
+        return { color: "red", text: message };
+      } else if (message.includes("님이 퇴장하였습니다.")) {
+        return { color: "red", text: message };
+      } else {
+        const parts = message.split(" :"); // ":"를 기준으로 메시지를 분할
+
+        let idx = 0;
+
+        for (let i = 1; i <= 6; i++) {
+          if (
+            useUserStore().userInfo.nickname ===
+            useRoomStore().seatInfo[`seatnum${i}`].nickname
+          ) {
+            idx = i;
+            break;
+          }
+        }
+
+        if (useRoomStore().seatInfo[`seatnum${idx}`].team === 1) {
+          // 이름과 내용이 존재하는 경우
+          return {
+            text: `<span style="color: #ff0000; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
+          };
+        } else {
+          if (useRoomStore().seatInfo[`seatnum${idx}`].team === 2)
+            // 이름과 내용이 존재하는 경우
+            return {
+              text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
+            };
+        }
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>
-.board-chat{
-    color: white;
-    width:250px;
-    height: 250px;
-    background-color: rgba(0, 0, 0, 0.32);
-    border-radius: 10px;
-    border: 1px solid white;
+.board-chat {
+  color: white;
+  width: 27vw;
+  height: 22vh;
+  background-color: rgba(90, 90, 90, 0.409);
+  border-radius: 10px;
+  border: 1px solid white;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: scroll;
+  height: 120px;
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent;
+}
+
+.chat-name {
+  width: 80px;
+}
+
+.chat-div {
+  margin-left: 10px;
+  display: flex;
+  font-size: 14px;
+}
+/* 자기 자신은 다른 색으로 구별하였다 */
+.my-chat .chat-div {
+  color: green;
+}
+
+.chat-chat {
+  margin-left: 20px;
+}
+/* 입력 칸 */
+.chat-input-div {
+  border-radius: 10px;
+  border: 1px solid white;
+  height: 5vh;
+  width: 25vw;
+  text-align: left;
+  margin-left: 15px;
+  color: green;
+  display: flex;
+  justify-content: space-between;
+}
+
+.send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-right: 20px;
+  margin: 3px;
+  border-radius: 100px;
+  background-color: rgba(72, 27, 222, 0.637);
+}
+
+.send-btn:hover {
+  background-color: rgb(150, 33, 33);
+}
+
+.send-btn > span {
+  align-content: center;
+}
+
+.chat-input {
+  margin-left: 20px;
+  width: 17vw;
+  background-color: transparent;
+  border: none;
+  color: white;
+}
+
+/* input을 클릭 시 테두리가 있어 제거 */
+.chat-input:focus {
+  outline: none;
+}
+
+/* Chrome, Edge, Safari에서 스크롤바 스타일 설정 */
+.chat-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
 }
 </style>
