@@ -536,21 +536,26 @@ export const useGameStore = defineStore("game", {
 
       // 미션장소 체크
       if (this.missionTiles.includes(target)) {
-        const MsgModalStore = useMsgModalStore();
-        MsgModalStore.printMessage("미션 장소 도착");
+        this.turnMessage = "미션 장소 도착";
+        this.isShowTurnMessage = true;
         setTimeout(() => {
           this.isMission = true;
+          this.isShowTurnMessage = false;
         }, 2000);
+      }else{
+        // 턴 바꿈.
+        if (this.throwChance === 0 && !this.isHorseEnd) {
+          this.turnChange();
+        }
       }
-
       this.isGoDiagonal = false;
       this.isCenterDir = false;
-      // 턴 바꿈.
-      if (this.throwChance === 0 && !this.isHorseEnd) {
-        this.turnChange();
-      }
       // 초기화.
-      this.isHorseEnd = false;
+      this.isHorseEnd = false;    
+    },
+    // 미션 끝
+    missionEnd(){
+      this.turnChange();
     },
     // 스턴
     horseStun(target, horseInfo) {

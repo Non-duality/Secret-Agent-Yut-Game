@@ -1,13 +1,18 @@
 .card-game {
   display: flex;
   flex-direction: column;
+  text-align: center;
+  justify-content: center;
   align-items: center;
+  background-color: rgb(255, 165, 123);
+  border-radius: 20px;
+  width: 40%;
+  height: 50%;
 }
 
 .card-title {
-  margin-top: 50px;
   font-size: xx-large;
-  color: white;
+  font-weight: 600;
 }
 
 .card-container {
@@ -25,10 +30,6 @@
 .card-container .card-item:first-child {
   margin-left: 0;
 }
-/* 5번째 마다 오는 카드 항목에 대한 마진 제거 */
-.card-container .card-item:nth-child(5n) {
-  margin-left: 0;
-}
 .card-item {
   margin-top: 20px;
   background-color: white;
@@ -44,4 +45,22 @@
 
 .card-img {
   width: 30px;
+}
+.card-select{
+  border: 3px solid red;
+}
+.card-item:hover{
+  background-color: rgb(255, 121, 121);
+}
+.card-select-btn {
+  background-color: rgb(105, 159, 239);
+  width: 80px;
+  border-radius: 20px;
+  font-weight: bold;
+  color: black;
+  margin-right: 10px;
+}
+.card-select-btn:hover{
+    background-color: #f44336;
+    color: white;
 }

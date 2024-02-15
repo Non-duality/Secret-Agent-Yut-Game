@@ -40,10 +40,10 @@
       </div>
     </div>
 
-    <!-- <MiniGame v-show="isMission" /> -->
+    <MiniGame v-if="isMission"/>
     <GameChat class="game-chat-main" />
     <GameEnd
-      v-if="isGameEnd || true"
+      v-if="isGameEnd"
       class="game-end"
       :winMessage="winMessage"
       @closeModal="closeModal"
@@ -59,6 +59,7 @@ import { socketSend } from "@/util/socket.js";
 
 import { useUserStore } from "@/store/userStore";
 import { useGameStore } from "@/store/gameStore";
+import { useMiniGameStore } from "@/store/miniGameStore"
 
 import GameBoard from "@/components/game/GameBoard.vue";
 import GameChat from "@/components/game/GameChat.vue";
@@ -111,6 +112,9 @@ export default {
     // 미션 장소 체크.
     isMission() {
       const gameStore = useGameStore();
+      if(gameStore.isMission){
+        useMiniGameStore().isShowCardSelect = true;
+      }
       return gameStore.isMission;
     },
     // 게임 상태 체크
