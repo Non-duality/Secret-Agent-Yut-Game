@@ -93,11 +93,9 @@ export default {
           }
         }
 
-        if (useRoomStore().seatInfo[`seatnum${idx}`].team === 2)
-          // 이름과 내용이 존재하는 경우
-          return {
-            text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
-          };
+        return {
+          text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
+        };
       }
     },
   },
