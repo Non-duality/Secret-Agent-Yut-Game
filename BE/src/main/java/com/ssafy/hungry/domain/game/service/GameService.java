@@ -1,5 +1,6 @@
 package com.ssafy.hungry.domain.game.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hungry.domain.game.dto.*;
 import com.ssafy.hungry.domain.game.entity.UnitEntity;
 import com.ssafy.hungry.domain.game.entity.game.Game;
@@ -47,6 +48,7 @@ public class GameService {
     private final BlueTeamUnitRepository blueTeamUnitRepository;
     private final RedUnitHintRepository redUnitHintRepository;
     private final BlueUnitHintRepository blueUnitHintRepository;
+    private final ObjectMapper objectMapper;
 
 
     public int[] generateMissionRegion() {
@@ -144,9 +146,9 @@ public class GameService {
         String redSpyHint = "";
         String blueSpyHint = "";;
 
-//        Map<Integer, List<String>> blueUnitHints = new HashMap<>();
-//        Map<Integer, List<String>> redUnitHints = new HashMap<>();
-//        List<String> hints;
+        Map<Integer, List<String>> blueUnitHints = new HashMap<>();
+        Map<Integer, List<String>> redUnitHints = new HashMap<>();
+        List<String> hints;
 
         // 홍팀 유저들의 유닛 선택창 정보
         List<CurrentUnitPickDto> redTeamUnitPickInfo = pickRedisRepository.getCurrentUnitPickInfo("RedUnitInfo: " + roomCode);
@@ -167,13 +169,13 @@ public class GameService {
                 redSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다. " +
                         "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";
             }
-//            hints = new ArrayList<>();
-//            hints.add(unitInfo.getScal());
-//            hints.add(unitInfo.getStuff());
-//            hints.add(unitInfo.getContactor());
-//            hints.add(unitInfo.getTime());
-//            hints.add(unitInfo.getPlace());
-//            redUnitHints.put(unitInfo.getUnitId(), hints);
+            hints = new ArrayList<>();
+            hints.add(unitInfo.getScal());
+            hints.add(unitInfo.getStuff());
+            hints.add(unitInfo.getContactor());
+            hints.add(unitInfo.getTime());
+            hints.add(unitInfo.getPlace());
+            redUnitHints.put(unitInfo.getUnitId(), hints);
             redUnitList.add(unitInfo);
             i++;
         }
@@ -198,17 +200,18 @@ public class GameService {
                 blueSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다." +
                         "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";;
             }
-//            hints = new ArrayList<>();
-//            hints.add(unitInfo.getScal());
-//            hints.add(unitInfo.getStuff());
-//            hints.add(unitInfo.getContactor());
-//            hints.add(unitInfo.getTime());
-//            hints.add(unitInfo.getPlace());
-//            blueUnitHints.put(unitInfo.getUnitId(), hints);
+            hints = new ArrayList<>();
+            hints.add(unitInfo.getScal());
+            hints.add(unitInfo.getStuff());
+            hints.add(unitInfo.getContactor());
+            hints.add(unitInfo.getTime());
+            hints.add(unitInfo.getPlace());
+            blueUnitHints.put(unitInfo.getUnitId(), hints);
             blueUnitList.add(unitInfo);
             i++;
         }
 
+//        String blueJson =
 //        BlueUnitHint blueUnitHint = new BlueUnitHint(roomCode, new UnitHints(blueUnitHints));
 //        RedUnitHint redUnitHint = new RedUnitHint(roomCode, new UnitHints(redUnitHints));
 //        blueUnitHintRepository.save(blueUnitHint);
