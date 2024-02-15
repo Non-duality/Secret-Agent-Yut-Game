@@ -275,9 +275,10 @@ export default {
       return gameStore.reasoningChoose;
     },
     // 힌트 메시지
-    mySqyHint() {
+    mySpyHint() {
       const gameStore = useGameStore();
-      return gameStore.mySqyHint;
+      console.log("스파이 힌트 : " + gameStore.mySpyHint);
+      return gameStore.mySpyHint;
     },
   },
   watch: {

@@ -236,7 +236,7 @@ function setInfo(receivedMsg) {
   // 우리팀의 스파이
   useGameStore().mySpyId = receivedMsg.mySpyUnitId;
   // 힌트
-  useGameStore().mySqyHint = receivedMsg.mySqyHint;
+  useGameStore().mySpyHint = receivedMsg.mySpyHint;
 
   for (let i = 0; i <= 30; i++) {
     useGameStore().tiles[i].horse = [];
@@ -275,23 +275,23 @@ function setInfo(receivedMsg) {
     useGameStore().blueHorses[i].age = receivedMsg.blueTeamUnitList[i].age;
     useGameStore().blueHorses[i].skill = receivedMsg.blueTeamUnitList[i].skill;
     useGameStore().blueHorses[i].contactor =
-      useGameStore().myTeam === 2 && receivedMsg.redTeamUnitList[i].name !== '대왕'
+      useGameStore().myTeam === 2 && receivedMsg.blueTeamUnitList[i].name !== '대왕'
         ? "???"
-        : receivedMsg.redTeamUnitList[i].contactor;
+        : receivedMsg.blueTeamUnitList[i].contactor;
     useGameStore().blueHorses[i].place =
-      useGameStore().myTeam === 2 && receivedMsg.redTeamUnitList[i].name !== '대왕'
+      useGameStore().myTeam === 2 && receivedMsg.blueTeamUnitList[i].name !== '대왕'
         ? "???"
-        : receivedMsg.redTeamUnitList[i].place;
+        : receivedMsg.blueTeamUnitList[i].place;
     useGameStore().blueHorses[i].scal =
-      useGameStore().myTeam === 2 && receivedMsg.redTeamUnitList[i].name !== '대왕'
-      ? "???" : receivedMsg.redTeamUnitList[i].scal;
+      useGameStore().myTeam === 2 && receivedMsg.blueTeamUnitList[i].name !== '대왕'
+      ? "???" : receivedMsg.blueTeamUnitList[i].scal;
     useGameStore().blueHorses[i].stuff =
-      useGameStore().myTeam === 2 && receivedMsg.redTeamUnitList[i].name !== '대왕'
+      useGameStore().myTeam === 2 && receivedMsg.blueTeamUnitList[i].name !== '대왕'
         ? "???"
-        : receivedMsg.redTeamUnitList[i].stuff;
+        : receivedMsg.blueTeamUnitList[i].stuff;
     useGameStore().blueHorses[i].time =
-      useGameStore().myTeam === 2 && receivedMsg.redTeamUnitList[i].name !== '대왕'
-      ? "???" : receivedMsg.redTeamUnitList[i].time;
+      useGameStore().myTeam === 2 && receivedMsg.blueTeamUnitList[i].name !== '대왕'
+      ? "???" : receivedMsg.blueTeamUnitList[i].time;
     useGameStore().blueHorses[i].id = receivedMsg.blueTeamUnitList[i].unitId;
     useGameStore().blueHorses[i].index = 0;
     useGameStore().blueHorses[i].team = 2;
