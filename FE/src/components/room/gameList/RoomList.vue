@@ -23,7 +23,7 @@
       </div>
       <div class="room-list-content">
         <RoomListComponent
-          v-for="roomInfo in filteredRoomInfos"
+          v-for="roomInfo in roomInfos"
           :key="roomInfo.roomId"
           :roomInfo="roomInfo"
           @click="selectRoom(roomInfo)"
@@ -59,14 +59,21 @@ export default {
     return {
       isRotating: false,
       selectedRoomId: null,
-      filteredRoomInfos: []
+      isFiltered: false,
+      query: ""
     };
   },
 
   computed: {
     // 방 정보를 실시간으로 계산
     roomInfos() {
-      return useRoomStore().roomList;
+      if (this.isFiltered) {
+        return useRoomStore().roomList.filter(room => {
+          return room.title.includes(this.query)
+        })
+      } else {
+        return useRoomStore().roomList;
+      }
     },
   },
 
@@ -76,19 +83,15 @@ export default {
       this.$emit("showRoomInfo", roomInfo);
     },
 
-    async refresh() {
+    refresh() {
       this.isRotating = true;
       // 애니메이션 종료 후 다시 false로
-      try {
+      setTimeout(() => {
+        this.isFiltered = false
+        this.isRotating = false;
         const roomStore = useRoomStore();
-        await roomStore.getRoomSomeListData();
-        this.filteredRoomInfos = this.roomInfos
-        setTimeout(() => {
-          this.isRotating = false;
-        }, 2000);
-      } catch (error) {
-        console.log("방 조회 에러", error)
-      }
+        roomStore.getRoomSomeListData();
+      }, 2000);
     },
 
     // 방 선택 로직 추가
@@ -106,18 +109,15 @@ export default {
 
     // 방 필터링하기
     searchRooms(query) {
-      if (!query) {
-        this.filteredRoomInfos = this.roomInfos
-      } else {
-        this.filteredRoomInfos = this.roomInfos.filter(room => {
-          return room.title.includes(query)
-        })
+      if (query) {
+        this.isFiltered = true
+        this.query = query
       }
     }
   },
 
   mounted() {
-    this.filteredRoomInfos = this.roomInfos
+    this.query = false
     setTimeout(() => {
       if (this.roomInfos.length > 0) {
         this.selectedRoomId = this.roomInfos[0].roomId;

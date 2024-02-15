@@ -2,14 +2,16 @@
   <div class="board-chat">
     <div class="chat-container">
       <div
-        v-for="(message, index) in reversedRoomChat"
+        v-for="(message, index) in gameChatMsg"
         :key="index"
         class="chat-log"
       >
-        <!-- <span
+        <span
+          :style="{
+            color: getColorForMessage(message).color,
+          }"
           v-html="getColorForMessage(message).text"
-        ></span> -->
-        <span>{{ message }}</span>
+        ></span>
       </div>
     </div>
 
@@ -44,18 +46,25 @@ export default {
   computed: {
     gameChatMsg() {
       const gameStore = useGameStore();
+      console.log(this.reversedRoomChat);
       return gameStore.gameChatMsg;
     },
-    reversedRoomChat() {
-      // roomChat 배열을 뒤집어 반환
-      return this.gameChatMsg.slice().reverse();
+    // reversedRoomChat() {
+    //   const gameStore = useGameStore();
+    //   return gameStore.gameChatMsg.slice().reverse();
+    // },
+    receivedMsg() {
+      const gameStore = useGameStore();
+      return gameStore.receivedMsg;
     },
   },
 
   watch: {
     receivedMsg(newVal) {
       const gameStore = useGameStore();
-      if (newVal.actionCategory === 6) {
+      if (newVal.actionCategory === 0) {
+        console.log("내가 찍었어요!!!!!!!!!!!!!!!!");
+        console.log("[" + newVal.nickname + "] : " + newVal.message);
         gameStore.gameChatMsg.push(
           "[" + newVal.nickname + "] : " + newVal.message
         );
