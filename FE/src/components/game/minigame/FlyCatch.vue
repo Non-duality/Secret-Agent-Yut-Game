@@ -159,6 +159,7 @@
             this.webcamRunning = false
             this.clearFlyCanvas()
             this.gameResult = true
+            this.$emit('endMinigame', this.victory)
           }
         }, 1000)
       },
@@ -217,7 +218,6 @@
             this.clearFlyCanvas()
             this.victory = true
             this.gameResult = true
-            this.$emit('endMinigame', this.victory)
         }
         // 인식된 손 정보
         if (this.results.gestures.length == 1) {
