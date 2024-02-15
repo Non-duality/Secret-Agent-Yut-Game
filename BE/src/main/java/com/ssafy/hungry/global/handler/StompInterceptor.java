@@ -57,7 +57,6 @@ public class StompInterceptor implements ChannelInterceptor {
                     log.info("소켓통신에서 토큰 검증");
                     String email = jwtUtil.getUserId(token);
                     StompPrincipal user = new StompPrincipal(accessor.getUser().getName());
-                    principalRepository.save(new PrincipalEntity(user.getName(), email));
                     sessionRepository.save(new SessionEntity(email, user));
                     principalRepository.save(new PrincipalEntity(user.getName(), email));
                 } else {
