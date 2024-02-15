@@ -46,7 +46,6 @@ export default {
   computed: {
     gameChatMsg() {
       const gameStore = useGameStore();
-      console.log(this.reversedRoomChat);
       return gameStore.gameChatMsg;
     },
     // reversedRoomChat() {
