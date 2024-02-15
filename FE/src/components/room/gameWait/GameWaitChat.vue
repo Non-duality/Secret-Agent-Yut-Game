@@ -94,7 +94,7 @@ export default {
         }
 
         return {
-          text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
+          text: `<span style="color: #9bff9bcb; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
         };
       }
     },
