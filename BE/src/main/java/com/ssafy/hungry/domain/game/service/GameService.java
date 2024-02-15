@@ -144,9 +144,9 @@ public class GameService {
         String redSpyHint = "";
         String blueSpyHint = "";;
 
-        Map<Integer, ArrayList<String>> blueUnitHints = new HashMap<>();
-        Map<Integer, ArrayList<String>> redUnitHints = new HashMap<>();
-        ArrayList<String> hints;
+//        Map<Integer, ArrayList<String>> blueUnitHints = new HashMap<>();
+//        Map<Integer, ArrayList<String>> redUnitHints = new HashMap<>();
+//        ArrayList<String> hints;
 
         // 홍팀 유저들의 유닛 선택창 정보
         List<CurrentUnitPickDto> redTeamUnitPickInfo = pickRedisRepository.getCurrentUnitPickInfo("RedUnitInfo: " + roomCode);
@@ -167,13 +167,13 @@ public class GameService {
                 redSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다. " +
                         "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";
             }
-            hints = new ArrayList<>();
-            hints.add(unitInfo.getScal());
-            hints.add(unitInfo.getStuff());
-            hints.add(unitInfo.getContactor());
-            hints.add(unitInfo.getTime());
-            hints.add(unitInfo.getPlace());
-            redUnitHints.put(unitInfo.getUnitId(), hints);
+//            hints = new ArrayList<>();
+//            hints.add(unitInfo.getScal());
+//            hints.add(unitInfo.getStuff());
+//            hints.add(unitInfo.getContactor());
+//            hints.add(unitInfo.getTime());
+//            hints.add(unitInfo.getPlace());
+//            redUnitHints.put(unitInfo.getUnitId(), hints);
             redUnitList.add(unitInfo);
             i++;
         }
@@ -198,25 +198,25 @@ public class GameService {
                 blueSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다." +
                         "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";;
             }
-            hints = new ArrayList<>();
-            hints.add(unitInfo.getScal());
-            hints.add(unitInfo.getStuff());
-            hints.add(unitInfo.getContactor());
-            hints.add(unitInfo.getTime());
-            hints.add(unitInfo.getPlace());
-            blueUnitHints.put(unitInfo.getUnitId(), hints);
+//            hints = new ArrayList<>();
+//            hints.add(unitInfo.getScal());
+//            hints.add(unitInfo.getStuff());
+//            hints.add(unitInfo.getContactor());
+//            hints.add(unitInfo.getTime());
+//            hints.add(unitInfo.getPlace());
+//            blueUnitHints.put(unitInfo.getUnitId(), hints);
             blueUnitList.add(unitInfo);
             i++;
         }
 
-        BlueUnitHint blueUnitHint = new BlueUnitHint();
-        RedUnitHint redUnitHint = new RedUnitHint();
-        blueUnitHint.setUnitHint(blueUnitHints);
-        blueUnitHint.setRoomCode(roomCode);
-        redUnitHint.setUnitHint(redUnitHints);
-        redUnitHint.setRoomCode(roomCode);
-        blueUnitHintRepository.save(blueUnitHint);
-        redUnitHintRepository.save(redUnitHint);
+//        BlueUnitHint blueUnitHint = new BlueUnitHint();
+//        RedUnitHint redUnitHint = new RedUnitHint();
+//        blueUnitHint.setUnitHint(blueUnitHints);
+//        blueUnitHint.setRoomCode(roomCode);
+//        redUnitHint.setUnitHint(redUnitHints);
+//        redUnitHint.setRoomCode(roomCode);
+//        blueUnitHintRepository.save(blueUnitHint);
+//        redUnitHintRepository.save(redUnitHint);
 
         int[] missionRegion = this.generateMissionRegion();
 
