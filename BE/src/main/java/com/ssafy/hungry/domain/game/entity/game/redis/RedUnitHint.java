@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,5 +14,5 @@ import java.util.Map;
 public class RedUnitHint {
     @Id
     private String roomCode;
-    private Map<Integer, List<String>> unitHint;
+    private Map<Integer, ArrayList<String>> unitHint = new HashMap<>();
 }

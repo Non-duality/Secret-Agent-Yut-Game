@@ -144,9 +144,9 @@ public class GameService {
         String redSpyHint = "";
         String blueSpyHint = "";;
 
-//        Map<Integer, List<String>> blueUnitHints = new HashMap<>();
-//        Map<Integer, List<String>> redUnitHints = new HashMap<>();
-//        List<String> hints;
+        Map<Integer, ArrayList<String>> blueUnitHints = new HashMap<>();
+        Map<Integer, ArrayList<String>> redUnitHints = new HashMap<>();
+        ArrayList<String> hints;
 
         // 홍팀 유저들의 유닛 선택창 정보
         List<CurrentUnitPickDto> redTeamUnitPickInfo = pickRedisRepository.getCurrentUnitPickInfo("RedUnitInfo: " + roomCode);
@@ -167,13 +167,13 @@ public class GameService {
                 redSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다. " +
                         "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";
             }
-//            hints = new ArrayList<>();
-//            hints.add(unitInfo.getScal());
-//            hints.add(unitInfo.getStuff());
-//            hints.add(unitInfo.getContactor());
-//            hints.add(unitInfo.getTime());
-//            hints.add(unitInfo.getPlace());
-//            redUnitHints.put(unitInfo.getUnitId(), hints);
+            hints = new ArrayList<>();
+            hints.add(unitInfo.getScal());
+            hints.add(unitInfo.getStuff());
+            hints.add(unitInfo.getContactor());
+            hints.add(unitInfo.getTime());
+            hints.add(unitInfo.getPlace());
+            redUnitHints.put(unitInfo.getUnitId(), hints);
             redUnitList.add(unitInfo);
             i++;
         }
@@ -198,25 +198,25 @@ public class GameService {
                 blueSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다." +
                         "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";;
             }
-//            hints = new ArrayList<>();
-//            hints.add(unitInfo.getScal());
-//            hints.add(unitInfo.getStuff());
-//            hints.add(unitInfo.getContactor());
-//            hints.add(unitInfo.getTime());
-//            hints.add(unitInfo.getPlace());
-//            blueUnitHints.put(unitInfo.getUnitId(), hints);
+            hints = new ArrayList<>();
+            hints.add(unitInfo.getScal());
+            hints.add(unitInfo.getStuff());
+            hints.add(unitInfo.getContactor());
+            hints.add(unitInfo.getTime());
+            hints.add(unitInfo.getPlace());
+            blueUnitHints.put(unitInfo.getUnitId(), hints);
             blueUnitList.add(unitInfo);
             i++;
         }
 
-//        BlueUnitHint blueUnitHint = new BlueUnitHint();
-//        RedUnitHint redUnitHint = new RedUnitHint();
-//        blueUnitHint.setUnitHint(blueUnitHints);
-//        blueUnitHint.setRoomCode(roomCode);
-//        redUnitHint.setUnitHint(redUnitHints);
-//        redUnitHint.setRoomCode(roomCode);
-//        blueUnitHintRepository.save(blueUnitHint);
-//        redUnitHintRepository.save(redUnitHint);
+        BlueUnitHint blueUnitHint = new BlueUnitHint();
+        RedUnitHint redUnitHint = new RedUnitHint();
+        blueUnitHint.setUnitHint(blueUnitHints);
+        blueUnitHint.setRoomCode(roomCode);
+        redUnitHint.setUnitHint(redUnitHints);
+        redUnitHint.setRoomCode(roomCode);
+        blueUnitHintRepository.save(blueUnitHint);
+        redUnitHintRepository.save(redUnitHint);
 
         int[] missionRegion = this.generateMissionRegion();
 
@@ -625,9 +625,9 @@ public class GameService {
             //유닛 힌트 객체 가져오기
             RedUnitHint redUnitHint = redUnitHintRepository.findById(roomCode).get();
             //해시맵 가져오기
-            Map<Integer, List<String>> unitHints = redUnitHint.getUnitHint();
+            Map<Integer, ArrayList<String>> unitHints = redUnitHint.getUnitHint();
             //해시맵에서 유닛 아이디로 검색
-            List<String> hints = unitHints.get(unitId);
+            ArrayList<String> hints = unitHints.get(unitId);
             //리스트에서 마지막으로 입력된 힌트 가져오기
             hint = hints.remove(hints.size() - 1);
             //다시 해시맵에 입력
@@ -640,9 +640,9 @@ public class GameService {
             //유닛 힌트 객체 가져오기
             BlueUnitHint blueUnitHint = blueUnitHintRepository.findById(roomCode).get();
             //해시맵 가져오기
-            Map<Integer, List<String>> unitHints = blueUnitHint.getUnitHint();
+            Map<Integer, ArrayList<String>> unitHints = blueUnitHint.getUnitHint();
             //해시맵에서 유닛 아이디로 검색
-            List<String> hints = unitHints.get(unitId);
+            ArrayList<String> hints = unitHints.get(unitId);
             //리스트에서 마지막으로 입력된 힌트 가져오기
             hint = hints.remove(hints.size() - 1);
             //다시 해시맵에 입력
