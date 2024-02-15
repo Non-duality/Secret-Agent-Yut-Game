@@ -460,7 +460,7 @@ export const useGameStore = defineStore("game", {
             unitId : arr,
           };
           // 말 들어오면 밀정인지 체크하기 위헤 서버 전송 이따.
-          // socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/unit-gole`, msg);
+          socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/unit-gole`, msg);
 
           // 턴 바꿈.
           if (this.throwChance === 0) {
@@ -541,7 +541,7 @@ export const useGameStore = defineStore("game", {
       this.isGoDiagonal = false;
       this.isCenterDir = false;
       // 턴 바꿈.
-      if (this.throwChance === 0) {
+      if (this.throwChance === 0 && !this.isHorseEnd) {
         this.turnChange();
       }
       // 초기화.
@@ -981,7 +981,7 @@ export const useGameStore = defineStore("game", {
             unitId : arr,
           };
           // 말 들어오면 밀정인지 체크하기 위헤 서버 전송 이따.
-          // socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/unit-gole`, msg);
+          socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/unit-gole`, msg);
 
         }, 300);
       }

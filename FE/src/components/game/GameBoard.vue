@@ -257,11 +257,10 @@ export default {
   },
   watch: {
     receivedMsg(newVal) {
-      const gameStore = useGameStore();
       console.log(newVal);
       switch (newVal.actionCategory) {
         case 1:
-          if (!gameStore.isThrowYut) {
+          if (!useGameStore().isThrowYut) {
             this.receiveYutRes();
           }
           break;
@@ -270,43 +269,43 @@ export default {
           // boolean값들 초기화.
           this.isSelectedHorse = false;
           this.canSelectHorse = false;
-          gameStore.isSelect = false;
+          useGameStore().isSelect = false;
           break;
         case 3:
-          gameStore.reasoningChoose = false;
+        useGameStore().reasoningChoose = false;
 
           // 성공
           if (newVal.spy) {
-            this.warningMessage = gameStore.teamTurn ? "청팀" : "홍팀";
+            this.warningMessage = useGameStore().teamTurn ? "청팀" : "홍팀";
             this.warningMessage =
               this.warningMessage + "이 밀정잡이에 성공하였습니다.";
 
-            if (newVal.team === gameStore.myTeam) {
-              gameStore.isFindSpy = true;
+            if (newVal.team === useGameStore().myTeam) {
+              useGameStore().isFindSpy = true;
             } else {
-              gameStore.isEnemyFindSpy = true;
+              useGameStore().isEnemyFindSpy = true;
             }
 
             // 해당 말이 밀정이면
             if (newVal.team === 1) {
-              for (let i = 0; i < gameStore.redHorses.length; i++) {
-                if (newVal.selectedUnit === gameStore.redHorses[i].id) {
-                  gameStore.redHorses[i].kill = true;
-                  gameStore.redHorses[i].status = "end";
-                  gameStore.redHorses[i].index = 0;
-                  gameStore.redEnd += 1;
-                  this.warningMessageSecond = gameStore.redHorses[i].name;
+              for (let i = 0; i < useGameStore().redHorses.length; i++) {
+                if (newVal.selectedUnit === useGameStore().redHorses[i].id) {
+                  useGameStore().redHorses[i].kill = true;
+                  useGameStore().redHorses[i].status = "end";
+                  useGameStore().redHorses[i].index = 0;
+                  useGameStore().redEnd += 1;
+                  this.warningMessageSecond = useGameStore().redHorses[i].name;
                   break;
                 }
               }
             } else {
-              for (let i = 0; i < gameStore.blueHorses.length; i++) {
-                if (newVal.selectedUnit === gameStore.blueHorses[i].id) {
-                  gameStore.blueHorses[i].kill = true;
-                  gameStore.blueHorses[i].status = "end";
-                  gameStore.blueHorses[i].index = 0;
-                  gameStore.blueEnd += 1;
-                  this.warningMessageSecond = gameStore.blueHorses[i].name;
+              for (let i = 0; i < useGameStore().blueHorses.length; i++) {
+                if (newVal.selectedUnit === useGameStore().blueHorses[i].id) {
+                  useGameStore().blueHorses[i].kill = true;
+                  useGameStore().blueHorses[i].status = "end";
+                  useGameStore().blueHorses[i].index = 0;
+                  useGameStore().blueEnd += 1;
+                  this.warningMessageSecond = useGameStore().blueHorses[i].name;
                   break;
                 }
               }
@@ -319,7 +318,7 @@ export default {
 
             setTimeout(() => {
               this.isShowWarningMessage = false;
-              gameStore.startTimer();
+              useGameStore().startTimer();
             }, 2000);
           }
           // 실패
