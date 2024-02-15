@@ -25,6 +25,20 @@
       <span class="game-board-warning-message">{{ warningMessageSecond }}</span>
     </div>
 
+    <!-- 힌트 메시지 -->
+    <div
+      class="game-board-hint-container"
+      @mouseover="hintMouseOver"
+      @mouseleave="hintMouseLeave"
+    >
+      <img class="game-board-hint-container-img" src="@/assets/icon/hint.png" />
+      <div v-if="isShowHint" class="game-board-hint-text-container">
+        <div class="game-board-hint-text">
+          {{ mySqyHint }}
+        </div>
+      </div>
+    </div>
+
     <!-- 타이머 -->
     <div class="game-board-timer-container">
       <span
@@ -132,6 +146,7 @@ export default {
       isShowGoDig: false, // 대각선으로 갈지 말지 선택.
       isShowResText: false, // 윷결과 텍스트 출력
       isHorseSelect: false, // 미션 성공 시 말 선택.
+      isShowHint: false,
       yutText: "", // 윷 결과 문자.
       goModalText1: "",
       goModalText2: "",
@@ -258,6 +273,11 @@ export default {
     reasoningChoose() {
       const gameStore = useGameStore();
       return gameStore.reasoningChoose;
+    },
+    // 힌트 메시지
+    mySqyHint() {
+      const gameStore = useGameStore();
+      return gameStore.mySqyHint;
     },
   },
   watch: {
@@ -468,19 +488,19 @@ export default {
               if (newVal.unitId === gameStore.redHorses[i].id) {
                 switch (newVal.category) {
                   case 1:
-                gameStore.redHorses[i].scal = newVal.hint;
+                    gameStore.redHorses[i].scal = newVal.hint;
                     break;
                   case 2:
-                gameStore.redHorses[i].stuff = newVal.hint;
+                    gameStore.redHorses[i].stuff = newVal.hint;
                     break;
                   case 3:
-                gameStore.redHorses[i].contactor = newVal.hint;
+                    gameStore.redHorses[i].contactor = newVal.hint;
                     break;
                   case 4:
-                gameStore.redHorses[i].time = newVal.hint;
+                    gameStore.redHorses[i].time = newVal.hint;
                     break;
                   case 5:
-                gameStore.redHorses[i].place = newVal.hint;
+                    gameStore.redHorses[i].place = newVal.hint;
                     break;
                 }
                 this.warningMessage += gameStore.redHorses[i].name;
@@ -492,19 +512,19 @@ export default {
               if (newVal.unitId === gameStore.blueHorses[i].id) {
                 switch (newVal.category) {
                   case 1:
-                gameStore.blueHorses[i].scal = newVal.hint;
+                    gameStore.blueHorses[i].scal = newVal.hint;
                     break;
                   case 2:
-                gameStore.blueHorses[i].stuff = newVal.hint;
+                    gameStore.blueHorses[i].stuff = newVal.hint;
                     break;
                   case 3:
-                gameStore.blueHorses[i].contactor = newVal.hint;
+                    gameStore.blueHorses[i].contactor = newVal.hint;
                     break;
                   case 4:
-                gameStore.blueHorses[i].time = newVal.hint;
+                    gameStore.blueHorses[i].time = newVal.hint;
                     break;
                   case 5:
-                gameStore.blueHorses[i].place = newVal.hint;
+                    gameStore.blueHorses[i].place = newVal.hint;
                     break;
                 }
                 this.warningMessage += gameStore.blueHorses[i].name;
@@ -526,6 +546,12 @@ export default {
     },
   },
   methods: {
+    hintMouseOver() {
+      this.isShowHint = true;
+    },
+    hintMouseLeave() {
+      this.isShowHint = false;
+    },
     // 로딩 완료 후 게임 시작.
     gameStart() {
       const gameStore = useGameStore();
