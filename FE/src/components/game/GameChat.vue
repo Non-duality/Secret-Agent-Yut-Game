@@ -1,21 +1,22 @@
 <template>
   <div class="board-chat">
-    <!-- <div class="chat-container">
+    <div class="chat-container">
       <div
         v-for="(message, index) in reversedGameChat"
         :key="index"
         class="chat-log"
       >
-        <span
+        <!-- <span
           :style="{
             color: getColorForMessage(message).color,
           }"
           v-html="getColorForMessage(message).text"
-        ></span>
+        ></span> -->
+        <span>{{ message }}</span>
       </div>
-    </div> -->
+    </div>
 
-    <!-- <div class="chat-input-div">
+    <div class="chat-input-div">
       <input
         class="chat-input"
         type="text"
@@ -26,7 +27,7 @@
       <button class="send-btn" @click="sendLocalMessage">
         <span>보내기</span>
       </button>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -37,83 +38,87 @@ import { usePickStore } from "@/store/pickStore";
 import { socketSend } from "@/util/socket";
 
 export default {
-  // data() {
-  //   return {
-  //     msg: "",
-  //   };
-  // },
+  data() {
+    return {
+      msg: "",
+    };
+  },
 
-  // computed: {
-  //   receivedMsg() {
-  //     const gameStore = useGameStore();
-  //     return gameStore.receivedMsg;
-  //   },
+  computed: {
+    receivedMsg() {
+      const gameStore = useGameStore();
+      return gameStore.receivedMsg;
+    },
 
-  //   reversedGameChat() {
-  //     return this.receivedMsg;
-  //   },
-  // },
+    reversedGameChat() {
+      return this.receivedMsg;
+    },
+  },
 
-  // watch: {
-  //   receivedMsg(newVal) {
-  //     switch (newVal.actionCategory) {
-  //       case 6:
-  //         useGameStore().gameChatMsg.push(newVal.message);
-  //         break;
-  //     }
-  //   },
-  // },
+  watch: {
+    receivedMsg(newVal) {
+      switch (newVal.actionCategory) {
+        case 6:
+          useGameStore().gameChatMsg.push(newVal.message);
+          break;
+      }
+    },
+  },
 
-  // methods: {
-  //   sendLocalMessage() {
-  //     if (this.msg === "") return;
+  methods: {
+    sendLocalMessage() {
+      if (this.msg === "") return;
 
-  //     const teamName = "";
-  //     if (usePickStore().code.includes("red")) teamName = "홍팀";
-  //     else teamName = "청팀";
+      const teamName = "";
+      if (usePickStore().code.includes("red")) teamName = "홍팀";
+      else teamName = "청팀";
 
-  //     const tempMSG = {
-  //       actionCategory: 6,
-  //       team: teamName,
-  //       nickname: useUserStore().userInfo.nickname,
-  //       message: this.msg,
-  //     };
+      console.log(teamName);
 
-  //     socketSend(
-  //       "/pub/game/" + useUserStore().currentRoomInfo.roomCode + "/chat",
-  //       tempMSG
-  //     );
+      const tempMSG = {
+        actionCategory: 6,
+        team: teamName,
+        nickname: useUserStore().userInfo.nickname,
+        message: this.msg,
+      };
 
-  //     this.msg = "";
-  //   },
+      console.log(tempMSG);
 
-  //   // 메시지의 종류에 따라 색상을 반환하는 메서드
-  //   getColorForMessage(message) {
-  //     if (message.includes("님이 입장하였습니다.")) {
-  //       return { color: "red", text: message };
-  //     } else if (message.includes("님이 퇴장하였습니다.")) {
-  //       return { color: "red", text: message };
-  //     } else {
-  //       const parts = message.split(" :"); // ":"를 기준으로 메시지를 분할
+      socketSend(
+        "/pub/game/" + useUserStore().currentRoomInfo.roomCode + "/chat",
+        tempMSG
+      );
 
-  //       let idx = 0;
+      this.msg = "";
+    },
 
-  //       for (let i = 1; i <= 6; i++) {
-  //         if (
-  //           useUserStore().userInfo.nickname ===
-  //           useRoomStore().seatInfo[`seatnum${i}`].nickname
-  //         ) {
-  //           idx = i;
-  //           break;
-  //         }
-  //       }
+    // 메시지의 종류에 따라 색상을 반환하는 메서드
+    getColorForMessage(message) {
+      if (message.includes("님이 입장하였습니다.")) {
+        return { color: "red", text: message };
+      } else if (message.includes("님이 퇴장하였습니다.")) {
+        return { color: "red", text: message };
+      } else {
+        const parts = message.split(" :"); // ":"를 기준으로 메시지를 분할
 
-  //       return {
-  //         text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
-  //       };
-  //     }
-  //   },
-  // },
+        let idx = 0;
+
+        // for (let i = 1; i <= 6; i++) {
+        //   if (
+        //     useUserStore().userInfo.nickname ===
+        //     useRoomStore().seatInfo[`seatnum${i}`].nickname
+        //   ) {
+        //     idx = i;
+        //     break;
+        //   }
+        // }
+
+        // return {
+        //   text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
+        // };
+      }
+    },
+  },
 };
 </script>
 
@@ -174,7 +179,7 @@ export default {
   background-color: rgba(72, 27, 222, 0.637);
 }
 
-.send-btn > span{
+.send-btn > span {
   display: flex;
 }
 

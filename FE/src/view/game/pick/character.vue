@@ -47,7 +47,11 @@
             <div class="character-item">
               <img
                 class="sample-img"
-                :src="getCharacterImage(user.selectUnitId)"
+                :src="
+                  getCharacterImage(user.selectUnitId)
+                    ? getCharacterImage(user.selectUnitId)
+                    : imgs
+                "
               />
               <p>{{ user.nickname }}</p>
             </div>
@@ -115,6 +119,7 @@ import cavalry from "@/assets/img/game/pick/cavalry.png";
 import peasant from "@/assets/img/game/pick/peasant.png";
 import slave from "@/assets/img/game/pick/slave.png";
 import spearman from "@/assets/img/game/pick/spearman.png";
+import alternativeImage from "@/assets/img/1.png";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -173,6 +178,8 @@ export default {
       isLeader: false,
 
       myTeamUsers: [],
+
+      imgs: alternativeImage,
     };
   },
 
@@ -584,7 +591,7 @@ export default {
         this.myUserName = useUserStore().userInfo.nickname;
         this.mySessionId = usePickStore().code.replace(/\//g, "");
         this.joinSession();
-      }, 1500 * myTurnNumber);
+      }, 500 * myTurnNumber);
 
       // (3) 서버에게 받은 현재 픽 해야하는 이메일과 타임을 가져온다.
       setTimeout(async () => {
@@ -663,7 +670,7 @@ export default {
         }
 
         // 1초 뒤 현재 상황 대기
-      }, 1000 * (4 - myTurnNumber));
+      }, 500 * (4 - myTurnNumber));
     }, 50);
   },
 

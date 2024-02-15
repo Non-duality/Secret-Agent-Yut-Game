@@ -323,22 +323,24 @@ export default {
     setTimeout(async () => {
       if (useGameStore().myTeam === 1) {
         for (let i = 1; i <= 3; i++) {
+          await this.delay2(500);
           if (this.myUserName === red[i - 1].nickname) {
-            await this.delay2(500);
+            await this.delay2(50);
             this.joinSession();
             break;
           }
         }
       } else {
         for (let i = 1; i <= 3; i++) {
+          await this.delay2(500);
           if (this.myUserName === blue[i - 1].nickname) {
-            await this.delay2(500);
+            await this.delay2(150);
             this.joinSession();
             break;
           }
         }
       }
-    }, 500);
+    }, 2000);
   },
 };
 </script>
