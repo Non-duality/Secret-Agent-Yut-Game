@@ -44,11 +44,12 @@ export default {
   computed: {
     gameChatMsg() {
       const gameStore = useGameStore();
-      console.log(gameStore.gameChatMsg.slice.reverse());
+      console.log(this.reversedRoomChat);
       return gameStore.gameChatMsg;
     },
     reversedRoomChat() {
-      return this.gameChatMsg.slice().reverse();
+      const gameStore = useGameStore();
+      return gameStore.gameChatMsg.slice().reverse();
     },
   },
 
