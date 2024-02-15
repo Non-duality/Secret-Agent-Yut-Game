@@ -322,23 +322,23 @@ export default {
           }
           // 실패
           else {
-            this.warningMessage = gameStore.teamTurn ? "청팀" : "홍팀";
+            this.warningMessage = useGameStore().teamTurn ? "청팀" : "홍팀";
             this.warningMessage =
               this.warningMessage + "이 밀정잡이에 실패하였습니다.";
             // 밀정이 아니면. 3턴 이동 금지
             if (newVal.team === 1) {
-              for (let i = 0; i < gameStore.redHorses.length; i++) {
-                if (newVal.selectedUnit === gameStore.redHorses[i].id) {
-                  gameStore.redHorses[i].stun += 3;
-                  this.warningMessageSecond = gameStore.redHorses[i].name;
+              for (let i = 0; i < useGameStore().redHorses.length; i++) {
+                if (newVal.selectedUnit === useGameStore().redHorses[i].id) {
+                  useGameStore().redHorses[i].stun += 3;
+                  this.warningMessageSecond = useGameStore().redHorses[i].name;
                   break;
                 }
               }
             } else {
-              for (let i = 0; i < gameStore.redHorses.length; i++) {
-                if (newVal.selectedUnit === gameStore.blueHorses[i].id) {
-                  gameStore.blueHorses[i].stun += 3;
-                  this.warningMessageSecond = gameStore.blueHorses[i].name;
+              for (let i = 0; i < useGameStore().redHorses.length; i++) {
+                if (newVal.selectedUnit === useGameStore().blueHorses[i].id) {
+                  useGameStore().blueHorses[i].stun += 3;
+                  this.warningMessageSecond = useGameStore().blueHorses[i].name;
                   break;
                 }
               }
@@ -351,27 +351,26 @@ export default {
             // 여유.
             setTimeout(() => {
               this.isShowWarningMessage = false;
-              gameStore.turnChange();
+              useGameStore().turnChange();
             }, 2000);
           }
           break;
         case 4:
-          gameStore.isShowReasoning = false;
+        useGameStore().isShowReasoning = false;
           if (newVal.reasoningChoose) {
-            gameStore.reasoningChoose = true;
-            if (gameStore.teamTurn) {
-              if (gameStore.myTeam === 2) gameStore.ticket -= 1;
-              else gameStore.enemyTicket -= 1;
+            useGameStore().reasoningChoose = true;
+            if (useGameStore().teamTurn) {
+              if (useGameStore().myTeam === 2) useGameStore().ticket -= 1;
+              else useGameStore().enemyTicket -= 1;
             } else {
-              if (gameStore.myTeam === 1) gameStore.ticket -= 1;
-              else gameStore.enemyTicket -= 1;
+              if (useGameStore().myTeam === 1) useGameStore().ticket -= 1;
+              else useGameStore().enemyTicket -= 1;
             }
           } else {
-            gameStore.startTimer();
+            useGameStore().startTimer();
           }
           break;
         case 5:
-          const gameStore = useGameStore();
           this.warningMessage = "";
           this.warningMessageSecond = "";
           let spyIndex = null;
@@ -408,17 +407,17 @@ export default {
             this.isShowWarningMessage = true;
             setTimeout(() => {
               this.isShowWarningMessage = false;
-              gameStore.spyGoal = true;
+              useGameStore().spyGoal = true;
             }, 2000);
           } else {
             this.isShowWarningMessage = true;
             setTimeout(() => {
               this.isShowWarningMessage = false;
 
-              if (gameStore.throwChance === 0) {
-                gameStore.turnChange();
+              if (useGameStore().throwChance === 0) {
+                useGameStore().turnChange();
               } else {
-                gameStore.startTimer();
+                useGameStore().startTimer();
               }
             }, 2000);
           }
