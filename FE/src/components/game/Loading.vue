@@ -59,23 +59,23 @@ export default {
       }, 3000);
       setTimeout(() => {
         this.loadingPercent = 86;
-      }, 3200);
+      }, 3500);
       setTimeout(() => {
         this.loadingPercent = 88;
-      }, 3400);
+      }, 3900);
       setTimeout(() => {
         this.loadingPercent = 90;
-      }, 3600);
+      }, 4300);
       setTimeout(() => {
         this.loadingPercent = 92;
-      }, 3800);
+      }, 4700);
       setTimeout(() => {
         this.loadingPercent = 97;
-      }, 4000);
+      }, 5000);
       setTimeout(() => {
         this.loadingPercent = 100;
         this.$emit("close-start-modal", "start");
-      }, 4200);
+      }, 5300);
     },
   },
   mounted() {
