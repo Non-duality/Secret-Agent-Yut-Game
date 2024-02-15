@@ -277,9 +277,6 @@ export default {
       const red = useGameStore().redUser;
       const blue = useGameStore().blueUser;
 
-      console.log(red);
-      console.log(blue);
-
       if (useGameStore().myTeam === 1) {
         for (let i = 1; i <= 3; i++) {
           if (this.myUserName === red[i - 1].nickname) {
@@ -297,7 +294,7 @@ export default {
           delay2(150 * i);
         }
       }
-    }, 9000);
+    }, 5000);
   },
 };
 </script>

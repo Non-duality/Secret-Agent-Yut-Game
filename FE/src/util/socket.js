@@ -754,24 +754,14 @@ export function initPick(router, from) {
           usePickStore().pickFinalFinished = !usePickStore().pickFinalFinished;
         }, 100);
 
+        console.log("게임 스타트 연결 시도");
+        gameConnect();
+
         setTimeout(() => {
-          // (1) 소켓 끊고 다음 게임 소켓으로 연결하기??
-          // const gameBoard = new GameBoardVue();
-          // gameBoard.connectSocket();
-          console.log("연결 시도");
-          gameConnect();
-          // (2) 그리고 나서 현재 방, 픽 창 리셋하기 --> 구독 정보 없애기
-
-          // 게임으로 푸쉬하기.
-          const check = setInterval(() => {
-            if(useGameStore().redUser.length !== 0){
-              router.push({ name: "game" });
-              clearInterval(check);
-              check = null;
-            }
-          },1000)
-
-        }, 2000);
+          if (useGameStore().redUser.length !== 0) {
+            router.push({ name: "game" });
+          }
+        }, 3000);
       }
     }
   );
