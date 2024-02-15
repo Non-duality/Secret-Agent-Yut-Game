@@ -92,13 +92,6 @@ const router = createRouter({
       meta: { background: "game" },
       component: GameViewVue,
     },
-    
-    // 광물 캐기 게임
-    {
-      path: "/mineral",
-      name: "mineral",
-      component: MineralVue,
-    },
   ],
 });
 

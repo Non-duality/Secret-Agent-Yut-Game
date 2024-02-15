@@ -7,7 +7,7 @@
           <Slide v-for="(slide, index) in i18n" :key="index">
             <div class="carousel__item">
               <img id="gallery" :src="slide.name" @click="openModal('event', index)"/>
-            </div>1
+            </div>
           </Slide>
           
           <template #addons>
