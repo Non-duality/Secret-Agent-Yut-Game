@@ -22,6 +22,7 @@
 <script>
 import { useUserStore } from "@/store/userStore";
 import { sendLogoutEvent } from '@/util/socket.js';
+import { useSettingStore } from "@/store/settingStore";
 
 export default {
   data() {
@@ -47,6 +48,8 @@ export default {
 
         // 유저 정보 초기화
         useUserStore().initData();
+
+        useSettingStore().isMusicPlaying = false
 
         this.$router.push("/");
       }
