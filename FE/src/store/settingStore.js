@@ -4,7 +4,7 @@ export const useSettingStore = defineStore("setting", {
   state: () => ({
     isMusicPlaying: false,
     soundEffect: true,
-    musicVolume: 70,
+    musicVolume: 5,
     currentBgmSrc: "/sound/OnceUponATime.mp3",
     bgmOptions: [
       { path: "/sound/BeautifulKorea.mp3", name: "Beautiful Korea" },
