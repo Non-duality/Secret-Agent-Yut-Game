@@ -210,7 +210,8 @@ export default {
       // 말이 들어 왔다면.
       else {
         if(this.horse.kill){
-          styles.background = "gray";
+          styles.background = "red";
+          styles.opacity = "0.5";
         }
         // 홍팀이면
         if (this.horse.team === 1) {

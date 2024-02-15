@@ -2,6 +2,7 @@
   <div class="game-board">
     <!-- 여기에 추리 말 선택 모달이 나와야한다. -->
     <GameSpySelect v-if="reasoningChoose" />
+    <GameHorseSelect v-if="isHorseSelect" />
     <!-- 방향 전환 시 모달로 선택 -->
     <GameModal
       v-if="isShowReasoning || isShowGoDig"
@@ -103,6 +104,7 @@ import GameHorse from "./item/GameHorse.vue";
 import GameYut from "./item/GameYut.vue";
 import GameModal from "./item/GameModal.vue";
 import GameSpySelect from "./item/GameSpySelect.vue";
+import GameHorseSelect from "./item/GameHorseSelect .vue";
 
 export default {
   components: {
@@ -111,6 +113,7 @@ export default {
     GameYut,
     GameModal,
     GameSpySelect,
+    GameHorseSelect,
   },
   mounted() {
     // this.connectSocket();
@@ -128,6 +131,7 @@ export default {
       isShowRes: true, // 윷 던지고 결과 화면 보여줄 때.
       isShowGoDig: false, // 대각선으로 갈지 말지 선택.
       isShowResText: false, // 윷결과 텍스트 출력
+      isHorseSelect: false, // 미션 성공 시 말 선택.
       yutText: "", // 윷 결과 문자.
       goModalText1: "",
       goModalText2: "",
@@ -273,6 +277,7 @@ export default {
           this.canSelectHorse = false;
           gameStore.isSelect = false;
           break;
+        // 추리
         case 3:
           gameStore.reasoningChoose = false;
 
@@ -358,6 +363,7 @@ export default {
             }, 2000);
           }
           break;
+        // 추리권 사용
         case 4:
           gameStore.isShowReasoning = false;
           if (newVal.reasoningChoose) {
@@ -426,23 +432,95 @@ export default {
             }, 2000);
           }
           break;
+        // 미션 시작.
         case 7:
           console("미션 시작 board");
           break;
+        // 미션 결과
         case 8:
           console.log("미션 종료 board");
           gameStore.isMission = false;
-          this.warningMessage = "미션이 종료되었습니다."
-          if(newVal.result){
+          this.warningMessage = "미션이 종료되었습니다.";
+          if (newVal.result) {
             this.warningMessageSecond = "미션에 성공하여 말을 선택해 주세요.";
-          }else{
-            this.warningMessageSecond = "미션에 실패하여 다음 턴으로 넘어갑니다.";
+            this.isShowWarningMessage = true;
+            setTimeout(() => {
+              this.isShowWarningMessage = false;
+              this.isHorseSelect = true;
+            }, 3000);
+          } else {
+            this.warningMessageSecond =
+              "미션에 실패하여 다음 턴으로 넘어갑니다.";
+            this.isShowWarningMessage = true;
+            setTimeout(() => {
+              this.isShowWarningMessage = false;
+              gameStore.missionEnd();
+            }, 3000);
           }
+          break;
+        // 미션 성공 후 힌트 얻기
+        case 10:
+          this.warningMessage = newVal.team === 2 ? "청팀 " : "홍팀 ";
+          this.isHorseSelect = false;
+          // 해당 말이 밀정이면
+          if (newVal.team === 1) {
+            for (let i = 0; i < gameStore.redHorses.length; i++) {
+              if (newVal.unitId === gameStore.redHorses[i].id) {
+                switch (newVal.category) {
+                  case 1:
+                gameStore.redHorses[i].scal = newVal.hint;
+                    break;
+                  case 2:
+                gameStore.redHorses[i].stuff = newVal.hint;
+                    break;
+                  case 3:
+                gameStore.redHorses[i].contactor = newVal.hint;
+                    break;
+                  case 4:
+                gameStore.redHorses[i].time = newVal.hint;
+                    break;
+                  case 5:
+                gameStore.redHorses[i].place = newVal.hint;
+                    break;
+                }
+                this.warningMessage += gameStore.redHorses[i].name;
+                break;
+              }
+            }
+          } else {
+            for (let i = 0; i < gameStore.blueHorses.length; i++) {
+              if (newVal.unitId === gameStore.blueHorses[i].id) {
+                switch (newVal.category) {
+                  case 1:
+                gameStore.blueHorses[i].scal = newVal.hint;
+                    break;
+                  case 2:
+                gameStore.blueHorses[i].stuff = newVal.hint;
+                    break;
+                  case 3:
+                gameStore.blueHorses[i].contactor = newVal.hint;
+                    break;
+                  case 4:
+                gameStore.blueHorses[i].time = newVal.hint;
+                    break;
+                  case 5:
+                gameStore.blueHorses[i].place = newVal.hint;
+                    break;
+                }
+                this.warningMessage += gameStore.blueHorses[i].name;
+                break;
+              }
+            }
+          }
+
+          this.warningMessage += "말에 대한 힌트를 얻었습니다.";
           this.isShowWarningMessage = true;
+
           setTimeout(() => {
             this.isShowWarningMessage = false;
-            gameStore.missionEnd(newVal);
-          },2500);
+            this.warningMessage = "";
+            gameStore.missionEnd();
+          }, 3000);
           break;
       }
     },
@@ -529,6 +607,7 @@ export default {
         clearInterval(gameStore.timerId);
         gameStore.timerId = null;
       }
+
       gameStore.isGoDiagonal = this.receivedMsg.goDiagonal;
       gameStore.isCenterDir = this.receivedMsg.centerDir;
       gameStore.moveHorse(this.receivedMsg);
