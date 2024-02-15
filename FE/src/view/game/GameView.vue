@@ -291,7 +291,7 @@ export default {
           this.joinSession();
           break;
         }
-        delay2(250 * i);
+        delay2(500 * i);
       }
     } else {
       for (let i = 1; i <= 3; i++) {
@@ -299,7 +299,7 @@ export default {
           this.joinSession();
           break;
         }
-        delay2(250 * i);
+        delay2(500 * i);
       }
     }
   },
