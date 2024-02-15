@@ -80,8 +80,8 @@ public class GameStompController {
     @MessageMapping("/game/{roomCode}/unit-gole")
     public void unitGole(@DestinationVariable String roomCode, UnitGoleDto dto){
         dto.setActionCategory(5);
-        gameService.unitGole(roomCode, dto);
-        simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
+        UnitGoleDto goleInfo = gameService.unitGole(roomCode, dto);
+        simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, goleInfo);
     }
 
     //게임 종료

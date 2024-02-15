@@ -66,7 +66,7 @@ server:
   port: 8080
 
 #jpa 쿼리 로그 설정
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type: trace
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
+#    org.hibernate.type: trace

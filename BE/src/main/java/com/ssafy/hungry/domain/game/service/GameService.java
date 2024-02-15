@@ -230,7 +230,7 @@ public class GameService {
     }
 
     //유닛 도착시 저장
-    public void unitGole(String gameCode, UnitGoleDto dto){
+    public UnitGoleDto unitGole(String gameCode, UnitGoleDto dto){
         Game game = gameRepository.findByGameCode(gameCode);
         if(dto.getTeam() == 2){
             for(int i = 0; i < dto.getUnitId().length; i++){
@@ -241,6 +241,7 @@ public class GameService {
                 }
                 blueTeamUnit.setGole(true);
                 blueTeamUnitRepository.save(blueTeamUnit);
+                return dto;
             }
         }else{
             for(int i = 0; i < dto.getUnitId().length; i++){
@@ -251,8 +252,10 @@ public class GameService {
                 }
                 redTeamUnit.setGole(true);
                 redTeamUnitRepository.save(redTeamUnit);
+                return dto;
             }
         }
+        return null;
     }
 
     //게임 종료 시 저장
