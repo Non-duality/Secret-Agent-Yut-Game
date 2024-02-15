@@ -47,10 +47,10 @@ export default {
       console.log(this.reversedRoomChat);
       return gameStore.gameChatMsg;
     },
-    reversedRoomChat() {
-      const gameStore = useGameStore();
-      return gameStore.gameChatMsg.slice().reverse();
-    },
+    // reversedRoomChat() {
+    //   const gameStore = useGameStore();
+    //   return gameStore.gameChatMsg.slice().reverse();
+    // },
   },
 
   watch: {
