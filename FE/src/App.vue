@@ -28,6 +28,8 @@ export default {
 <template>
   <div class="app-container" :class="backgroundClass">
     <Main></Main>
+    <!-- 효과음 오디오 요소 추가 -->
+    <audio id="clickSound" src="./src/assets/sound/1.mp3"></audio>
     <canvas id="canv"></canvas>
   </div>
 </template>
