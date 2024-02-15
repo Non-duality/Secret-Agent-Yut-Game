@@ -6,10 +6,12 @@
         :key="index"
         class="chat-log"
       >
-        <!-- <span
+        <span
+          :style="{
+            color: getColorForMessage(message).color,
+          }"
           v-html="getColorForMessage(message).text"
-        ></span> -->
-        <span>{{ message }}</span>
+        ></span>
       </div>
     </div>
 
@@ -56,7 +58,7 @@ export default {
   watch: {
     receivedMsg(newVal) {
       const gameStore = useGameStore();
-      if (newVal.actionCategory === 6) {
+      if (newVal.actionCategory === 0) {
         gameStore.gameChatMsg.push(
           "[" + newVal.nickname + "] : " + newVal.message
         );
