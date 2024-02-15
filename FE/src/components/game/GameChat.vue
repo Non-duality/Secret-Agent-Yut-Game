@@ -82,6 +82,7 @@ export default {
         message: this.msg,
       };
 
+      console.log("!!! 로그 !!!")
       console.log(tempMSG);
 
       socketSend(
