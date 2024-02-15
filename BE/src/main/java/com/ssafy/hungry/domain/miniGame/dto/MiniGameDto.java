@@ -11,6 +11,6 @@ public class MiniGameDto {
 
     private int actionCategory;
     private String email;
-    private String result;
+    private boolean result;
 
 }
