@@ -236,7 +236,7 @@ function setInfo(receivedMsg) {
   // 우리팀의 스파이
   useGameStore().mySpyId = receivedMsg.mySpyUnitId;
   // 힌트
-  useGameStore().mySqyHint = receivedMsg.mySqyHint;
+  useGameStore().mySpyHint = receivedMsg.mySpyHint;
 
   for (let i = 0; i <= 30; i++) {
     useGameStore().tiles[i].horse = [];

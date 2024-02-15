@@ -54,7 +54,7 @@ export const useGameStore = defineStore("game", {
       isEnemyFindSpy: false,
       spyGoal: false,
       // 힌트 메시지
-      mySqyHint : "",
+      mySpyHint : "",
       // 다음 차례 메시지.
       turnMessage: "",
       redTurnName: "",

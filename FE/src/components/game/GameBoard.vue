@@ -275,9 +275,9 @@ export default {
       return gameStore.reasoningChoose;
     },
     // 힌트 메시지
-    mySqyHint() {
+    mySpyHint() {
       const gameStore = useGameStore();
-      return gameStore.mySqyHint;
+      return gameStore.mySpyHint;
     },
   },
   watch: {
