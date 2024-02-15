@@ -80,6 +80,7 @@ export const useGameStore = defineStore("game", {
           stuff: "",
           time: "",
           stun: 0,
+          kill: false,
         },
         {
           id: 2,
@@ -98,6 +99,7 @@ export const useGameStore = defineStore("game", {
           stuff: "",
           time: "",
           stun: 0,
+          kill: false,
         },
         {
           id: 3,
@@ -116,6 +118,7 @@ export const useGameStore = defineStore("game", {
           stuff: "",
           time: "",
           stun: 0,
+          kill: false,
         },
         {
           id: 4,
@@ -134,6 +137,7 @@ export const useGameStore = defineStore("game", {
           stuff: "",
           time: "",
           stun: 0,
+          kill: false,
         },
         {
           id: 5,
@@ -152,6 +156,7 @@ export const useGameStore = defineStore("game", {
           stuff: "",
           time: "",
           stun: 0,
+          kill: false,
         },
       ],
       blueHorses: [
@@ -172,6 +177,7 @@ export const useGameStore = defineStore("game", {
           stuff: "",
           time: "",
           stun: 0,
+          kill: false,
         },
         {
           id: 2,
@@ -190,6 +196,7 @@ export const useGameStore = defineStore("game", {
           stuff: "",
           time: "",
           stun: 0,
+          kill: false,
         },
         {
           id: 3,
@@ -208,6 +215,7 @@ export const useGameStore = defineStore("game", {
           stuff: "",
           time: "",
           stun: 0,
+          kill: false,
         },
         {
           id: 4,
@@ -226,6 +234,7 @@ export const useGameStore = defineStore("game", {
           stuff: "",
           time: "",
           stun: 0,
+          kill: false,
         },
         {
           id: 5,
@@ -244,6 +253,7 @@ export const useGameStore = defineStore("game", {
           stuff: "",
           time: "",
           stun: 0,
+          kill: false,
         },
       ],
       horsesIndex: [
@@ -367,15 +377,13 @@ export const useGameStore = defineStore("game", {
         if (this.yutRes === -1) {
           this.yutRes += 1;
         } else this.yutRes -= 1;
-      } 
+      }
       // 목적지 설정.
       let target = horseInfo.index + this.yutRes;
 
       // 창병 앞 뒤 적은 1턴간 이동 금지.
-      if (horseInfo.name === "창병"){
-        if([5,10,15,30].includes(target)){
-          
-        }
+      if (horseInfo.name === "창병") {
+        horseStun(target, horseInfo);
       }
 
       // 노비의 능력으로 0값이면.
@@ -510,6 +518,183 @@ export const useGameStore = defineStore("game", {
         this.turnChange();
       }
     },
+    // 스턴
+    horseStun(target, horseInfo){
+      // 24,29번이 아닌 타일만.
+      if (![24, 30].includes(target)) {
+        // 앞 스턴.
+        if (this.tiles[target + 1].horse.length !== 0) {
+          for (let i = 0; i < this.tiles[target + 1].horse.length; i++) {
+            const horsedel =
+              this.tiles[target + 1].horse[i].team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[target + 1].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[target + 1].horse[i].id
+                  );
+            if (horsedel.team !== horseInfo.team) {
+              break;
+            }
+            horsedel.stun += 1;
+          }
+        }
+      } else if (target === 24) {
+        // 앞 스턴.
+        if (this.tiles[target - 9].horse.length !== 0) {
+          for (let i = 0; i < this.tiles[target - 9].horse.length; i++) {
+            const horsedel =
+              this.tiles[target + 1].horse[i].team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[target - 9].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[target - 9].horse[i].id
+                  );
+
+            if (horsedel.team !== horseInfo.team) {
+              break;
+            }
+
+            horsedel.stun += 1;
+          }
+        }
+      }
+      // 20,25 제외
+      if (![20, 25].includes(target)) {
+        if (this.tiles[target - 1].horse.length !== 0) {
+          for (let i = 0; i < this.tiles[target - 1].horse.length; i++) {
+            const horsedel =
+              this.tiles[target + 1].horse[i].team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[target - 1].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[target - 1].horse[i].id
+                  );
+
+            if (horsedel.team !== horseInfo.team) {
+              break;
+            }
+
+            horsedel.stun += 1;
+          }
+        }
+      } else {
+        if (this.tiles[target - 15].horse.length !== 0) {
+          for (let i = 0; i < this.tiles[target - 15].horse.length; i++) {
+            const horsedel =
+              this.tiles[target + 1].horse[i].team === 1
+                ? this.redHorses.find(
+                    (horse) =>
+                      horse.id === this.tiles[target - 15].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) =>
+                      horse.id === this.tiles[target - 15].horse[i].id
+                  );
+
+            if (horsedel.team !== horseInfo.team) {
+              break;
+            }
+
+            horsedel.stun += 1;
+          }
+        }
+      }
+
+      // 각 모서리에 도착한다면.
+      if ([5, 10].includes(target)) {
+        if (this.tiles[target + 15].horse.length !== 0) {
+          for (let i = 0; i < this.tiles[target + 15].horse.length; i++) {
+            const horsedel =
+              this.tiles[target + 1].horse[i].team === 1
+                ? this.redHorses.find(
+                    (horse) =>
+                      horse.id === this.tiles[target + 15].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) =>
+                      horse.id === this.tiles[target + 15].horse[i].id
+                  );
+            horsedel.stun += 1;
+          }
+        }
+      } else if (target === 15) {
+        if (this.tiles[24].horse.length !== 0) {
+          for (let i = 0; i < this.tiles[24].horse.length; i++) {
+            const horsedel =
+              this.tiles[target + 1].horse[i].team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[24].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[24].horse[i].id
+                  );
+            horsedel.stun += 1;
+          }
+        }
+      }
+
+      // 정 가운데.
+      if (target === 22) {
+        if (this.tiles[26].horse.length !== 0) {
+          for (let i = 0; i < this.tiles[26].horse.length; i++) {
+            const horsedel =
+              this.tiles[target + 1].horse[i].team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[26].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[26].horse[i].id
+                  );
+            horsedel.stun += 1;
+          }
+        }
+        if (this.tiles[28].horse.length !== 0) {
+          for (let i = 0; i < this.tiles[28].horse.length; i++) {
+            const horsedel =
+              this.tiles[target + 1].horse[i].team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[28].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[28].horse[i].id
+                  );
+            horsedel.stun += 1;
+          }
+        }
+      }
+
+      if (target === 27) {
+        if (this.tiles[21].horse.length !== 0) {
+          for (let i = 0; i < this.tiles[21].horse.length; i++) {
+            const horsedel =
+              this.tiles[target + 1].horse[i].team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[21].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[21].horse[i].id
+                  );
+            horsedel.stun += 1;
+          }
+        }
+        if (this.tiles[23].horse.length !== 0) {
+          for (let i = 0; i < this.tiles[23].horse.length; i++) {
+            const horsedel =
+              this.tiles[target + 1].horse[i].team === 1
+                ? this.redHorses.find(
+                    (horse) => horse.id === this.tiles[23].horse[i].id
+                  )
+                : this.blueHorses.find(
+                    (horse) => horse.id === this.tiles[23].horse[i].id
+                  );
+            horsedel.stun += 1;
+          }
+        }
+      }
+    },
 
     // 턴 바꿈.
     turnChange() {
@@ -522,9 +707,8 @@ export const useGameStore = defineStore("game", {
             this.ticket++;
           }
           // 같은 팀 이동 시 스턴 감소
-          for(let i = 0;i<5;i++){
-            if(this.redHorses[i].stun > 0) 
-              this.redHorses[i].stun--;
+          for (let i = 0; i < 5; i++) {
+            if (this.redHorses[i].stun > 0) this.redHorses[i].stun--;
           }
         } else {
           this.enemyTicketTemp++;
@@ -546,9 +730,8 @@ export const useGameStore = defineStore("game", {
             this.ticket++;
           }
           // 같은 팀 이동 시 스턴 감소
-          for(let i = 0;i<5;i++){
-            if(this.blueHorses[i].stun > 0) 
-              this.blueHorses[i].stun--;
+          for (let i = 0; i < 5; i++) {
+            if (this.blueHorses[i].stun > 0) this.blueHorses[i].stun--;
           }
         } else {
           this.enemyTicketTemp++;
@@ -600,9 +783,9 @@ export const useGameStore = defineStore("game", {
           (((!this.teamTurn && this.myTeam === 1) ||
             (this.teamTurn && this.myTeam === 2)) &&
             this.ticket > 0) ||
-            (((!this.teamTurn && this.myTeam === 2) ||
+          (((!this.teamTurn && this.myTeam === 2) ||
             (this.teamTurn && this.myTeam === 1)) &&
-          this.enemyTicket > 0)
+            this.enemyTicket > 0)
         ) {
           this.isShowReasoning = true;
           // 여기에 추리 모달 결과 작성.
