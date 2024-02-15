@@ -4,7 +4,7 @@ export const useSettingStore = defineStore("setting", {
   state: () => ({
     isMusicPlaying: false,
     soundEffect: true,
-    musicVolume: 70,
+    musicVolume: 5,
     currentBgmSrc: "/sound/OnceUponATime.mp3",
     bgmOptions: [
       { path: "/sound/BeautifulKorea.mp3", name: "Beautiful Korea" },
@@ -22,5 +22,16 @@ export const useSettingStore = defineStore("setting", {
     setCurrentBgmSrc(path) {
       this.currentBgmSrc = path
     }
-  }
+  },
+
+  persist: {
+    enabled: true, //storage 저장유무
+    strategies: [
+      {
+        key: "setting", //storage key값 설정
+        storage: localStorage, // localStorage, sessionStorage storage 선택 default sessionStorage
+      },
+    ],
+  },
+  
 });
