@@ -1,5 +1,7 @@
 package com.ssafy.hungry.domain.game.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hungry.domain.game.dto.*;
 import com.ssafy.hungry.domain.game.entity.UnitEntity;
@@ -99,26 +101,26 @@ public class GameService {
         sr.setSeed(new Date().getTime());
         String[] placeList = new String[]{"경복궁", "덕수궁"};
         String[] timeList = new String[]{"축시", "인시"};
-        String[] contactorList = new String[] {"경비병", "궁녀"};
+        String[] contactorList = new String[]{"경비병", "궁녀"};
         String[] stuffList = new String[]{"쪽지", "지도"};
         String[] scalList = new String[]{"오른쪽 가슴", "왼쪽 허벅지", "손목", "등", "종아리"};
         String roomCode = room.getRoomCode();
 
         //레디스에서 참여자 목록을 받아옴
-        List<CurrentUserPickDto> currentUserPickDtoList = pickRedisRepository.getCurrentUserPickInfo("UserPickInfo: " + roomCode,0,-1);
+        List<CurrentUserPickDto> currentUserPickDtoList = pickRedisRepository.getCurrentUserPickInfo("UserPickInfo: " + roomCode, 0, -1);
         log.info("gameStart currentUserPickDtoList : " + currentUserPickDtoList.toString());
 
         //레디스에서 스파이 유닛 아이디를 받아옴
-        Map<Object,Object> spyPickInfo = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + roomCode);
-        int redTeamSpyId = Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀")));
-        int blueTeamSpyId = Integer.parseInt( String.valueOf(spyPickInfo.get("청팀")));
+        Map<Object, Object> spyPickInfo = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + roomCode);
+        int redTeamSpyId = Integer.parseInt(String.valueOf(spyPickInfo.get("홍팀")));
+        int blueTeamSpyId = Integer.parseInt(String.valueOf(spyPickInfo.get("청팀")));
 
         //게임시작 dto 에 담아줄 유저 리스트를 생성
         List<UserInfo> redTeamUserList = new ArrayList<>();
         List<UserInfo> blueTeamUserList = new ArrayList<>();
 
         // 유저 리스트 담기
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             CurrentUserPickDto user = currentUserPickDtoList.get(i);
             UserInfo userInfo = UserInfo.builder()
                     .email(userRepository.findById(user.getUserId()).getEmail())
@@ -128,7 +130,7 @@ public class GameService {
             redTeamUserList.add(userInfo);
         }
 
-        for (int i = 3; i < 6; i++){
+        for (int i = 3; i < 6; i++) {
             CurrentUserPickDto user = currentUserPickDtoList.get(i);
             UserInfo userInfo = UserInfo.builder()
                     .email(userRepository.findById(user.getUserId()).getEmail())
@@ -144,7 +146,8 @@ public class GameService {
 //        UnitInfo redSpyInfo = redUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀"))) - 1);
 //        UnitInfo blueSpyInfo = blueUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("청팀"))) - 1);
         String redSpyHint = "";
-        String blueSpyHint = "";;
+        String blueSpyHint = "";
+        ;
 
         Map<Integer, List<String>> blueUnitHints = new HashMap<>();
         Map<Integer, List<String>> redUnitHints = new HashMap<>();
@@ -154,7 +157,7 @@ public class GameService {
         List<CurrentUnitPickDto> redTeamUnitPickInfo = pickRedisRepository.getCurrentUnitPickInfo("RedUnitInfo: " + roomCode);
         List<UnitInfo> redUnitList = new ArrayList<>();
         int i = 0;
-        for(CurrentUnitPickDto unit : redTeamUnitPickInfo){
+        for (CurrentUnitPickDto unit : redTeamUnitPickInfo) {
             UnitInfo unitInfo = UnitInfo.builder()
                     .unitId(unit.getUnitId())
                     .name(unit.getName())
@@ -165,7 +168,7 @@ public class GameService {
                     .scal(scalList[randomPer[i]])
                     .skill(unit.getSkill())
                     .build();
-            if(unit.getUnitId() == blueTeamSpyId){
+            if (unit.getUnitId() == blueTeamSpyId) {
                 redSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다. " +
                         "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";
             }
@@ -185,7 +188,7 @@ public class GameService {
         List<CurrentUnitPickDto> blueTeamUnitPickInfo = pickRedisRepository.getCurrentUnitPickInfo("BlueUnitInfo: " + roomCode);
         List<UnitInfo> blueUnitList = new ArrayList<>();
         i = 0;
-        for(CurrentUnitPickDto unit : blueTeamUnitPickInfo){
+        for (CurrentUnitPickDto unit : blueTeamUnitPickInfo) {
             UnitInfo unitInfo = UnitInfo.builder()
                     .unitId(unit.getUnitId())
                     .name(unit.getName())
@@ -196,9 +199,10 @@ public class GameService {
                     .scal(scalList[randomPer[i]])
                     .skill(unit.getSkill())
                     .build();
-            if(unit.getUnitId() == redTeamSpyId){
+            if (unit.getUnitId() == redTeamSpyId) {
                 blueSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다." +
-                        "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";;
+                        "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";
+                ;
             }
             hints = new ArrayList<>();
             hints.add(unitInfo.getScal());
@@ -211,11 +215,18 @@ public class GameService {
             i++;
         }
 
-//        String blueJson =
-//        BlueUnitHint blueUnitHint = new BlueUnitHint(roomCode, new UnitHints(blueUnitHints));
-//        RedUnitHint redUnitHint = new RedUnitHint(roomCode, new UnitHints(redUnitHints));
-//        blueUnitHintRepository.save(blueUnitHint);
-//        redUnitHintRepository.save(redUnitHint);
+        String blueJson;
+        String redJson;
+        try {
+            blueJson = objectMapper.writeValueAsString(blueUnitHints);
+            redJson = objectMapper.writeValueAsString(redUnitHints);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        BlueUnitHint blueUnitHint = new BlueUnitHint(roomCode, blueJson);
+        RedUnitHint redUnitHint = new RedUnitHint(roomCode, redJson);
+        blueUnitHintRepository.save(blueUnitHint);
+        redUnitHintRepository.save(redUnitHint);
 
         int[] missionRegion = this.generateMissionRegion();
 
@@ -229,7 +240,7 @@ public class GameService {
                 .blueTeamUserList(blueTeamUserList)
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
-                .mySpyUnitId(Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀"))))
+                .mySpyUnitId(Integer.parseInt(String.valueOf(spyPickInfo.get("홍팀"))))
                 .mySpyHint(redSpyHint)
                 .build();
 
@@ -242,7 +253,7 @@ public class GameService {
                 .blueTeamUserList(blueTeamUserList)
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
-                .mySpyUnitId(Integer.parseInt( String.valueOf(spyPickInfo.get("청팀"))))
+                .mySpyUnitId(Integer.parseInt(String.valueOf(spyPickInfo.get("청팀"))))
                 .mySpyHint(blueSpyHint)
                 .build();
 
@@ -616,43 +627,64 @@ public class GameService {
     }
 
     //미션 성공시 힌트 주기
-//    public String unitHint(String roomCode, MissionSuccessDto dto){
-//        int unitId = dto.getUnitId();
-//        int team = dto.getTeam();
-//        String hint;
-//        if(team == 1){ // 홍팀
-//            //유닛 힌트 객체 가져오기
-//            RedUnitHint redUnitHint = redUnitHintRepository.findById(roomCode).get();
-//            //해시맵 가져오기
-//            UnitHints unitHints = redUnitHint.getUnitHint();
-//            //해시맵에서 유닛 아이디로 검색
-//            List<String> hints = unitHints.getUnitHint().get(unitId);
-//            //리스트에서 마지막으로 입력된 힌트 가져오기
-//            hint = hints.remove(hints.size() - 1);
-//            //다시 해시맵에 입력
-//            unitHints.getUnitHint().put(unitId, hints);
-//            //데이터 입력
-//            redUnitHint.setUnitHint(unitHints);
-//            //다시 저장
-//            redUnitHintRepository.save(redUnitHint);
-//        }else{
-//            //유닛 힌트 객체 가져오기
-//            BlueUnitHint blueUnitHint = blueUnitHintRepository.findById(roomCode).get();
-//            //해시맵 가져오기
-//            UnitHints unitHints = blueUnitHint.getUnitHint();
-//            //해시맵에서 유닛 아이디로 검색
-//            List<String> hints = unitHints.getUnitHint().get(unitId);
-//            //리스트에서 마지막으로 입력된 힌트 가져오기
-//            hint = hints.remove(hints.size() - 1);
-//            //다시 해시맵에 입력
-//            unitHints.getUnitHint().put(unitId, hints);
-//            //데이터 입력
-//            blueUnitHint.setUnitHint(unitHints);
-//            //다시 저장
-//            blueUnitHintRepository.save(blueUnitHint);
-//        }
-//        return hint;
-//    }
+    public String unitHint(String roomCode, MissionSuccessDto dto){
+        int unitId = dto.getUnitId();
+        int team = dto.getTeam();
+        String hint;
+        String json;
+        if(team == 1){ // 홍팀
+            //유닛 힌트 객체 가져오기
+            RedUnitHint redUnitHint = redUnitHintRepository.findById(roomCode).get();
+            //해시맵 가져오기
+            Map<Integer, List<String>> unitHints = null;
+            try {
+                unitHints = objectMapper.readValue(redUnitHint.getUnitHint(), new TypeReference<Map<Integer, List<String>>>() {});
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            //해시맵에서 유닛 아이디로 검색
+            List<String> hints = unitHints.get(unitId);
+            //리스트에서 마지막으로 입력된 힌트 가져오기
+            hint = hints.remove(hints.size() - 1);
+            //다시 해시맵에 입력
+            unitHints.put(unitId, hints);
+            //데이터 입력
+            try {
+                json = objectMapper.writeValueAsString(unitHints);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            redUnitHint.setUnitHint(json);
+            //다시 저장
+            redUnitHintRepository.save(redUnitHint);
+        }else{
+            //유닛 힌트 객체 가져오기
+            BlueUnitHint blueUnitHint = blueUnitHintRepository.findById(roomCode).get();
+            //해시맵 가져오기
+            Map<Integer, List<String>> unitHints = null;
+            try {
+                unitHints = objectMapper.readValue(blueUnitHint.getUnitHint(), new TypeReference<Map<Integer, List<String>>>() {});
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            //해시맵에서 유닛 아이디로 검색
+            List<String> hints = unitHints.get(unitId);
+            //리스트에서 마지막으로 입력된 힌트 가져오기
+            hint = hints.remove(hints.size() - 1);
+            //다시 해시맵에 입력
+            unitHints.put(unitId, hints);
+            //데이터 입력
+            try {
+                json = objectMapper.writeValueAsString(unitHints);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            blueUnitHint.setUnitHint(json);
+            //다시 저장
+            blueUnitHintRepository.save(blueUnitHint);
+        }
+        return hint;
+    }
 
 
     public boolean isSpy(int unitId, int team, String roomCode) {

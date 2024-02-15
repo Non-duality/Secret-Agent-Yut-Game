@@ -97,7 +97,7 @@ public class GameStompController {
     @MessageMapping("/game/{roomCode}/hint")
     public void hint(@DestinationVariable String roomCode, MissionSuccessDto dto){
         dto.setActionCategory(10);
-//        dto.setHint(gameService.unitHint(roomCode ,dto));
+        dto.setHint(gameService.unitHint(roomCode ,dto));
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 
