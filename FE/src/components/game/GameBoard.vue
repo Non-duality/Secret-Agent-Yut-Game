@@ -136,8 +136,7 @@ export default {
       // 경고 메시지
       isShowWarningMessage: false,
       warningMessage: "홍팀이 밀정잡이에 실패하였습니다.",
-      warningMessageSecond:
-        "해당말은 이제 처형입니다. 윷을 한번 더 던지세요!!",
+      warningMessageSecond: "해당말은 이제 처형입니다. 윷을 한번 더 던지세요!!",
     };
   },
   computed: {
@@ -410,6 +409,7 @@ export default {
           gameStore.redHorses[4].index === 0
         ) {
           setTimeout(() => {
+            this.isShowResText = false;
             gameStore.turnChange();
             return;
           }, 3500);
@@ -419,6 +419,7 @@ export default {
           gameStore.redHorses[4].index === 0
         ) {
           setTimeout(() => {
+            this.isShowResText = false;
             gameStore.turnChange();
             return;
           }, 3500);
@@ -483,6 +484,7 @@ export default {
           gameStore.redHorses[4].index === 0
         ) {
           setTimeout(() => {
+            this.isShowResText = false;
             gameStore.turnChange();
             return;
           }, 3500);
@@ -492,6 +494,7 @@ export default {
           gameStore.redHorses[4].index === 0
         ) {
           setTimeout(() => {
+            this.isShowResText = false;
             gameStore.turnChange();
             return;
           }, 3500);
@@ -586,7 +589,8 @@ export default {
         // 이동 금지 말 체크.
         if (horse.stun > 0) {
           // 메시지 출력
-          this.warningMessage = horse.name + "말은 " + horse.stun + "턴간 이동 금지입니다.";
+          this.warningMessage =
+            horse.name + "말은 " + horse.stun + "턴간 이동 금지입니다.";
           this.warningMessageSecond = "";
           this.isShowWarningMessage = true;
 
