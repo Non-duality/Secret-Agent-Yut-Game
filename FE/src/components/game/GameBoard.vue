@@ -68,16 +68,18 @@
     </div>
     <!-- 홍팀 말 -->
     <GameHorse
-      v-for="horse in redHorses"
+      v-for="(horse,index) in redHorses"
       :key="horse.id"
       :horse="horse"
+      :index="index"
       @selectHorse="selectHorse"
     />
     <!-- 청팀 말 -->
     <GameHorse
-      v-for="horse in blueHorses"
+      v-for="(horse,index) in blueHorses"
       :key="horse.id"
       :horse="horse"
+      :index="index"
       @selectHorse="selectHorse"
     />
 

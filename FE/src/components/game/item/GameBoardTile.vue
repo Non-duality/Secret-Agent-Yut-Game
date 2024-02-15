@@ -7,7 +7,7 @@
   <script>
 import taegeukImage from "@/assets/img/game/taegeuk.png";
 import { useGameStore } from "@/store/gameStore";
-import missionTile from "@/assets/icon/missionTile.png"
+import missionTile from "@/assets/icon/missionTile.png";
 
 export default {
   props: ["tile"],
@@ -46,6 +46,8 @@ export default {
         styles.backgroundPosition = "center";
       } else if(useGameStore().missionTiles.includes(this.tile.id)){
         styles.backgroundImage = `url(${this.missionTileUrl})`;
+        styles.backgroundSize = "cover"; // This will ensure that your image covers the entire tile
+        styles.backgroundPosition = "center";
       }
       else {
         styles.backgroundColor = "#D2691E"; // 기본 색
