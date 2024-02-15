@@ -317,6 +317,8 @@ function setInfo(receivedMsg) {
   useGameStore().enemyTicket = 0;
   useGameStore().ticketTemp = 0;
   useGameStore().enemyTicketTemp = 0;
+  // 힌트
+  useGameStore().mySqyHint = receivedMsg.mySqyHint;
   // 라운드
   useGameStore().gameSpeed = 3;
   // 미션 타일

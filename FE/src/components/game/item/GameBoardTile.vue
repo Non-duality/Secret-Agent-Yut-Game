@@ -1,6 +1,6 @@
 <template>
   <div :style="tileStyle">
-    {{ tile.id }}
+    <!-- {{ tile.id }} -->
   </div>
 </template>
   

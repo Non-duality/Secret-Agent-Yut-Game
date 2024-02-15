@@ -24,8 +24,8 @@ export default {
       cards: [
         { name: "파리잡기", value: 1 },
         { name: "케이크먹기", value: 2 },
-        { name: "광물때리기", value: 3 },
-        { name: "참참참", value: 4 },
+        // { name: "광물때리기", value: 3 },
+        { name: "참참참", value: 3 },
       ],
       selectedCard: null,
       selectedCardValue: null,

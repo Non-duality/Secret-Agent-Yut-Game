@@ -66,6 +66,8 @@ export const useGameStore = defineStore("game", {
       // 적팀 추리권,.
       enemyTicket: 0,
       enemyTicketTemp: 0,
+      // 힌트 메시지
+      mySqyHint : "",
       // 몇라운드마다 티켓을 얻을 지
       gameSpeed: 0,
       // 스턴

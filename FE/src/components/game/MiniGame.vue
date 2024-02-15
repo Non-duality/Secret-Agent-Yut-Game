@@ -4,7 +4,7 @@
     <Cake v-if="isShowCake && isThrowYut" @endMinigame="endMinigame"/>
     <cham v-if="isShowCham && isThrowYut" @endMinigame="endMinigame"/>
     <FlyCatch v-if="isShowFlyCatch && isThrowYut" @endMinigame="endMinigame"/>
-    <Mineral v-if="isShowMineral && isThrowYut" @endMinigame="endMinigame"/>
+    <!-- <Mineral v-if="isShowMineral && isThrowYut" @endMinigame="endMinigame"/> -->
     <div class="mini-wait" v-if="!isThrowYut">
       {{ nickName }}님이 미션중입니다.<br />
       잠시만 기다려 주세요
@@ -17,7 +17,7 @@ import MiniCard from "./item/MiniCard.vue";
 import Cake from "./minigame/Cake.vue";
 import Cham from "./minigame/Cham.vue";
 import FlyCatch from "./minigame/FlyCatch.vue";
-import Mineral from "./minigame/Mineral.vue";
+// import Mineral from "./minigame/Mineral.vue";
 
 import { useMiniGameStore } from "@/store/miniGameStore";
 import { useGameStore } from "@/store/gameStore";
@@ -39,7 +39,7 @@ export default {
     Cake,
     Cham,
     FlyCatch,
-    Mineral,
+    // Mineral,
   },
   computed: {
     isShowCardSelect() {
@@ -68,9 +68,6 @@ export default {
           this.isShowCake = true;
           break;
         case 3:
-          this.isShowMineral = true;
-          break;
-        case 4:
           this.isShowCham = true;
           break;
       }
