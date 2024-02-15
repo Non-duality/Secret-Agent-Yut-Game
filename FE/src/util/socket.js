@@ -552,7 +552,7 @@ export function initRoom(router, from) {
           // 픽창으로 넘어가기.
           setTimeout(() => {
             router.push({ name: "pick" });
-          }, 3000);
+          }, 2000);
         });
       }
 
@@ -758,9 +758,7 @@ export function initPick(router, from) {
         gameConnect();
 
         setTimeout(() => {
-          if (useGameStore().redUser.length !== 0) {
-            router.push({ name: "game" });
-          }
+          router.push({ name: "game" });
         }, 3000);
       }
     }
