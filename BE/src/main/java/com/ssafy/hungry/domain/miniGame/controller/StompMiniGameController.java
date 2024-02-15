@@ -22,14 +22,14 @@ public class StompMiniGameController {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    @MessageMapping(value="/pick/{roomCode}/mini-game-start")
+    @MessageMapping("/game/{roomCode}/mini-game-start")
     public void startMiniGame(@DestinationVariable String roomCode, MiniGameDto miniGameDto){
         log.info("미니게임 미션 시작 : " + miniGameDto);
         miniGameDto.setActionCategory(7);
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, miniGameDto);
     }
 
-    @MessageMapping(value="/pick/{roomCode}/mini-game-finish")
+    @MessageMapping("/game/{roomCode}/mini-game-finish")
     public void finishMiniGame(@DestinationVariable String roomCode, MiniGameDto miniGameDto){
         log.info("미니게임 미션 완료 : " + miniGameDto);
         miniGameDto.setActionCategory(8);
