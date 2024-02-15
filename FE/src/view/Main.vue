@@ -16,10 +16,11 @@
 <script>
 import NavBar from "@/components/layout/NavBar.vue";
 import SideBar from "@/components/layout/SideBar.vue";
+import { useSettingStore } from "@/store/settingStore";
 import { useUserStore } from "@/store/userStore";
 import { storeToRefs } from "pinia";
 import { connectWebSocket } from "@/util/socket";
-import { onMounted, watch } from "vue";
+import { onMounted, watch, ref } from "vue";
 import { useRoute } from "vue-router";
 
 export default {
@@ -30,31 +31,70 @@ export default {
 
   setup() {
     const route = useRoute()
+    const userStore = useUserStore()
+    const settingStore = useSettingStore()
+    const { showModalSide } = storeToRefs(userStore)
 
-    const store = useUserStore();
-    const { showModalSide } = storeToRefs(store);
-    
-    const backgroundMusicSrc = new URL('@/assets/sound/OnceUponATime.mp3', import.meta.url).href;
-    const backgroundMusic = new Audio(backgroundMusicSrc);
+    // 배경음악
+    const backgroundMusic = ref(new Audio(settingStore.currentBgmSrc))
+    backgroundMusic.value.loop = true
+    backgroundMusic.value.volume = settingStore.musicVolume / 100
 
-    const playAudio = () => {
-      if (route.path !== '/') {
-        backgroundMusic.play().catch(error => console.error("Audio play failed:", error));
-      }
+    // 페이드인
+    const fadeMusicIn = () => {
+      let step = 0.01
+      let interval = 5000 * step
+      let targetVolume = settingStore.musicVolume / 100
+      backgroundMusic.value.play().catch(error => console.error('배경음악 플레이 에러', error))
+      const fade = setInterval(() => {
+        if (backgroundMusic.value.volume < targetVolume) {
+          let newVolume = backgroundMusic.value.volume + step
+          if (newVolume > targetVolume) {
+            newVolume = targetVolume;
+          }
+          backgroundMusic.value.volume = newVolume;
+        } else {
+          clearInterval(fade)
+        }
+      }, interval)
     }
 
-    // 라우터 이동 감시
+    // 배경음악 재생 시 라우터 이동 감시
     watch(() => route.path, (newPath) => {
-      if (newPath !== '/login') {
-        playAudio(); // 라우트 변경 시 조건에 따라 오디오 재생
-      } else {
-        backgroundMusic.pause(); // 로그인 화면으로 이동 시 음악 정지
+      if (newPath !== '/' && !settingStore.isMusicPlaying) {
+        setTimeout(() => {
+          fadeMusicIn(backgroundMusic.value)
+          settingStore.isMusicPlaying = true
+        }, 5000)
+      } else if (['/', '/pick', '/game'].includes(newPath)) {
+        settingStore.isMusicPlaying = false
       }
     });
 
+    // 스토어의 musicVolume 상태 변경 감시
+    watch(() => settingStore.musicVolume, (newVolume) => {
+      backgroundMusic.value.volume = newVolume / 100
+    })
+
+    // 스토어의 currentBgmSrc 상태 변경 감시
+    watch(() => settingStore.currentBgmSrc, (newSrc) => {
+      backgroundMusic.value.src = newSrc
+      if (settingStore.isMusicPlaying) {
+        backgroundMusic.value.play().catch(error => console.error('배경음악 플레이 에러', error));
+      }
+    })
+
+    // 스토어에 isMusicPlaying 감시
+    watch(() => settingStore.isMusicPlaying, (isPlaying) => {
+      if (isPlaying) {
+        backgroundMusic.value.play().catch(error => console.error('배경음악 플레이 에러', error));
+      } else {
+        backgroundMusic.value.pause();
+        backgroundMusic.value.currentTime = 0; 
+      }
+    })
+
     onMounted(() => {
-      // 음악 재생
-      playAudio();
       // 새로고침 할 때 소켓 재연결
       const userString = localStorage.getItem('user')
       if (userString) {

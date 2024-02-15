@@ -3,14 +3,11 @@
     <h2>게임 설정</h2>
     <div class="background-value">
       <label for="backgroundMusic">배경음 선택</label>
-      <select id="backgroundMusic" v-model="selectedOption" @change="selectOption(selectedOption)">
+      <select id="backgroundMusic" v-model="selectedOption">
         <option v-for="(option, index) in options" :key="index" :value="option">
           {{ option.name }}
         </option>
       </select>
-      <audio id="clickSound" ref="audioElement" preload="auto">
-        <source :src="selectedOption.path" type="audio/mpeg">
-      </audio>
     </div>
     <div class="setting-value">
       <p class="volume-sound">소리 크기</p>
@@ -29,35 +26,53 @@
       </div>
     </div>
     <div class="btn-box">
-      <button class="btn-confirm" @click="playBgm">변경</button>
-      <button @click="closeSetting" class="btn-cancel">취소</button>
+      <button class="btn-confirm" @click="closeSetting">변경</button>
+      <button @click="cancelSetting" class="btn-cancel">취소</button>
     </div>
   </div>
 </template>
 
 <script>
+  import { useSettingStore } from '@/store/settingStore';
   export default {
     data() {
       return {
-        volumeValue: 30,
-        soundEffect: true,
-        selectedOption: "",   // 현재 선택된 BGM
-        options: [
-          { path: "@/assets/sound/BeautifulKorea.mp3", name: "Beautiful Korea" },
-          { path: "@/assets/sound/BlackBox.mp3", name: "Black Box" },
-          { path: "@/assets/sound/Blumenlied.mp3", name: "Blumenlied" },
-          { path: "@/assets/sound/Denys.mp3", name: "Upbeat Game" },
-          { path: "@/assets/sound/MorningAtThePalace.mp3", name: "Morning At The Palace" },
-          { path: "@/assets/sound/OnceUponATime.mp3", name: "Once Upon A Time" },
-        ],
-
-        isOpen: false,  // 설정 모달이 열려있는지 닫혀있는지 판단
-        audio: null,    // 현재 재생중인 음악
+        initSetting: {},
+        options: useSettingStore().bgmOptions
       };
     },
 
+    computed: {
+      selectedOption: {
+        get() {
+          return useSettingStore().currentBgmSrc
+        },
+        set(value) {
+          useSettingStore().currentBgmSrc = value.path
+        }
+      },
+
+      volumeValue: {
+        get() {
+          return useSettingStore().musicVolume
+        },
+        set(value) {
+          useSettingStore().musicVolume = value
+        }
+      },
+
+      soundEffect: {
+        get() {
+          return useSettingStore().soundEffect
+        },
+        set(value) {
+          useSettingStore().soundEffect = value
+        }
+      }
+    },
+
     methods: {
-      // 설정 모달 닫는 것
+      // 설정 모달 닫기
       closeSetting() {
         try {
           this.$emit('close-setting');
@@ -66,32 +81,22 @@
         }
       },
       
-      // 설정 모달의 닫힘 여부 판단하는 메서드
-      toggleDropdown() {
-        this.isOpen = !this.isOpen;
+      // 이벤트 취소
+      cancelSetting() {
+        const settingStore = useSettingStore();
+        settingStore.currentBgmSrc = this.initSetting.currentBgmSrc;
+        settingStore.musicVolume = this.initSetting.musicVolume;
+        settingStore.soundEffect = this.initSetting.soundEffect;
+        this.closeSetting()
       },
+    },
 
-      // 배경음 선택하는 메서드
-      selectOption(option) {
-        this.selectedOption = option;
-        this.isOpen = false;
-        console.log(this.selectedOption)
-      },
-
-      // 배경음 재생
-      playBgm() {
-        // 재생 중인 배경음이 있다면 일시 중지
-        if ( this.audio != null ) {
-          this.audio.pause();
-          this.audio.currentTime = 0;     // 재생 중인 배경음 초기화
-        }
-        this.audio = this.$refs.audioElement;              // 오디오 세팅
-        this.audio.volume = this.volumeValue / 100;        // 볼륨 설정
-        // 오디오가 완전히 로드될 때까지 기다린 후 재생
-        this.audio.addEventListener('loadeddata', () => {
-          this.audio.play();
-        });
-      },
+    mounted() {
+      this.initSetting = {
+        currentBgmSrc: useSettingStore().currentBgmSrc,
+        musicVolume: useSettingStore().musicVolume,
+        soundEffect: useSettingStore().soundEffect
+      }
     }
   };
 </script>
