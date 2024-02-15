@@ -235,7 +235,7 @@ public class GameService {
         if(dto.getTeam() == 2){
             for(int i = 0; i < dto.getUnitId().length; i++){
                 BlueTeamUnit blueTeamUnit = blueTeamUnitRepository.findByGameCodeAndUnitId(game, unitRepository.findById(dto.getUnitId()[i]));
-                if(this.isSpy(blueTeamUnit.getId(), 2, gameCode)){
+                if(this.isSpy(dto.getUnitId()[i], 2, gameCode)){
                     dto.setSpy(true);
                     dto.setSpyId(blueTeamUnit.getId());
                 }
@@ -246,7 +246,7 @@ public class GameService {
         }else{
             for(int i = 0; i < dto.getUnitId().length; i++){
                 RedTeamUnit redTeamUnit = redTeamUnitRepository.findByGameCodeAndUnitId(game, unitRepository.findById(dto.getUnitId()[i]));
-                if(this.isSpy(redTeamUnit.getId(), 2, gameCode)){
+                if(this.isSpy(dto.getUnitId()[i], 1, gameCode)){
                     dto.setSpy(true);
                     dto.setSpyId(redTeamUnit.getId());
                 }
