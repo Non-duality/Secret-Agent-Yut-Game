@@ -71,7 +71,6 @@ export default {
       console.log(teamName);
 
       let tempMSG = {
-        actionCategory: 6,
         team: teamName,
         nickname: useUserStore().userInfo.nickname,
         message: this.msg,
