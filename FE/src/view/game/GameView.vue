@@ -241,7 +241,7 @@ export default {
 
             this.mainStreamManager = publisher;
 
-            if (useUserStore().myTeamIdx === 1) this.redUsers.push(publisher);
+            if (useGameStore().myTeam === 1) this.redUsers.push(publisher);
             else this.blueUsers.push(publisher);
 
             this.session.publish(publisher);
@@ -318,29 +318,26 @@ export default {
     const red = useGameStore().redUser;
     const blue = useGameStore().blueUser;
 
-    // console.log(useGameStore().myTeam);
+    console.log("내팀은????????????????????")
+    console.log(useGameStore().myTeam);
 
     setTimeout(async () => {
       if (useGameStore().myTeam === 1) {
         for (let i = 1; i <= 3; i++) {
-          await this.delay2(500);
           if (this.myUserName === red[i - 1].nickname) {
-            await this.delay2(50);
             this.joinSession();
             break;
           }
         }
       } else {
         for (let i = 1; i <= 3; i++) {
-          await this.delay2(500);
           if (this.myUserName === blue[i - 1].nickname) {
-            await this.delay2(150);
             this.joinSession();
             break;
           }
         }
       }
-    }, 2000);
+    }, 1500);
   },
 };
 </script>

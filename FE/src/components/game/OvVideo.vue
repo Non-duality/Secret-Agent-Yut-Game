@@ -10,6 +10,12 @@ export default {
     streamManager: Object,
   },
 
+  data(){
+    return{
+      priority: null,
+    }
+  },
+
   mounted() {
     const data = JSON.parse(this.streamManager.stream.connection.data);
     const jsonData = JSON.parse(data.data);

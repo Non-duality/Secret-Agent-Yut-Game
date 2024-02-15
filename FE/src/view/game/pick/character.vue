@@ -249,7 +249,7 @@ export default {
               publishVideo: true, // Whether you want to start publishing with your video enabled or not
               resolution: "640x480", // The resolution of your video
               frameRate: 30, // The frame rate of your video
-              insertMode: "PREPEND", // How the video is inserted in the target element 'video-container'
+              insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
               mirror: false, // Whether to mirror your local video or not
             });
 
@@ -280,22 +280,6 @@ export default {
       this.myTeamUsers = [];
 
       window.removeEventListener("beforeunload", this.leaveSession);
-    },
-
-    updateMainVideoStreamManager(stream) {
-      let publisher = this.OV.initPublisher(undefined, {
-        audioSource: undefined, // The source of audio. If undefined default microphone
-        videoSource: undefined, // The source of video. If undefined default webcam
-        publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-        publishVideo: false, // Whether you want to start publishing with your video enabled or not
-        resolution: "640x480", // The resolution of your video
-        frameRate: 30, // The frame rate of your video
-        insertMode: "PREPEND", // How the video is inserted in the target element 'video-container'
-        mirror: false, // Whether to mirror your local video or not
-      });
-
-      if (this.publisher === publisher) return;
-      this.publisher = publisher;
     },
 
     async getToken(mySessionId) {
@@ -550,14 +534,7 @@ export default {
         this.showWaitSpyOppModal = true;
       }
     );
-
-    // watch(
-    //   () => pickStore.pickFinalFinished,
-    //   (newValue) => {
-    //     this.showWaitSpyOppModal = false;
-    //   }
-    // );
-
+    
     // 새로고침 방지 이벤트를 추가한다.
     window.addEventListener("beforeunload", this.leave);
 
@@ -591,7 +568,7 @@ export default {
         this.myUserName = useUserStore().userInfo.nickname;
         this.mySessionId = usePickStore().code.replace(/\//g, "");
         this.joinSession();
-      }, 500 * myTurnNumber);
+      }, 250 * myTurnNumber);
 
       // (3) 서버에게 받은 현재 픽 해야하는 이메일과 타임을 가져온다.
       setTimeout(async () => {
@@ -670,7 +647,7 @@ export default {
         }
 
         // 1초 뒤 현재 상황 대기
-      }, 500 * (4 - myTurnNumber));
+      }, 250 * (4 - myTurnNumber));
     }, 50);
   },
 

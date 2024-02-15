@@ -2,7 +2,7 @@
   <div class="board-chat">
     <div class="chat-container">
       <div
-        v-for="(message, index) in reversedGameChat"
+        v-for="(message, index) in receivedMsg"
         :key="index"
         class="chat-log"
       >
@@ -46,12 +46,7 @@ export default {
 
   computed: {
     receivedMsg() {
-      const gameStore = useGameStore();
-      return gameStore.receivedMsg;
-    },
-
-    reversedGameChat() {
-      return this.receivedMsg;
+      return useGameStore().gameChatMsg;
     },
   },
 
@@ -69,19 +64,19 @@ export default {
     sendLocalMessage() {
       if (this.msg === "") return;
 
-      const teamName = "";
+      let teamName = "";
       if (usePickStore().code.includes("red")) teamName = "홍팀";
       else teamName = "청팀";
 
       console.log(teamName);
 
-      const tempMSG = {
-        actionCategory: 6,
+      let tempMSG = {
         team: teamName,
         nickname: useUserStore().userInfo.nickname,
         message: this.msg,
       };
 
+      console.log("!!! 로그 !!!")
       console.log(tempMSG);
 
       socketSend(
