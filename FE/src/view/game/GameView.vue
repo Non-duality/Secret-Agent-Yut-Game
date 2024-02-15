@@ -5,7 +5,8 @@
     </transition>
 
     <MessageModal />
-    <!-- <span class="game-red-team-name">홍팀</span> -->
+    
+    <!-- 홍팀 -->
     <div class="game-video-team1">
       <div id="session" v-if="session">
         <div class="rtc-container">
@@ -23,7 +24,7 @@
 
     <GameBoard class="game-board-main" />
 
-    <!-- <span class="game-blue-team-name">청팀</span> -->
+    <!-- 청팀 -->
     <div class="game-video-team2">
       <div id="session" v-if="session">
         <div class="rtc-container">
@@ -90,7 +91,7 @@ export default {
       session: undefined,
       mainStreamManager: undefined,
       publisher: undefined,
-      subscribers: [],
+      // subscribers: [],
 
       mySessionId: "",
       myUserName: "",
@@ -158,7 +159,7 @@ export default {
 
       this.session.on("streamCreated", ({ stream }) => {
         const subscriber = this.session.subscribe(stream);
-        this.subscribers.push(subscriber);
+        // this.subscribers.push(subscriber);
 
         const data = JSON.parse(stream.connection.data);
         const jsonData = JSON.parse(data.data);
@@ -210,11 +211,13 @@ export default {
           })
           .catch((error) => {});
       });
-
-      window.addEventListener("beforeunload", this.leaveSession);
     },
 
     leaveSession() {
+      this.OV = null;
+      this.session = null;
+      this.mainStreamManager = null;
+
       // 스트림 매니저 삭제
       this.subscribers.forEach((subscriber, index) => {
         subscriber.stream.disposeVideoElement();
@@ -267,35 +270,38 @@ export default {
   },
 
   mounted() {
+    this.redUsers = [];
+    this.blueUsers = [];
+
+    window.addEventListener("beforeunload", this.leaveSession);
+
     // 로딩창 5.8초동안 데이터 받는 시간 확보
-    setTimeout(() => {
-      this.myUserName = useUserStore().userInfo.nickname;
-      this.mySessionId = useUserStore().currentRoomInfo.roomCode;
-      // this.mySessionId = "A";
-      this.joinSession();
+    this.myUserName = useUserStore().userInfo.nickname;
+    this.mySessionId = useUserStore().currentRoomInfo.roomCode;
+    // this.mySessionId = "B";
+    this.joinSession();
 
-      // 여기서 순서 생각하기.
-      const red = useGameStore().redUser;
-      const blue = useGameStore().blueUser;
+    // 여기서 순서 생각하기.
+    // const red = useGameStore().redUser;
+    // const blue = useGameStore().blueUser;
 
-      if (useGameStore().myTeam === 1) {
-        for (let i = 1; i <= 3; i++) {
-          if (this.myUserName === red[i - 1].nickname) {
-            this.joinSession();
-            break;
-          }
-          delay2(250 * i);
-        }
-      } else {
-        for (let i = 1; i <= 3; i++) {
-          if (this.myUserName === blue[i - 1].nickname) {
-            this.joinSession();
-            break;
-          }
-          delay2(250 * i);
-        }
-      }
-    }, 5000);
+    // if (useGameStore().myTeam === 1) {
+    //   for (let i = 1; i <= 3; i++) {
+    //     if (this.myUserName === red[i - 1].nickname) {
+    //       this.joinSession();
+    //       break;
+    //     }
+    //     delay2(250 * i);
+    //   }
+    // } else {
+    //   for (let i = 1; i <= 3; i++) {
+    //     if (this.myUserName === blue[i - 1].nickname) {
+    //       this.joinSession();
+    //       break;
+    //     }
+    //     delay2(250 * i);
+    //   }
+    // }
   },
 };
 </script>

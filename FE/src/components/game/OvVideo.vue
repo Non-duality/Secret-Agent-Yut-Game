@@ -29,7 +29,7 @@ export default {
 <style scoped>
 video {
   max-width: 25vw;
-  max-height: 18vh;
+  max-height: 16vh;
   border: 5px solid red;
 }
 </style>
