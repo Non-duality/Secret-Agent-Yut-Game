@@ -9,12 +9,12 @@
       </div>
     </div>
   
-    <div v-for="chat in chatMessages" :key="chat" class="chat-notification">
+    <!-- <div v-for="chat in chatMessages" :key="chat" class="chat-notification">
       <div class="chating" @click="goChat(chat)">
         <h4 class="title">채팅이 왔습니다</h4>
         <p class="content">{{ chat }}님으로부터 채팅이 왔습니다. 확인해보세요!</p>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

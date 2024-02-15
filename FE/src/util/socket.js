@@ -111,10 +111,8 @@ export function sendEvent(event) {
 function handleWebSocketMessage(message) {
   const event = JSON.parse(message.body);
   const friendStore = useFriendStore();
-  console.log(event.eventCategory);
   switch (event.eventCategory) {
     case "1":
-      console.log('하이 보내지냐고')
       const chatInfo = {
         friendID: event.fromUserEmail,
         message: event.message,
