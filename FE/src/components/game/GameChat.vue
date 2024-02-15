@@ -2,16 +2,13 @@
   <div class="board-chat">
     <div class="chat-container">
       <div
-        v-for="(message, index) in gameChatMsg"
+        v-for="(message, index) in reversedRoomChat"
         :key="index"
         class="chat-log"
       >
-        <!-- <span
-          :style="{
-            color: getColorForMessage(message).color,
-          }"
+        <span
           v-html="getColorForMessage(message).text"
-        ></span> -->
+        ></span>
         <span>{{ message }}</span>
       </div>
     </div>
@@ -49,18 +46,19 @@ export default {
       const gameStore = useGameStore();
       return gameStore.gameChatMsg;
     },
-    receivedMsg() {
-      const gameStore = useGameStore();
-      return gameStore.receivedMsg;
+    reversedRoomChat() {
+      // roomChat 배열을 뒤집어 반환
+      return this.gameChatMsg.slice().reverse();
     },
   },
 
   watch: {
     receivedMsg(newVal) {
       const gameStore = useGameStore();
-      if(newVal.actionCategory === 6){
-          console.log(newVal);
-          gameStore.gameChatMsg.push(newVal.message);
+      if (newVal.actionCategory === 6) {
+        gameStore.gameChatMsg.push(
+          "[" + newVal.nickname + "] : " + newVal.message
+        );
       }
     },
   },
@@ -73,16 +71,11 @@ export default {
       if (usePickStore().code.includes("red")) teamName = "홍팀";
       else teamName = "청팀";
 
-      console.log(teamName);
-
       let tempMSG = {
         team: teamName,
         nickname: useUserStore().userInfo.nickname,
         message: this.msg,
       };
-
-      console.log("!!! 로그 !!!")
-      console.log(tempMSG);
 
       socketSend(
         "/pub/game/" + useUserStore().currentRoomInfo.roomCode + "/chat",
@@ -94,29 +87,11 @@ export default {
 
     // 메시지의 종류에 따라 색상을 반환하는 메서드
     getColorForMessage(message) {
-      if (message.includes("님이 입장하였습니다.")) {
-        return { color: "red", text: message };
-      } else if (message.includes("님이 퇴장하였습니다.")) {
-        return { color: "red", text: message };
-      } else {
-        const parts = message.split(" :"); // ":"를 기준으로 메시지를 분할
+      const parts = message.split(" :"); // ":"를 기준으로 메시지를 분할
 
-        let idx = 0;
-
-        // for (let i = 1; i <= 6; i++) {
-        //   if (
-        //     useUserStore().userInfo.nickname ===
-        //     useRoomStore().seatInfo[`seatnum${i}`].nickname
-        //   ) {
-        //     idx = i;
-        //     break;
-        //   }
-        // }
-
-        // return {
-        //   text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
-        // };
-      }
+      return {
+        text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
+      };
     },
   },
 };
@@ -137,6 +112,7 @@ export default {
   flex-direction: column-reverse;
   overflow-y: scroll;
   height: 20vh;
+  margin-left: 20px;
   scrollbar-width: thin;
   scrollbar-color: #888 transparent;
 }
