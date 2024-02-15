@@ -434,7 +434,7 @@ export default {
           break;
         // 미션 시작.
         case 7:
-          console("미션 시작 board");
+          console.log("미션 시작 board");
           break;
         // 미션 결과
         case 8:
