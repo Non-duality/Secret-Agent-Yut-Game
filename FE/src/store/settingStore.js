@@ -23,4 +23,6 @@ export const useSettingStore = defineStore("setting", {
       this.currentBgmSrc = path
     }
   }
+
+  
 });
