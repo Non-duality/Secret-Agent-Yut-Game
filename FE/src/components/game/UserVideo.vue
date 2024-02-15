@@ -48,8 +48,6 @@ export default {
   methods: {
     // 임시 미션 모달 토글
     toggleMission() {
-      console.log("눌렀다.");
-
       if (this.missionModalNum === -1) {
         this.missionModalNum = Math.floor(Math.random() * 4);
       } else {
@@ -66,7 +64,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 @import url("@/assets/css/openvidu/userVideo.css");
