@@ -49,10 +49,10 @@
 
         <!-- 내용 -->
         <div id="patch-content">
-          <div id="patch-list">
-            <span>Hello</span>
-            <span>Hello</span>
-            <span>Hello</span>
+          <div id="patch-list" v-if="patches.length > 0">
+            <span v-for="patch in filterPetch" :key="patch.id">
+              {{ patch.subject }}
+            </span>
           </div>
         </div>
       </div>
@@ -102,6 +102,9 @@ import event03 from "@/assets/img/home/carousel3.png";
 import SnsEvent from "@/assets/img/home/snsevent.png";
 import MalEvent from "@/assets/img/home/malevent.png";
 import SulEvent from "@/assets/img/home/sulevent.png";
+
+// 패치노트
+import { getPetch } from "@/api/petch";
 
 export default defineComponent({
   name: "Autoplay",
@@ -155,7 +158,14 @@ export default defineComponent({
       showMessage: false,
       showEventModal: false,
       clickedImageIndex: null,    // 클릭한 이미지의 인덱스를 저장할 변수
+      patches: []
     };
+  },
+
+  computed: {
+    filterPetch() {
+      return this.patches.slice(0, 3)
+    }
   },
 
   mounted() {
@@ -163,6 +173,15 @@ export default defineComponent({
     setTimeout(() => {
       this.showMessage = true;
     }, 4000);
+    // 패치노트 업로드
+    getPetch((response) => {
+      if (response && response.data) {
+        this.patches = response.data
+      }
+    }, (error) => {
+      console.log(error)
+    })
+    
   },
 });
 </script>
