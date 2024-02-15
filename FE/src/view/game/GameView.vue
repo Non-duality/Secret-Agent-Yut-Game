@@ -148,28 +148,34 @@ export default {
     },
     redWin() {
       this.msg.team = 1;
-      socketSend(
-        `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
-        this.msg
-      );
+      if (useGameStore().isThrowYut) {
+        socketSend(
+          `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
+          this.msg
+        );
+      }
       this.winMessage = 1;
       this.isShowEnd = true;
     },
     blueWin() {
-      this.msg.team = 1;
-      socketSend(
-        `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
-        this.msg
-      );
+      this.msg.team = 2;
+      if (useGameStore().isThrowYut) {
+        socketSend(
+          `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
+          this.msg
+        );
+      }
       this.winMessage = 2;
       this.isShowEnd = true;
     },
     spyEnd() {
       this.msg.team = useGameStore().receivedMsg.team === 1 ? 2 : 1;
-      socketSend(
-        `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
-        this.msg
-      );
+      if (useGameStore().isThrowYut) {
+        socketSend(
+          `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
+          this.msg
+        );
+      }
       this.winMessage = 3;
       this.isShowEnd = true;
     },
