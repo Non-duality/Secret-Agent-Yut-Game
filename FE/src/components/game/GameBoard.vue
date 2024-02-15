@@ -34,7 +34,7 @@
       <img class="game-board-hint-container-img" src="@/assets/icon/hint.png" />
       <div v-if="isShowHint" class="game-board-hint-text-container">
         <div class="game-board-hint-text">
-          {{ mySqyHint }}
+          {{ mySpyHint }}
         </div>
       </div>
     </div>
