@@ -105,6 +105,11 @@ public class GameService {
         List<CurrentUserPickDto> currentUserPickDtoList = pickRedisRepository.getCurrentUserPickInfo("UserPickInfo: " + roomCode,0,-1);
         log.info("gameStart currentUserPickDtoList : " + currentUserPickDtoList.toString());
 
+        //레디스에서 스파이 유닛 아이디를 받아옴
+        Map<Object,Object> spyPickInfo = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + roomCode);
+        int redTeamSpyId = Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀")));
+        int blueTeamSpyId = Integer.parseInt( String.valueOf(spyPickInfo.get("청팀")));
+
         //게임시작 dto 에 담아줄 유저 리스트를 생성
         List<UserInfo> redTeamUserList = new ArrayList<>();
         List<UserInfo> blueTeamUserList = new ArrayList<>();
@@ -130,8 +135,15 @@ public class GameService {
             blueTeamUserList.add(userInfo);
         }
 
-        // 홍팀 유저들의 유닛 선택창 정보
+        // 흉터 정보 랜텀 입력을 위한 랜덤 수열 생성
         int[] randomPer = this.randomPermutation();
+
+//        UnitInfo redSpyInfo = redUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀"))) - 1);
+//        UnitInfo blueSpyInfo = blueUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("청팀"))) - 1);
+        String redSpyHint = "";
+        String blueSpyHint = "";;
+
+        // 홍팀 유저들의 유닛 선택창 정보
         List<CurrentUnitPickDto> redTeamUnitPickInfo = pickRedisRepository.getCurrentUnitPickInfo("RedUnitInfo: " + roomCode);
         List<UnitInfo> redUnitList = new ArrayList<>();
         int i = 0;
@@ -147,6 +159,10 @@ public class GameService {
                     .skill(unit.getSkill())
                     .build();
             redUnitList.add(unitInfo);
+            if(unit.getUnitId() == blueTeamSpyId){
+                redSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다. " +
+                        "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";
+            }
             i++;
         }
 
@@ -166,18 +182,13 @@ public class GameService {
                     .scal(scalList[randomPer[i]])
                     .skill(unit.getSkill())
                     .build();
+            if(unit.getUnitId() == redTeamSpyId){
+                blueSpyHint = "밀정은 " + unitInfo.getTime() + "에 " + unitInfo.getPlace() + "에서 " + unitInfo.getContactor() + "을(를) 만나 " + unitInfo.getStuff() + "을 전달받았습니다." +
+                        "그리고 밀정은 " + unitInfo.getScal() + "에 흉터가 있습니다.";;
+            }
             blueUnitList.add(unitInfo);
             i++;
         }
-
-        Map<Object,Object> spyPickInfo = pickRedisRepository.getCurrentSpyPickInfo("SpyInfo: " + roomCode);
-
-        UnitInfo redSpyInfo = redUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀"))) - 1);
-        UnitInfo blueSpyInfo = blueUnitList.get(Integer.parseInt( String.valueOf(spyPickInfo.get("청팀"))) - 1);
-        String redSpyHint = "밀정은 " + redSpyInfo.getTime() + "에 " + redSpyInfo.getPlace() + "에서 " + redSpyInfo.getContactor() + "을(를) 만나 " + redSpyInfo.getStuff() + "을 전달받았습니다. " +
-                "그리고 밀정은 " + redSpyInfo.getScal() + "에 흉터가 있습니다.";
-        String blueSpyHint = "밀정은 " + blueSpyInfo.getTime() + "에 " + blueSpyInfo.getPlace() + "에서 " + blueSpyInfo.getContactor() + "을(를) 만나 " + blueSpyInfo.getStuff() + "을 전달받았습니다." +
-                "그리고 밀정은 " + blueSpyInfo.getScal() + "에 흉터가 있습니다.";;
 
         int[] missionRegion = this.generateMissionRegion();
 
@@ -191,8 +202,8 @@ public class GameService {
                 .blueTeamUserList(blueTeamUserList)
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
-                .mySpyUnitId(Integer.parseInt( String.valueOf(spyPickInfo.get("청팀"))))
-                .mySpyHint(blueSpyHint)
+                .mySpyUnitId(Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀"))))
+                .mySpyHint(redSpyHint)
                 .build();
 
         GameStartDto blueGameDto = GameStartDto.builder()
@@ -204,8 +215,8 @@ public class GameService {
                 .blueTeamUserList(blueTeamUserList)
                 .redTeamUnitList(redUnitList)
                 .blueTeamUnitList(blueUnitList)
-                .mySpyUnitId(Integer.parseInt( String.valueOf(spyPickInfo.get("홍팀"))))
-                .mySpyHint(redSpyHint)
+                .mySpyUnitId(Integer.parseInt( String.valueOf(spyPickInfo.get("청팀"))))
+                .mySpyHint(blueSpyHint)
                 .build();
 
         Map<String, Object> result = new HashMap<>();
