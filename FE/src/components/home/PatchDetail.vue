@@ -3,10 +3,8 @@
   <div class="modal">
     <div class="modal-content">
       <font-awesome-icon :icon="['fas', 'x']" style="color: #ffffff;" class="close" @click="closeModal('patchDetail')" />
-      <h2 class="title">{{patchDetail.subject}}</h2>
-      <br />
-      <p>{{ patchDetail.content }}</p>
-      <br />
+      <h2 @click="showMe" class="title">{{patchDetail.subject}}</h2>
+      <p style="color: #ffffff;" v-html="patchDetail.content"></p>
     </div>
   </div>
 </template>
@@ -25,6 +23,10 @@ export default {
     closeModal(modalId) {
       this.$emit("close-modal", modalId);
     },
+
+    showMe() {
+      console.log(this.patchDetail)
+    }
   },
 };
 </script>

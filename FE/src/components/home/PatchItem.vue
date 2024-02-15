@@ -6,7 +6,7 @@
       <h2 class="title">패치노트</h2>
       <br />
       <p v-for="patch in patches">
-        {{ patch.subject }}
+        {{ patch.created_date}} {{ patch.subject }}
       </p>
       <br />
     </div>

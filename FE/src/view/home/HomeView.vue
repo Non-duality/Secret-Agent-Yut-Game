@@ -57,7 +57,7 @@
               <PatchDetail 
                 v-if="showPatchDetailModal"
                 @close-modal="closeModal"
-                :patchDetail="patchDetail"
+                :patch-detail="patchDetailContent"
               />
             </transition>
           </div>
@@ -163,7 +163,7 @@ export default defineComponent({
     },
 
     showPetchDetail(patch) {
-      this.patchDetail = patch
+      this.patchDetailContent = patch
       this.openModal('patchDetail')
     }
   },
@@ -178,7 +178,7 @@ export default defineComponent({
       clickedImageIndex: null,    // 클릭한 이미지의 인덱스를 저장할 변수
       patches: [],
       showPatchDetailModal: false,
-      patchDetail: null,
+      patchDetailContent: null,
     };
   },
 
