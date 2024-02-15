@@ -51,6 +51,16 @@ export function connectWebSocket(accessToken) {
         console.log("[socket.onStompError] : " + error.headers["message"]);
         console.log("STOMP 상세 에러 : " + error.body);
         reject(new Error("STOMP ERROR"));
+        const userStore = useUserStore()
+        const event = {
+          fromUserEmail: userStore.userInfo.email,
+          eventCategory: '5',
+          eventAction: 'LOGOUT',
+          message: `${userStore.userInfo.nickname}님이 로그아웃했습니다.`
+        }
+        this.sendLogoutEvent(event)
+        alert("서버 오류로 로그아웃 처리되었습니다.")
+        userStore.initData()
         // alert("소켓 연결이 끊어졌습니다.");
       },
 
