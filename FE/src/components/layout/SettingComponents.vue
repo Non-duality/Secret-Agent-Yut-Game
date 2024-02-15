@@ -43,16 +43,12 @@
         soundEffect: true,
         selectedOption: "",   // 현재 선택된 BGM
         options: [
-          { path: "@/assets/sound/Axel.mp3", name: "Axel Lundstrom" },
-          { path: "@/assets/sound/Becouse.mp3", name: "Becouse Heart" },
-          { path: "@/assets/sound/Dee.mp3", name: "Dee Yan-Key" },
+          { path: "@/assets/sound/BeautifulKorea.mp3", name: "Beautiful Korea" },
+          { path: "@/assets/sound/BlackBox.mp3", name: "Black Box" },
+          { path: "@/assets/sound/Blumenlied.mp3", name: "Blumenlied" },
           { path: "@/assets/sound/Denys.mp3", name: "Upbeat Game" },
-          { path: "@/assets/sound/Eggy.mp3", name: "Eggy Toast" },
-          { path: "@/assets/sound/Holizna.mp3", name: "HoliznaCC0" },
-          { path: "@/assets/sound/Mohmohrap.mp3", name: "Mohmohrap" },
-          { path: "@/assets/sound/Standing.mp3", name: "Skipping in the No Standing Zone" },
-          { path: "@/assets/sound/Strobotone.mp3", name: "Strobotone" },
-          { path: "@/assets/sound/Wizwars.mp3", name: "Wizwars" },
+          { path: "@/assets/sound/MorningAtThePalace.mp3", name: "Morning At The Palace" },
+          { path: "@/assets/sound/OnceUponATime.mp3", name: "Once Upon A Time" },
         ],
 
         isOpen: false,  // 설정 모달이 열려있는지 닫혀있는지 판단
