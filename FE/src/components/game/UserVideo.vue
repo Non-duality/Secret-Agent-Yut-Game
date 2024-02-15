@@ -5,7 +5,7 @@
       v-if="streamManager"
       :stream-manager="streamManager"
     />
-    <button class="mission-btn" @click="toggleMission">미션</button>
+    <!-- <button class="mission-btn" @click="toggleMission">미션</button> -->
   </div>
 
   <div class="mission-modal">
