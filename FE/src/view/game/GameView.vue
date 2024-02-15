@@ -103,6 +103,7 @@ export default {
   },
 
   created() {
+    // 새로고침 방지 이벤트를 추가한다.
     this.myTeamIdx = useUserStore().myTeamIdx;
   },
 
@@ -135,6 +136,16 @@ export default {
   },
 
   methods: {
+    leave(event) {
+      event.preventDefault();
+      event.returnValue = "홈으로...";
+
+      // 홈으로 이동
+      useUserStore().initData();
+      alert("홈으로!!");
+      window.location.href = "/";
+      return event.returnValue;
+    },
     redWin() {
       this.msg.team = 1;
       socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`, this.msg);
@@ -288,6 +299,7 @@ export default {
     this.mySessionId = useUserStore().currentRoomInfo.roomCode;
     // this.mySessionId = "B";
     // this.joinSession();
+    useUserStore().showModalSide = false;
 
     // 여기서 순서 생각하기.
     const red = useGameStore().redUser;

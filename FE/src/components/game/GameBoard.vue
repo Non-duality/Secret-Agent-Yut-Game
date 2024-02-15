@@ -111,13 +111,12 @@ export default {
     GameSpySelect,
   },
   mounted() {
-    // 새로고침 방지 이벤트를 추가한다.
-    window.addEventListener("beforeunload", this.leave);
     // this.connectSocket();
     // gameConnect();
     console.log("게임 시작");
-    this.gameStart();
-    useUserStore().showModalSide = false;
+    setTimeout(() => {
+      this.gameStart();
+    },5000);
   },
   data() {
     return {
@@ -444,16 +443,6 @@ export default {
         // gameStore.isShowReasoning = true;
         gameStore.startTimer();
       }, 4000);
-    },
-    leave(event) {
-      event.preventDefault();
-      event.returnValue = "홈으로...";
-
-      // 홈으로 이동
-      useUserStore().initData();
-      alert("홈으로!!");
-      window.location.href = "/";
-      return event.returnValue;
     },
     // 윷 결과를 받아 왔을 때.
     receiveYutRes() {
