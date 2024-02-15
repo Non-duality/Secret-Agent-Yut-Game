@@ -9,7 +9,6 @@ import com.ssafy.hungry.domain.game.entity.game.red.RedTeamMember;
 import com.ssafy.hungry.domain.game.entity.game.red.RedTeamUnit;
 import com.ssafy.hungry.domain.game.entity.game.redis.BlueUnitHint;
 import com.ssafy.hungry.domain.game.entity.game.redis.RedUnitHint;
-import com.ssafy.hungry.domain.game.entity.game.redis.UnitHints;
 import com.ssafy.hungry.domain.game.repository.*;
 import com.ssafy.hungry.domain.pick.dto.CurrentUnitPickDto;
 import com.ssafy.hungry.domain.pick.dto.CurrentUserPickDto;

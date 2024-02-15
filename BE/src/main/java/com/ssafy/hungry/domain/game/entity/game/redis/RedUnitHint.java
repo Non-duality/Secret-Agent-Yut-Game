@@ -18,9 +18,9 @@ public class RedUnitHint {
     @Id
     private String roomCode;
 
-    private UnitHints unitHint;
+    private String unitHint;
 
-    public RedUnitHint(String roomCode, UnitHints unitHint){
+    public RedUnitHint(String roomCode, String unitHint){
         this.roomCode = roomCode;
         this.unitHint = unitHint;
     }
