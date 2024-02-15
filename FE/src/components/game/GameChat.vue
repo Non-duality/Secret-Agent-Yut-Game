@@ -12,7 +12,9 @@
           }"
           v-html="getColorForMessage(message).text"
         ></span> -->
-        <span>{{ message }}</span>
+        <!-- <span>{{ message }}</span> -->
+        <span>123</span>
+        <span>123</span>
       </div>
     </div>
 
