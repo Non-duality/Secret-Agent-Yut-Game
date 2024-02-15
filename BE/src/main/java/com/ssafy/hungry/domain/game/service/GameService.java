@@ -613,43 +613,43 @@ public class GameService {
     }
 
     //미션 성공시 힌트 주기
-    public String unitHint(String roomCode, MissionSuccessDto dto){
-        int unitId = dto.getUnitId();
-        int team = dto.getTeam();
-        String hint;
-        if(team == 1){ // 홍팀
-            //유닛 힌트 객체 가져오기
-            RedUnitHint redUnitHint = redUnitHintRepository.findById(roomCode).get();
-            //해시맵 가져오기
-            UnitHints unitHints = redUnitHint.getUnitHint();
-            //해시맵에서 유닛 아이디로 검색
-            List<String> hints = unitHints.getUnitHint().get(unitId);
-            //리스트에서 마지막으로 입력된 힌트 가져오기
-            hint = hints.remove(hints.size() - 1);
-            //다시 해시맵에 입력
-            unitHints.getUnitHint().put(unitId, hints);
-            //데이터 입력
-            redUnitHint.setUnitHint(unitHints);
-            //다시 저장
-            redUnitHintRepository.save(redUnitHint);
-        }else{
-            //유닛 힌트 객체 가져오기
-            BlueUnitHint blueUnitHint = blueUnitHintRepository.findById(roomCode).get();
-            //해시맵 가져오기
-            UnitHints unitHints = blueUnitHint.getUnitHint();
-            //해시맵에서 유닛 아이디로 검색
-            List<String> hints = unitHints.getUnitHint().get(unitId);
-            //리스트에서 마지막으로 입력된 힌트 가져오기
-            hint = hints.remove(hints.size() - 1);
-            //다시 해시맵에 입력
-            unitHints.getUnitHint().put(unitId, hints);
-            //데이터 입력
-            blueUnitHint.setUnitHint(unitHints);
-            //다시 저장
-            blueUnitHintRepository.save(blueUnitHint);
-        }
-        return hint;
-    }
+//    public String unitHint(String roomCode, MissionSuccessDto dto){
+//        int unitId = dto.getUnitId();
+//        int team = dto.getTeam();
+//        String hint;
+//        if(team == 1){ // 홍팀
+//            //유닛 힌트 객체 가져오기
+//            RedUnitHint redUnitHint = redUnitHintRepository.findById(roomCode).get();
+//            //해시맵 가져오기
+//            UnitHints unitHints = redUnitHint.getUnitHint();
+//            //해시맵에서 유닛 아이디로 검색
+//            List<String> hints = unitHints.getUnitHint().get(unitId);
+//            //리스트에서 마지막으로 입력된 힌트 가져오기
+//            hint = hints.remove(hints.size() - 1);
+//            //다시 해시맵에 입력
+//            unitHints.getUnitHint().put(unitId, hints);
+//            //데이터 입력
+//            redUnitHint.setUnitHint(unitHints);
+//            //다시 저장
+//            redUnitHintRepository.save(redUnitHint);
+//        }else{
+//            //유닛 힌트 객체 가져오기
+//            BlueUnitHint blueUnitHint = blueUnitHintRepository.findById(roomCode).get();
+//            //해시맵 가져오기
+//            UnitHints unitHints = blueUnitHint.getUnitHint();
+//            //해시맵에서 유닛 아이디로 검색
+//            List<String> hints = unitHints.getUnitHint().get(unitId);
+//            //리스트에서 마지막으로 입력된 힌트 가져오기
+//            hint = hints.remove(hints.size() - 1);
+//            //다시 해시맵에 입력
+//            unitHints.getUnitHint().put(unitId, hints);
+//            //데이터 입력
+//            blueUnitHint.setUnitHint(unitHints);
+//            //다시 저장
+//            blueUnitHintRepository.save(blueUnitHint);
+//        }
+//        return hint;
+//    }
 
 
     public boolean isSpy(int unitId, int team, String roomCode) {

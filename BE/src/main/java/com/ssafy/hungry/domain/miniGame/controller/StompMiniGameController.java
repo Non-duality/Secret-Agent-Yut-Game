@@ -26,7 +26,7 @@ public class StompMiniGameController {
     public void startMiniGame(@DestinationVariable String roomCode, MiniGameDto miniGameDto){
         log.info("미니게임 미션 시작 : " + miniGameDto);
         miniGameDto.setActionCategory(7);
-       simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, miniGameDto);
+        simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, miniGameDto);
     }
 
     @MessageMapping(value="/pick/{roomCode}/mini-game-finish")
