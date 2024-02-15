@@ -116,7 +116,9 @@ export default {
     // this.connectSocket();
     // gameConnect();
     console.log("게임 시작");
-    this.gameStart();
+    setTimeout(() => {
+      this.gameStart();
+    }, 5000);
   },
   data() {
     return {
@@ -272,7 +274,7 @@ export default {
           gameStore.isSelect = false;
           break;
         case 3:
-        gameStore.reasoningChoose = false;
+          gameStore.reasoningChoose = false;
 
           // 성공
           if (newVal.spy) {

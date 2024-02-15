@@ -311,20 +311,20 @@ export default {
 
     this.myUserName = useUserStore().userInfo.nickname;
     this.mySessionId = useUserStore().currentRoomInfo.roomCode;
-    // this.mySessionId = "B";
-    // this.joinSession();
+
     useUserStore().showModalSide = false;
 
     // 여기서 순서 생각하기.
     const red = useGameStore().redUser;
     const blue = useGameStore().blueUser;
 
-    console.log(useGameStore().myTeam);
+    // console.log(useGameStore().myTeam);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       if (useGameStore().myTeam === 1) {
         for (let i = 1; i <= 3; i++) {
           if (this.myUserName === red[i - 1].nickname) {
+            await this.delay2(500);
             this.joinSession();
             break;
           }
@@ -332,6 +332,7 @@ export default {
       } else {
         for (let i = 1; i <= 3; i++) {
           if (this.myUserName === blue[i - 1].nickname) {
+            await this.delay2(500);
             this.joinSession();
             break;
           }
