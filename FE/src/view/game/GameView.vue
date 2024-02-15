@@ -12,7 +12,7 @@
         <div class="rtc-container">
           <div id="video-container">
             <user-video
-              v-for="user in redUsers"
+              v-for="user in blueUsers"
               :key="user.stream.connection.connectionId"
               :stream-manager="user"
               :nickname="currentUserNickname"
@@ -30,7 +30,7 @@
         <div class="rtc-container">
           <div id="video-container">
             <user-video
-              v-for="user in blueUsers"
+              v-for="user in redUsers"
               :key="user.stream.connection.connectionId"
               :stream-manager="user"
               :nickname="currentUserNickname"
