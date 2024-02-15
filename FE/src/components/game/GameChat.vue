@@ -2,7 +2,7 @@
   <div class="board-chat">
     <div class="chat-container">
       <div
-        v-for="(message, index) in reversedRoomChat"
+        v-for="(message, index) in gameChatMsg"
         :key="index"
         class="chat-log"
       >
@@ -44,10 +44,10 @@ export default {
   computed: {
     gameChatMsg() {
       const gameStore = useGameStore();
+      console.log(gameStore.gameChatMsg.slice.reverse());
       return gameStore.gameChatMsg;
     },
     reversedRoomChat() {
-      // roomChat 배열을 뒤집어 반환
       return this.gameChatMsg.slice().reverse();
     },
   },
