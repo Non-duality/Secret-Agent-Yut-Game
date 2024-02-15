@@ -112,7 +112,7 @@ public class GameStompController {
     @MessageMapping("/game/{roomCode}/chat")
     public void gameChat(@DestinationVariable String roomCode, GameChatDto gameChatDto){
         log.info("게임 채팅 호출 : " + roomCode + " " + gameChatDto.getMessage());
-
+        gameChatDto.setActionCategory(6);
         if(gameChatDto.getTeam().equals("홍팀")){
             simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode + "/red", gameChatDto);
 
