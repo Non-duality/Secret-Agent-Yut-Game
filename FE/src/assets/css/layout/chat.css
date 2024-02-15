@@ -1,4 +1,19 @@
-/* 대기 방 채팅 css */
+.chat-box {
+  height: 100%;
+}
+
+.chat-top {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.chat-partner {
+  color: rgb(0, 255, 72);
+  margin: 3px;
+}
+
 .personal-chat {
   margin: 10px;
   background-color: rgba(90, 90, 90, 0.409);
@@ -6,7 +21,7 @@
   padding: 5px;
   border: 1px solid white;
   width: 90%;
-  height: 50vh;
+  height: 73%;
 }
 
 .chat-container {
@@ -17,7 +32,7 @@
   height: 100%;
   scrollbar-width: thin;
   scrollbar-color: #888 transparent;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .chat-name {
@@ -29,22 +44,18 @@
   display: flex;
   font-size: 14px;
 }
-/* 자기 자신은 다른 색으로 구별하였다 */
-.my-chat .chat-div {
-  color: green;
-}
 
 .chat-chat {
   margin-left: 20px;
 }
 /* 입력 칸 */
 .chat-input-div {
+  padding-right: thin;
   border-radius: 10px;
   border: 1px solid white;
   height: 5vh;
-  width: 95%;
+  width: 100%;
   text-align: left;
-  margin: 5px;
   color: green;
   display: flex;
   justify-content: space-between;

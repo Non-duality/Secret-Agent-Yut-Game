@@ -1,16 +1,25 @@
 <template>
-  <div class="personal-chat">
-    <!-- 채팅 로그 -->
-    <div class="chat-container">
-      <div
-        v-for="(message, index) in reversedpersonalChat"
-        :key="index"
-        class="chat-log"
-      >
-        <span :class="getNicknameColor(message[0])">[{{ message[0] }}] </span>
-        <span class="chat-message">{{ message[1] }}</span>
+  <div class="chat-box">
+    <div class="chat-top">
+      <h4 class="chat-partner">{{ friendNickname }}과의 채팅방</h4>
+      <font-awesome-icon 
+      :icon="['fas', 'rotate-left']" size="lg" style="color: #ffffff;" 
+      @click="goFriend"
+      />
+    </div>
+    <div class="personal-chat">
+      <!-- 채팅 로그 -->
+      <div class="chat-container">
+        <div
+          v-for="(message, index) in reversedpersonalChat"
+          :key="index"
+          class="chat-log"
+        >
+          <span :class="getNicknameColor(message[0])">[{{ message[0] }}] </span>
+          <span class="chat-message">{{ message[1] }}</span>
+        </div>
+        <!-- 입력 부분 -->
       </div>
-      <!-- 입력 부분 -->
       <div class="chat-input-div">
         <input
           class="chat-input"
@@ -29,9 +38,9 @@
 
 <script>
 // 아이콘
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
-library.add(faPaperPlane);
+library.add(faPaperPlane, faRotateLeft);
 
 import { useFriendStore } from "@/store/friendStore";
 import { useUserStore } from "@/store/userStore";
@@ -45,6 +54,7 @@ export default {
   data() {
     return {
       msg: "",
+      friendNickname: ""
     }
   },
   computed: {
@@ -85,8 +95,17 @@ export default {
       } else {
         return 'color-green'
       }
+    },
+
+    // 친구 있는 모달 띄우기
+    goFriend(){
+      this.$emit('open-friend-list')
     }
   },
+
+  mounted() {
+    this.friendNickname = this.friendInfo.nickname
+  }
 }
 </script>
 

@@ -17,6 +17,7 @@
       /></transition>
       <transition name="fade" mode="out-in">
         <ChatComponents v-if="showChatFlag"
+        @open-friend-list="handleOpenFriendRoom"
         :friendInfo="chatFriend"
       /></transition>
       <transition name="fade" mode="out-in">
@@ -133,6 +134,11 @@ export default {
     handleOpenChatRoom(friend) {
       this.chatFriend = friend
       this.showChat()
+    },
+
+    // 친구 목록 접근
+    handleOpenFriendRoom() {
+      this.showFriend()
     }
   },
 };
