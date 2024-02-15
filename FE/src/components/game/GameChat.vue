@@ -59,9 +59,9 @@ export default {
     receivedMsg(newVal) {
       const gameStore = useGameStore();
       if (newVal.actionCategory === 0) {
-        gameStore.gameChatMsg.push(
-          "[" + newVal.nickname + "] : " + newVal.message
-        );
+        console.log("내가 찍었어요!!!!!!!!!!!!!!!!");
+        console.log("[" + newVal.nickname + "] : " + newVal.message);
+        gameStore.gameChatMsg.push(newVal.message);
       }
     },
   },
