@@ -8,4 +8,5 @@ public class MissionSuccessDto {
     private int team;
     private int unitId;
     private String hint;
+    private int category;
 }

@@ -93,11 +93,11 @@ public class GameStompController {
     }
 
 
-    //레디스에 RedUnitHint / blueUnitHint 로 나누고 방 코드로 저장
+    //힌드 받기 레디스에 RedUnitHint / blueUnitHint 로 나누고 방 코드로 저장
     @MessageMapping("/game/{roomCode}/hint")
     public void hint(@DestinationVariable String roomCode, MissionSuccessDto dto){
         dto.setActionCategory(10);
-        dto.setHint(gameService.unitHint(roomCode ,dto));
+        dto = gameService.unitHint(roomCode ,dto);
         simpMessagingTemplate.convertAndSend("/sub/game/" + roomCode, dto);
     }
 

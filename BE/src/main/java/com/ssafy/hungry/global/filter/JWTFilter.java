@@ -30,7 +30,6 @@ public class JWTFilter extends OncePerRequestFilter {
         this.repository = repository;
     }
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 스웨거 경로를 확인하고 필터 적용을 건너뛰기
