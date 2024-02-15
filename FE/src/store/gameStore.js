@@ -456,11 +456,16 @@ export const useGameStore = defineStore("game", {
           this.isCenterDir = false;
 
           const msg = {
-            team : horseInfo.team,
-            unitId : arr,
+            team: horseInfo.team,
+            unitId: arr,
           };
           // 말 들어오면 밀정인지 체크하기 위헤 서버 전송 이따.
-          socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/unit-gole`, msg);
+          if (this.isThrowYut) {
+            socketSend(
+              `/pub/game/${useUserStore().currentRoomInfo.roomCode}/unit-gole`,
+              msg
+            );
+          }
 
           // 턴 바꿈.
           if (this.throwChance === 0) {
@@ -977,12 +982,16 @@ export const useGameStore = defineStore("game", {
           this.tiles[from].horse = [];
 
           const msg = {
-            team : team,
-            unitId : arr,
+            team: team,
+            unitId: arr,
           };
           // 말 들어오면 밀정인지 체크하기 위헤 서버 전송 이따.
-          socketSend(`/pub/game/${useUserStore().currentRoomInfo.roomCode}/unit-gole`, msg);
-
+          if (this.isThrowYut) {
+            socketSend(
+              `/pub/game/${useUserStore().currentRoomInfo.roomCode}/unit-gole`,
+              msg
+            );
+          }
         }, 300);
       }
       // 모서리를 통과할때.

@@ -375,25 +375,13 @@ export default {
           this.warningMessage = "";
           this.warningMessageSecond = "";
           let spyIndex = null;
+          let arr = newVal.unitId;
           for (let i = 0; i < 5; i++) {
-            if (
-              newVal.unitIds.includes(
-                newVal.team === 1 ? this.redHorses[i].id : this.blueHorses[i].id
-              )
-            ) {
-              this.warningMessage =
-                this.warningMessage + newVal.team === 1
-                  ? this.redHorses[i].name
-                  : this.blueHorses[i].name + " ";
+            if (arr.includes(newVal.team === 1 ? this.redHorses[i].id : this.blueHorses[i].id)) {
+              this.warningMessage += (newVal.team === 1 ? this.redHorses[i].name : this.blueHorses[i].name) + " ";
             }
             if (newVal.spy) {
-              if (
-                newVal.unitIds.includes(
-                  newVal.team === 1
-                    ? this.redHorses[i].id
-                    : this.blueHorses[i].id
-                )
-              ) {
+              if (arr.includes(newVal.team === 1 ? this.redHorses[i].id : this.blueHorses[i].id)) {
                 spyIndex = i;
               }
             }

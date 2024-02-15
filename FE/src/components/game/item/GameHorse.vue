@@ -325,7 +325,7 @@ export default {
           case "대왕":
             if (
               gameStore.myTeam != this.horse.team &&
-              gameStore.mySpyId === 0
+              gameStore.mySpyId === this.horse.id
             ) {
               if (this.horse.team === 1) {
                 this.imgSrc = (
@@ -349,7 +349,7 @@ export default {
           case "기병":
             if (
               gameStore.myTeam != this.horse.team &&
-              gameStore.mySpyId === 1
+              gameStore.mySpyId === this.horse.id
             ) {
               if (this.horse.team === 1) {
                 this.imgSrc = (
@@ -373,7 +373,7 @@ export default {
           case "창병":
             if (
               gameStore.myTeam != this.horse.team &&
-              gameStore.mySpyId === 2
+              gameStore.mySpyId === this.horse.id
             ) {
               if (this.horse.team === 1) {
                 this.imgSrc = (
@@ -397,7 +397,7 @@ export default {
           case "농민":
             if (
               gameStore.myTeam != this.horse.team &&
-              gameStore.mySpyId === 3
+              gameStore.mySpyId === this.horse.id
             ) {
               if (this.horse.team === 1) {
                 this.imgSrc = (
@@ -421,7 +421,7 @@ export default {
           case "노비":
             if (
               gameStore.myTeam != this.horse.team &&
-              gameStore.mySpyId === 4
+              gameStore.mySpyId === this.horse.id
             ) {
               if (this.horse.team === 1) {
                 this.imgSrc = (
