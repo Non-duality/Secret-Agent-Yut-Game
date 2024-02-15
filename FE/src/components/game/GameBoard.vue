@@ -283,17 +283,25 @@ export default {
 
             // 해당 말이 밀정이면
             if (newVal.team === 1) {
-              gameStore.redHorses[newVal.selectedUnit].kill = true;
-              gameStore.redHorses[newVal.selectedUnit].status = "end";
-              gameStore.redEnd += 1;
-              this.warningMessageSecond =
-                gameStore.redHorses[newVal.selectedUnit].name;
+              for (let i = 0; i < gameStore.redHorses.length; i++) {
+                if (newVal.selectedUnit === gameStore.redHorses[i].id) {
+                  gameStore.redHorses[i].kill = true;
+                  gameStore.redHorses[i].status = "end";
+                  gameStore.redEnd += 1;
+                  this.warningMessageSecond = gameStore.redHorses[i].name;
+                  break;
+                }
+              }
             } else {
-              gameStore.blueHorses[newVal.selectedUnit].kill = true;
-              gameStore.blueHorses[newVal.selectedUnit].status = "end";
-              gameStore.blueEnd += 1;
-              this.warningMessageSecond =
-                gameStore.blueHorses[newVal.selectedUnit].name;
+              for (let i = 0; i < gameStore.blueHorses.length; i++) {
+                if (newVal.selectedUnit === gameStore.blueHorses[i].id) {
+                  gameStore.blueHorses[i].kill = true;
+                  gameStore.blueHorses[i].status = "end";
+                  gameStore.blueEnd += 1;
+                  this.warningMessageSecond = gameStore.blueHorses[i].name;
+                  break;
+                }
+              }
             }
 
             this.warningMessageSecond =
@@ -312,13 +320,21 @@ export default {
               this.warningMessage + "이 밀정잡이에 실패하였습니다.";
             // 밀정이 아니면. 3턴 이동 금지
             if (newVal.team === 1) {
-              gameStore.redHorses[newVal.selectedUnit].stun += 3;
-              this.warningMessageSecond =
-                gameStore.redHorses[newVal.selectedUnit].name;
+              for (let i = 0; i < gameStore.redHorses.length; i++) {
+                if (newVal.selectedUnit === gameStore.redHorses[i].id) {
+                  gameStore.redHorses[i].stun += 3;
+                  this.warningMessageSecond = gameStore.redHorses[i].name;
+                  break;
+                }
+              }
             } else {
-              gameStore.blueHorses[newVal.selectedUnit].stun += 3;
-              this.warningMessageSecond =
-                gameStore.blueHorses[newVal.selectedUnit].name;
+              for (let i = 0; i < gameStore.redHorses.length; i++) {
+                if (newVal.selectedUnit === gameStore.blueHorses[i].id) {
+                  gameStore.blueHorses[i].stun += 3;
+                  this.warningMessageSecond = gameStore.blueHorses[i].name;
+                  break;
+                }
+              }
             }
 
             this.warningMessageSecond =

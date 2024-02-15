@@ -87,7 +87,7 @@ export default {
       }
       const msg = {
         team : gameStore.myTeam,
-        selectedUnit : this.selectedHorseId
+        selectedUnit : this.selectedHorseId ,
       }
       socketSend(`/pub/game/${this.roomCode}/reasoning`, msg);
     },
