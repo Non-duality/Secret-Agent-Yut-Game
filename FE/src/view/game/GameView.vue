@@ -12,7 +12,7 @@
         <div class="rtc-container">
           <div id="video-container">
             <user-video
-              v-for="user in redUsers"
+              v-for="user in blueUsers"
               :key="user.stream.connection.connectionId"
               :stream-manager="user"
               :nickname="currentUserNickname"
@@ -30,7 +30,7 @@
         <div class="rtc-container">
           <div id="video-container">
             <user-video
-              v-for="user in blueUsers"
+              v-for="user in redUsers"
               :key="user.stream.connection.connectionId"
               :stream-manager="user"
               :nickname="currentUserNickname"
@@ -270,38 +270,35 @@ export default {
   },
 
   mounted() {
-    this.redUsers = [];
-    this.blueUsers = [];
-
     window.addEventListener("beforeunload", this.leaveSession);
 
     // 로딩창 5.8초동안 데이터 받는 시간 확보
     this.myUserName = useUserStore().userInfo.nickname;
     this.mySessionId = useUserStore().currentRoomInfo.roomCode;
     // this.mySessionId = "B";
-    this.joinSession();
+    // this.joinSession();
 
     // 여기서 순서 생각하기.
-    // const red = useGameStore().redUser;
-    // const blue = useGameStore().blueUser;
+    const red = useGameStore().redUser;
+    const blue = useGameStore().blueUser;
 
-    // if (useGameStore().myTeam === 1) {
-    //   for (let i = 1; i <= 3; i++) {
-    //     if (this.myUserName === red[i - 1].nickname) {
-    //       this.joinSession();
-    //       break;
-    //     }
-    //     delay2(250 * i);
-    //   }
-    // } else {
-    //   for (let i = 1; i <= 3; i++) {
-    //     if (this.myUserName === blue[i - 1].nickname) {
-    //       this.joinSession();
-    //       break;
-    //     }
-    //     delay2(250 * i);
-    //   }
-    // }
+    if (useGameStore().myTeam === 1) {
+      for (let i = 1; i <= 3; i++) {
+        if (this.myUserName === red[i - 1].nickname) {
+          this.joinSession();
+          break;
+        }
+        delay2(500 * i);
+      }
+    } else {
+      for (let i = 1; i <= 3; i++) {
+        if (this.myUserName === blue[i - 1].nickname) {
+          this.joinSession();
+          break;
+        }
+        delay2(500 * i);
+      }
+    }
   },
 };
 </script>
