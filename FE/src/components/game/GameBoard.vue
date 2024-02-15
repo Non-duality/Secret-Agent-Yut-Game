@@ -17,7 +17,7 @@
     </div>
     <!-- 경고 메시지  -->
     <div
-      v-if="isShowWarningMessage || true"
+      v-if="isShowWarningMessage"
       class="game-board-warning-message-container"
     >
       <span>{{ warningMessage }}</span>
@@ -137,7 +137,7 @@ export default {
       isShowWarningMessage: false,
       warningMessage: "홍팀이 밀정잡이에 실패하였습니다.",
       warningMessageSecond:
-        "해당말은 이제 같은 팀입니다. 윷을 한번 더 던지세요!!",
+        "해당말은 이제 처형입니다. 윷을 한번 더 던지세요!!",
     };
   },
   computed: {
@@ -284,17 +284,27 @@ export default {
 
             // 해당 말이 밀정이면
             if (newVal.team === 1) {
+              gameStore.redHorses[newVal.selectedUnit].kill = true;
+              gameStore.redHorses[newVal.selectedUnit].status = "end";
+              gameStore.redEnd += 1;
               this.warningMessageSecond =
                 gameStore.redHorses[newVal.selectedUnit].name;
             } else {
+              gameStore.blueHorses[newVal.selectedUnit].kill = true;
+              gameStore.blueHorses[newVal.selectedUnit].status = "end";
+              gameStore.blueEnd += 1;
               this.warningMessageSecond =
                 gameStore.blueHorses[newVal.selectedUnit].name;
             }
 
             this.warningMessageSecond =
               this.warningMessageSecond +
-              "말은 이제 같은 팀입니다. 윷을 한번 더 던지세요!!";
+              "말을 사살했습니다.. 윷을 한번 더 던지세요!!";
             this.isShowWarningMessage = true;
+
+            setTimeout(() => {
+              this.isShowWarningMessage = false;
+            }, 2000);
           }
           // 실패
           else {

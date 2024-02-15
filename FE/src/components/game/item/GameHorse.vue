@@ -208,6 +208,9 @@ export default {
       }
       // 말이 들어 왔다면.
       else {
+        if(this.horse.kill){
+          styles.background = "gray";
+        }
         // 홍팀이면
         if (this.horse.team === 1) {
           styles.bottom = horsesIndex[2][this.horse.endOrder].bottom;
