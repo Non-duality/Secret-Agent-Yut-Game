@@ -15,7 +15,7 @@ export default {
     const jsonData = JSON.parse(data.data);
     const teamValue = jsonData.team;
     
-    if (teamValue === 2) {
+    if (teamValue === 1) {
       this.$el.style.border = "5px solid red";
     } else {
       this.$el.style.border = "5px solid blue";

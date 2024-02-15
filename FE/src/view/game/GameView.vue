@@ -12,7 +12,7 @@
         <div class="rtc-container">
           <div id="video-container">
             <user-video
-              v-for="user in blueUsers"
+              v-for="user in redUsers"
               :key="user.stream.connection.connectionId"
               :stream-manager="user"
               :nickname="currentUserNickname"
@@ -30,7 +30,7 @@
         <div class="rtc-container">
           <div id="video-container">
             <user-video
-              v-for="user in redUsers"
+              v-for="user in blueUsers"
               :key="user.stream.connection.connectionId"
               :stream-manager="user"
               :nickname="currentUserNickname"
@@ -60,8 +60,6 @@ import { useUserStore } from "@/store/userStore";
 import { useGameStore } from "@/store/gameStore";
 
 import GameBoard from "@/components/game/GameBoard.vue";
-import RedVideo from "@/components/game/RedVideo.vue";
-import BlueVideo from "@/components/game/BlueVideo.vue";
 import GameChat from "@/components/game/GameChat.vue";
 import MiniGame from "@/components/game/MiniGame.vue";
 import MessageModal from "@/components/layout/MessageModal.vue";
@@ -71,8 +69,6 @@ import Loading from "@/components/game/Loading.vue";
 export default {
   components: {
     GameBoard,
-    RedVideo,
-    BlueVideo,
     GameChat,
     MiniGame,
     MessageModal,
@@ -287,7 +283,7 @@ export default {
 
     if (useGameStore().myTeam === 1) {
       for (let i = 1; i <= 3; i++) {
-        await this.delay2(1000);
+        await this.delay2(900);
 
         if (this.myUserName === red[i - 1].nickname) {
           this.joinSession();
@@ -296,7 +292,7 @@ export default {
       }
     } else {
       for (let i = 1; i <= 3; i++) {
-        await this.delay2(1000);
+        await this.delay2(1200);
 
         if (this.myUserName === blue[i - 1].nickname) {
           this.joinSession();
