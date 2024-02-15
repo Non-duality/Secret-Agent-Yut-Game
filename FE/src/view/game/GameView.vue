@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <MiniGame v-show="isMission" />
+    <!-- <MiniGame v-show="isMission" /> -->
     <GameChat class="game-chat-main" />
     <GameEnd
       v-if="isGameEnd"

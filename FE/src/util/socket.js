@@ -757,9 +757,15 @@ export function initPick(router, from) {
         console.log("게임 스타트 연결 시도");
         gameConnect();
 
-        setTimeout(() => {
-          router.push({ name: "game" });
-        }, 3000);
+        const check = setInterval(() => {
+          if(useGameStore().redUser.length !== 0){
+            setTimeout(() => {
+              router.push({ name: "game" });
+              clearInterval(check);
+              check = null;
+            },2000);
+          }
+        }, 1000);
       }
     }
   );
