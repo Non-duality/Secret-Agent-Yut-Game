@@ -53,6 +53,10 @@ export default {
     //   const gameStore = useGameStore();
     //   return gameStore.gameChatMsg.slice().reverse();
     // },
+    receivedMsg() {
+      const gameStore = useGameStore();
+      return gameStore.receivedMsg;
+    },
   },
 
   watch: {
@@ -61,7 +65,9 @@ export default {
       if (newVal.actionCategory === 0) {
         console.log("내가 찍었어요!!!!!!!!!!!!!!!!");
         console.log("[" + newVal.nickname + "] : " + newVal.message);
-        gameStore.gameChatMsg.push(newVal.message);
+        gameStore.gameChatMsg.push(
+          "[" + newVal.nickname + "] : " + newVal.message
+        );
       }
     },
   },
