@@ -63,30 +63,30 @@ export default {
     /* 방장이 게임 시작을 누름 */
     gameStart() {
       // 게임 시작 가능한 상태인지 확인 (시작)
-      // let canStart = true;
-      // const seatInfo = useRoomStore().seatInfo;
-      // const seatKeys = Object.keys(seatInfo);
+      let canStart = true;
+      const seatInfo = useRoomStore().seatInfo;
+      const seatKeys = Object.keys(seatInfo);
 
-      // for (let i = 1; i < seatKeys.length; i++) {
-      //   const seatKey = seatKeys[i];
-      //   if (!seatInfo[seatKey].nickname) {
-      //     alert("빈 자리가 존재합니다.");
-      //     canStart = false;
-      //     return;
-      //     break;
-      //   }
-      // }
+      for (let i = 1; i < seatKeys.length; i++) {
+        const seatKey = seatKeys[i];
+        if (!seatInfo[seatKey].nickname) {
+          alert("빈 자리가 존재합니다.");
+          canStart = false;
+          return;
+          break;
+        }
+      }
 
-      // for (let i = 1; i < seatKeys.length; i++) {
-      //   const seatKey = seatKeys[i];
-      //   if (!seatInfo[seatKey].ready) {
-      //     alert("모두 준비완료가 되지 않았습니다.");
-      //     canStart = false;
-      //     break;
-      //   }
-      // }
+      for (let i = 1; i < seatKeys.length; i++) {
+        const seatKey = seatKeys[i];
+        if (!seatInfo[seatKey].ready) {
+          alert("모두 준비완료가 되지 않았습니다.");
+          canStart = false;
+          break;
+        }
+      }
 
-      // if(!canStart) return;
+      if(!canStart) return;
       // 게임 시작 가능한 상태인지 확인 (끝)
 
       // 게임 방 사람에게 알린다.

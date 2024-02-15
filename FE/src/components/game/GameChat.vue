@@ -6,9 +6,9 @@
         :key="index"
         class="chat-log"
       >
-        <span
+        <!-- <span
           v-html="getColorForMessage(message).text"
-        ></span>
+        ></span> -->
         <span>{{ message }}</span>
       </div>
     </div>
