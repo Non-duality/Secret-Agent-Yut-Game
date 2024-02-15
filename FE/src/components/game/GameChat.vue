@@ -50,8 +50,7 @@ export default {
       return gameStore.gameChatMsg;
     },
     // reversedRoomChat() {
-    //   const gameStore = useGameStore();
-    //   return gameStore.gameChatMsg.slice().reverse();
+    //   return this.gameChatMsg.reverse();
     // },
     receivedMsg() {
       const gameStore = useGameStore();
@@ -63,11 +62,7 @@ export default {
     receivedMsg(newVal) {
       const gameStore = useGameStore();
       if (newVal.actionCategory === 0) {
-        console.log("내가 찍었어요!!!!!!!!!!!!!!!!");
-        console.log("[" + newVal.nickname + "] : " + newVal.message);
-        gameStore.gameChatMsg.push(
-          "[" + newVal.nickname + "] : " + newVal.message
-        );
+        gameStore.gameChatMsg.push(newVal.nickname + " : " + newVal.message);
       }
     },
   },
@@ -99,7 +94,7 @@ export default {
       const parts = message.split(" :"); // ":"를 기준으로 메시지를 분할
 
       return {
-        text: `<span style="color: #2d81ff; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
+        text: `<span style="color: #9bff9bcb; float: left; margin-left: 20px; margin-right: 10px">[${parts[0]}] </span> <span style="color: white; float: left;">${parts[1]}</span>`,
       };
     },
   },
