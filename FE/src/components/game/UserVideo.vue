@@ -6,12 +6,13 @@
       :stream-manager="streamManager"
     />
     <button class="mission-btn" @click="toggleMission">미션</button>
-    <div class="mission-modal">
-      <jewelModal v-if="showMissionModal[0]"/>
-      <cakeModal v-if="showMissionModal[1]"/>
-      <chamModal v-if="showMissionModal[2]"/>
-      <flyCatchModal v-if="showMissionModal[3]"/>
-    </div>
+  </div>
+
+  <div class="mission-modal">
+    <jewelModal v-if="showMissionModal[0]" />
+    <cakeModal v-if="showMissionModal[1]" />
+    <chamModal v-if="showMissionModal[2]" />
+    <flyCatchModal v-if="showMissionModal[3]" />
   </div>
 </template>
 
