@@ -432,7 +432,17 @@ export default {
         case 8:
           console.log("미션 종료 board");
           gameStore.isMission = false;
-          gameStore.missionEnd(newVal);
+          this.warningMessage = "미션이 종료되었습니다."
+          if(newVal.result){
+            this.warningMessageSecond = "미션에 성공하여 말을 선택해 주세요.";
+          }else{
+            this.warningMessageSecond = "미션에 실패하여 다음 턴으로 넘어갑니다.";
+          }
+          this.isShowWarningMessage = true;
+          setTimeout(() => {
+            this.isShowWarningMessage = false;
+            gameStore.missionEnd(newVal);
+          },2500);
           break;
       }
     },
