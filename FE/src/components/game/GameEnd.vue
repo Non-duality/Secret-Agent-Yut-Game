@@ -12,20 +12,15 @@ import { useGameStore } from "@/store/gameStore";
 
 export default {
   props: {
-    winMessage: String,
-  },
-  data(){
-    return{
-      text : "승리",
-    }
+    winMessage: Number,
   },
   computed: {
-    // text() {
-    //   if(this.winMessage === useGameStore().myTeam)
-    //     return "승리";
-    //   else
-    //     return "패배";
-    // },
+    text() {
+      if(this.winMessage === useGameStore().myTeam)
+        return "승리";
+      else
+        return "패배";
+    },
   },
   methods: {
     sendToParent() {
