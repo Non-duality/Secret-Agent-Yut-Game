@@ -17,7 +17,7 @@ export default {
       throwPower: [0.07, 0.07, 0.07, 0.07], // 초기 속도 => 얼마나 높게 올라가는지 결정
       secondPower: [0.03, 0.03, 0.03, 0.03],  // 두번째 힘.
       positionSpeedX: [0.02, 0.02, 0.02, 0.02], // 회전.
-      gravity: -0.001, // 중력 => 윷에 작용하는 중력.
+      gravity: -0.003, // 중력 => 윷에 작용하는 중력.
       animationFrameId: null,
       modelLoaded: false, // 모델 로드 상태를 확인하는 변수
     };
