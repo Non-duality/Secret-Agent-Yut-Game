@@ -41,8 +41,9 @@
 <img src="https://img.shields.io/badge/jira-0052CC?style=flat&logo=jira&logoColor=white">
 <br>
 <img src="https://img.shields.io/badge/fontawesome-339AF0?style=flat&logo=fontawesome&logoColor=white">
-<img src="https://img.shields.io/badge/OpenVidu-E02B20?style=flat&logo=openvidu&logoColor=white">
-<img src="https://img.shields.io/badge/MediaPipe-00A66B?style=flat&logo=mediapipe&logoColor=white">
+<img src="https://img.shields.io/badge/Three.js-0aa0f4?style=flat&logo=three.js&logoColor=white">
+<img src="https://img.shields.io/badge/OpenVidu-fecb00?style=flat&logo=openvidu&logoColor=white">
+<img src="https://img.shields.io/badge/MediaPipe-0097a7?style=flat&logo=mediapipe&logoColor=white">
 
 ### 📌프로젝트 기간
 
@@ -572,72 +573,67 @@ const props = defineProps({
 #### 📌진입 화면
 
 ##### 회원가입
-![회원가입gif](/uploads/7d7bc62f3c1d057b90189d4458828816/회원가입gif.gif)
+![회원가입gif](/uploads/e12dc378ea55863c4fd4318debc5c344/회원가입gif.gif)
 
 ##### 로그인
-![로그인gif](/uploads/10057b63048da69027ab64f4a245651a/로그인gif.gif)
+![로그인gif](/uploads/d1501d1d1420a93045b4f39b9e8c3c54/로그인gif.gif)
 
 #### 📌홈 화면
 
 ##### 홈 화면 진입 후 로그아웃
-![로그아웃gif](/uploads/68624b102417db2657d47b2b8119345d/로그아웃gif.gif)
+![로그아웃gif](/uploads/907b56750a250d3d98698ddfd8976bb6/로그아웃gif.gif)
 
 ##### 도움말
-![도움말gif](/uploads/f8a40d97e8bf803b73c4ba3569e44b86/도움말gif.gif)
+![도움말gif](/uploads/cfbd71ae76af2c426326b4f642a09e69/도움말gif.gif)
 
 ##### 게임 관련 설정창 조작
-![설정창gif](/uploads/f694aab7d0f598e443cf65deb40fe206/설정창gif.gif)
+![설정창gif](/uploads/513998d40b80469a3c74561908d1c7e0/설정창gif.gif)
 
 ##### 친구 추가
-![친구추가gif](/uploads/dc2366c7f801c8654a611c374dcbea3e/친구추가gif.gif)
+![친구추가gif](/uploads/b8485f55ebea18e46b05eb67d493a441/친구추가gif.gif)
 
 ##### 친구 채팅
-![친구채팅gif](/uploads/a82eb1e977b301b1e16a297a8978cb40/친구채팅gif.gif)
-![친구채팅2gif](/uploads/0f32b9615f7647edd31797853fcdd9da/친구채팅2gif.gif)
+![친구채팅gif](/uploads/5eed3ae008464948a91ff2a9f6348b98/친구채팅gif.gif)
+![친구채팅2gif](/uploads/7f4df9022e0082162cdf8c7c3e6cef5b/친구채팅2gif.gif)
 
 #### 📌프로필 화면
 
 ##### 프로필 홈화면
-![내정보gif](/uploads/0abf5094e4884f2c0358d45d6507ce70/내정보gif.gif)
+![내정보gif](/uploads/9a18f73a7ef26e1b280a015282d5e7f8/내정보gif.gif)
 
 ##### 닉네임 변경
-![닉네임변경gif](/uploads/a72b33cab1948d41226d89cc847faf9b/닉네임변경gif.gif)
+![닉네임변경gif](/uploads/8faa8c5b55c200f77619d0b47431ddff/닉네임변경gif.gif)
 
 ##### 비밀번호 변경
-![비밀번호변경gif](/uploads/4a0d73a13b7e8423c76abe7eb21d495f/비밀번호변경gif.gif)
+![비밀번호변경gif](/uploads/5665fd64df7c3390ace33efc47a0cf78/비밀번호변경gif.gif)
 
 #### 📌게임 방 화면
 
 ##### 게임 방 리스트 및 대기 방 입장
-![방입장gif](/uploads/ae997ed1aad14c8086d00efdc40c4a54/방입장gif.gif)
+![방입장gif](/uploads/8fef9ab2144abe26b52a80fa0f84373a/방입장gif.gif)
 
 #### 📌게임 진행
 
 ##### 게임 시작 시 캐릭터 픽 창 진입
-![픽창입장gif](/uploads/07f0c97c1b519644b6bbd33114270c46/픽창입장gif.gif)
+![픽창입장gif](/uploads/58455ec15cf72064265b1d346816917b/픽창입장gif.gif)
 
 ##### 캐릭터 픽 이후 상대 팀 밀정 픽 창 진입
-![픽과밀정픽gif](/uploads/5bf0ef5f2c03977f686ad38ff2772c65/픽과밀정픽gif.gif)
+![픽과밀정픽gif](/uploads/cdb026a3b0ab24e619b6ec490f8df11a/픽과밀정픽gif.gif)
 
 ##### 게임 시작
-![게임입장gif](/uploads/194fef64383121ee3b3b393593500762/게임입장gif.gif)
+![게임입장gif](/uploads/fba87929038f33309200b2ef1a8268d4/게임입장gif.gif)
 
 ##### 윷 던지기
-![윷던지기유닛이동미션도착gif](/uploads/de6745643d75d6d8889c2aace26b2dad/윷던지기유닛이동미션도착gif.gif)
+![윷던지기유닛이동미션도착gif](/uploads/26fca4298e4f80da28919fcbfb2caac7/윷던지기유닛이동미션도착gif.gif)
 
 ##### 미니 게임 실행
-![미션gif](/uploads/032836cc99c86c1589368b12bee59af7/미션gif.gif)
-
-###### 각종 미니 게임
-![케이크먹기](/uploads/253001ce3d5d1415392d84c0b6cccc45/케이크먹기.gif)
-![참참참](/uploads/72a1da4dd14d78099368f55da38da2d3/참참참.gif)
-![파리잡기](/uploads/567327f4f4db2d0420bb25eb2ef82d88/파리잡기.gif)
+![미션gif](/uploads/5ba2ecc6be69f72d979766ea78ac023d/미션gif.gif)
 
 ##### 미니 게임 성공 후 밀정 힌트 얻기
-![힌트얻기gif](/uploads/970ae6da00212be7a664a969debc79a1/힌트얻기gif.gif))
+![힌트얻기gif](/uploads/fceda0ddf994107565b0dc0788adb80d/힌트얻기gif.gif)
 
 ##### 밀정 추리
-![추리gif](/uploads/4d6c7f8ded64de723763da6bc0126769/추리gif.gif)
+![추리gif](/uploads/0e903f4f791ccca8c68c614596042895/추리gif.gif)
 
 
 
