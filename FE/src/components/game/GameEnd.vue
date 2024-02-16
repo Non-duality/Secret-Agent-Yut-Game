@@ -1,7 +1,7 @@
 <template>
   <div class="end-main">
     <div class="end-container"></div>
-    <div :style="{ color: text === '승리' ? 'blue' : 'red' }" class="end-text">{{text}}</div>
+    <div :style="{ color: text === '승리' ? 'blue' : 'red' }" class="end-text">{{winMessage}}</div>
     <button class="end-btn" @click="sendToParent">나가기</button>
   </div>
 </template>
@@ -12,15 +12,7 @@ import { useGameStore } from "@/store/gameStore";
 
 export default {
   props: {
-    winMessage: Number,
-  },
-  computed: {
-    text() {
-      if(this.winMessage === useGameStore().myTeam)
-        return "승리";
-      else
-        return "패배";
-    },
+    winMessage: String,
   },
   methods: {
     sendToParent() {

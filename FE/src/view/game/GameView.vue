@@ -158,7 +158,11 @@ export default {
           this.msg
         );
       }
-      this.winMessage = 1;
+      if(useGameStore().myTeam === 1){
+        this.winMessage = "승리";
+      }else{
+        this.winMessage = "패배";
+      }
       this.isShowEnd = true;
     },
     blueWin() {
@@ -169,7 +173,11 @@ export default {
           this.msg
         );
       }
-      this.winMessage = 2;
+      if(useGameStore().myTeam === 2){
+        this.winMessage = "승리";
+      }else{
+        this.winMessage = "패배";
+      }
       this.isShowEnd = true;
     },
     spyEnd() {
@@ -180,7 +188,19 @@ export default {
           this.msg
         );
       }
-      this.winMessage = useGameStore().receivedMsg.team === 1 ? 2 : 1;
+      if(useGameStore().receivedMsg.team === 1){
+        if(useGameStore().myTeam === 1){
+          this.winMessage = "패배";
+        }else{
+          this.winMessage = "승리";
+        }
+      }else{
+        if(useGameStore().myTeam === 2){
+          this.winMessage = "패배";
+        }else{
+          this.winMessage = "승리";
+        }
+      }
       this.isShowEnd = true;
     },
     closeModal() {
