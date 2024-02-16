@@ -14,35 +14,35 @@
 - 경쟁과 협력이 공존하는 게임으로 서로 간의 유대감 증진이 가능하다.
 
 ### 📌기술 스택
-<img src="https://img.shields.io/badge/html5-E34F26?style=flat&logo=html5&logoColor=white"><br>
-<img src="https://img.shields.io/badge/css-1572B6?style=flat&logo=css3&logoColor=white"><br>
-<img src="https://img.shields.io/badge/vite-646CFF?style=flat&logo=vite&logoColor=white"><br>
+<img src="https://img.shields.io/badge/html5-E34F26?style=flat&logo=html5&logoColor=white">
+<img src="https://img.shields.io/badge/css-1572B6?style=flat&logo=css3&logoColor=white">
+<img src="https://img.shields.io/badge/vite-646CFF?style=flat&logo=vite&logoColor=white">
 <img src="https://img.shields.io/badge/vue.js-4FC08D?style=flat&logo=vue.js&logoColor=white"><br>
 <br>
-<img src="https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat&logo=spring-boot&logoColor=white"><br>
+<img src="https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat&logo=spring-boot&logoColor=white">
 <img src="https://img.shields.io/badge/Spring%20Security-6DB33F?style=flat&logo=spring-security&logoColor=white"><br>
-<img src="https://img.shields.io/badge/JPA-007396?style=flat&logo=java&logoColor=white"><br>
+<img src="https://img.shields.io/badge/JPA-007396?style=flat&logo=java&logoColor=white">
 <img src="https://img.shields.io/badge/JWT-000000?style=flat&logo=json-web-tokens&logoColor=white"><br>
 <br>
-<img src="https://img.shields.io/badge/Nginx-009639?style=flat&logo=nginx&logoColor=white"><br>
-<img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white"><br>
+<img src="https://img.shields.io/badge/Nginx-009639?style=flat&logo=nginx&logoColor=white">
+<img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white">
 <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white"><br>
 <br>
-<img src="https://img.shields.io/badge/gitlab-FC6D26?style=flat&logo=gitlab&logoColor=white"><br>
+<img src="https://img.shields.io/badge/gitlab-FC6D26?style=flat&logo=gitlab&logoColor=white">
 <img src="https://img.shields.io/badge/Gerrit-FCC624?style=flat&logo=gerrit&logoColor=white"><br>
 <br>
-<img src="https://img.shields.io/badge/docker-2496ED?style=flat&logo=docker&logoColor=white"><br>
-<img src="https://img.shields.io/badge/jenkins-D24939?style=flat&logo=jenkins&logoColor=white"><br>
+<img src="https://img.shields.io/badge/docker-2496ED?style=flat&logo=docker&logoColor=white">
+<img src="https://img.shields.io/badge/jenkins-D24939?style=flat&logo=jenkins&logoColor=white">
 <img src="https://img.shields.io/badge/AWS%20EC2-FF9900?style=flat&logo=amazon-aws&logoColor=white"><br>
 <br>
-<img src="https://img.shields.io/badge/figma-F24E1E?style=flat&logo=figma&logoColor=white"><br>
+<img src="https://img.shields.io/badge/figma-F24E1E?style=flat&logo=figma&logoColor=white">
 <img src="https://img.shields.io/badge/Notion-000000?style=flat&logo=Notion&logoColor=white"><br>
 <br>
-<img src="https://img.shields.io/badge/mattermost-0058CC?style=flat&logo=mattermost&logoColor=white"><br>
+<img src="https://img.shields.io/badge/mattermost-0058CC?style=flat&logo=mattermost&logoColor=white">
 <img src="https://img.shields.io/badge/jira-0052CC?style=flat&logo=jira&logoColor=white"><br>
 <br>
-<img src="https://img.shields.io/badge/fontawesome-339AF0?style=flat&logo=fontawesome&logoColor=white"><br>
-<img src="https://img.shields.io/badge/OpenVidu-E02B20?style=flat&logo=openvidu&logoColor=white"><br>
+<img src="https://img.shields.io/badge/fontawesome-339AF0?style=flat&logo=fontawesome&logoColor=white">
+<img src="https://img.shields.io/badge/OpenVidu-E02B20?style=flat&logo=openvidu&logoColor=white">
 <img src="https://img.shields.io/badge/MediaPipe-00A66B?style=flat&logo=mediapipe&logoColor=white">
 
 ### 📌프로젝트 기간
