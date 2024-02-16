@@ -180,7 +180,7 @@ export default {
           this.msg
         );
       }
-      this.winMessage = 3;
+      this.winMessage = useGameStore().receivedMsg.team === 1 ? 2 : 1;
       this.isShowEnd = true;
     },
     closeModal() {

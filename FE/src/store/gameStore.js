@@ -54,7 +54,7 @@ export const useGameStore = defineStore("game", {
       isEnemyFindSpy: false,
       spyGoal: false,
       // 힌트 메시지
-      mySpyHint : "",
+      mySpyHint: "",
       // 다음 차례 메시지.
       turnMessage: "",
       redTurnName: "",
@@ -1151,48 +1151,65 @@ export const useGameStore = defineStore("game", {
       // this.timerId = null;
       this.throwChance--;
       // 총 4번의 랜덤을 발생
-      // false가 뒤집어 진거
-      let cnt = 0;
-      for (var i = 0; i < 4; i++) {
-        const rand = Math.floor(Math.random() * 10);
+      
+      // 라이브 시연 용..
+      const nick = useUserStore().userInfo.nickname;
+      if (nick === "이희웅") {
+        this.yutRes = 3;
+        this.yutText = "걸";
+      } else if (nick === "이준희" || nick === "김수빈") {
+        this.yutRes = 2;
+        this.yutText = "개";
+      } else if (nick === "이주미" || nick === "박지훈") {
+        this.yutRes = 1;
+        this.yutText = "도";
+      } else if (nick === "양성규") {
+        this.yutRes = -1;
+        this.yutText = "백도";
+      } else {
+        // false가 뒤집어 진거
+        let cnt = 0;
+        for (var i = 0; i < 4; i++) {
+          const rand = Math.floor(Math.random() * 10);
 
-        // 윷은 4개이므로 각각 결과를 저장.
-        if (rand < 4) {
-          this.throwRes[i] = true;
-          cnt++;
-        } else {
-          this.throwRes[i] = false;
+          // 윷은 4개이므로 각각 결과를 저장.
+          if (rand < 4) {
+            this.throwRes[i] = true;
+            cnt++;
+          } else {
+            this.throwRes[i] = false;
+          }
+          // console.log("rand = " + rand);
         }
-        // console.log("rand = " + rand);
-      }
 
-      // 저장된 결과를 계산.
-      switch (cnt) {
-        case 0:
-          this.yutRes = 5;
-          this.yutText = "모";
-          break;
-        case 1:
-          this.yutText = "도";
-          if (this.throwRes[0]) {
-            this.yutText = "백도";
-            this.yutRes = -1;
-          } else this.yutRes = 1;
-          break;
-        case 2:
-          this.yutText = "개";
-          this.yutRes = 2;
-          break;
-        case 3:
-          this.yutText = "걸";
-          this.yutRes = 3;
-          break;
-        case 4:
-          this.yutText = "윷";
-          this.yutRes = 4;
-          break;
-        default:
-          break;
+        // 저장된 결과를 계산.
+        switch (cnt) {
+          case 0:
+            this.yutRes = 5;
+            this.yutText = "모";
+            break;
+          case 1:
+            this.yutText = "도";
+            if (this.throwRes[0]) {
+              this.yutText = "백도";
+              this.yutRes = -1;
+            } else this.yutRes = 1;
+            break;
+          case 2:
+            this.yutText = "개";
+            this.yutRes = 2;
+            break;
+          case 3:
+            this.yutText = "걸";
+            this.yutRes = 3;
+            break;
+          case 4:
+            this.yutText = "윷";
+            this.yutRes = 4;
+            break;
+          default:
+            break;
+        }
       }
 
       if (this.yutRes >= 4) {
