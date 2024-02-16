@@ -14,47 +14,38 @@
 - 경쟁과 협력이 공존하는 게임으로 서로 간의 유대감 증진이 가능하다.
 
 ### 📌기술 스택
-```
 <img src="https://img.shields.io/badge/html5-E34F26?styleflat&logo=html5&logoColor=white"> 
   <img src="https://img.shields.io/badge/css-1572B6?styleflat&logo=css3&logoColor=white"> 
 <img src="https://img.shields.io/badge/vite-646CFF?styleflat&logo=vite&logoColor=white">
 <img src="https://img.shields.io/badge/vue.js-4FC08D?styleflat&logo=vue.js&logoColor=white">
-```
-```
+
 <img src="https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat&logo=spring-boot&logoColor=white">
 <img src="https://img.shields.io/badge/Spring%20Security-6DB33F?style=flat&logo=spring-security&logoColor=white">
 <img src="https://img.shields.io/badge/JPA-007396?style=flat&logo=java&logoColor=white">
 <img src="https://img.shields.io/badge/JWT-000000?style=flat&logo=json-web-tokens&logoColor=white">
-```
-```
+
 <img src="https://img.shields.io/badge/Nginx-009639?style=flat&logo=nginx&logoColor=white">
-```
-```
+
 <img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white">
 <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white">
-```
-```
+
 <img src="https://img.shields.io/badge/gitlab-FC6D26?styleflat&logo=gitlab&logoColor=white">
 <img src="https://img.shields.io/badge/Gerrit-FCC624?style=flat&logo=gerrit&logoColor=white">
-```
-```
+
 <img src="https://img.shields.io/badge/docker-2496ED?styleflat&logo=docker&logoColor=white">
 <img src="https://img.shields.io/badge/jenkins-D24939?styleflat&logo=jenkins&logoColor=white">
 <img src="https://img.shields.io/badge/AWS%20EC2-FF9900?style=flat&logo=amazon-aws&logoColor=white">
-```
-```
+
 <img src="https://img.shields.io/badge/figma-F24E1E?styleflat&logo=figma&logoColor=white">
 <img src="https://img.shields.io/badge/Notion-000000?styleflat&logo=Notion&logoColor=white">
-```
-```
+
 <img src="https://img.shields.io/badge/mattermost-0058CC?styleflat&logo=mattermost&logoColor=white">
 <img src="https://img.shields.io/badge/jira-0052CC?styleflat&logo=jira&logoColor=white">
-```
-```
+
 <img src="https://img.shields.io/badge/fontawesome-339AF0?styleflat&logo=fontawesome&logoColor=white">
 <img src="https://img.shields.io/badge/OpenVidu-E02B20?style=flat&logo=openvidu&logoColor=white">
 <img src="https://img.shields.io/badge/MediaPipe-00A66B?style=flat&logo=mediapipe&logoColor=white">
-```
+
 
 ### 📌프로젝트 기간
 
