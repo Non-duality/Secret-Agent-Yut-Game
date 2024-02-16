@@ -1151,21 +1151,25 @@ export const useGameStore = defineStore("game", {
       // this.timerId = null;
       this.throwChance--;
       // 총 4번의 랜덤을 발생
-      
+
       // 라이브 시연 용..
       const nick = useUserStore().userInfo.nickname;
       if (nick === "이희웅") {
         this.yutRes = 3;
         this.yutText = "걸";
+        this.throwRes = [true,false,true,true];
       } else if (nick === "이준희" || nick === "김수빈") {
         this.yutRes = 2;
         this.yutText = "개";
-      } else if (nick === "이주미" || nick === "박지훈") {
+        this.throwRes = [false,false,true,true];
+      } else if (nick === "이주미") {
         this.yutRes = 1;
         this.yutText = "도";
+        this.throwRes = [false,false,true,false];
       } else if (nick === "양성규") {
         this.yutRes = -1;
         this.yutText = "백도";
+        this.throwRes = [true,false,false,false];
       } else {
         // false가 뒤집어 진거
         let cnt = 0;
