@@ -131,7 +131,7 @@ export const useUserStore = defineStore("user", {
               
               // 웹 소켓 연결
               try {
-                await connectWebSocket(accessToken)
+                // await connectWebSocket(accessToken)
                 resolve(); // 작업 완료 후 resolve 호출
               } catch (error) {
                 resolve() 
