@@ -1,18 +1,7 @@
 import axios from "axios";
 import { httpStatusCode } from "./http-status";
 
-const { VITE_VUE_API_URL, VITE_ELECTRIC_CHARGING_STATION_URL } = import.meta.env;
-
-// station vue api axios instance
-function stationAxios() {
-  const instance = axios.create({
-    baseURL: VITE_ELECTRIC_CHARGING_STATION_URL,
-    headers: {
-      "Content-Type": "application/json;charset=utf-8",
-    },
-  });
-  return instance;
-}
+const { VITE_VUE_API_URL } = import.meta.env;
 
 // local vue api axios instance
 function localAxios() {
@@ -23,6 +12,7 @@ function localAxios() {
     //   "Content-Type": "application/json;charset=utf-8",
     // },
   });
+
   // Request 발생 시 적용할 내용.
   instance.defaults.headers.common["Authorization"] = "";
   instance.defaults.headers.post["Content-Type"] = "application/json";
@@ -38,10 +28,8 @@ function localAxios() {
 
   // accessToken의 값이 유효하지 않은 경우,
   // refreshToken을 이용해 재발급 처리.
-  // https://maruzzing.github.io/study/rnative/axios-interceptors%EB%A1%9C-%ED%86%A0%ED%81%B0-%EB%A6%AC%ED%94%84%EB%A0%88%EC%8B%9C-%ED%95%98%EA%B8%B0/
-
   let isTokenRefreshing = false;
-
+  
   instance.interceptors.response.use(
     (response) => {
       return response;
@@ -78,7 +66,7 @@ function localAxios() {
           });
         }
       } else if (status == httpStatusCode.FORBIDDEN) {
-        alert(error.response.data.message);
+        // console.log(error.response.data.message);
       }
 
       return Promise.reject(error);
@@ -87,4 +75,4 @@ function localAxios() {
   return instance;
 }
 
-export { localAxios, stationAxios };
+export { localAxios };

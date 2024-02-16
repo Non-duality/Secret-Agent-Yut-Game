@@ -29,12 +29,35 @@
 
 /* 네비게이션 바 링크에 마우스를 올렸을 때의 스타일 */
 .nav-text:hover {
-  color: #7EB0F2; /* 마우스 오버 시의 텍스트 색상 */
-  transition: background-color 0.3s, color 0.3s; /* 색상 변경에 애니메이션 효과 적용 */
+  color: #eb00009c; /* 마우스 오버 시의 텍스트 색상 */
+}
+
+.active-link {
+  /* 선택된 링크의 색상을 여기에 지정하세요. 예: */
+  color: #eb00009c;
 }
 
 /* 프로필 위한 클래스 */
 .pro-box {
   margin-left: auto;
   margin-right: 30px;
+}
+
+.fade-enter-from {
+  opacity: 0;
+}
+.fade-enter-active {
+  transition: all 0.5s;
+}
+.fade-enter-to {
+  opacity: 1;
+}
+.fade-leave-from {
+  opacity: 1;
+}
+.fade-leave-active {
+  transition: all 0.5s;
+}
+.fade-leave-to {
+  opacity: 0;
 }

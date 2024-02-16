@@ -2,6 +2,7 @@
 .nav-pro{
     display: flex;
 }
+
 /* 테두리 설정 */
 .nav-img{
     padding: 5px;
@@ -20,10 +21,27 @@
     justify-content: center; /* 수직 축에서 중앙 정렬 */
     /* align-items: center; 수평 축에서 중앙 정렬 */
 }
+
+span{
+    text-align: start;
+}
+
 .nav-my{
     display: flex;
 }
 
 .nav-btn{
-    padding: none;
+    background-color: whitesmoke;
+    text-decoration: none;
+    margin-top: 5px;
+    padding: 2px 5px;
+    border: 3px lightgray solid;
+    color: rgb(38, 38, 38);
+    font-size: small;
+}
+
+.nav-btn:hover {
+    cursor: pointer;
+    background-color: darkgray;
+    color: whitesmoke;
 }

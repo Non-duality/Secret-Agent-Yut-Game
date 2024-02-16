@@ -3,13 +3,32 @@
   <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./src/assets/css/main.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>밀정 윷놀이</title>
   </head>
   <body>
-    <!-- 효과음 오디오 요소 추가 -->
-    <audio id="clickSound" src="./src/assets/sound/1.mp3"></audio>
-    <div id="app"></div>
+    <!-- 배경음 오디오 설정 -->
+    <div id="app">
+      <setting-modal></setting-modal>
+    </div>
     <script type="module" src="/src/main.js"></script>
+    
+    <!-- 웹캠 권한 요청 -->
+    <script>
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+
+        })
+        .catch((error) => {
+          console.error("웹캠 권한이 거부되었습니다:", error);
+        });
+    </script>
+
+    <!-- 미디어파이프 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js"
+    crossorigin="anonymous"></script>
+
+    </script>
   </body>
 </html>
+

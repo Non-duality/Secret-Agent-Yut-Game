@@ -25,9 +25,9 @@
   top: 0;
   left: 0;
 
-  background: url("../img/MainBackground.png") no-repeat;
+  /* background: url("../img/MainBackground.png") no-repeat;
   background-size: cover;
-  background-position: center;
+  background-position: center; */
   z-index: 0;
 }
 
@@ -37,4 +37,64 @@ button {
   padding: 10px 20px;
   border: none;
   cursor: pointer;
+}
+
+.default {
+  background: url("../img/MainBackground.png") no-repeat;
+  background-size: cover;
+  background-position: center;
+  animation: backgroundAnimation 70s infinite linear;
+}
+
+.home {
+  background: url("@/assets/img/home/homeBackground.png");
+  background-size: cover;
+  background-position: center;
+  animation: backgroundAnimation 70s infinite linear;
+}
+
+.room-list {
+  background: url("@/assets/img/room/roomListBackground.png");
+  background-size: cover;
+  background-position: center;
+  animation: backgroundAnimation 70s infinite linear;
+}
+
+.room-wait {
+  background: url("@/assets/img/room/roomWatingBackground.png");
+  background-size: cover;
+  background-position: center;
+  animation: backgroundAnimation 70s infinite linear;
+}
+
+.profile {
+  background: url("@/assets/img/user/profileBackground.png");
+  background-size: cover;
+  background-position: center;
+  animation: backgroundAnimation 70s infinite linear;
+}
+
+.game {
+  background: url("@/assets/img/game/back_6.png");
+  background-size: cover;
+  background-position: center;
+}
+
+/* 애니메이션 추가 */
+@keyframes backgroundAnimation {
+  0% {
+    background-position: center;
+  }
+  25% {
+    background-position: top left;
+  }
+  50% {
+    background-position: top right;
+  }
+  75% {
+    background-position: bottom left;
+  }
+  100% {
+    background-position: center; /* 다시 시작 위치로 돌아가면서 자연스럽게 전환됩니다. */
+  }
 }
