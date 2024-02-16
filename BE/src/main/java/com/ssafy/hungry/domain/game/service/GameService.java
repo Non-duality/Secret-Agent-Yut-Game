@@ -56,7 +56,7 @@ public class GameService {
     public int[] generateMissionRegion() {
         // 0 5 10 15 22 27 을 제외하고 0~29까지중 랜덤으로 4개를 선택
         int[] missionRigion = new int[4];
-        int[][] map = new int[][] {{1,2,3,4}, {6,7,8,9}, {11,12,13,14}, {16,17,18,19}};
+        int[][] map = new int[][] {{3,3,3,3}, {6,7,8,9}, {11,12,13,14}, {16,17,18,19}};
         SecureRandom sr = new SecureRandom();
         sr.setSeed(new Date().getTime());
         for(int i = 0; i < 4; i++){
