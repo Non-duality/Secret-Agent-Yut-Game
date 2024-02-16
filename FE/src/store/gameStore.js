@@ -1150,6 +1150,22 @@ export const useGameStore = defineStore("game", {
       // clearInterval(this.timerId);
       // this.timerId = null;
       this.throwChance--;
+      
+      // 총 4번의 랜덤을 발생
+      // false가 뒤집어 진거
+      let cnt = 0;
+      for (var i = 0; i < 4; i++) {
+        const rand = Math.floor(Math.random() * 10);
+
+        // 윷은 4개이므로 각각 결과를 저장.
+        if (rand < 4) {
+          this.throwRes[i] = true;
+          cnt++;
+        } else {
+          this.throwRes[i] = false;
+        }
+        // console.log("rand = " + rand);
+      }
 
       // 저장된 결과를 계산.
       switch (cnt) {
