@@ -242,3 +242,5 @@ const props = defineProps({
 - 빈 블록은 줄바꿈하지 않고 {} 로 사용 multi-block(if/else, try/catch/finally) 은 줄바꿈
 - 같은 동일한 이름의 메서드, 생성자는 연속적으로 작성
 - @Override: 항상 사용
+
+![system.drawio](/uploads/c5ff7077913bb566d2c39ca95509cfa9/system.drawio.png)
