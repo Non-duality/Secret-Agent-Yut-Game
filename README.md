@@ -244,3 +244,5 @@ const props = defineProps({
 - @Override: 항상 사용
 
 ![system.drawio](/uploads/c5ff7077913bb566d2c39ca95509cfa9/system.drawio.png)
+
+![게임입장gif](/uploads/05aa12ee41ac55d8459a19205f05232c/게임입장gif.gif)
