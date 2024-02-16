@@ -326,8 +326,8 @@ function setInfo(receivedMsg) {
   // 라운드
   useGameStore().gameSpeed = 3;
   // 미션 타일
-  useGameStore().missionTiles = receivedMsg.missionRegion;
-  // useGameStore().missionTiles = [3,8,13,17];
+  // useGameStore().missionTiles = receivedMsg.missionRegion;
+  useGameStore().missionTiles = [3,8,13,17];
 }
 
 /*
