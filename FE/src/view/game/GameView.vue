@@ -45,7 +45,6 @@
     <GameEnd
       v-if="isGameEnd"
       class="game-end"
-      :winMessage="winMessage"
       @closeModal="closeModal"
     />
   </div>
@@ -81,7 +80,7 @@ export default {
 
   data() {
     return {
-      winMessage: null,
+      // winMessage: null,
       showStartModal: true,
 
       // OpenVidu objects
@@ -158,7 +157,11 @@ export default {
           this.msg
         );
       }
-      this.winMessage = 1;
+      if(useGameStore().myTeam === 1){
+        useGameStore().resText = "승리";
+      }else{
+        useGameStore().resText = "패배";
+      }
       this.isShowEnd = true;
     },
     blueWin() {
@@ -169,18 +172,14 @@ export default {
           this.msg
         );
       }
-      this.winMessage = 2;
+      if(useGameStore().myTeam === 2){
+        useGameStore().resText = "승리";
+      }else{
+        useGameStore().resText = "패배";
+      }
       this.isShowEnd = true;
     },
     spyEnd() {
-      this.msg.team = useGameStore().receivedMsg.team === 1 ? 2 : 1;
-      if (useGameStore().isThrowYut) {
-        socketSend(
-          `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
-          this.msg
-        );
-      }
-      this.winMessage = useGameStore().receivedMsg.team === 1 ? 2 : 1;
       this.isShowEnd = true;
     },
     closeModal() {

@@ -436,10 +436,31 @@ export default {
                 : this.blueHorses[spyIndex].name +
                   "말이 밀정이여서 게임이 종료되었습니다!!";
             this.isShowWarningMessage = true;
-            setTimeout(() => {
-              this.isShowWarningMessage = false;
-              gameStore.spyGoal = true;
-            }, 2000);
+
+            // 윷 결과 보내기.
+            if (gameStore.isThrowYut) {
+              const msg = {
+                team: newVal.team === 1 ? 2 : 1,
+              };
+
+              socketSend(
+                `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
+                msg
+              );
+            }
+
+            // 결과 텍스트
+            if (gameStore.myTeam === newVal.team){
+              gameStore.resText = "패배";
+            }else{
+              gameStore.resText = "승리";
+            }
+
+              setTimeout(() => {
+                this.isShowWarningMessage = false;
+                gameStore.spyGoal = true;
+              }, 2000);
+
           } else {
             this.isShowWarningMessage = true;
             setTimeout(() => {

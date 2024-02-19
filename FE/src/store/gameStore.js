@@ -7,6 +7,8 @@ export const useGameStore = defineStore("game", {
   // 반응형 상태 (data)
   state: () => {
     return {
+      // 승리 팀 텍스트
+      resText : "",
       // 채팅 메시지
       gameChatMsg: [],
       // 소켓 메시지
