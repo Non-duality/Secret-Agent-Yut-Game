@@ -430,6 +430,8 @@ export default {
           }
           this.warningMessage = this.warningMessage + "말이 도착하였습니다.";
           if (newVal.spy) {
+            // 게임 종료
+            gameStore.gameStatus = false;
             this.warningMessageSecond =
               newVal.team === 1
                 ? this.redHorses[spyIndex].name

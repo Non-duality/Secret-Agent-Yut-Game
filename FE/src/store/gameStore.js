@@ -9,6 +9,8 @@ export const useGameStore = defineStore("game", {
     return {
       // 승리 팀 텍스트
       resText : "",
+      // 게임 상태
+      gameStatus : true,
       // 채팅 메시지
       gameChatMsg: [],
       // 소켓 메시지
@@ -816,6 +818,8 @@ export const useGameStore = defineStore("game", {
 
     // 턴 바꿈.
     turnChange() {
+      if(!this.gameStatus)
+        return;
       // 홍팀이였다면,.
       if (!this.teamTurn) {
         if (this.myTeam === 1) {

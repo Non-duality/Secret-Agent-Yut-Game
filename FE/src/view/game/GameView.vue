@@ -151,6 +151,7 @@ export default {
     },
     redWin() {
       this.msg.team = 1;
+      useGameStore().gameStatus = false;
       if (useGameStore().isThrowYut) {
         socketSend(
           `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
@@ -166,6 +167,7 @@ export default {
     },
     blueWin() {
       this.msg.team = 2;
+      useGameStore().gameStatus = false;
       if (useGameStore().isThrowYut) {
         socketSend(
           `/pub/game/${useUserStore().currentRoomInfo.roomCode}/finish`,
