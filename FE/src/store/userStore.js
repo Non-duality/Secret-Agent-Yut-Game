@@ -218,6 +218,7 @@ export const useUserStore = defineStore("user", {
 
     // 이메일 중복 체크
     emailCheck: async (email) => {
+      console.log("이메일 체크 : " + email);
       await emailCheck(
         email,
         (response) => {
@@ -236,6 +237,7 @@ export const useUserStore = defineStore("user", {
 
     // 닉네임 중복 체크
     nickCheck: async (nickname) => {
+      console.log("닉네임 체크 : " + nickname);
       await nickCheck(
         nickname,
         (response) => {
