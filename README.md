@@ -635,5 +635,8 @@ const props = defineProps({
 ##### 밀정 추리
 ![추리gif](/uploads/0e903f4f791ccca8c68c614596042895/추리gif.gif)
 
+##### 게임 승패
+![승리gif](/uploads/ca6e1d2f264ec17439fa2bd74469e0da/승리gif.gif)
+
 
 
