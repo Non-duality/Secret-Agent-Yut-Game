@@ -640,8 +640,8 @@ const props = defineProps({
 
 
 ## 🌐 출처
-"Beautiful Korea(뷰티플 코리아)" 사운드는 윤영현에 의해 제작되었으며, CC BY 라이선스에 따라 사용되었습니다."  
-"BLACK BOX - South Korea" 사운드는 이지빈에 의해 제작되었으며, CC BY 라이선스에 따라 사용되었습니다."  
-"74. Blumenlied (Flower Song)_ 꽃노래_국악" 사운드는 한국저작권위원회에 의해 제작되었으며, CC BY 라이선스에 따라 사용되었습니다."  
-"LSMBG0701_궁궐에서 맞이하는 아침" 사운드는 한국저작권위원회에 의해 제작되었으며, CC BY 라이선스에 따라 사용되었습니다."  
-"Once upon a time" 사운드eldlofi에 의해 의해 제작되었습니다.  
+"**Beautiful Korea(뷰티플 코리아)**" 사운드는 윤영현에 의해 제작되었으며, CC BY 라이선스에 따라 사용되었습니다.  
+"**BLACK BOX - South Korea**" 사운드는 이지빈에 의해 제작되었으며, CC BY 라이선스에 따라 사용되었습니다.  
+"**74. Blumenlied (Flower Song)_ 꽃노래_국악**" 사운드는 한국저작권위원회에 의해 제작되었으며, CC BY 라이선스에 따라 사용되었습니다.  
+"**LSMBG0701_궁궐에서 맞이하는 아침**" 사운드는 한국저작권위원회에 의해 제작되었으며, CC BY 라이선스에 따라 사용되었습니다.  
+"**Once upon a time**" 사운드는 eldlofi에 의해 의해 제작되었습니다.  
