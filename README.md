@@ -562,81 +562,81 @@ const props = defineProps({
 
 ### 📌아키텍처 설계
 
-![system.drawio](/uploads/19ec72502e78fbdb63f8a886bb8ea577/system.drawio.png)
+![system.drawio](./exec/Img/아키텍쳐.png)
 
 ### 📌DB 설계 (ERD)
 
-![ERD](/uploads/65a9590cdbbf1a6775460d6dc24bbcaf/ERD.png)
+![ERD](./exec/Img/ERD.png)
 
 ## 💻실제 화면
 
 #### 📌진입 화면
 
 ##### 회원가입
-![회원가입gif](/uploads/e12dc378ea55863c4fd4318debc5c344/회원가입gif.gif)
+![회원가입gif](./exec/Img/회원가입gif.gif)
 
 ##### 로그인
-![로그인gif](/uploads/d1501d1d1420a93045b4f39b9e8c3c54/로그인gif.gif)
+![로그인gif](./exec/Img/로그인gif.gif)
 
 #### 📌홈 화면
 
 ##### 홈 화면 진입 후 로그아웃
-![로그아웃gif](/uploads/907b56750a250d3d98698ddfd8976bb6/로그아웃gif.gif)
+![로그아웃gif](./exec/Img/로그아웃gif.gif)
 
 ##### 도움말
-![도움말gif](/uploads/cfbd71ae76af2c426326b4f642a09e69/도움말gif.gif)
+![도움말gif](./exec/Img/도움말gif.gif)
 
 ##### 게임 관련 설정창 조작
-![설정창gif](/uploads/513998d40b80469a3c74561908d1c7e0/설정창gif.gif)
+![설정창gif](./exec/Img/설정창gif.gif)
 
 ##### 친구 추가
-![친구추가gif](/uploads/b8485f55ebea18e46b05eb67d493a441/친구추가gif.gif)
+![친구추가gif](./exec/Img/친구추가gif.gif)
 
 ##### 친구 채팅
-![친구채팅gif](/uploads/5eed3ae008464948a91ff2a9f6348b98/친구채팅gif.gif)
-![친구채팅2gif](/uploads/7f4df9022e0082162cdf8c7c3e6cef5b/친구채팅2gif.gif)
+![친구채팅gif](./exec/Img/친구채팅gif.gif)
+![친구채팅2gif](./exec/Img/친구채팅2gif.gif)
 
 #### 📌프로필 화면
 
 ##### 프로필 홈화면
-![내정보gif](/uploads/9a18f73a7ef26e1b280a015282d5e7f8/내정보gif.gif)
+![내정보gif](./exec/Img/내정보gif.gif)
 
 ##### 닉네임 변경
-![닉네임변경gif](/uploads/8faa8c5b55c200f77619d0b47431ddff/닉네임변경gif.gif)
+![닉네임변경gif](./exec/Img/닉네임변경gif.gif)
 
 ##### 비밀번호 변경
-![비밀번호변경gif](/uploads/5665fd64df7c3390ace33efc47a0cf78/비밀번호변경gif.gif)
+![비밀번호변경gif](./exec/Img/비밀번호변경gif.gif)
 
 #### 📌게임 방 화면
 
 ##### 게임 방 리스트 및 대기 방 입장
-![방입장gif](/uploads/8fef9ab2144abe26b52a80fa0f84373a/방입장gif.gif)
+![방입장gif](./exec/Img/방입장gif.gif)
 
 #### 📌게임 진행
 
 ##### 게임 시작 시 캐릭터 픽 창 진입
-![픽창입장gif](/uploads/58455ec15cf72064265b1d346816917b/픽창입장gif.gif)
+![픽창입장gif](./exec/Img/픽창입장gif.gif)
 
 ##### 캐릭터 픽 이후 상대 팀 밀정 픽 창 진입
-![픽과밀정픽gif](/uploads/cdb026a3b0ab24e619b6ec490f8df11a/픽과밀정픽gif.gif)
+![픽과밀정픽gif](./exec/Img/픽과밀정픽gif.gif)
 
 ##### 게임 시작
-![게임입장gif](/uploads/fba87929038f33309200b2ef1a8268d4/게임입장gif.gif)
+![게임입장gif](./exec/Img/게임입장gif.gif)
 
 ##### 윷 던지기
-![윷던지기유닛이동미션도착gif](/uploads/26fca4298e4f80da28919fcbfb2caac7/윷던지기유닛이동미션도착gif.gif)
+![윷던지기유닛이동미션도착gif](./exec/Img/윷던지기유닛이동미션도착gif.gif)
 
 ##### 미니 게임 실행
-![미션gif](/uploads/5ba2ecc6be69f72d979766ea78ac023d/미션gif.gif)
+![미션gif](./exec/Img/미션gif.gif)
 
 ##### 미니 게임 성공 후 밀정 힌트 얻기
-![힌트얻기gif](/uploads/fceda0ddf994107565b0dc0788adb80d/힌트얻기gif.gif)
+![힌트얻기gif](./exec/Img/힌트얻기gif.gif)
 
 ##### 밀정 추리
-![추리gif](/uploads/0e903f4f791ccca8c68c614596042895/추리gif.gif)
+![추리gif](./exec/Img/추리gif.gif)
 
 ##### 게임 승패
-![gif-ezgif.com-resize](/uploads/b85127cbeeb3d75518532b572f49f7fc/gif-ezgif.com-resize.gif)
+![gif-ezgif.com-resize](./exec/Img/승리gif.gif)
 
 
 ## 🌐 출처
