@@ -2,7 +2,7 @@ spring:
   #메일 인증을 위한 설정
   mail:
     host: ENC(viy9Ztw5f5J212yEvuLOfI/AtepmAaGK) #gmail 서비스 사용
-    port: 587
+    port: 
     username: ENC(80aS6n6xT6g/f/ZnpAfGDE8jHTm+Qyb3ZAHefBG4fes=) #gmail 계정
     password: ENC(W9n+wP/FM0oGHZWPqEflaYNIaInbEquF1GCxU38uwlY=) #메일 api 인증 코드
     properties:
@@ -20,7 +20,7 @@ spring:
   #레디스 설정 정보
   redis:
     host: ENC(5lc3y/8+rbT2qZUwQAJmB2uMQ/2njthp6miNwxuZBHY=) #서버주소
-    port: 6379 #레디스 컨테이너 포트
+    port: #레디스 컨테이너 포트
 
   #하이버네이트 설정
   h2:
@@ -63,7 +63,7 @@ server:
   servlet:
     context-path: /api/v1
 
-  port: 8080
+  port: 
 
 #jpa 쿼리 로그 설정
 #logging:
